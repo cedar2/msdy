@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasSeasonVendorMapper">
+
+    <resultMap type="com.platform.ems.domain.BasSeasonVendor" id="BasSeasonVendorResult">
+        <result property="clientId" column="client_id"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="seasonVendorSid" column="season_vendor_sid"/>
+        <result property="seasonVendorCode" column="season_vendor_code"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="companyBrandCode" column="company_brand_code"/>
+        <result property="isKuaifanVendor" column="is_kuaifan_vendor"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectBasSeasonVendorVo">
+        select t.client_id,
+               t.product_season_sid,
+               t.product_season_code,
+               t.vendor_sid,
+               t.season_vendor_sid,
+               t.season_vendor_code,
+               t.vendor_code,
+               t.company_sid,
+               t.company_code,
+               t.company_brand_sid,
+               t.company_brand_code,
+               t.is_kuaifan_vendor,
+               t.remark,
+               t.status,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t5.product_season_name,
+               t6.vendor_name,
+               ifnull(t6.short_name, t6.vendor_name) as vendor_short_name,
+               t7.company_name,
+               ifnull(t7.short_name, t7.company_name) as company_short_name,
+               t8.brand_name as company_brand_name
+        from s_bas_season_vendor t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t3.client_id
+         LEFT JOIN s_bas_product_season t5 ON t.product_season_sid = t5.product_season_sid
+         LEFT JOIN s_bas_vendor t6 ON t.vendor_sid = t6.vendor_sid
+         LEFT JOIN s_bas_company t7 ON t.company_sid = t7.company_sid
+         LEFT JOIN s_bas_company_brand t8 ON t.company_brand_sid = t8.company_brand_sid
+    </sql>
+
+    <select id="selectBasSeasonVendorById" parameterType="Long" resultMap="BasSeasonVendorResult">
+        <include refid="selectBasSeasonVendorVo"/>
+        where t.season_vendor_sid = #{seasonVendorSid}
+    </select>
+
+    <select id="selectBasSeasonVendorList" parameterType="com.platform.ems.domain.BasSeasonVendor"
+            resultMap="BasSeasonVendorResult">
+        <include refid="selectBasSeasonVendorVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="seasonVendorSid != null ">
+                and t.season_vendor_sid = #{seasonVendorSid}
+            </if>
+            <if test="seasonVendorSidList != null  and seasonVendorSidList.length >0 ">
+                and t.season_vendor_sid in
+                (<foreach collection="seasonVendorSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="productSeasonSid != null ">
+                and t.product_season_sid = #{productSeasonSid}
+            </if>
+            <if test="productSeasonSidList != null  and productSeasonSidList.length >0 ">
+                and t.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="productSeasonCode != null and productSeasonCode != ''">
+                and t.product_season_code = #{productSeasonCode}
+            </if>
+            <if test="vendorSid != null ">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="vendorSidList != null  and vendorSidList.length >0 ">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="vendorCode != null and vendorCode != ''">
+                and t.vendor_code = #{vendorCode}
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null  and companySidList.length >0 ">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companyCode != null and companyCode != ''">
+                and t.company_code = #{companyCode}
+            </if>
+            <if test="companyBrandSid != null ">
+                and t.company_brand_sid = #{companyBrandSid}
+            </if>
+            <if test="companyBrandSidList != null  and companyBrandSidList.length >0 ">
+                and t.company_brand_sid in
+                (<foreach collection="companyBrandSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companyBrandCode != null and companyBrandCode != ''">
+                and t.company_brand_code = #{companyBrandCode}
+            </if>
+            <if test="isKuaifanVendor != null and isKuaifanVendor != ''">
+                and t.is_kuaifan_vendor = #{isKuaifanVendor}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountList != null  and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.season_vendor_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_season_vendor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            product_season_sid,
+            product_season_code,
+            vendor_sid,
+            season_vendor_sid,
+            season_vendor_code,
+            vendor_code,
+            company_sid,
+            company_code,
+            company_brand_sid,
+            company_brand_code,
+            is_kuaifan_vendor,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.productSeasonSid},
+                #{item.productSeasonCode},
+                #{item.vendorSid},
+                #{item.seasonVendorCode},
+                #{item.vendorCode},
+                #{item.companySid},
+                #{item.companyCode},
+                #{item.companyBrandSid},
+                #{item.companyBrandCode},
+                #{item.isKuaifanVendor},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_season_vendor
+        <trim prefix="SET" suffixOverrides=",">
+            product_season_sid = #{productSeasonSid},
+            product_season_code = #{productSeasonCode},
+            vendor_sid = #{vendorSid},
+            vendor_code = #{vendorCode},
+            company_sid = #{companySid},
+            company_code = #{companyCode},
+            company_brand_sid = #{companyBrandSid},
+            company_brand_code = #{companyBrandCode},
+            is_kuaifan_vendor = #{isKuaifanVendor},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where season_vendor_sid = #{seasonVendorSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_season_vendor
+            <trim prefix="SET" suffixOverrides=",">
+                product_season_sid = #{o.productSeasonSid},
+                product_season_code = #{o.productSeasonCode},
+                vendor_sid = #{o.vendorSid},
+                vendor_code = #{o.vendorCode},
+                company_sid = #{o.companySid},
+                company_code = #{o.companyCode},
+                company_brand_sid = #{o.companyBrandSid},
+                company_brand_code = #{o.companyBrandCode},
+                is_kuaifan_vendor = #{o.isKuaifanVendor},
+                remark = #{o.remark},
+                status = #{o.status},
+                handle_status = #{o.handleStatus},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+            </trim>
+            where season_vendor_sid = #{o.seasonVendorSid}
+        </foreach>
+    </update>
+
+</mapper>

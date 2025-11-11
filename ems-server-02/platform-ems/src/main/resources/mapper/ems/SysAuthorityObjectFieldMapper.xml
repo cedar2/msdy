@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.SysAuthorityObjectFieldMapper">
+
+    <resultMap type="com.platform.ems.domain.SysAuthorityObjectField" id="SysAuthorityObjectFieldResult">
+        <result property="clientId" column="client_id"/>
+        <result property="authorityObjectFieldSid" column="authority_object_field_sid"/>
+        <result property="authorityObjectSid" column="authority_object_sid"/>
+        <result property="authorityFieldSid" column="authority_field_sid"/>
+        <result property="authorityFieldParam" column="authority_field_param"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectSysAuthorityObjectFieldVo">
+        select t.client_id,
+        t.authority_object_field_sid,
+        t.authority_object_sid,
+        t.authority_field_sid,
+        t.authority_field_param,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+        u1.nick_name AS creator_account_name,
+        u2.nick_name AS updater_account_name,
+        t1.object_code,
+        t1.object_name,
+        t2.field_code,
+        t2.field_name
+        from s_sys_authority_object_field t
+        left join sys_user u1 on t.creator_account = u1.user_name
+        left join sys_user u2 on t.updater_account = u2.user_name
+        left join s_sys_authority_object t1 on t.authority_object_sid = t1.authority_object_sid
+        left join s_sys_authority_field t2 on t.authority_field_sid = t2.authority_field_sid
+    </sql>
+
+    <select id="selectSysAuthorityObjectFieldById" parameterType="Long" resultMap="SysAuthorityObjectFieldResult">
+        <include refid="selectSysAuthorityObjectFieldVo"/>
+        where t.authority_object_field_sid = #{authorityObjectFieldSid}
+    </select>
+
+    <select id="selectSysAuthorityObjectFieldListById" parameterType="Long" resultMap="SysAuthorityObjectFieldResult">
+        <include refid="selectSysAuthorityObjectFieldVo"/>
+        where t.authority_object_sid = #{sid}
+    </select>
+
+    <select id="selectSysAuthorityObjectFieldList" parameterType="com.platform.ems.domain.SysAuthorityObjectField"
+            resultMap="SysAuthorityObjectFieldResult">
+        <include refid="selectSysAuthorityObjectFieldVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="authorityObjectSid != null ">
+                and t.authority_object_sid =#{authorityObjectSid}
+            </if>
+            <if test="authorityFieldSid != null ">
+                and t.authority_field_sid =#{authorityFieldSid}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_sys_authority_object_field
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            authority_object_field_sid,
+            authority_object_sid,
+            authority_field_sid,
+            authority_field_param,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.authorityObjectFieldSid},
+                #{item.authorityObjectSid},
+                #{item.authorityFieldSid},
+                #{item.authorityFieldParam},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_sys_authority_object_field
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            authority_object_field_sid = #{authorityObjectFieldSid},
+            authority_object_sid = #{authorityObjectSid},
+            authority_field_sid = #{authorityFieldSid},
+            authority_field_param = #{authorityFieldParam},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where authority_object_field_sid = #{authorityObjectFieldSid}
+    </update>
+
+</mapper>

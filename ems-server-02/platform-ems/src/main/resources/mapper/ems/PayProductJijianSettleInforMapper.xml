@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PayProductJijianSettleInforMapper">
+
+    <resultMap type="com.platform.ems.domain.PayProductJijianSettleInfor" id="PayProductJijianSettleInforResult">
+        <result property="clientId" column="client_id"/>
+        <result property="jijianSettleInforSid" column="jijian_settle_infor_sid"/>
+        <result property="yearmonth" column="yearmonth"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="workCenterSid" column="work_center_sid"/>
+        <result property="workCenterCode" column="work_center_code"/>
+        <result property="productPriceType" column="product_price_type"/>
+        <result property="jixinWangongType" column="jixin_wangong_type"/>
+        <result property="department" column="department"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="productSid" column="product_sid"/>
+        <result property="productCode" column="product_code"/>
+        <result property="paichanBatch" column="paichan_batch"/>
+        <result property="settleQuantity" column="settle_quantity"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="plantName" column="plant_name"/>
+        <result property="plantShortName" column="plant_short_name"/>
+        <result property="workCenterName" column="work_center_name"/>
+        <result property="materialName" column="material_name"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerShortName" column="customer_short_name"/>
+    </resultMap>
+
+    <sql id="selectPayProductJijianSettleInforVo">
+        select t.client_id,
+               t.jijian_settle_infor_sid,
+               t.yearmonth,
+               t.plant_sid,
+               t.plant_code,
+               t.work_center_sid,
+               t.work_center_code,
+               t.product_price_type,
+               t.jixin_wangong_type,
+               t.department,
+               t.product_sid,
+               t.product_code,
+               t.paichan_batch,
+               t.paichan_batch AS paichan_batch_to_string,
+               t.settle_quantity,
+               t.handle_status,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t5.plant_name, t5.short_name as plant_short_name,
+               t6.work_center_name, t7.material_name,
+               t8.customer_sid,t8.customer_code,t8.customer_name,t8.short_name as customer_short_name,
+               t11.name as department_name,
+               t12.total_price_blq, t12.total_price_blh
+        from s_pay_product_jijian_settle_infor t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t4.client_id
+         LEFT JOIN s_bas_plant t5 ON t.plant_sid = t5.plant_sid
+         LEFT JOIN s_man_work_center t6 ON t.work_center_sid = t6.work_center_sid
+         LEFT JOIN s_bas_material t7 ON t.product_sid = t7.material_sid
+         LEFT JOIN s_bas_customer t8 ON t7.customer_sid = t8.customer_sid
+         LEFT JOIN sys_dict_data t9 ON t9.dict_type = 's_product_price_type' AND t.product_price_type = t9.dict_value
+         LEFT JOIN sys_dict_data t10 ON t10.dict_type = 's_jixin_wangong_type' AND t.jixin_wangong_type = t10.dict_value
+         LEFT JOIN s_con_manufacture_department t11 ON t.department = t11.code
+         LEFT JOIN s_pay_product_process_step t12 ON t.plant_sid = t12.plant_sid and t.product_sid = t12.product_sid
+            and t.department = t12.department and t.product_price_type = t12.product_price_type and t.jixin_wangong_type = t12.jixin_wangong_type
+    </sql>
+
+    <select id="selectPayProductJijianSettleInforById" parameterType="Long"
+            resultMap="PayProductJijianSettleInforResult">
+        <include refid="selectPayProductJijianSettleInforVo"/>
+        where t.jijian_settle_infor_sid = #{jijianSettleInforSid}
+    </select>
+
+    <select id="selectPayProductJijianSettleInforList"
+            parameterType="com.platform.ems.domain.PayProductJijianSettleInfor"
+            resultMap="PayProductJijianSettleInforResult">
+        <include refid="selectPayProductJijianSettleInforVo"/>
+        <where>
+            <if test="customerSid != null">
+                and t7.customer_sid = #{customerSid}
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0 ">
+                and t7.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="jijianSettleInforSid != null ">
+                and t.jijian_settle_infor_sid = #{jijianSettleInforSid}
+            </if>
+            <if test="jijianSettleInforSidList != null and jijianSettleInforSidList.length >0 ">
+                and t.jijian_settle_infor_sid in
+                (<foreach collection="jijianSettleInforSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="yearmonth != null and yearmonth != ''">
+                and t.yearmonth = #{yearmonth}
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid = #{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="plantCode != null and plantCode != ''">
+                and t.plant_code like concat('%', #{plantCode}, '%')
+            </if>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid = #{workCenterSid}
+            </if>
+            <if test="workCenterSidList != null and workCenterSidList.length >0 ">
+                and t.work_center_sid in
+                (<foreach collection="workCenterSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="workCenterCode != null and workCenterCode != ''">and
+                t.work_center_code like concat('%', #{workCenterCode}, '%')
+            </if>
+            <if test="productPriceType != null and productPriceType != ''">
+                and t.product_price_type = #{productPriceType}
+            </if>
+            <if test="productPriceTypeList != null and productPriceTypeList.length >0 ">
+                and t.product_price_type in
+                (<foreach collection="productPriceTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="jixinWangongType != null and jixinWangongType != ''">
+                and t.jixin_wangong_type = #{jixinWangongType}
+            </if>
+            <if test="jixinWangongTypeList != null and jixinWangongTypeList.length >0 ">
+                and t.jixin_wangong_type in
+                (<foreach collection="jixinWangongTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="department != null and department != ''">
+                and t.department = #{department}
+            </if>
+            <if test="departmentList != null and departmentList.length >0 ">
+                and t.department in
+                (<foreach collection="departmentList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="productSid != null ">
+                and t.product_sid = #{productSid}
+            </if>
+            <if test="productSidList != null and productSidList.length >0 ">
+                and t.product_sid in
+                (<foreach collection="productSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and t.product_code like concat('%', #{productCode}, '%')
+            </if>
+            <if test="paichanBatch != null ">
+                and t.paichan_batch = #{paichanBatch}
+            </if>
+            <if test="settleQuantity != null ">
+                and t.settle_quantity = #{settleQuantity}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and t7.material_name like concat('%', #{materialName}, '%')
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.yearmonth desc, CONVERT(t5.short_name USING gbk) desc, CONVERT(t.department USING gbk) desc, CONVERT(t6.work_center_name USING gbk) desc,
+        CONVERT(t9.dict_label USING gbk) desc, CONVERT(t10.dict_label USING gbk) desc, CONVERT(t.product_code USING gbk) desc, t.paichan_batch desc
+        <if test="pageNum != null and pageSize != null">LIMIT ${pageBegin},${pageSize}</if>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pay_product_jijian_settle_infor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            jijian_settle_infor_sid,
+            yearmonth,
+            plant_sid,
+            plant_code,
+            work_center_sid,
+            work_center_code,
+            product_price_type,
+            jixin_wangong_type,
+            department,
+            product_sid,
+            product_code,
+            paichan_batch,
+            settle_quantity,
+            handle_status,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.jijianSettleInforSid},
+                #{item.yearmonth},
+                #{item.plantSid},
+                #{item.plantCode},
+                #{item.workCenterSid},
+                #{item.workCenterCode},
+                #{item.productPriceType},
+                #{item.jixinWangongType},
+                #{item.department},
+                #{item.productSid},
+                #{item.productCode},
+                #{item.paichanBatch},
+                #{item.settleQuantity},
+                #{item.handleStatus},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pay_product_jijian_settle_infor
+        <trim prefix="SET" suffixOverrides=",">
+            yearmonth = #{yearmonth},
+            plant_sid = #{plantSid},
+            plant_code = #{plantCode},
+            work_center_sid = #{workCenterSid},
+            work_center_code = #{workCenterCode},
+            product_price_type = #{productPriceType},
+            jixin_wangong_type = #{jixinWangongType},
+            department = #{department},
+            product_sid = #{productSid},
+            product_code = #{productCode},
+            paichan_batch = #{paichanBatch},
+            settle_quantity = #{settleQuantity},
+            handle_status = #{handleStatus},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where jijian_settle_infor_sid = #{jijianSettleInforSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pay_product_jijian_settle_infor
+            <trim prefix="SET" suffixOverrides=",">
+                yearmonth = #{yearmonth},
+                plant_sid = #{plantSid},
+                plant_code = #{plantCode},
+                work_center_sid = #{workCenterSid},
+                work_center_code = #{workCenterCode},
+                product_price_type = #{productPriceType},
+                jixin_wangong_type = #{jixinWangongType},
+                department = #{department},
+                product_sid = #{productSid},
+                product_code = #{productCode},
+                paichan_batch = #{paichanBatch},
+                settle_quantity = #{settleQuantity},
+                handle_status = #{handleStatus},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+            </trim>
+            where jijian_settle_infor_sid = #{jijianSettleInforSid}
+        </foreach>
+    </update>
+
+    <select id="countSettleQuantity" parameterType="com.platform.ems.domain.PayProductJijianSettleInfor"
+            resultType="java.lang.Double">
+        select ifnull(sum(t.settle_quantity), 0) as settle_quantity from s_pay_product_jijian_settle_infor t
+        <where>
+            <if test="plantSid != null ">
+                and t.plant_sid = #{plantSid}
+            </if>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid = #{workCenterSid}
+            </if>
+            <if test="productPriceType != null and productPriceType != ''">
+                and t.product_price_type = #{productPriceType}
+            </if>
+            <if test="jixinWangongType != null and jixinWangongType != ''">
+                and t.jixin_wangong_type = #{jixinWangongType}
+            </if>
+            <if test="department != null and department != ''">
+                and t.department = #{department}
+            </if>
+            <if test="yearmonth != null and yearmonth != ''">
+                and t.yearmonth = #{yearmonth}
+            </if>
+            <if test="productSid != null ">
+                and t.product_sid = #{productSid}
+            </if>
+            <if test="paichanBatch != null ">
+                and t.paichan_batch = #{paichanBatch}
+            </if>
+            <if test="paichanBatch == null ">
+                and t.paichan_batch is null
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+        </where>
+    </select>
+
+    <select id="collectPayProductJijianSettleInforList" parameterType="com.platform.ems.domain.PayProductJijianSettleInfor"
+            resultType="com.platform.ems.domain.PayProductJijianSettleInfor">
+        SELECT t0.plant_sid,t0.product_sid,t0.paichan_batch,t0.paichan_batch as paichan_batch_to_string,t0.department,t0.product_price_type,t0.jixin_wangong_type,
+               IFNULL(x.settle_quantity_check,0) as settle_quantity_check,
+        IFNULL(y.settle_quantity_total,0) as settle_quantity_total,t1.plant_code,t1.plant_name,t1.short_name as plant_short_name,t2.material_code as product_code,t2.material_name,
+        t3.customer_sid,t3.customer_code,t3.customer_name,t3.short_name as customer_short_name,t11.name as department_name,t12.shicai_quantity,
+        ifnull((t12.shicai_quantity - ifnull(x.settle_quantity_check, 0)), 0) as wei_settle_quantity_check,
+        ifnull((t12.shicai_quantity - ifnull(y.settle_quantity_total, 0)), 0) as wei_settle_quantity_total,
+        t13.total_price_blq, t13.total_price_blh
+        FROM
+        (
+        SELECT t.plant_sid,t.product_sid,t.paichan_batch,t.department,t.product_price_type,t.jixin_wangong_type FROM s_pay_product_jijian_settle_infor t
+        GROUP BY t.plant_sid,t.product_sid,t.paichan_batch,t.department,t.product_price_type,t.jixin_wangong_type
+        ) t0
+        LEFT JOIN
+        (
+        SELECT t.plant_sid,t.product_sid,t.paichan_batch,t.department,t.product_price_type,t.jixin_wangong_type,SUM(t.settle_quantity) as settle_quantity_check FROM s_pay_product_jijian_settle_infor t
+        WHERE t.handle_status = '5'
+        GROUP BY t.plant_sid,t.product_sid,t.paichan_batch,t.department,t.product_price_type,t.jixin_wangong_type
+        ) x
+        ON t0.plant_sid = x.plant_sid and t0.product_sid = x.product_sid and t0.department = x.department and
+        t0.product_price_type = x.product_price_type and t0.jixin_wangong_type = x.jixin_wangong_type and
+           (t0.paichan_batch = x.paichan_batch or (t0.paichan_batch is null and x.paichan_batch is null))
+        LEFT JOIN
+        (
+        SELECT t.plant_sid,t.product_sid,t.paichan_batch,t.department,t.product_price_type,t.jixin_wangong_type,SUM(t.settle_quantity) as settle_quantity_total FROM s_pay_product_jijian_settle_infor t
+        WHERE t.handle_status in ('5','1')
+        GROUP BY t.plant_sid,t.product_sid,t.paichan_batch,t.department,t.product_price_type,t.jixin_wangong_type
+        ) y
+        ON t0.plant_sid = y.plant_sid and t0.product_sid = y.product_sid and t0.department = y.department and
+        t0.product_price_type = y.product_price_type and t0.jixin_wangong_type = y.jixin_wangong_type and
+           (t0.paichan_batch = y.paichan_batch or (t0.paichan_batch is null and y.paichan_batch is null))
+        LEFT JOIN s_bas_plant t1 ON t0.plant_sid = t1.plant_sid
+        LEFT JOIN s_bas_material t2 ON t0.product_sid = t2.material_sid
+        LEFT JOIN s_bas_customer t3 ON t2.customer_sid = t3.customer_sid
+        LEFT JOIN sys_dict_data t9 ON t9.dict_type = 's_product_price_type' AND t0.product_price_type = t9.dict_value
+        LEFT JOIN sys_dict_data t10 ON t10.dict_type = 's_jixin_wangong_type' AND t0.jixin_wangong_type = t10.dict_value
+        LEFT JOIN s_con_manufacture_department t11 ON t0.department = t11.code
+        LEFT JOIN s_man_product_produce_batch_infor t12 ON t0.plant_sid = t12.plant_sid and t0.product_sid = t12.product_sid
+             and (t0.paichan_batch = t12.paichan_batch or (t0.paichan_batch is null and t12.paichan_batch is null))
+        LEFT JOIN s_pay_product_process_step t13 ON t0.plant_sid = t13.plant_sid and t0.product_sid = t13.product_sid
+             and t0.department = t13.department and t0.product_price_type = t13.product_price_type and t0.jixin_wangong_type = t13.jixin_wangong_type
+        <where>
+            <if test="plantSid != null ">
+                and t0.plant_sid = #{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t0.plant_sid in
+                (<foreach collection="plantSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="productPriceType != null and productPriceType != ''">
+                and t0.product_price_type = #{productPriceType}
+            </if>
+            <if test="jixinWangongType != null and jixinWangongType != ''">
+                and t0.jixin_wangong_type = #{jixinWangongType}
+            </if>
+            <if test="department != null and department != ''">
+                and t0.department = #{department}
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and t2.material_name like concat('%', #{materialName}, '%')
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and t2.material_code like concat('%', #{productCode}, '%')
+            </if>
+            <if test="productSid != null ">
+                and t0.product_sid = #{productSid}
+            </if>
+            <if test="paichanBatchToString != null and paichanBatchToString != 'null'.toString() and paichanBatchToString != ''">
+                and t0.paichan_batch = #{paichanBatchToString}
+            </if>
+            <if test="(paichanBatchToString == null or paichanBatchToString == 'null'.toString()) and isPaichanPre == 'Y'.toString()">
+                and t0.paichan_batch is null
+            </if>
+            <if test="isHaveShicaiQuantity != null and isHaveShicaiQuantity == 'Y'.toString()">
+                and t12.shicai_quantity is not null
+            </if>
+            <if test="isHaveShicaiQuantity != null and isHaveShicaiQuantity == 'N'.toString()">
+                and t12.shicai_quantity is null
+            </if>
+        </where>
+        order by CONVERT(t1.short_name USING gbk) ASC, CONVERT(t2.material_code USING gbk) ASC, t0.paichan_batch ASC,
+                 CONVERT(t0.department USING gbk) ASC, CONVERT(t9.dict_label USING gbk) ASC, CONVERT(t10.dict_label USING gbk) ASC
+        <if test="pageNum != null and pageSize != null">LIMIT ${pageBegin},${pageSize}</if>
+    </select>
+
+    <select id="selectPayProductJijianSettleInforListPrecision"
+            parameterType="com.platform.ems.domain.PayProductJijianSettleInfor"
+            resultMap="PayProductJijianSettleInforResult">
+        <include refid="selectPayProductJijianSettleInforVo"/>
+        <where>
+            <if test="customerSid != null">
+                and t7.customer_sid = #{customerSid}
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0 ">
+                and t7.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="jijianSettleInforSid != null ">
+                and t.jijian_settle_infor_sid = #{jijianSettleInforSid}
+            </if>
+            <if test="jijianSettleInforSidList != null and jijianSettleInforSidList.length >0 ">
+                and t.jijian_settle_infor_sid in
+                (<foreach collection="jijianSettleInforSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="yearmonth != null and yearmonth != ''">
+                and t.yearmonth = #{yearmonth}
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid = #{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid = #{workCenterSid}
+            </if>
+            <if test="workCenterSidList != null and workCenterSidList.length >0 ">
+                and t.work_center_sid in
+                (<foreach collection="workCenterSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="productPriceType != null and productPriceType != ''">
+                and t.product_price_type = #{productPriceType}
+            </if>
+            <if test="productPriceTypeList != null and productPriceTypeList.length >0 ">
+                and t.product_price_type in
+                (<foreach collection="productPriceTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="jixinWangongType != null and jixinWangongType != ''">
+                and t.jixin_wangong_type = #{jixinWangongType}
+            </if>
+            <if test="jixinWangongTypeList != null and jixinWangongTypeList.length >0 ">
+                and t.jixin_wangong_type in
+                (<foreach collection="jixinWangongTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="department != null and department != ''">
+                and t.department = #{department}
+            </if>
+            <if test="departmentList != null and departmentList.length >0 ">
+                and t.department in
+                (<foreach collection="departmentList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="productSid != null ">
+                and t.product_sid = #{productSid}
+            </if>
+            <if test="productSidList != null and productSidList.length >0 ">
+                and t.product_sid in
+                (<foreach collection="productSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and t.product_code = #{productCode}
+            </if>
+            <if test="paichanBatch != null ">
+                and t.paichan_batch = #{paichanBatch}
+            </if>
+            <if test="paichanBatchToString != null and paichanBatchToString != 'null'.toString() and paichanBatchToString != ''">
+                and t.paichan_batch = #{paichanBatchToString}
+            </if>
+            <if test="paichanBatchToString == null ">
+                and t.paichan_batch is null
+            </if>
+            <if test="settleQuantity != null ">
+                and t.settle_quantity = #{settleQuantity}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name = #{creatorAccountName}
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and t7.material_name = #{materialName}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.yearmonth desc, CONVERT(t6.work_center_name USING gbk) ASC,  t.settle_quantity ASC, t.handle_status ASC
+        <if test="pageNum != null and pageSize != null">LIMIT ${pageBegin},${pageSize}</if>
+    </select>
+
+</mapper>

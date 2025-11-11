@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.SalSalesIntentOrderItemMapper">
+
+    <resultMap type="com.platform.ems.domain.SalSalesIntentOrderItem" id="SalSalesIntentOrderItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="salesIntentOrderItemSid" column="sales_intent_order_item_sid"/>
+        <result property="salesIntentOrderSid" column="sales_intent_order_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="materialName" column="material_name"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku1Code" column="sku1_code"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="sku2Code" column="sku2_code"/>
+        <result property="barcodeSid" column="barcode_sid"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="quantity" column="quantity"/>
+        <result property="barcode" column="barcode"/>
+        <result property="contractDate" column="contract_date"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="isModifying" column="is_modifying"/>
+        <result property="initialQuantity" column="initial_quantity"/>
+        <result property="initialContractDate" column="initial_contract_date"/>
+        <result property="newQuantity" column="new_quantity"/>
+        <result property="newContractDate" column="new_contract_date"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectSalSalesIntentOrderItemVo">
+        select t.client_id,
+               t.sales_intent_order_item_sid,
+               t.sales_intent_order_sid,
+               t.material_sid,
+               t.material_name,
+               t.material_code,
+               t.sku1_sid,
+               t.sku1_code,
+               t.sku2_sid,
+               t.sku2_code,
+               t.barcode_sid,
+               t.barcode,
+               t.unit_base,
+               t.unit_price,
+               round(t.quantity, 4) as quantity,
+               t.sale_price_tax,
+               round((t.quantity * t.sale_price_tax), 2) as current_amount_tax,
+               t.contract_date,
+               t.item_num,
+               t.is_modifying,
+               t.initial_quantity,
+               t.initial_contract_date,
+               t.new_quantity,
+               t.new_contract_date,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t1.sales_intent_order_code,
+               t1.sale_intent_contract_sid,
+               t1.sale_intent_contract_code,
+               t1.handle_status,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.sku_name as sku1_name,
+               t4.sku_type as sku1_type,
+               t5.sku_name as sku2_name,
+               t5.sku_type as sku2_type,
+               t6.name as unit_base_name,
+               t7.name as unit_price_name,
+               t8.company_name,
+               ifnull(t8.short_name, t8.company_name) as company_short_name,
+               t9.customer_name,
+               ifnull(t9.short_name, t9.customer_name) as customer_short_name,
+               t10.product_season_name,
+               t11.nick_name as sale_person_name,
+               t12.name as business_type_name,
+               t13.picture_path,
+               t14.name as material_type_name,
+               ta.sort as sort1,
+               tb.sort as sort2
+        from s_sal_sales_intent_order_item t
+         LEFT JOIN s_bas_material_sku ta on t.material_sid = ta.material_sid and t.sku1_sid = ta.sku_sid
+         LEFT JOIN s_bas_material_sku tb on t.material_sid=tb.material_sid and t.sku2_sid = tb.sku_sid
+         LEFT JOIN s_sal_sales_intent_order t1 ON t.sales_intent_order_sid = t1.sales_intent_order_sid
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN s_bas_sku t4 ON t.sku1_sid = t4.sku_sid
+         LEFT JOIN s_bas_sku t5 ON t.sku2_sid = t5.sku_sid
+         LEFT JOIN s_con_measure_unit t6 ON t.unit_base = t6.code
+         LEFT JOIN s_con_measure_unit t7 ON t.unit_price = t7.code
+         LEFT JOIN s_bas_company t8 ON t1.company_sid = t8.company_sid
+         LEFT JOIN s_bas_customer t9 ON t1.customer_sid = t9.customer_sid
+         LEFT JOIN s_bas_product_season t10 ON t1.product_season_sid = t10.product_season_sid
+         LEFT JOIN sys_user t11 ON t1.sale_person = t11.user_name AND t1.client_id = t11.client_id
+         LEFT JOIN s_con_bu_type_sales_order t12 ON t1.business_type = t12.code
+         LEFT JOIN s_bas_material t13 ON t.material_sid = t13.material_sid
+         LEFT JOIN s_con_material_type t14 ON t13.material_type = t14.code
+    </sql>
+
+    <select id="selectSalSalesIntentOrderItemById" parameterType="Long" resultMap="SalSalesIntentOrderItemResult">
+        <include refid="selectSalSalesIntentOrderItemVo"/>
+        where t.sales_intent_order_item_sid = #{salesIntentOrderItemSid}
+    </select>
+
+    <select id="selectSalSalesIntentOrderItemList" parameterType="com.platform.ems.domain.SalSalesIntentOrderItem"
+            resultMap="SalSalesIntentOrderItemResult">
+        <include refid="selectSalSalesIntentOrderItemVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="salesIntentOrderSid != null ">
+                and t.sales_intent_order_sid = #{salesIntentOrderSid}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and t.material_name like concat('%', #{materialName}, '%')
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and t.material_code = #{materialCode}
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid = #{sku1Sid}
+            </if>
+            <if test="sku1Code != null and sku1Code != ''">
+                and t.sku1_code = #{sku1Code}
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid = #{sku2Sid}
+            </if>
+            <if test="sku2Code != null and sku2Code != ''">
+                and t.sku2_code = #{sku2Code}
+            </if>
+            <if test="barcodeSid != null ">
+                and t.barcode_sid = #{barcodeSid}
+            </if>
+            <if test="unitBase != null and unitBase != ''">
+                and t.unit_base = #{unitBase}
+            </if>
+            <if test="unitPrice != null and unitPrice != ''">
+                and t.unit_price = #{unitPrice}
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="barcode != null and barcode != ''">
+                and t.barcode = #{barcode}
+            </if>
+            <if test="contractDate != null ">
+                and t.contract_date = #{contractDate}
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num = #{itemNum}
+            </if>
+            <if test="isModifying != null and isModifying != ''">
+                and t.is_modifying = #{isModifying}
+            </if>
+            <if test="initialQuantity != null ">
+                and t.initial_quantity = #{initialQuantity}
+            </if>
+            <if test="initialContractDate != null ">
+                and t.initial_contract_date = #{initialContractDate}
+            </if>
+            <if test="newQuantity != null ">
+                and t.new_quantity = #{newQuantity}
+            </if>
+            <if test="newContractDate != null ">
+                and t.new_contract_date = #{newContractDate}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="saleIntentContractSid != null ">
+                and t1.sale_intent_contract_sid = #{saleIntentContractSid}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_sal_sales_intent_order_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sales_intent_order_item_sid,
+            sales_intent_order_sid,
+            material_sid,
+            material_name,
+            material_code,
+            sku1_sid,
+            sku1_code,
+            sku2_sid,
+            sku2_code,
+            barcode_sid,
+            barcode,
+            unit_base,
+            unit_price,
+            quantity,
+            sale_price_tax,
+            contract_date,
+            item_num,
+            is_modifying,
+            initial_quantity,
+            initial_contract_date,
+            new_quantity,
+            new_contract_date,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.salesIntentOrderItemSid},
+                #{item.salesIntentOrderSid},
+                #{item.materialSid},
+                #{item.materialName},
+                #{item.materialCode},
+                #{item.sku1Sid},
+                #{item.sku1Code},
+                #{item.sku2Sid},
+                #{item.sku2Code},
+                #{item.barcodeSid},
+                #{item.barcode},
+                #{item.unitBase},
+                #{item.unitPrice},
+                #{item.quantity},
+                #{item.salePriceTax},
+                #{item.contractDate},
+                #{item.itemNum},
+                #{item.isModifying},
+                #{item.initialQuantity},
+                #{item.initialContractDate},
+                #{item.newQuantity},
+                #{item.newContractDate},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_sal_sales_intent_order_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            sales_intent_order_sid = #{salesIntentOrderSid},
+            material_sid = #{materialSid},
+            material_name = #{materialName},
+            material_code = #{materialCode},
+            sku1_sid = #{sku1Sid},
+            sku1_code = #{sku1Code},
+            sku2_sid = #{sku2Sid},
+            sku2_code = #{sku2Code},
+            barcode_sid = #{barcodeSid},
+            barcode = #{barcode},
+            unit_base = #{unitBase},
+            unit_price = #{unitPrice},
+            quantity = #{quantity},
+            sale_price_tax = #{salePriceTax},
+            contract_date = #{contractDate},
+            item_num = #{itemNum},
+            is_modifying = #{isModifying},
+            initial_quantity = #{initialQuantity},
+            initial_contract_date = #{initialContractDate},
+            new_quantity = #{newQuantity},
+            new_contract_date = #{newContractDate},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where sales_intent_order_item_sid = #{salesIntentOrderItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_sal_sales_intent_order_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                sales_intent_order_sid = #{salesIntentOrderSid},
+                material_sid = #{materialSid},
+                material_name = #{materialName},
+                material_code = #{materialCode},
+                sku1_sid = #{sku1Sid},
+                sku1_code = #{sku1Code},
+                sku2_sid = #{sku2Sid},
+                sku2_code = #{sku2Code},
+                barcode_sid = #{barcodeSid},
+                barcode = #{barcode},
+                unit_base = #{unitBase},
+                unit_price = #{unitPrice},
+                quantity = #{quantity},
+                sale_price_tax = #{salePriceTax},
+                contract_date = #{contractDate},
+                item_num = #{itemNum},
+                is_modifying = #{isModifying},
+                initial_quantity = #{initialQuantity},
+                initial_contract_date = #{initialContractDate},
+                new_quantity = #{newQuantity},
+                new_contract_date = #{newContractDate},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+            </trim>
+            where sales_intent_order_item_sid = #{salesIntentOrderItemSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.QuaProductCheckItemMapper">
+
+    <resultMap type="com.platform.ems.domain.QuaProductCheckItem" id="QuaProductCheckItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="productCheckItemSid" column="product_check_item_sid"/>
+        <result property="productCheckSid" column="product_check_sid"/>
+        <result property="itemCategory" column="item_category"/>
+        <result property="itemSid" column="item_sid"/>
+        <result property="itemValue" column="item_value"/>
+        <result property="itemResult" column="item_result"/>
+        <result property="preItemValue" column="pre_item_value"/>
+        <result property="preItemResult" column="pre_item_result"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectQuaProductCheckItemVo">
+      select
+      t.client_id,
+      t.product_check_item_sid,
+      t.product_check_sid,
+      t.item_category,
+      t.item_sid,
+      t.item_value,
+      t.item_result,
+      t.pre_item_value,
+      t.pre_item_result,
+      t.remark,
+      t.creator_account,
+      t.create_date,
+      t.updater_account,
+      t.update_date,
+      t.data_source_sys,
+      t1.code as item_code,
+      t1.name as item_name,
+      t2.nick_name AS creator_account_name,
+      t3.nick_name AS updater_account_name
+from s_qua_product_check_item t
+      LEFT JOIN s_con_check_item t1 ON t1.sid = t.item_sid
+      LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+      LEFT JOIN sys_user t3 ON t3.user_name = t.updater_account
+    </sql>
+
+    <select id="selectQuaProductCheckItemById" parameterType="Long" resultMap="QuaProductCheckItemResult">
+        <include refid="selectQuaProductCheckItemVo"/>
+        where t.product_check_item_sid = #{productCheckItemSid}
+    </select>
+
+
+    <select id="selectQuaProductCheckItemList" parameterType="com.platform.ems.domain.QuaProductCheckItem"
+            resultMap="QuaProductCheckItemResult">
+        <include refid="selectQuaProductCheckItemVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="productCheckSid != null ">
+                and t.product_check_sid =#{productCheckSid}
+            </if>
+            <if test="itemCategory != null ">
+                and t.item_category =#{itemCategory}
+            </if>
+            <if test="itemSid != null ">
+                and t.item_sid =#{itemSid}
+            </if>
+            <if test="itemValue != null ">
+                and t.item_value = #{itemValue}
+            </if>
+            <if test="itemResult != null  and itemResult != ''">
+                and (<foreach collection="itemResult.split(';')" item="item" separator="or">t.item_result
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="preItemValue != null ">
+                and t.pre_item_value = #{preItemValue}
+            </if>
+            <if test="preItemResult != null  and preItemResult != ''">
+                and (<foreach collection="preItemResult.split(';')" item="item" separator="or">t.pre_item_result
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t1.name
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_qua_product_check_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            product_check_item_sid,
+            product_check_sid,
+            item_category,
+            item_sid,
+            item_value,
+            item_result,
+            pre_item_value,
+            pre_item_result,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.productCheckItemSid},
+                #{item.productCheckSid},
+                #{item.itemCategory},
+                #{item.itemSid},
+                #{item.itemValue},
+                #{item.itemResult},
+                #{item.preItemValue},
+                #{item.preItemResult},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_qua_product_check_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            product_check_item_sid = #{productCheckItemSid},
+            product_check_sid = #{productCheckSid},
+            item_category = #{itemCategory},
+            item_sid = #{itemSid},
+            item_value = #{itemValue},
+            item_result = #{itemResult},
+            pre_item_value = #{preItemValue},
+            pre_item_result = #{preItemResult},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where product_check_item_sid = #{productCheckItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_qua_product_check_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                product_check_item_sid = #{productCheckItemSid},
+                product_check_sid = #{productCheckSid},
+                item_category = #{itemCategory},
+                item_sid = #{itemSid},
+                item_value = #{itemValue},
+                item_result = #{itemResult},
+                pre_item_value = #{preItemValue},
+                pre_item_result = #{preItemResult},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where product_check_item_sid = #{productCheckItemSid}
+        </foreach>
+    </update>
+
+</mapper>

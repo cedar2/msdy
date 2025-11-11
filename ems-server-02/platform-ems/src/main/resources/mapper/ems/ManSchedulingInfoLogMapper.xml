@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.device.log.mapper.ManSchedulingInfoLogMapper">
+
+    <resultMap type="com.platform.ems.device.log.domain.ManSchedulingInfoLog" id="ManSchedulingInfoLogResult">
+        <result property="clientId" column="client_id"/>
+        <result property="schedulingInfoLogSid" column="scheduling_info_log_sid"/>
+        <result property="schedulingInfoSid" column="scheduling_info_sid"/>
+        <result property="schedulingInfoCode" column="scheduling_info_code"/>
+        <result property="productSid" column="product_sid"/>
+        <result property="productCode" column="product_code"/>
+        <result property="productName" column="product_name"/>
+        <result property="productDimension" column="product_dimension"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku1Code" column="sku1_code"/>
+        <result property="sku1Name" column="sku1_name"/>
+        <result property="sku1Type" column="sku1_type"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="sku2Code" column="sku2_code"/>
+        <result property="sku2Name" column="sku2_name"/>
+        <result property="sku2Type" column="sku2_type"/>
+        <result property="processStepSid" column="process_step_sid"/>
+        <result property="processStepCode" column="process_step_code"/>
+        <result property="processStepName" column="process_step_name"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="companyName" column="company_name"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="plantName" column="plant_name"/>
+        <result property="departmentCode" column="department_code"/>
+        <result property="workCenterSid" column="work_center_sid"/>
+        <result property="workCenterCode" column="work_center_code"/>
+        <result property="workCenterName" column="work_center_name"/>
+        <result property="workstationSid" column="workstation_sid"/>
+        <result property="workstationCode" column="workstation_code"/>
+        <result property="workstationName" column="workstation_name"/>
+        <result property="processSid" column="process_sid"/>
+        <result property="processCode" column="process_code"/>
+        <result property="processName" column="process_name"/>
+        <result property="productProcessStepSid" column="product_process_step_sid"/>
+        <result property="productProcessStepItemSid" column="product_process_step_item_sid"/>
+        <result property="sort" column="sort"/>
+        <result property="productionMode" column="production_mode"/>
+        <result property="paichanBatch" column="paichan_batch"/>
+        <result property="fenpeiQuantity" column="fenpei_quantity"/>
+        <result property="wanchengQuantity" column="wancheng_quantity"/>
+        <result property="quantityCategory" column="quantity_category"/>
+        <result property="productPriceType" column="product_price_type"/>
+        <result property="jixinWangongType" column="jixin_wangong_type"/>
+        <result property="completeStatus" column="complete_status"/>
+        <result property="requestCategory" column="request_category"/>
+        <result property="sendAccount" column="send_account"/>
+        <result property="sendDate" column="send_date"/>
+        <result property="dataSent" column="data_sent"/>
+        <result property="dataTarget" column="data_target"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectManSchedulingInfoLogVo">
+        select t.client_id,
+               t.scheduling_info_log_sid,
+               t.scheduling_info_sid,
+               t.scheduling_info_code,
+               t.product_sid,
+               t.product_code,
+               t.product_name,
+               t.product_dimension,
+               t.sku1_sid,
+               t.sku1_code,
+               t.sku1_name,
+               t.sku1_type,
+               t.sku2_sid,
+               t.sku2_code,
+               t.sku2_name,
+               t.sku2_type,
+               t.process_step_sid,
+               t.process_step_code,
+               t.process_step_name,
+               t.company_sid,
+               t.company_code,
+               t.company_name,
+               t.plant_sid,
+               t.plant_code,
+               t.plant_name,
+               t.department_code,
+               t.work_center_sid,
+               t.work_center_code,
+               t.work_center_name,
+               t.workstation_sid,
+               t.workstation_code,
+               t.workstation_name,
+               t.process_sid,
+               t.process_code,
+               t.process_name,
+               t.product_process_step_sid,
+               t.product_process_step_item_sid,
+               t.sort,
+               t.production_mode,
+               t.paichan_batch,
+               t.fenpei_quantity,
+               t.wancheng_quantity,
+               t.quantity_category,
+               t.product_price_type,
+               t.jixin_wangong_type,
+               t.complete_status,
+               t.request_category,
+               t.send_account,
+               t.send_date,
+               t.data_sent,
+               t.data_target,
+               t.data_source_sys
+        from s_man_scheduling_info_log t
+    </sql>
+
+    <select id="selectManSchedulingInfoLogById" parameterType="Long" resultMap="ManSchedulingInfoLogResult">
+        <include refid="selectManSchedulingInfoLogVo"/>
+        where t.scheduling_info_log_sid = #{schedulingInfoLogSid}
+    </select>
+
+    <select id="selectManSchedulingInfoLogList" parameterType="com.platform.ems.device.log.domain.ManSchedulingInfoLog"
+            resultMap="ManSchedulingInfoLogResult">
+        <include refid="selectManSchedulingInfoLogVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="schedulingInfoSid != null ">
+                and t.scheduling_info_sid = #{schedulingInfoSid}
+            </if>
+            <if test="schedulingInfoCode != null ">
+                and t.scheduling_info_code = #{schedulingInfoCode}
+            </if>
+            <if test="productSid != null ">
+                and t.product_sid = #{productSid}
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and t.product_code = #{productCode}
+            </if>
+            <if test="productName != null and productName != ''">and
+                t.product_name like concat('%', #{productName}, '%')
+            </if>
+            <if test="productDimension != null and productDimension != ''">
+                and t.product_dimension = #{productDimension}
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid = #{sku1Sid}
+            </if>
+            <if test="sku1Code != null and sku1Code != ''">
+                and t.sku1_code = #{sku1Code}
+            </if>
+            <if test="sku1Name != null and sku1Name != ''">and
+                t.sku1_name like concat('%', #{sku1Name}, '%')
+            </if>
+            <if test="sku1Type != null and sku1Type != ''">
+                and t.sku1_type = #{sku1Type}
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid = #{sku2Sid}
+            </if>
+            <if test="sku2Code != null and sku2Code != ''">
+                and t.sku2_code = #{sku2Code}
+            </if>
+            <if test="sku2Name != null and sku2Name != ''">and
+                t.sku2_name like concat('%', #{sku2Name}, '%')
+            </if>
+            <if test="sku2Type != null and sku2Type != ''">
+                and t.sku2_type = #{sku2Type}
+            </if>
+            <if test="processStepSid != null ">
+                and t.process_step_sid = #{processStepSid}
+            </if>
+            <if test="processStepCode != null and processStepCode != ''">
+                and t.process_step_code = #{processStepCode}
+            </if>
+            <if test="processStepName != null and processStepName != ''">and
+                t.process_step_name like concat('%', #{processStepName}, '%')
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companyCode != null and companyCode != ''">
+                and t.company_code = #{companyCode}
+            </if>
+            <if test="companyName != null and companyName != ''">and
+                t.company_name like concat('%', #{companyName}, '%')
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid = #{plantSid}
+            </if>
+            <if test="plantCode != null and plantCode != ''">
+                and t.plant_code = #{plantCode}
+            </if>
+            <if test="plantName != null and plantName != ''">and
+                t.plant_name like concat('%', #{plantName}, '%')
+            </if>
+            <if test="departmentCode != null and departmentCode != ''">
+                and t.department_code = #{departmentCode}
+            </if>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid = #{workCenterSid}
+            </if>
+            <if test="workCenterCode != null and workCenterCode != ''">
+                and t.work_center_code = #{workCenterCode}
+            </if>
+            <if test="workCenterName != null and workCenterName != ''">and
+                t.work_center_name like concat('%', #{workCenterName}, '%')
+            </if>
+            <if test="workstationSid != null ">
+                and t.workstation_sid = #{workstationSid}
+            </if>
+            <if test="workstationCode != null and workstationCode != ''">
+                and t.workstation_code = #{workstationCode}
+            </if>
+            <if test="workstationName != null and workstationName != ''">and
+                t.workstation_name like concat('%', #{workstationName}, '%')
+            </if>
+            <if test="processSid != null ">
+                and t.process_sid = #{processSid}
+            </if>
+            <if test="processCode != null and processCode != ''">
+                and t.process_code = #{processCode}
+            </if>
+            <if test="processName != null and processName != ''">and
+                t.process_name like concat('%', #{processName}, '%')
+            </if>
+            <if test="productProcessStepSid != null ">
+                and t.product_process_step_sid = #{productProcessStepSid}
+            </if>
+            <if test="productProcessStepItemSid != null ">
+                and t.product_process_step_item_sid = #{productProcessStepItemSid}
+            </if>
+            <if test="sort != null ">
+                and t.sort = #{sort}
+            </if>
+            <if test="productionMode != null and productionMode != ''">
+                and t.production_mode = #{productionMode}
+            </if>
+            <if test="paichanBatch != null ">
+                and t.paichan_batch = #{paichanBatch}
+            </if>
+            <if test="fenpeiQuantity != null ">
+                and t.fenpei_quantity = #{fenpeiQuantity}
+            </if>
+            <if test="wanchengQuantity != null ">
+                and t.wancheng_quantity = #{wanchengQuantity}
+            </if>
+            <if test="quantityCategory != null and quantityCategory != ''">
+                and t.quantity_category = #{quantityCategory}
+            </if>
+            <if test="productPriceType != null and productPriceType != ''">
+                and t.product_price_type = #{productPriceType}
+            </if>
+            <if test="jixinWangongType != null and jixinWangongType != ''">
+                and t.jixin_wangong_type = #{jixinWangongType}
+            </if>
+            <if test="completeStatus != null and completeStatus != ''">
+                and t.complete_status = #{completeStatus}
+            </if>
+            <if test="requestCategory != null and requestCategory != ''">
+                and t.request_category = #{requestCategory}
+            </if>
+            <if test="sendAccount != null and sendAccount != ''">
+                and t.send_account = #{sendAccount}
+            </if>
+            <if test="sendDate != null ">
+                and t.send_date = #{sendDate}
+            </if>
+            <if test="dataSent != null and dataSent != ''">
+                and t.data_sent = #{dataSent}
+            </if>
+            <if test="dataTarget != null and dataTarget != ''">
+                and t.data_target = #{dataTarget}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_scheduling_info_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            scheduling_info_log_sid,
+            scheduling_info_sid,
+            scheduling_info_code,
+            product_sid,
+            product_code,
+            product_name,
+            product_dimension,
+            sku1_sid,
+            sku1_code,
+            sku1_name,
+            sku1_type,
+            sku2_sid,
+            sku2_code,
+            sku2_name,
+            sku2_type,
+            process_step_sid,
+            process_step_code,
+            process_step_name,
+            company_sid,
+            company_code,
+            company_name,
+            plant_sid,
+            plant_code,
+            plant_name,
+            department_code,
+            work_center_sid,
+            work_center_code,
+            work_center_name,
+            workstation_sid,
+            workstation_code,
+            workstation_name,
+            process_sid,
+            process_code,
+            process_name,
+            product_process_step_sid,
+            product_process_step_item_sid,
+            sort,
+            production_mode,
+            paichan_batch,
+            fenpei_quantity,
+            wancheng_quantity,
+            quantity_category,
+            product_price_type,
+            jixin_wangong_type,
+            complete_status,
+            request_category,
+            send_account,
+            send_date,
+            data_sent,
+            data_target,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.schedulingInfoLogSid},
+                #{item.schedulingInfoSid},
+                #{item.schedulingInfoCode},
+                #{item.productSid},
+                #{item.productCode},
+                #{item.productName},
+                #{item.productDimension},
+                #{item.sku1Sid},
+                #{item.sku1Code},
+                #{item.sku1Name},
+                #{item.sku1Type},
+                #{item.sku2Sid},
+                #{item.sku2Code},
+                #{item.sku2Name},
+                #{item.sku2Type},
+                #{item.processStepSid},
+                #{item.processStepCode},
+                #{item.processStepName},
+                #{item.plantSid},
+                #{item.plantCode},
+                #{item.plantName},
+                #{item.departmentCode},
+                #{item.workCenterSid},
+                #{item.workCenterCode},
+                #{item.workCenterName},
+                #{item.workstationSid},
+                #{item.workstationCode},
+                #{item.workstationName},
+                #{item.processSid},
+                #{item.processCode},
+                #{item.processName},
+                #{item.productProcessStepSid},
+                #{item.productProcessStepItemSid},
+                #{item.sort},
+                #{item.productionMode},
+                #{item.paichanBatch},
+                #{item.fenpeiQuantity},
+                #{item.wanchengQuantity},
+                #{item.quantityCategory},
+                #{item.productPriceType},
+                #{item.jixinWangongType},
+                #{item.completeStatus},
+                #{item.requestCategory},
+                #{item.sendAccount},
+                #{item.sendDate},
+                #{item.dataSent},
+                #{item.dataTarget},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_scheduling_info_log
+        <trim prefix="SET" suffixOverrides=",">
+            product_sid = #{productSid},
+            product_code = #{productCode},
+            product_name = #{productName},
+            product_dimension = #{productDimension},
+            sku1_sid = #{sku1Sid},
+            sku1_code = #{sku1Code},
+            sku1_name = #{sku1Name},
+            sku1_type = #{sku1Type},
+            sku2_sid = #{sku2Sid},
+            sku2_code = #{sku2Code},
+            sku2_name = #{sku2Name},
+            sku2_type = #{sku2Type},
+            process_step_sid = #{processStepSid},
+            process_step_code = #{processStepCode},
+            process_step_name = #{processStepName},
+            company_sid = #{companySid},
+            company_code = #{companyCode},
+            company_name = #{companyName},
+            plant_sid = #{plantSid},
+            plant_code = #{plantCode},
+            plant_name = #{plantName},
+            department_code = #{departmentCode},
+            work_center_sid = #{workCenterSid},
+            work_center_code = #{workCenterCode},
+            work_center_name = #{workCenterName},
+            workstation_sid = #{workstationSid},
+            workstation_code = #{workstationCode},
+            workstation_name = #{workstationName},
+            process_sid = #{processSid},
+            process_code = #{processCode},
+            process_name = #{processName},
+            product_process_step_sid = #{productProcessStepSid},
+            product_process_step_item_sid = #{productProcessStepItemSid},
+            sort = #{sort},
+            production_mode = #{productionMode},
+            paichan_batch = #{paichanBatch},
+            fenpei_quantity = #{fenpeiQuantity},
+            wancheng_quantity = #{wanchengQuantity},
+            quantity_category = #{quantityCategory},
+            product_price_type = #{productPriceType},
+            jixin_wangong_type = #{jixinWangongType},
+            complete_status = #{completeStatus},
+            request_category = #{requestCategory},
+            send_account = #{sendAccount},
+            send_date = #{sendDate},
+            data_sent = #{dataSent},
+            data_target = #{dataTarget},
+        </trim>
+        where scheduling_info_log_sid = #{schedulingInfoLogSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_scheduling_info_log
+            <trim prefix="SET" suffixOverrides=",">
+                product_sid = #{o.productSid},
+                product_code = #{o.productCode},
+                product_name = #{o.productName},
+                product_dimension = #{o.productDimension},
+                sku1_sid = #{o.sku1Sid},
+                sku1_code = #{o.sku1Code},
+                sku1_name = #{o.sku1Name},
+                sku1_type = #{o.sku1Type},
+                sku2_sid = #{o.sku2Sid},
+                sku2_code = #{o.sku2Code},
+                sku2_name = #{o.sku2Name},
+                sku2_type = #{o.sku2Type},
+                process_step_sid = #{o.processStepSid},
+                process_step_code = #{o.processStepCode},
+                process_step_name = #{o.processStepName},
+                company_sid = #{o.companySid},
+                company_code = #{o.companyCode},
+                company_name = #{o.companyName},
+                plant_sid = #{o.plantSid},
+                plant_code = #{o.plantCode},
+                plant_name = #{o.plantName},
+                department_code = #{o.departmentCode},
+                work_center_sid = #{o.workCenterSid},
+                work_center_code = #{o.workCenterCode},
+                work_center_name = #{o.workCenterName},
+                workstation_sid = #{o.workstationSid},
+                workstation_code = #{o.workstationCode},
+                workstation_name = #{o.workstationName},
+                process_sid = #{o.processSid},
+                process_code = #{o.processCode},
+                process_name = #{o.processName},
+                product_process_step_sid = #{o.productProcessStepSid},
+                product_process_step_item_sid = #{o.productProcessStepItemSid},
+                sort = #{o.sort},
+                production_mode = #{o.productionMode},
+                paichan_batch = #{o.paichanBatch},
+                fenpei_quantity = #{o.fenpeiQuantity},
+                wancheng_quantity = #{o.wanchengQuantity},
+                quantity_category = #{o.quantityCategory},
+                product_price_type = #{o.productPriceType},
+                jixin_wangong_type = #{o.jixinWangongType},
+                complete_status = #{o.completeStatus},
+                request_category = #{o.requestCategory},
+                send_account = #{o.sendAccount},
+                send_date = #{o.sendDate},
+                data_sent = #{o.dataSent},
+                data_target = #{o.dataTarget},
+            </trim>
+            where scheduling_info_log_sid = #{o.schedulingInfoLogSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.QuaPurInspectionRecordMapper">
+
+    <resultMap type="com.platform.ems.domain.QuaPurInspectionRecord" id="QuaPurInspectionRecordResult">
+        <result property="clientId" column="client_id"/>
+        <result property="purInspectionRecordSid" column="pur_inspection_record_sid"/>
+        <result property="purInspectionRecordCode" column="pur_inspection_record_code"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="purchaseOrderCode" column="purchase_order_code"/>
+        <result property="purchaseContractCode" column="purchase_contract_code"/>
+        <result property="carrierName" column="carrier_name"/>
+        <result property="driver" column="driver"/>
+        <result property="driverPhone" column="driver_phone"/>
+        <result property="carrierNoteCode" column="carrier_note_code"/>
+        <result property="arrivalDate" column="arrival_date"/>
+        <result property="inspectionMethod" column="inspection_method"/>
+        <result property="result" column="result"/>
+        <result property="inspectionPartnerType" column="inspection_partner_type"/>
+        <result property="inspectionBatch" column="inspection_batch"/>
+        <result property="quantity" column="quantity"/>
+        <result property="bhgQuantity" column="bhg_quantity"/>
+        <result property="repeatInspectionNum" column="repeat_inspection_num"/>
+        <result property="inspector" column="inspector"/>
+        <result property="inspectionDate" column="inspection_date"/>
+        <result property="inspectionRemark" column="inspection_remark"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="defectType" column="defect_type"/>
+        <result property="defectDescription" column="defect_description"/>
+        <result property="resolveStatus" column="resolve_status"/>
+        <result property="solutionRemark" column="solution_remark"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="videoPath" column="video_path"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectQuaPurInspectionRecordVo">
+        select
+            t.client_id,
+            t.pur_inspection_record_sid,
+            t.pur_inspection_record_code,
+            t.product_season_sid,
+            t.product_season_code,
+            t.material_sid,
+            t.material_code,
+            t.vendor_sid,
+            t.vendor_code,
+            t.company_sid,
+            t.company_code,
+            t.purchase_order_code,
+            t.purchase_contract_code,
+            t.carrier_name,
+            t.driver,
+            t.driver_phone,
+            t.carrier_note_code,
+            t.arrival_date,
+            t.inspection_method,
+            t.result,
+            t.inspection_partner_type,
+            t.inspection_batch,
+            t.quantity,
+            t.bhg_quantity,
+            t.repeat_inspection_num,
+            t.inspector,
+            t.inspection_date,
+            t.inspection_remark,
+            t.plant_sid,
+            t.plant_code,
+            t.defect_type,
+            t.defect_description,
+            t.resolve_status,
+            t.solution_remark,
+            t.picture_path,
+            t.video_path,
+            t.remark,
+            t.handle_status,
+            t.creator_account,
+            t.create_date,
+            t.updater_account,
+            t.update_date,
+            t.confirmer_account,
+            t.confirm_date,
+            t.data_source_sys,
+            t2.nick_name AS creator_account_name,
+            t3.nick_name AS updater_account_name,
+            t4.nick_name AS confirmer_account_name,
+            t5.material_name,
+            t6.plant_name,
+            t6.short_name as plant_short_name,
+            t7.product_season_name,
+            t8.short_name as company_short_name,
+            t9.short_name as vendor_short_name
+        from s_qua_pur_inspection_record t
+                 LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+                 LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+                 LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t4.client_id
+                 LEFT JOIN s_bas_material t5 ON t.material_sid = t5.material_sid
+                 LEFT JOIN s_bas_plant t6 ON t.plant_sid = t6.plant_sid
+                 LEFT JOIN s_bas_product_season t7 ON t.product_season_sid = t7.product_season_sid
+                 LEFT JOIN s_bas_company t8 ON t.company_sid = t8.company_sid
+                 LEFT JOIN s_bas_vendor t9 ON t.vendor_sid = t9.vendor_sid
+    </sql>
+
+    <select id="selectQuaPurInspectionRecordById" parameterType="Long" resultMap="QuaPurInspectionRecordResult">
+        <include refid="selectQuaPurInspectionRecordVo"/>
+        where t.pur_inspection_record_sid = #{purInspectionRecordSid}
+    </select>
+
+    <select id="selectQuaPurInspectionRecordList" parameterType="com.platform.ems.domain.QuaPurInspectionRecord"
+            resultMap="QuaPurInspectionRecordResult">
+        <include refid="selectQuaPurInspectionRecordVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="purInspectionRecordSid != null ">
+                and t.pur_inspection_record_sid = #{purInspectionRecordSid}
+            </if>
+            <if test="purInspectionRecordSidList != null and purInspectionRecordSidList.length >0">
+                and t.product_check_record_sid in
+                (<foreach collection="purInspectionRecordSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="purInspectionRecordCode != null ">
+                and t.pur_inspection_record_code like concat('%', #{purInspectionRecordCode}, '%')
+            </if>
+            <if test="productSeasonSid != null ">
+                and t.product_season_sid = #{productSeasonSid}
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">
+                and t7.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="productSeasonCode != null and productSeasonCode != ''">
+                and t.product_season_code = #{productSeasonCode}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and t.material_code like concat('%', #{materialCode}, '%')
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and t5.material_name like concat('%', #{materialName}, '%')
+            </if>
+            <if test="vendorSid != null ">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t9.vendor_sid in
+                (<foreach collection="vendorSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="vendorCode != null and vendorCode != ''">
+                and t.vendor_code like concat('%', #{vendorCode}, '%')
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t8.company_sid in
+                (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companyCode != null and companyCode != ''">
+                and t.company_code like concat('%',#{companyCode}, '%')
+            </if>
+            <if test="purchaseOrderCode != null and purchaseOrderCode != ''">
+                and t.purchase_order_code like concat('%',#{purchaseOrderCode} , '%')
+            </if>
+            <if test="purchaseContractCode != null and purchaseContractCode != ''">
+                and t.purchase_contract_code  like concat('%',#{purchaseContractCode}, '%')
+            </if>
+            <if test="carrierName != null and carrierName != ''">and
+                t.carrier_name like concat('%', #{carrierName}, '%')
+            </if>
+            <if test="driver != null and driver != ''">
+                and t.driver like concat('%', #{driver}, '%')
+            </if>
+            <if test="driverPhone != null and driverPhone != ''">
+                and t.driver_phone = #{driverPhone}
+            </if>
+            <if test="carrierNoteCode != null and carrierNoteCode != ''">
+                and t.carrier_note_code  like concat('%',#{carrierNoteCode}, '%')
+            </if>
+            <if test="arrivalDate != null ">
+                and t.arrival_date = #{arrivalDate}
+            </if>
+            <if test="inspectionMethod != null and inspectionMethod != ''">
+                and t.inspection_method = #{inspectionMethod}
+            </if>
+            <if test="inspectionMethodList != null and inspectionMethodList.length >0">
+                and t.inspection_method in
+                (<foreach collection="inspectionMethodList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="result != null and result != ''">
+                and t.result = #{result}
+            </if>
+            <if test="resultList != null and resultList.length >0">
+                and t.result in
+                (<foreach collection="resultList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="inspectionPartnerType != null and inspectionPartnerType != ''">
+                and t.inspection_partner_type = #{inspectionPartnerType}
+            </if>
+            <if test="inspectionBatch != null ">
+                and t.inspection_batch = #{inspectionBatch}
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="bhgQuantity != null ">
+                and t.bhg_quantity = #{bhgQuantity}
+            </if>
+            <if test="repeatInspectionNum != null ">
+                and t.repeat_inspection_num = #{repeatInspectionNum}
+            </if>
+            <if test="inspector != null and inspector != ''">
+                and t.inspector like concat('%', #{inspector}, '%')
+            </if>
+            <if test="inspectionDate != null ">
+                and t.inspection_date = #{inspectionDate}
+            </if>
+            <if test="inspectionDateBegin != null and inspectionDateBegin!=''">
+                and date_format(t.inspection_date,'%y%m%d') &gt;= date_format(#{inspectionDateBegin},'%y%m%d')
+            </if>
+            <if test="inspectionDateEnd != null and inspectionDateEnd!=''">
+                and date_format(t.inspection_date,'%y%m%d') &lt;= date_format(#{inspectionDateEnd},'%y%m%d')
+            </if>
+            <if test="inspectionRemark != null and inspectionRemark != ''">
+                and t.inspection_remark = #{inspectionRemark}
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid = #{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="plantCode != null and plantCode != ''">
+                and t.plant_code = #{plantCode}
+            </if>
+            <if test="defectType != null and defectType != ''">
+                and t.defect_type = #{defectType}
+            </if>
+            <if test="defectTypeList != null and defectTypeList.length >0">
+                and t.defect_type in
+                (<foreach collection="defectTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="defectDescription != null and defectDescription != ''">
+                and t.defect_description = #{defectDescription}
+            </if>
+            <if test="resolveStatus != null and resolveStatus != ''">
+                and t.resolve_status = #{resolveStatus}
+            </if>
+            <if test="resolveStatusList != null and resolveStatusList.length >0">
+                and t.resolve_status in
+                (<foreach collection="resolveStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="solutionRemark != null and solutionRemark != ''">
+                and t.solution_remark = #{solutionRemark}
+            </if>
+            <if test="picturePath != null and picturePath != ''">
+                and t.picture_path = #{picturePath}
+            </if>
+            <if test="videoPath != null and videoPath != ''">
+                and t.video_path = #{videoPath}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.pur_inspection_record_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_qua_pur_inspection_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            pur_inspection_record_sid,
+            pur_inspection_record_code,
+            product_season_sid,
+            product_season_code,
+            material_sid,
+            material_code,
+            vendor_sid,
+            vendor_code,
+            company_sid,
+            company_code,
+            purchase_order_code,
+            purchase_contract_code,
+            carrier_name,
+            driver,
+            driver_phone,
+            carrier_note_code,
+            arrival_date,
+            inspection_method,
+            result,
+            inspection_partner_type,
+            inspection_batch,
+            quantity,
+            bhg_quantity,
+            repeat_inspection_num,
+            inspector,
+            inspection_date,
+            inspection_remark,
+            plant_sid,
+            plant_code,
+            defect_type,
+            defect_description,
+            resolve_status,
+            solution_remark,
+            picture_path,
+            video_path,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.purInspectionRecordSid},
+                #{item.purInspectionRecordCode},
+                #{item.productSeasonSid},
+                #{item.productSeasonCode},
+                #{item.materialSid},
+                #{item.materialCode},
+                #{item.vendorSid},
+                #{item.vendorCode},
+                #{item.companySid},
+                #{item.companyCode},
+                #{item.purchaseOrderCode},
+                #{item.purchaseContractCode},
+                #{item.carrierName},
+                #{item.driver},
+                #{item.driverPhone},
+                #{item.carrierNoteCode},
+                #{item.arrivalDate},
+                #{item.inspectionMethod},
+                #{item.result},
+                #{item.inspectionPartnerType},
+                #{item.inspectionBatch},
+                #{item.quantity},
+                #{item.bhgQuantity},
+                #{item.repeatInspectionNum},
+                #{item.inspector},
+                #{item.inspectionDate},
+                #{item.inspectionRemark},
+                #{item.plantSid},
+                #{item.plantCode},
+                #{item.defectType},
+                #{item.defectDescription},
+                #{item.resolveStatus},
+                #{item.solutionRemark},
+                #{item.picturePath},
+                #{item.videoPath},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_qua_pur_inspection_record
+        <trim prefix="SET" suffixOverrides=",">
+            product_season_sid = #{productSeasonSid},
+            product_season_code = #{productSeasonCode},
+            material_sid = #{materialSid},
+            material_code = #{materialCode},
+            vendor_sid = #{vendorSid},
+            vendor_code = #{vendorCode},
+            company_sid = #{companySid},
+            company_code = #{companyCode},
+            purchase_order_code = #{purchaseOrderCode},
+            purchase_contract_code = #{purchaseContractCode},
+            carrier_name = #{carrierName},
+            driver = #{driver},
+            driver_phone = #{driverPhone},
+            carrier_note_code = #{carrierNoteCode},
+            arrival_date = #{arrivalDate},
+            inspection_method = #{inspectionMethod},
+            result = #{result},
+            inspection_partner_type = #{inspectionPartnerType},
+            inspection_batch = #{inspectionBatch},
+            quantity = #{quantity},
+            bhg_quantity = #{bhgQuantity},
+            repeat_inspection_num = #{repeatInspectionNum},
+            inspector = #{inspector},
+            inspection_date = #{inspectionDate},
+            inspection_remark = #{inspectionRemark},
+            plant_sid = #{plantSid},
+            plant_code = #{plantCode},
+            defect_type = #{defectType},
+            defect_description = #{defectDescription},
+            resolve_status = #{resolveStatus},
+            solution_remark = #{solutionRemark},
+            picture_path = #{picturePath},
+            video_path = #{videoPath},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where pur_inspection_record_sid = #{purInspectionRecordSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_qua_pur_inspection_record
+            <trim prefix="SET" suffixOverrides=",">
+                product_season_sid = #{o.productSeasonSid},
+                product_season_code = #{o.productSeasonCode},
+                material_sid = #{o.materialSid},
+                material_code = #{o.materialCode},
+                vendor_sid = #{o.vendorSid},
+                vendor_code = #{o.vendorCode},
+                company_sid = #{o.companySid},
+                company_code = #{o.companyCode},
+                purchase_order_code = #{o.purchaseOrderCode},
+                purchase_contract_code = #{o.purchaseContractCode},
+                carrier_name = #{o.carrierName},
+                driver = #{o.driver},
+                driver_phone = #{o.driverPhone},
+                carrier_note_code = #{o.carrierNoteCode},
+                arrival_date = #{o.arrivalDate},
+                inspection_method = #{o.inspectionMethod},
+                result = #{o.result},
+                inspection_partner_type = #{o.inspectionPartnerType},
+                inspection_batch = #{o.inspectionBatch},
+                quantity = #{o.quantity},
+                bhg_quantity = #{o.bhgQuantity},
+                repeat_inspection_num = #{o.repeatInspectionNum},
+                inspector = #{o.inspector},
+                inspection_date = #{o.inspectionDate},
+                inspection_remark = #{o.inspectionRemark},
+                plant_sid = #{o.plantSid},
+                plant_code = #{o.plantCode},
+                defect_type = #{o.defectType},
+                defect_description = #{o.defectDescription},
+                resolve_status = #{o.resolveStatus},
+                solution_remark = #{o.solutionRemark},
+                picture_path = #{o.picturePath},
+                video_path = #{o.videoPath},
+                remark = #{o.remark},
+                handle_status = #{o.handleStatus},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+            </trim>
+            where pur_inspection_record_sid = #{o.purInspectionRecordSid}
+        </foreach>
+    </update>
+
+</mapper>

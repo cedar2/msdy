@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasCompanyBrandMapper">
+
+    <resultMap type="com.platform.ems.domain.BasCompanyBrand" id="BasCompanyBrandResult">
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="brandCode" column="brand_code"/>
+        <result property="brandName" column="brand_name"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="clientId" column="client_id"/>
+    </resultMap>
+
+    <sql id="selectBasCompanyBrandVo">
+        select t.company_brand_sid,
+               t.company_sid,
+               t.brand_code,
+               t.brand_name,
+               t.remark,
+               t.status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t.client_id,
+               t2.nick_name AS creator_account_name
+        from s_bas_company_brand t
+         LEFT JOIN sys_user t2 on t.creator_account = t2.user_name and t.client_id = t2.client_id
+    </sql>
+
+    <select id="selectBasCompanyBrandById" parameterType="Long" resultMap="BasCompanyBrandResult">
+        <include refid="selectBasCompanyBrandVo"/>
+        where t.company_brand_sid = #{companyBrandSid}
+    </select>
+
+    <select id="selectBasCompanyBrandList" parameterType="com.platform.ems.domain.BasCompanyBrand"
+            resultMap="BasCompanyBrandResult">
+        <include refid="selectBasCompanyBrandVo"/>
+        <where>
+            <if test="companySid != null">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="brandCode != null ">
+                and t.brand_code like concat('%', #{brandCode}, '%')
+            </if>
+            <if test="brandName != null and brandName != ''">
+                and t.brand_name like concat('%', #{brandName}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account like concat('%', #{creatorAccount}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null ">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_company_brand
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            company_brand_sid,
+            company_sid,
+            brand_code,
+            brand_name,
+            remark,
+            status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+            client_id,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{item.companyBrandSid},
+                #{item.companySid},
+                #{item.brandCode},
+                #{item.brandName},
+                #{item.remark},
+                #{item.status},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+                #{item.clientId},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_company_brand
+        <trim prefix="SET" suffixOverrides=",">
+            company_sid = #{companySid},
+            brand_code = #{brandCode},
+            brand_name = #{brandName},
+            remark = #{remark},
+            status = #{status},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+            client_id = #{clientId},
+        </trim>
+        where company_brand_sid = #{companyBrandSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_company_brand
+            <trim prefix="SET" suffixOverrides=",">
+                company_sid = #{companySid},
+                brand_code = #{brandCode},
+                brand_name = #{brandName},
+                remark = #{remark},
+                status = #{status},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+                client_id = #{clientId},
+            </trim>
+            where company_brand_sid = #{companyBrandSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,604 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasMaterialCertificateMapper">
+
+    <resultMap type="com.platform.ems.domain.BasMaterialCertificate" id="BasMaterialCertificateResult">
+        <result property="clientId"    column="client_id"    />
+        <result property="materialCertificateSid"    column="material_certificate_sid"    />
+        <result property="materialSid"    column="material_sid"    />
+        <result property="suggestedPrice"    column="suggested_price"    />
+        <result property="grade"    column="grade"    />
+        <result property="executiveStandard"    column="executive_standard"    />
+        <result property="executiveStandardBottoms"    column="executive_standard_bottoms"    />
+        <result property="productPlace"    column="product_place"    />
+        <result property="checker"    column="checker"    />
+        <result property="productDate"    column="product_date"    />
+        <result property="manufacturer"    column="manufacturer"    />
+        <result property="iconGroup"    column="icon_group"    />
+        <result property="detectComposition"    column="detect_composition"    />
+        <result property="picturePath"    column="picture_path"    />
+        <result property="remark"    column="remark"    />
+        <result property="handleStatus"    column="handle_status"    />
+        <result property="creatorAccount"    column="creator_account"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updaterAccount"    column="updater_account"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="confirmerAccount"    column="confirmer_account"    />
+        <result property="confirmDate"    column="confirm_date"    />
+        <result property="dataSourceSys"    column="data_source_sys"    />
+        <result property="safeCategory"    column="safe_category"    />
+        <result property="sampleCodeSelf"    column="sample_code_self"    />
+        <result property="materialType"    column="material_type"    />
+        <result property="companySid"    column="company_sid"    />
+        <result property="companyName"    column="company_name"    />
+        <result property="companyCode" column="company_code"/>
+        <result property="materialName"    column="material_name"    />
+        <result property="materialCode"    column="material_code"    />
+        <result property="simpleCode"    column="simple_code"    />
+        <result property="productSeasonSid"    column="product_season_sid"    />
+        <result property="productSeasonName"    column="product_season_name"    />
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="isSuit"    column="is_suit"    />
+        <result property="designerAccount"    column="designer_account"    />
+        <result property="modelSid"    column="model_sid"    />
+        <result property="kuanType"    column="kuan_type"    />
+        <result property="status"    column="status"    />
+        <result property="sampleCodeCustomer"    column="sample_code_customer"    />
+        <result property="customerProductCode"    column="customer_product_code"    />
+        <result property="companyBrandName"    column="company_brand_name"    />
+        <result property="companyBrandCode" column="company_brand_code"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerName"    column="customer_name"    />
+        <result property="customerCode" column="customer_code"/>
+        <result property="customerBrandName"    column="customer_brand_name"    />
+        <result property="customerBrandCode" column="customer_brand_code"/>
+        <result property="vendorName"    column="vendor_name"    />
+        <result property="vendorCode" column="vendor_code"/>
+    </resultMap>
+
+    <sql id="selectBasMaterialCertificateVo">
+        select
+        t.client_id,
+        t.material_certificate_sid,
+        t.material_sid,
+        t.company_sid,
+        t.suggested_price,
+        t.grade,
+        t.executive_standard,
+        t.executive_standard_bottoms,
+        t.product_place,
+        t.checker,
+        t.product_date,
+        t.manufacturer,
+        t.icon_group,
+        t.detect_composition,
+        t.picture_path,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t.safe_category,
+        t1.material_code,
+        t1.material_name,
+        t1.sample_code_self,
+        t1.sample_code_customer,
+        t1.simple_Code,
+        t1.customer_product_code,
+        t1.product_season_sid,
+        t1.customer_sid,
+        t1.up_down_suit,
+        t1.material_type,
+        t2.product_season_name,
+        t2.product_season_code,
+        t3.company_name,
+        ifnull(t3.short_name, t3.company_name) as company_short_name,
+        t3.company_code,
+        t4.brand_name as company_brand_name,
+        t4.brand_code as company_brand_code,
+        t5.customer_name,
+        ifnull(t5.short_name, t5.customer_name) as customer_short_name,
+        t5.customer_code,
+        t6.brand_name as customer_brand_name,
+        t6.brand_code as customer_brand_code,
+        t7.vendor_name,
+        t7.vendor_code,
+        ifnull(t7.short_name, t7.vendor_name) as manufacturer_short_name,
+        t8.nick_name AS creator_account_name,
+        t9.nick_name AS updater_account_name,
+        t10.nick_name AS confirmer_account_name,
+        t11.model_name,
+        t12.nick_name AS designer_account_name,
+        t13.name AS material_type_name
+    from s_bas_material_certificate t
+        LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+        LEFT JOIN s_bas_company t3 ON t3.company_sid = t1.company_sid
+        LEFT JOIN s_bas_vendor t7 on t7.vendor_sid = t.manufacturer
+        LEFT JOIN s_bas_product_season t2 on t2.product_season_sid = t1.product_season_sid
+        LEFT JOIN s_bas_company_brand t4 on t4.company_brand_sid = t1.company_brand_sid
+        LEFT JOIN s_bas_customer t5 on t5.customer_sid = t1.customer_sid
+        LEFT JOIN s_bas_customer_brand t6 on t6.customer_brand_sid = t1.customer_brand_sid
+        LEFT JOIN sys_user t8 ON t.creator_account = t8.user_name
+        LEFT JOIN sys_user t9 ON t.updater_account = t9.user_name
+        LEFT JOIN sys_user t10 ON t.confirmer_account = t10.user_name
+        LEFT JOIN s_tec_model t11 ON t1.model_sid = t11.model_sid
+        LEFT JOIN sys_user t12 ON t1.designer_account = t12.user_name
+        LEFT JOIN s_con_material_type t13 ON t1.material_type = t13.code
+    </sql>
+
+    <select id="selectBasMaterialCertificateById" parameterType="long" resultMap="BasMaterialCertificateResult">
+        <include refid="selectBasMaterialCertificateVo"/>
+        where t.material_certificate_sid = #{materialCertificateSid}
+    </select>
+
+    <sql id="selectForExternalVO">
+        select
+            t.client_id,
+            t.material_certificate_sid,
+            t.material_sid AS product_sid,
+            t.company_sid,
+            t.suggested_price,
+            t.product_place,
+            t.checker,
+            t.product_date,
+            t.icon_group,
+            t.detect_composition,
+            t.picture_path,
+            t.remark AS comment,
+            t.handle_status,
+            t.creator_account,
+            t.create_date,
+            t.updater_account,
+            t.update_date,
+            t.confirmer_account,
+            t.confirm_date,
+            t.data_source_sys,
+            t1.material_code AS product_code,
+            t1.material_name AS product_name,
+            t2.name AS unit_base,
+            t3.dict_label AS grade,
+            t4.dict_label AS executive_standard,
+            t5.dict_label AS executive_standard_bottoms,
+            t6.dict_label AS safe_category,
+            t7.dict_label AS status,
+            t8.vendor_name AS manufacturer
+        from s_bas_material_certificate t
+        LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+        LEFT JOIN s_con_measure_unit t2 ON t1.unit_base = t2.code
+        LEFT JOIN sys_dict_data t3 ON t.grade = t3.dict_value and t3.dict_type = 's_grade_product'
+        LEFT JOIN sys_dict_data t4 ON t.executive_standard = t4.dict_value and t4.dict_type = 's_executive_standard'
+        LEFT JOIN sys_dict_data t5 ON t.executive_standard_bottoms = t5.dict_value and t5.dict_type = 's_executive_standard'
+        LEFT JOIN sys_dict_data t6 ON t.safe_category = t6.dict_value and t6.dict_type = 's_safe_type'
+        LEFT JOIN sys_dict_data t7 ON t1.status = t7.dict_value and t7.dict_type = 's_valid_flag'
+        LEFT JOIN s_bas_vendor t8 ON t.manufacturer = t8.vendor_sid
+    </sql>
+
+    <select id="selectForExternalById" parameterType="long" resultType="com.platform.ems.domain.dto.response.external.BasMaterialCertificateExternal">
+        <include refid="selectForExternalVO"/>
+        where t.material_certificate_sid = #{materialCertificateSid}
+    </select>
+
+    <select id="selectBasMaterialCertificateList" parameterType="com.platform.ems.domain.BasMaterialCertificate" resultMap="BasMaterialCertificateResult">
+        <include refid="selectBasMaterialCertificateVo"/>
+        <where>
+            <if test="materialCertificateSid != null ">
+                and t.material_certificate_sid = #{materialCertificateSid}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="materialCertificateSidList != null  and materialCertificateSidList.length > 0">
+                and t.material_certificate_sid in (
+                <foreach collection="materialCertificateSidList" item="materialCertificateSid" separator=",">
+                    #{materialCertificateSid}
+                </foreach>
+                )
+            </if>
+            <if test="sampleCodeSelf != null  and sampleCodeSelf != ''">
+                and (<foreach collection="sampleCodeSelf.split(';')" item="item" separator="or"> t1.sample_code_self like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialType != null  and materialType != ''">and t1.material_type in (
+                <foreach collection="materialType.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>)
+            </if>
+            <if test="companySid != null">
+                and t1.company_sid = #{companySid}
+            </if>
+            <if test="customerSid != null">
+                and t1.customer_sid = #{customerSid}
+            </if>
+            <if test="materialName != null  and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="item" separator="or"> t1.material_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialCode != null  and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator="or"> t1.material_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="simpleCode != null  and simpleCode != ''">
+                and (<foreach collection="simpleCode.split(';')" item="item" separator="or"> t1.simple_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">
+                t8.nick_name like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and  t.handle_status in (
+                <foreach collection="handleStatus.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0 ">
+                and t1.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">#{productSeasonSid}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0 ">
+                and t1.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="upDownSuitList != null and upDownSuitList.length >0 ">
+                and t1.up_down_suit in
+                (<foreach collection="upDownSuitList" item="upDownSuit" separator=",">#{upDownSuit}</foreach>)
+            </if>
+            <if test="modelSidList != null and modelSidList.length >0 ">
+                and t1.model_sid in
+                (<foreach collection="modelSidList" item="modelSid" separator=",">#{modelSid}</foreach>)
+            </if>
+            <if test="materialTypeList != null  and materialTypeList.length >0 ">
+                and t1.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=",">#{materialType}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t1.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="productSeasonSid != null and productSeasonSid != ''">
+                and t1.product_season_sid = #{productSeasonSid}
+            </if>
+            <if test="isSuit != null  and isSuit != ''">
+                and  t1.is_suit in (
+                <foreach collection="isSuit.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="designerAccount != null  and designerAccount != ''">
+                and (<foreach collection="designerAccount.split(';')" item="item" separator="or"> t1.designer_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="modelSid != null and modelSid != ''">
+                and t1.model_sid = #{modelSid}
+            </if>
+            <if test="status != null  and status != ''">
+                and  t1.status in (
+                <foreach collection="status.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="sampleCodeCustomer != null  and sampleCodeCustomer != ''">
+                and (<foreach collection="sampleCodeCustomer.split(';')" item="item" separator="or"> t1.sample_code_customer like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="customerProductCode != null  and customerProductCode != ''">
+                and (<foreach collection="customerProductCode.split(';')" item="item" separator="or"> t1.customer_product_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="upDownSuit != null  and upDownSuit != ''">and t1.up_down_suit in (
+                <foreach collection="upDownSuit.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>)
+            </if>
+            <if test="suggestedPrice != null "> and t.suggested_price = #{suggestedPrice}</if>
+            <if test="grade != null  and grade != ''">
+                and  t.grade in (
+                <foreach collection="grade.split(';')" item="item" separator=",">
+                #{item}
+                </foreach>
+                )
+            </if>
+            <if test="executiveStandard != null  and executiveStandard != ''">
+                and  t.executive_standard in (
+                <foreach collection="executiveStandard.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="executiveStandardBottoms != null  and executiveStandardBottoms != ''">
+                and  t.executive_standard_bottoms in (
+                <foreach collection="executiveStandardBottoms.split(';')" item="item" separator=",">
+                #{item}
+                </foreach>
+                )
+            </if>
+            <if test="productPlace != null  and productPlace != ''">
+                and  t.product_place in (
+                <foreach collection="productPlace.split(';')" item="item" separator=",">
+                #{item}
+                </foreach>
+                )
+            </if>
+            <if test="checker != null  and checker != ''">
+                and  t.checker in (
+                <foreach collection="checker.split(';')" item="item" separator=",">
+                #{item}
+                </foreach>
+                )
+            </if>
+            <if test="productDate != null "> and t.product_date = #{productDate}</if>
+            <if test="manufacturer != null "> and t.manufacturer = #{manufacturer}</if>
+            <if test="iconGroup != null  and iconGroup != ''">
+                and  t.icon_group in (
+                <foreach collection="iconGroup.split(';')" item="item" separator=",">
+                #{item}
+                </foreach>
+                )
+            </if>
+            <if test="detectComposition != null  and detectComposition != ''">
+                and  t.detect_composition in (
+                <foreach collection="detectComposition.split(';')" item="item" separator=",">
+                #{item}
+                </foreach>
+                )
+            </if>
+            <if test="picturePath != null  and picturePath != ''">
+                and  t.picture_path in (
+                <foreach collection="picturePath.split(';')" item="item" separator=",">
+                #{item}
+                </foreach>
+                )
+            </if>
+
+            <if test="createDate != null "> and t.create_date = #{createDate}</if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and  t.updater_account in (
+                <foreach collection="updaterAccount.split(';')" item="item" separator=",">
+                #{item}
+                </foreach>
+                )
+            </if>
+            <if test="updateDate != null "> and t.update_date = #{updateDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and  t.data_source_sys in (
+                <foreach collection="dataSourceSys.split(';')" item="item" separator=",">
+                #{item}
+                </foreach>
+                )
+            </if>
+            <if test="safeCategory != null  and safeCategory != ''">
+                and  t.safe_category in (
+                <foreach collection="safeCategory.split(';')" item="item" separator=",">
+                #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+        order by t.create_date desc
+    </select>
+
+    <select id="selectBasMaterialCertificateListByMaterialSids" resultMap="BasMaterialCertificateResult">
+        <include refid="selectBasMaterialCertificateVo"/>
+        <where>
+            <if test="materialSids != null and materialSids.size > 0">
+                and t.material_sid in (
+                <foreach collection="materialSids" item="materialSid" separator=",">
+                    #{materialSid}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_material_certificate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                        client_id,
+                                material_certificate_sid,
+                                material_sid,
+                                company_sid,
+                                suggested_price,
+                                grade,
+                                executive_standard,
+                                executive_standard_bottoms,
+                                product_place,
+                                checker,
+                                product_date,
+                                manufacturer,
+                                icon_group,
+                                detect_composition,
+                                picture_path,
+                                remark,
+                                handle_status,
+                                creator_account,
+                                create_date,
+                                updater_account,
+                                update_date,
+                                confirmer_account,
+                                confirm_date,
+                                data_source_sys,
+                                safe_category,
+                        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+        <foreach collection="list" item="o" separator=",">
+                        #{clientId},
+                                #{materialCertificateSid},
+                                #{materialSid},
+                                #{suggestedPrice},
+                                #{grade},
+                                #{executiveStandard},
+                                #{executiveStandardBottoms},
+                                #{productPlace},
+                                #{checker},
+                                #{productDate},
+                                #{manufacturer},
+                                #{iconGroup},
+                                #{detectComposition},
+                                #{picturePath},
+                                #{remark},
+                                #{handleStatus},
+                                #{creatorAccount},
+                                #{createDate},
+                                #{updaterAccount},
+                                #{updateDate},
+                                #{confirmerAccount},
+                                #{confirmDate},
+                                #{dataSourceSys},
+                                #{safeCategory},
+                        </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_material_certificate
+        <trim prefix="SET" suffixOverrides=",">
+                                material_sid = #{materialSid},
+                                company_sid = #{companySid},
+                                suggested_price = #{suggestedPrice},
+                                grade = #{grade},
+                                executive_standard = #{executiveStandard},
+                                executive_standard_bottoms = #{executiveStandardBottoms},
+                                product_place = #{productPlace},
+                                checker = #{checker},
+                                product_date = #{productDate},
+                                manufacturer = #{manufacturer},
+                                icon_group = #{iconGroup},
+                                detect_composition = #{detectComposition},
+                                picture_path = #{picturePath},
+                                remark = #{remark},
+                                handle_status = #{handleStatus},
+                                creator_account = #{creatorAccount},
+                                create_date = #{createDate},
+                                updater_account = #{updaterAccount},
+                                update_date = #{updateDate},
+                                confirmer_account = #{confirmerAccount},
+                                confirm_date = #{confirmDate},
+                                data_source_sys = #{dataSourceSys},
+                                safe_category = #{safeCategory},
+                        </trim>
+        where material_certificate_sid = #{materialCertificateSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+        update s_bas_material_certificate
+        <trim prefix="SET" suffixOverrides=",">
+                                material_certificate_sid = #{materialCertificateSid},
+                                material_sid = #{materialSid},
+                                company_sid = #{companySid},
+                                suggested_price = #{suggestedPrice},
+                                grade = #{grade},
+                                executive_standard = #{executiveStandard},
+                                executive_standard_bottoms = #{executiveStandardBottoms},
+                                product_place = #{productPlace},
+                                checker = #{checker},
+                                product_date = #{productDate},
+                                manufacturer = #{manufacturer},
+                                icon_group = #{iconGroup},
+                                detect_composition = #{detectComposition},
+                                picture_path = #{picturePath},
+                                remark = #{remark},
+                                handle_status = #{handleStatus},
+                                creator_account = #{creatorAccount},
+                                create_date = #{createDate},
+                                updater_account = #{updaterAccount},
+                                update_date = #{updateDate},
+                                confirmer_account = #{confirmerAccount},
+                                confirm_date = #{confirmDate},
+                                data_source_sys = #{dataSourceSys},
+                                safe_category = #{safeCategory},
+                        </trim>
+        where client_id = #{clientId}
+        </foreach>
+    </update>
+
+    <select id="selectBasMaterialSidList" resultType="java.lang.String">
+        select material_sid from s_bas_material_certificate
+    </select>
+
+    <select id="checkMaterialSidUnique" resultType="java.lang.Integer">
+        select count(*) from s_bas_material_certificate where material_sid = #{materialSid} limit 1
+    </select>
+
+    <delete id="deleteBasMaterialCertificateByIds" parameterType="long">
+        delete from s_bas_material_certificate where material_certificate_sid in
+        <foreach item="materialCertificateSid" collection="materialCertificateSidList" open="(" separator="," close=")">
+            #{materialCertificateSid}
+        </foreach>
+    </delete>
+
+    <select id="countByDomain" resultType="java.lang.Integer">
+        select count(1) from s_bas_material_certificate
+        <where>
+            <if test="materialCertificateSidList != null  and materialCertificateSidList.length > 0">
+                and material_certificate_sid in (
+                <foreach collection="materialCertificateSidList" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and handle_status in (
+                <foreach collection="handleStatus.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+
+    <update id="confirm" parameterType="com.platform.ems.domain.BasMaterialCertificate">
+        update s_bas_material_certificate
+        <set>
+            <if test="handleStatus != null and handleStatus != ''" >handle_status = #{handleStatus},</if>
+            <if test="confirmerAccount != null and confirmerAccount != ''" >confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmDate != null" >confirm_date = #{confirmDate},</if>
+        </set>
+        where material_certificate_sid in
+        (<foreach collection="materialCertificateSidList" item="materialCertificateSid" separator=",">#{materialCertificateSid}</foreach>)
+    </update>
+
+    <select id="selectBasMaterialCertificateByMaterialSid" resultType="com.platform.ems.domain.BasMaterialCertificate">
+        select * from s_bas_material_certificate where material_sid = #{materialSid} limit 1
+    </select>
+
+    <select id="selectMaterialCertificateListByParams" resultMap="BasMaterialCertificateResult">
+        <include refid="selectBasMaterialCertificateVo"/>
+        <where>
+            <if test="materialCertificateSidList != null and materialCertificateSidList.length > 0">
+                and material_certificate_sid in
+                (<foreach collection="materialCertificateSidList" item="materialCertificateSid" separator=",">#{materialCertificateSid}</foreach>)
+            </if>
+        </where>
+    </select>
+</mapper>

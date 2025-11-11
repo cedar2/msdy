@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinPayBillItemOutsourceSettleMapper">
+
+    <resultMap type="com.platform.ems.domain.FinPayBillItemOutsourceSettle" id="FinPayBillItemOutsourceSettleResult">
+        <result property="clientId" column="client_id"/>
+        <result property="payBillItemOutsourceSettleSid" column="pay_bill_item_outsource_settle_sid"/>
+        <result property="payBillSid" column="pay_bill_sid"/>
+        <result property="payBillCode" column="pay_bill_code"/>
+        <result property="manufactureOutsourceSettleSid" column="manufacture_outsource_settle_sid"/>
+        <result property="manufactureOutsourceSettleCode" column="manufacture_outsource_settle_code"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectFinPayBillItemOutsourceSettleVo">
+        select t.client_id,
+               t.pay_bill_item_outsource_settle_sid,
+               t.pay_bill_sid,
+               t.pay_bill_code,
+               t.manufacture_outsource_settle_sid,
+               t.manufacture_outsource_settle_code,
+               t.currency_amount_tax,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               u1.nick_name AS creator_account_name,
+               u2.nick_name AS updater_account_name,
+               t2.vendor_sid,
+               t2.company_sid,
+               t2.plant_sid,
+               t2.document_type,
+               t2.business_type,
+               t2.document_date,
+               t2.total_settle_amount_tax,
+               t2.purchase_contract_sid,
+               t2.purchase_contract_code,
+               t2.handle_status,
+               t2.remark as outsource_settle_remark,
+               t3.vendor_code,
+               t3.vendor_name,
+               ifnull(t3.short_name, t3.vendor_name) as vendor_short_name,
+               t4.company_code,
+               t4.company_name,
+               ifnull(t4.short_name, t4.company_name) as company_short_name,
+               t5.plant_code,
+               t5.plant_name,
+               ifnull(t5.short_name, t5.plant_name) as plant_short_name,
+               t6.name as document_type_name,
+               t7.name as business_type_name,
+               t8.purchase_contract_code,
+               ifnull(t9.currency_amount_tax_zfz, 0) as currency_amount_tax_zfz,
+               ifnull(t9.currency_amount_tax_yzf, 0) as currency_amount_tax_yzf,
+               (t2.total_settle_amount_tax - ifnull(t9.currency_amount_tax_zfz, 0)- ifnull(t9.currency_amount_tax_yzf, 0)) as currency_amount_tax_wzf
+        from s_fin_pay_bill_item_outsource_settle t
+                 LEFT JOIN sys_user u1 ON t.creator_account = u1.user_name
+                 LEFT JOIN sys_user u2 ON t.updater_account = u2.user_name
+                 LEFT JOIN s_fin_pay_bill t1 ON t.pay_bill_sid = t1.pay_bill_sid
+                 LEFT JOIN s_man_manufacture_outsource_settle t2 on t.manufacture_outsource_settle_sid = t2.manufacture_outsource_settle_sid
+                 LEFT JOIN s_bas_vendor t3 on t2.vendor_sid = t3.vendor_sid
+                 LEFT JOIN s_bas_company t4 on t2.company_sid = t4.company_sid
+                 LEFT JOIN s_bas_plant t5 on t2.plant_sid = t5.plant_sid
+                 LEFT JOIN s_con_doc_type_manufacture_outsource_settle t6 ON t2.document_type = t6.code
+                 LEFT JOIN s_con_bu_type_manufacture_outsource_settle t7 ON t2.business_type = t7.code
+                 LEFT JOIN s_pur_purchase_contract t8 ON t2.purchase_contract_sid = t8.purchase_contract_sid
+                 LEFT JOIN (
+            SELECT a.manufacture_outsource_settle_sid,
+                   sum(if(a1.handle_status = '3', a.currency_amount_tax, 0)) as currency_amount_tax_zfz,
+                   sum(if(a1.handle_status = '5', a.currency_amount_tax, 0)) as currency_amount_tax_yzf
+            FROM s_fin_pay_bill_item_outsource_settle a
+                     LEFT JOIN s_fin_pay_bill a1 ON a.pay_bill_sid = a1.pay_bill_sid
+            WHERE a1.handle_status in ('5','3')
+            GROUP BY a.manufacture_outsource_settle_sid
+        ) t9 on t.manufacture_outsource_settle_sid = t9.manufacture_outsource_settle_sid
+    </sql>
+
+    <select id="selectFinPayBillItemOutsourceSettleById" parameterType="Long"
+            resultMap="FinPayBillItemOutsourceSettleResult">
+        <include refid="selectFinPayBillItemOutsourceSettleVo"/>
+        where t.pay_bill_item_outsource_settle_sid = #{payBillItemOutsourceSettleSid}
+    </select>
+
+    <select id="selectFinPayBillItemOutsourceSettleList"
+            parameterType="com.platform.ems.domain.FinPayBillItemOutsourceSettle"
+            resultMap="FinPayBillItemOutsourceSettleResult">
+        <include refid="selectFinPayBillItemOutsourceSettleVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="payBillItemOutsourceSettleSid != null ">
+                and t.pay_bill_item_outsource_settle_sid = #{payBillItemInvoiceSid}
+            </if>
+            <if test="payBillItemOutsourceSettleSidList != null and payBillItemOutsourceSettleSidList.length >0">
+                and t.pay_bill_item_outsource_settle_sid in
+                (<foreach collection="payBillItemOutsourceSettleSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="payBillSid != null ">
+                and t.pay_bill_sid = #{payBillSid}
+            </if>
+            <if test="payBillCode != null ">
+                and t1.pay_bill_code like concat('%', #{payBillCode}, '%')
+            </if>
+            <if test="payBillSidList != null  and payBillSidList.length >0">
+                and t.pay_bill_sid in (<foreach collection="payBillSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="manufactureOutsourceSettleSid != null ">
+                and t.manufacture_outsource_settle_sid = #{manufactureOutsourceSettleSid}
+            </if>
+            <if test="manufactureOutsourceSettleCode != null ">
+                and t.manufacture_outsource_settle_code = #{manufactureOutsourceSettleCode}
+            </if>
+            <if test="currencyAmountTax != null ">
+                and t.currency_amount_tax = #{currencyAmountTax}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_pay_bill_item_outsource_settle
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            pay_bill_item_outsource_settle_sid,
+            pay_bill_sid,
+            pay_bill_code,
+            manufacture_outsource_settle_sid,
+            manufacture_outsource_settle_code,
+            currency_amount_tax,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.payBillItemOutsourceSettleSid},
+                #{item.payBillSid},
+                #{item.payBillCode},
+                #{item.manufactureOutsourceSettleSid},
+                #{item.manufactureOutsourceSettleCode},
+                #{item.currencyAmountTax},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_pay_bill_item_outsource_settle
+        <trim prefix="SET" suffixOverrides=",">
+            currency_amount_tax = #{currencyAmountTax},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where pay_bill_item_outsource_settle_sid = #{payBillItemOutsourceSettleSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_pay_bill_item_outsource_settle
+            <trim prefix="SET" suffixOverrides=",">
+                currency_amount_tax = #{o.currencyAmountTax},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where pay_bill_item_outsource_settle_sid = #{o.payBillItemOutsourceSettleSid}
+        </foreach>
+    </update>
+
+</mapper>

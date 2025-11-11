@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.plug.mapper.ConDocBuTypeGroupPoMapper">
+
+    <resultMap type="com.platform.ems.plug.domain.ConDocBuTypeGroupPo" id="ConDocBuTypeGroupPoResult">
+        <result property="clientId" column="client_id"/>
+        <result property="sid" column="sid"/>
+        <result property="docTypeCode" column="doc_type_code"/>
+        <result property="buTypeCode" column="bu_type_code"/>
+        <result property="sort" column="sort"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="docTypeName" column="doc_type_name"/>
+        <result property="buTypeName" column="bu_type_name"/>
+        <result property="isEditPrice" column="is_edit_price"/>
+        <result property="isNonApproval" column="is_non_approval"/>
+    </resultMap>
+
+    <sql id="selectConDocBuTypeGroupPoVo">
+        select t.client_id,
+               t.sid,
+               t.doc_type_code,
+               t.bu_type_code,
+               t.is_non_approval,
+               t.sort,
+               t.remark,
+               t.status,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t1.nick_name as creator_account_name,
+               t2.name AS doc_type_name,
+               t3.name AS bu_type_name,
+               t2.is_return_goods,
+               t2.is_consignment_settle,
+               t3.inventory_control_mode,
+               t3.is_edit_price
+        from s_con_doc_bu_type_group_po t
+        LEFT JOIN sys_user t1 ON t.creator_account = t1.user_name
+        LEFT JOIN s_con_doc_type_purchase_order t2 ON t.doc_type_code = t2.code
+        LEFT JOIN s_con_bu_type_purchase_order t3 ON t.bu_type_code = t3.code
+    </sql>
+
+    <select id="selectConDocBuTypeGroupPoById" parameterType="Long" resultMap="ConDocBuTypeGroupPoResult">
+        <include refid="selectConDocBuTypeGroupPoVo"/>
+        where t.sid = #{sid}
+    </select>
+
+
+    <select id="selectConDocBuTypeGroupPoList" parameterType="com.platform.ems.plug.domain.ConDocBuTypeGroupPo"
+            resultMap="ConDocBuTypeGroupPoResult">
+        <include refid="selectConDocBuTypeGroupPoVo"/>
+        <where>
+            <if test="docTypeCodeList != null and docTypeCodeList.length >0 ">
+                and t.doc_type_code in
+                (<foreach collection="docTypeCodeList" item="docTypeCode" separator=",">#{docTypeCode}</foreach>)
+            </if>
+            <if test="buTypeCodeList != null and buTypeCodeList.length >0 ">
+                and t.bu_type_code in
+                (<foreach collection="buTypeCodeList" item="buTypeCode" separator=",">#{buTypeCode}</foreach>)
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sid != null ">
+                and t.sid =#{sid}
+            </if>
+            <if test="docTypeCode != null  and docTypeCode != ''">
+                and t.doc_type_code = #{docTypeCode}
+            </if>
+            <if test="buTypeCode != null  and buTypeCode != ''">
+                and t.bu_type_code = #{buTypeCode}
+            </if>
+            <if test="isNonApproval != null and isNonApproval != ''">
+                and t.is_non_approval = #{isNonApproval}
+            </if>
+            <if test="sort != null ">
+                and t.sort =#{sort}
+            </if>
+            <if test="status != null  and status != ''">
+                and (<foreach collection="status.split(';')" item="item" separator="or">t.status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.sort asc, t2.name asc, t3.name asc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_doc_bu_type_group_po
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sid,
+            doc_type_code,
+            bu_type_code,
+            is_non_approval,
+            sort,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.docTypeCode},
+                #{item.buTypeCode},
+                #{item.isNonApproval},
+                #{item.sort},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_doc_bu_type_group_po
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            sid = #{sid},
+            doc_type_code = #{docTypeCode},
+            bu_type_code = #{buTypeCode},
+            is_non_approval = #{isNonApproval},
+            sort = #{sort},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where sid = #{sid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_doc_bu_type_group_po
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                sid = #{sid},
+                doc_type_code = #{docTypeCode},
+                bu_type_code = #{buTypeCode},
+                is_non_approval = #{isNonApproval},
+                sort = #{sort},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where sid = #{sid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.HrOtherPersonnelCertificateMapper">
+
+    <resultMap type="com.platform.ems.domain.HrOtherPersonnelCertificate" id="HrOtherPersonnelCertificateResult">
+        <result property="clientId" column="client_id"/>
+        <result property="otherPersonnelCertificateSid" column="other_personnel_certificate_sid"/>
+        <result property="otherPersonnelCertificateCode" column="other_personnel_certificate_code"/>
+        <result property="staffSid" column="staff_sid"/>
+        <result property="staffCode" column="staff_code"/>
+        <result property="staffName" column="staff_name"/>
+        <result property="documentType" column="document_type"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyShortName" column="company_short_name"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="positionName" column="position_name"/>
+        <result property="checkInDate" column="check_in_date"/>
+        <result property="esignId" column="esign_id"/>
+        <result property="esignStatus" column="esign_status"/>
+        <result property="esignDesc" column="esign_desc"/>
+        <result property="remark" column="remark"/>
+        <result property="signInStatus" column="sign_in_status"/>
+        <result property="esignEndTime" column="esign_end_time"/>
+        <result property="esignPlatform" column="esign_platform"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="confirmDate" column="confirm_date"/>
+    </resultMap>
+
+    <sql id="selectHrOtherPersonnelCertificateVo">
+        SELECT
+            t.client_id,
+            t.other_personnel_certificate_sid,
+            t.other_personnel_certificate_code,
+            t.staff_sid,
+            t.staff_code,
+            t.document_type,
+            t.esign_id,
+            t.esign_status,
+            t.esign_desc,
+            t.remark,
+            t.sign_in_status,
+            t.esign_end_time,
+            t.esign_platform,
+            t.handle_status,
+            t.creator_account,
+            t.create_date,
+            t.updater_account,
+            t.update_date,
+            t.confirmer_account,
+            t.confirm_date,
+            t2.nick_name AS creator_account_name,
+            t3.nick_name AS updater_account_name,
+            t4.nick_name AS confirmer_account_name,
+            t5.staff_name AS staff_name,
+            t7.department_name AS department_name,
+            t8.position_name AS position_name,
+            t5.check_in_date AS check_in_date,
+            t6.company_sid AS company_sid,
+            t6.short_name AS company_short_name
+        from s_hr_other_personnel_certificate t
+                 LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name
+                 LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name
+                 LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name
+                 LEFT JOIN s_bas_staff t5 ON t.staff_sid = t5.staff_sid
+                 LEFT JOIN s_bas_company t6 ON t5.default_company_sid = t6.company_sid
+                 LEFT JOIN s_bas_department t7 ON t5.default_department_sid = t7.department_sid
+                 LEFT JOIN s_bas_position t8 ON t5.default_position = t8.position_sid
+    </sql>
+
+    <select id="selectHrOtherPersonnelCertificateById" parameterType="Long" resultMap="HrOtherPersonnelCertificateResult">
+        <include refid="selectHrOtherPersonnelCertificateVo"/>
+        where t.other_personnel_certificate_sid = #{otherPersonnelCertificateSid}
+    </select>
+
+
+    <select id="selectHrOtherPersonnelCertificateList" parameterType="com.platform.ems.domain.HrOtherPersonnelCertificate"
+            resultMap="HrOtherPersonnelCertificateResult">
+        <include refid="selectHrOtherPersonnelCertificateVo"/>
+        <where>
+            <if test="companySidList != null and companySidList.length > 0">
+                and t6.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="staffName != null  and staffName != ''">
+                and t5.staff_name like concat('%',#{staffName}, '%')
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length > 0">
+                and t.document_type in
+                (<foreach collection="documentTypeList" item="documentType" separator=",">#{documentType}</foreach>)
+            </if>
+            <if test="esignStatusList != null and esignStatusList.length > 0">
+                and t.esign_status in
+                (<foreach collection="esignStatusList" item="esignStatus" separator=",">#{esignStatus}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+        </where> order by t.other_personnel_certificate_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_hr_other_personnel_certificate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            other_personnel_certificate_sid,
+            other_personnel_certificate_code,
+            staff_sid,
+            staff_code,
+            document_type,
+            esign_id,
+            esign_status,
+            esign_desc,
+            remark,
+            sign_in_status,
+            esign_end_time,
+            esign_platform,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.otherPersonnelCertificateSid},
+                #{item.otherPersonnelCertificateCode},
+                #{item.staffSid},
+                #{item.staffCode},
+                #{item.documentType},
+                #{item.esignId},
+                #{item.esignStatus},
+                #{item.esignDesc},
+                #{item.remark},
+                #{item.signInStatus},
+                #{item.esignEndTime},
+                #{item.esignPlatform},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_hr_other_personnel_certificate
+        <trim prefix="SET" suffixOverrides=",">
+            other_personnel_certificate_code = #{otherPersonnelCertificateCode},
+            staff_sid = #{staffSid},
+            staff_code = #{staffCode},
+            document_type = #{documentType},
+            esign_id = #{esignId},
+            esign_status = #{esignStatus},
+            esign_desc = #{esignDesc},
+            remark = #{remark},
+            sign_in_status = #{signInStatus},
+            esign_end_time = #{esignEndTime},
+            esign_platform = #{esignPlatform},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate}
+        </trim>
+        where other_personnel_certificate_sid = #{otherPersonnelCertificateSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_hr_other_personnel_certificate
+            <trim prefix="SET" suffixOverrides=",">
+                other_personnel_certificate_code = #{o.otherPersonnelCertificateCode},
+                staff_sid = #{o.staffSid},
+                staff_code = #{o.staffCode},
+                document_type = #{o.documentType},
+                esign_id = #{o.esignId},
+                esign_status = #{o.esignStatus},
+                esign_desc = #{o.esignDesc},
+                remark = #{o.remark},
+                sign_in_status = #{o.signInStatus},
+                esign_end_time = #{o.esignEndTime},
+                esign_platform = #{o.esignPlatform},
+                handle_status = #{o.handleStatus},
+                creator_account = #{o.creatorAccount},
+                create_date = #{o.createDate},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate}
+            </trim>
+            where other_personnel_certificate_sid = #{o.otherPersonnelCertificateSid}
+        </foreach>
+    </update>
+
+</mapper>

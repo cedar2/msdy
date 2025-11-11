@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurServiceAcceptanceItemMapper">
+
+    <resultMap type="com.platform.ems.domain.PurServiceAcceptanceItem" id="PurServiceAcceptanceItemResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="serviceAcceptanceItemSid" column="service_acceptance_item_sid"/>
+                    <result property="serviceAcceptanceSid" column="service_acceptance_sid"/>
+                    <result property="materialSid" column="material_sid"/>
+                    <result property="barcodeSid" column="barcode_sid"/>
+                    <result property="materialName" column="material_name"/>
+                    <result property="purchaseOrderItemSid" column="purchase_order_item_sid"/>
+                    <result property="itemNum" column="item_num"/>
+                    <result property="unitBase" column="unit_base"/>
+                    <result property="purchaseUnit" column="purchase_unit"/>
+                    <result property="taxRate" column="tax_rate"/>
+                    <result property="purchasePrice" column="purchase_price"/>
+                    <result property="purchasePriceTax" column="purchase_price_tax"/>
+                    <result property="expectedQuantity" column="expected_quantity"/>
+                    <result property="actualQuantity" column="actual_quantity"/>
+                    <result property="remark" column="remark"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="materialCode" column="material_code"/>
+                    <result property="quantity" column="quantity"/>
+            </resultMap>
+    <!---->
+    <sql id="selectPurServiceAcceptanceItemVo">
+        select t.client_id, t.service_acceptance_item_sid, t.service_acceptance_sid, t.material_sid, t.barcode_sid,
+        t.material_name, t.purchase_order_item_sid, t.item_num, t.unit_base, t.purchase_unit, t.tax_rate, t.purchase_price, t.purchase_price_tax,
+        t.expected_quantity, t.actual_quantity, t.remark, t.creator_account, t.create_date, t.updater_account, t.update_date, t1.material_code, t2.quantity
+        from s_pur_service_acceptance_item t
+        LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+        LEFT JOIN s_pur_purchase_order_item t2 ON t2.purchase_order_item_sid = t.purchase_order_item_sid
+    </sql>
+
+    <select id="selectPurServiceAcceptanceItemById" parameterType="Long" resultMap="PurServiceAcceptanceItemResult">
+        <include refid="selectPurServiceAcceptanceItemVo"/>
+        where t.client_id = #{clientId}
+    </select>
+
+
+    <select id="selectPurServiceAcceptanceItemList" parameterType="com.platform.ems.domain.PurServiceAcceptanceItem"
+            resultMap="PurServiceAcceptanceItemResult">
+        <include refid="selectPurServiceAcceptanceItemVo"/>
+        <where>
+                                                                                                                                <if test="serviceAcceptanceItemSid != null ">
+                                and t.service_acceptance_item_sid = #{serviceAcceptanceItemSid}
+                            </if>
+                            <if test="serviceAcceptanceSid != null ">
+                                and t.service_acceptance_sid = #{serviceAcceptanceSid}
+                            </if>
+                            <if test="materialSid != null ">
+                                and t.material_sid = #{materialSid}
+                            </if>
+                            <if test="barcodeSid != null ">
+                                and t.barcode_sid = #{barcodeSid}
+                            </if>
+            <if test="materialName != null  and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="item" separator="or"> t.material_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+                            <if test="purchaseOrderItemSid != null ">
+                                and t.purchase_order_item_sid = #{purchaseOrderItemSid}
+                            </if>
+                                                                                                                                                                                            <if test="unitBase != null  and unitBase != ''">
+                               and (<foreach collection="unitBase.split(';')" item="item" separator="or"> t.unit_base like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="purchaseUnit != null  and purchaseUnit != ''">
+                               and (<foreach collection="purchaseUnit.split(';')" item="item" separator="or"> t.purchase_unit like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="taxRate != null ">
+                                    and t.tax_rate = #{taxRate}
+                                </if>
+                                                                                                                                                                                                                            <if test="purchasePrice != null ">
+                                    and t.purchase_price = #{purchasePrice}
+                                </if>
+                                                                                                                                                                                                                            <if test="purchasePriceTax != null ">
+                                    and t.purchase_price_tax = #{purchasePriceTax}
+                                </if>
+                                                                                                                                                                                                                            <if test="expectedQuantity != null ">
+                                    and t.expected_quantity = #{expectedQuantity}
+                                </if>
+                                                                                                                                                                                                                            <if test="actualQuantity != null ">
+                                    and t.actual_quantity = #{actualQuantity}
+                                </if>
+                                                                                                                                                                <if test="creatorAccount != null  and creatorAccount != ''">
+                               and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t.creator_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="beginTime != null and beginTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                                </if>
+                                <if test="endTime != null and endTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                                </if>
+                                                                                                                                                                                            <if test="updaterAccount != null  and updaterAccount != ''">
+                               and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="updateDate != null ">
+                                    and t.update_date = #{updateDate}
+                                </if>
+                                                                                                            </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_service_acceptance_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                service_acceptance_item_sid,
+                                                                service_acceptance_sid,
+                                                                material_sid,
+                                                                barcode_sid,
+                                                                material_name,
+                                                                purchase_order_item_sid,
+                                                                item_num,
+                                                                unit_base,
+                                                                purchase_unit,
+                                                                tax_rate,
+                                                                purchase_price,
+                                                                purchase_price_tax,
+                                                                expected_quantity,
+                                                                actual_quantity,
+                                                                remark,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                                                            #{clientId},
+                                                                                #{serviceAcceptanceItemSid},
+                                                                                #{serviceAcceptanceSid},
+                                                                                #{materialSid},
+                                                                                #{barcodeSid},
+                                                                                #{materialName},
+                                                                                #{purchaseOrderItemSid},
+                                                                                #{itemNum},
+                                                                                #{unitBase},
+                                                                                #{purchaseUnit},
+                                                                                #{taxRate},
+                                                                                #{purchasePrice},
+                                                                                #{purchasePriceTax},
+                                                                                #{expectedQuantity},
+                                                                                #{actualQuantity},
+                                                                                #{remark},
+                                                                                #{creatorAccount},
+                                                                                #{createDate},
+                                                                                #{updaterAccount},
+                                                                                #{updateDate},
+                                                </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_service_acceptance_item
+        <trim prefix="SET" suffixOverrides=",">
+                                                                service_acceptance_item_sid = #{serviceAcceptanceItemSid},
+                                                                service_acceptance_sid = #{serviceAcceptanceSid},
+                                                                material_sid = #{materialSid},
+                                                                barcode_sid = #{barcodeSid},
+                                                                material_name = #{materialName},
+                                                                purchase_order_item_sid = #{purchaseOrderItemSid},
+                                                                item_num = #{itemNum},
+                                                                unit_base = #{unitBase},
+                                                                purchase_unit = #{purchaseUnit},
+                                                                tax_rate = #{taxRate},
+                                                                purchase_price = #{purchasePrice},
+                                                                purchase_price_tax = #{purchasePriceTax},
+                                                                expected_quantity = #{expectedQuantity},
+                                                                actual_quantity = #{actualQuantity},
+                                                                remark = #{remark},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                    </trim>
+        where client_id = #{clientId}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_service_acceptance_item
+            <trim prefix="SET" suffixOverrides=",">
+                                                                                service_acceptance_item_sid = #{serviceAcceptanceItemSid},
+                                                                                service_acceptance_sid = #{serviceAcceptanceSid},
+                                                                                material_sid = #{materialSid},
+                                                                                barcode_sid = #{barcodeSid},
+                                                                                material_name = #{materialName},
+                                                                                purchase_order_item_sid = #{purchaseOrderItemSid},
+                                                                                item_num = #{itemNum},
+                                                                                unit_base = #{unitBase},
+                                                                                purchase_unit = #{purchaseUnit},
+                                                                                tax_rate = #{taxRate},
+                                                                                purchase_price = #{purchasePrice},
+                                                                                purchase_price_tax = #{purchasePriceTax},
+                                                                                expected_quantity = #{expectedQuantity},
+                                                                                actual_quantity = #{actualQuantity},
+                                                                                remark = #{remark},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                </trim>
+            where client_id = #{clientId}
+        </foreach>
+    </update>
+
+    <delete id="deletePurServiceAcceptanceItemByIds" parameterType="long">
+        delete from s_pur_service_acceptance_item where service_acceptance_sid in
+        <foreach item="serviceAcceptanceSid" collection="array" open="(" separator="," close=")">
+            #{serviceAcceptanceSid}
+        </foreach>
+    </delete>
+
+</mapper>

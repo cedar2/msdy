@@ -1,0 +1,586 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PrjMatterListMapper">
+
+    <resultMap type="com.platform.ems.domain.PrjMatterList" id="PrjMatterListResult">
+        <result property="clientId" column="client_id"/>
+        <result property="matterListSid" column="matter_list_sid"/>
+        <result property="matterName" column="matter_name"/>
+        <result property="projectSid" column="project_sid"/>
+        <result property="projectCode" column="project_code"/>
+        <result property="storeSid" column="store_sid"/>
+        <result property="storeCode" column="store_code"/>
+        <result property="matterStatus" column="matter_status"/>
+        <result property="referDocCategory" column="refer_doc_category"/>
+        <result property="referDocumentSid" column="refer_document_sid"/>
+        <result property="referDocumentCode" column="refer_document_code"/>
+        <result property="priorityMatter" column="priority_matter"/>
+        <result property="preMatter" column="pre_matter"/>
+        <result property="matterManager" column="matter_manager"/>
+        <result property="positionTypeMatterHandler" column="position_type_matter_handler"/>
+        <result property="matterHandler" column="matter_handler"/>
+        <result property="personNoticeMatter" column="person_notice_matter"/>
+        <result property="personAttent" column="person_attent"/>
+        <result property="planStartDate" column="plan_start_date"/>
+        <result property="planEndDate" column="plan_end_date"/>
+        <result property="actualEndDate" column="actual_end_date"/>
+        <result property="isPictureUpload" column="is_picture_upload"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="videoPath" column="video_path"/>
+        <result property="toexpireDaysMatter" column="toexpire_days_matter"/>
+        <result property="todoDaysMatter" column="todo_days_matter"/>
+        <result property="matterPhase" column="matter_phase"/>
+        <result property="matterBusiness" column="matter_business"/>
+        <result property="progressDescription" column="progress_description"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectPrjMatterListVo">
+        select t.client_id,
+               t.matter_list_sid,
+               t.matter_name,
+               t.project_sid,
+               ifnull(t.project_code, t1.project_code) as project_code,
+               t.store_sid,
+               ifnull(t.store_code, t3.store_code) as store_code,
+               t.matter_status,
+               t.refer_doc_category,
+               t.refer_document_sid,
+               t.refer_document_code,
+               t.priority_matter,
+               t.pre_matter,
+               t.matter_manager,
+               t.position_type_matter_handler,
+               t.matter_handler,
+               t.person_notice_matter,
+               t.person_attent,
+               t.plan_start_date,
+               t.plan_end_date,
+               t.actual_end_date,
+               t.is_picture_upload,
+               t.picture_path,
+               t.video_path,
+               t.toexpire_days_matter,
+               t.todo_days_matter,
+               t.matter_phase,
+               t.matter_business,
+               t.progress_description,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               u1.nick_name AS creator_account_name,
+               u2.nick_name AS updater_account_name,
+               u3.nick_name AS matter_manager_name,
+               u3.user_id AS matter_manager_id,
+               u4.nick_name AS matter_handler_name,
+               u5.person_notice_matter_name,
+               u6.person_attent_name,
+               t1.project_name,
+               t1.project_type,
+               t2.refer_doc_category_name,
+               t3.store_name,
+               if((t.matter_status = 'WKS' OR t.matter_status = 'ZT' OR t.matter_status = 'QX'), -1,
+                  if((t.matter_status = 'YWC' OR t.matter_status = 'ZZ'), 3,
+                     if((t.matter_status = 'JXZ' AND t.plan_end_date &lt; DATE_FORMAT(NOW(), '%Y-%m-%d')), 0,
+                        if((t.matter_status = 'JXZ' AND t.plan_end_date &gt;= DATE_FORMAT(NOW(), '%Y-%m-%d')
+                            AND t.plan_end_date &lt;= DATE_FORMAT(date_add(now(),
+                                                                           interval t.toexpire_days_matter day), '%Y-%m-%d')), 2, 1)
+                         )
+                      )
+                   )        as light
+        from s_prj_matter_list t
+                 LEFT JOIN sys_user u1 ON t.creator_account = u1.user_name
+                 LEFT JOIN sys_user u2 ON t.updater_account = u2.user_name
+                 LEFT JOIN sys_user u3 ON t.matter_manager = u3.user_name
+                 LEFT JOIN sys_user u4 ON t.matter_handler = u4.user_name
+                 LEFT JOIN (
+            SELECT ta.matter_list_sid,
+                   GROUP_CONCAT(tb.user_id ORDER BY tb.user_name ASC SEPARATOR ';') as person_notice_matter_id,
+                   GROUP_CONCAT(tb.nick_name ORDER BY tb.user_name ASC SEPARATOR ';') as person_notice_matter_name
+            FROM s_prj_matter_list ta
+                     LEFT JOIN sys_user tb ON (ta.person_notice_matter = tb.user_name
+                or ta.person_notice_matter like concat('%;', tb.user_name, ';%')
+                or ta.person_notice_matter like concat(tb.user_name, ';%')
+                or ta.person_notice_matter like concat('%;', tb.user_name))
+            GROUP BY ta.matter_list_sid
+        ) u5 ON t.matter_list_sid = u5.matter_list_sid
+                 LEFT JOIN (
+            SELECT ta.matter_list_sid,
+                   GROUP_CONCAT(tb.user_id ORDER BY tb.user_name ASC SEPARATOR ';') as person_attent_id,
+                   GROUP_CONCAT(tb.nick_name ORDER BY tb.user_name ASC SEPARATOR ';') as person_attent_name
+            FROM s_prj_matter_list ta
+                     LEFT JOIN sys_user tb ON (ta.person_attent = tb.user_name
+                or ta.person_attent like concat('%;', tb.user_name, ';%')
+                or ta.person_attent like concat(tb.user_name, ';%')
+                or ta.person_attent like concat('%;', tb.user_name))
+            GROUP BY ta.matter_list_sid
+        ) u6 ON t.matter_list_sid = u6.matter_list_sid
+                 LEFT JOIN s_prj_project t1 ON t.project_sid = t1.project_sid
+                 LEFT JOIN s_con_refer_doc_category t2 ON t.refer_doc_category = t2.refer_doc_category_code
+                 LEFT JOIN s_bas_store t3 ON t.store_sid = t3.store_sid
+    </sql>
+
+    <select id="selectPrjMatterListById" parameterType="Long" resultMap="PrjMatterListResult">
+        <include refid="selectPrjMatterListVo"/>
+        where t.matter_list_sid = #{matterListSid}
+    </select>
+
+    <select id="selectPrjMatterListList" parameterType="com.platform.ems.domain.PrjMatterList"
+            resultMap="PrjMatterListResult">
+        <include refid="selectPrjMatterListVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="matterListSidList != null and matterListSidList.length > 0 ">
+                and t.matter_list_sid in
+                (<foreach collection="matterListSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="matterListSid != null ">
+                and t.matter_list_sid = #{matterListSid}
+            </if>
+            <if test="matterName != null and matterName != ''">
+                and t.matter_name like concat('%', #{matterName}, '%')
+            </if>
+            <if test="projectSid != null ">
+                and t.project_sid = #{projectSid}
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                and t.project_code like concat('%', #{projectCode}, '%')
+            </if>
+            <if test="storeSid != null ">
+                and t.store_sid = #{storeSid}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and t.store_code like concat('%', #{storeCode}, '%')
+            </if>
+            <if test="storeName != null and storeName != ''">
+                and t3.store_name like concat('%', #{storeName}, '%')
+            </if>
+            <if test="matterStatus != null and matterStatus != ''">
+                and t.matter_status = #{matterStatus}
+            </if>
+            <if test="matterHandlerIsNull != null and matterHandlerIsNull == 'N'.toString()">
+                and t.matter_handler is not null
+            </if>
+            <if test="matterHandlerIsNull != null and matterHandlerIsNull == 'Y'.toString()">
+                and t.matter_handler is null
+            </if>
+            <if test="matterManagerIsNull != null and matterManagerIsNull == 'N'.toString()">
+                and t.matter_manager is not null
+            </if>
+            <if test="matterStatusList != null and matterStatusList.length > 0 ">
+                and t.matter_status in
+                (<foreach collection="matterStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="projectTypeList != null and projectTypeList.length > 0 ">
+                and t1.project_type in
+                (<foreach collection="projectTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="projectType != null and projectType != '' ">
+                and t1.project_type = #{projectType}
+            </if>
+            <if test="referDocCategory != null and referDocCategory != ''">
+                and t.refer_doc_category = #{referDocCategory}
+            </if>
+            <if test="referDocumentSid != null ">
+                and t.refer_document_sid = #{referDocumentSid}
+            </if>
+            <if test="referDocumentCode != null and referDocumentCode != ''">
+                and t.refer_document_code = #{referDocumentCode}
+            </if>
+            <if test="priorityMatter != null and priorityMatter != ''">
+                and t.priority_matter = #{priorityMatter}
+            </if>
+            <if test="preMatter != null and preMatter != ''">
+                and t.pre_matter = #{preMatter}
+            </if>
+            <if test="matterManager != null and matterManager != ''">
+                and t.matter_manager = #{matterManager}
+            </if>
+            <if test="matterManagerList != null and matterManagerList.length > 0 ">
+                and t.matter_manager in
+                (<foreach collection="matterManagerList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="positionTypeMatterHandler != null and positionTypeMatterHandler != ''">
+                and t.position_type_matter_handler = #{positionTypeMatterHandler}
+            </if>
+            <if test="positionTypeMatterHandlerList != null and positionTypeMatterHandlerList.length > 0 ">
+                and t.position_type_matter_handler in
+                (<foreach collection="positionTypeMatterHandlerList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="matterHandler != null and matterHandler != ''">
+                and t.matter_handler = #{matterHandler}
+            </if>
+            <if test="matterHandlerList != null and matterHandlerList.length > 0 ">
+                and t.matter_handler in
+                (<foreach collection="matterHandlerList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="personNoticeMatter != null and personNoticeMatter != ''">
+                and t.person_notice_matter = #{personNoticeMatter}
+            </if>
+            <if test="personAttent != null and personAttent != ''">
+                and t.person_attent = #{personAttent}
+            </if>
+            <if test="planStartDate != null ">
+                and t.plan_start_date = #{planStartDate}
+            </if>
+            <if test="planStartDateBegin != null and planStartDateBegin!=''">
+                and date_format(t.plan_start_date,'%y%m%d') &gt;= date_format(#{planStartDateBegin},'%y%m%d')
+            </if>
+            <if test="planStartDateEnd != null and planStartDateEnd!=''">
+                and date_format(t.plan_start_date,'%y%m%d') &lt;= date_format(#{planStartDateEnd},'%y%m%d')
+            </if>
+            <if test="planEndDate != null ">
+                and t.plan_end_date = #{planEndDate}
+            </if>
+            <if test="planEndDateBegin != null and planEndDateBegin!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(#{planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="planEndDateEnd != null and planEndDateEnd!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &lt;= date_format(#{planEndDateEnd},'%y%m%d')
+            </if>
+            <if test="actualEndDate != null ">
+                and t.actual_end_date = #{actualEndDate}
+            </if>
+            <if test="isPictureUpload != null and isPictureUpload != ''">
+                and t.is_picture_upload = #{isPictureUpload}
+            </if>
+            <if test="toexpireDaysMatter != null ">
+                and t.toexpire_days_matter = #{toexpireDaysMatter}
+            </if>
+            <if test="todoDaysMatter != null ">
+                and t.todo_days_matter = #{todoDaysMatter}
+            </if>
+            <if test="matterPhase != null and matterPhase != ''">
+                and t.matter_phase = #{matterPhase}
+            </if>
+            <if test="matterBusiness != null and matterBusiness != ''">
+                and t.matter_business = #{matterBusiness}
+            </if>
+            <if test="progressDescription != null and progressDescription != ''">
+                and t.progress_description = #{progressDescription}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and u1.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_prj_matter_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            matter_list_sid,
+            matter_name,
+            project_sid,
+            project_code,
+            store_sid,
+            store_code,
+            matter_status,
+            refer_doc_category,
+            refer_document_sid,
+            refer_document_code,
+            priority_matter,
+            pre_matter,
+            matter_manager,
+            position_type_matter_handler,
+            matter_handler,
+            person_notice_matter,
+            person_attent,
+            plan_start_date,
+            plan_end_date,
+            actual_end_date,
+            is_picture_upload,
+            picture_path,
+            video_path,
+            toexpire_days_matter,
+            todo_days_matter,
+            matter_phase,
+            matter_business,
+            progress_description,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.matterListSid},
+                #{item.matterName},
+                #{item.projectSid},
+                #{item.projectCode},
+                #{item.storeSid},
+                #{item.storeCode},
+                #{item.matterStatus},
+                #{item.referDocCategory},
+                #{item.referDocumentSid},
+                #{item.referDocumentCode},
+                #{item.priorityMatter},
+                #{item.preMatter},
+                #{item.matterManager},
+                #{item.positionTypeMatterHandler},
+                #{item.matterHandler},
+                #{item.personNoticeMatter},
+                #{item.personAttent},
+                #{item.planStartDate},
+                #{item.planEndDate},
+                #{item.actualEndDate},
+                #{item.isPictureUpload},
+                #{item.picturePath},
+                #{item.videoPath},
+                #{item.toexpireDaysMatter},
+                #{item.todoDaysMatter},
+                #{item.matterPhase},
+                #{item.matterBusiness},
+                #{item.progressDescription},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_prj_matter_list
+        <trim prefix="SET" suffixOverrides=",">
+            matter_name = #{matterName},
+            project_sid = #{projectSid},
+            project_code = #{projectCode},
+            store_sid = #{storeSid},
+            store_code = #{storeCode},
+            matter_status = #{matterStatus},
+            refer_doc_category = #{referDocCategory},
+            refer_document_sid = #{referDocumentSid},
+            refer_document_code = #{referDocumentCode},
+            priority_matter = #{priorityMatter},
+            pre_matter = #{preMatter},
+            matter_manager = #{matterManager},
+            position_type_matter_handler = #{positionTypeMatterHandler},
+            matter_handler = #{matterHandler},
+            person_notice_matter = #{personNoticeMatter},
+            person_attent = #{personAttent},
+            plan_start_date = #{planStartDate},
+            plan_end_date = #{planEndDate},
+            actual_end_date = #{actualEndDate},
+            is_picture_upload = #{isPictureUpload},
+            picture_path = #{picturePath},
+            video_path = #{videoPath},
+            toexpire_days_matter = #{toexpireDaysMatter},
+            todo_days_matter = #{todoDaysMatter},
+            matter_phase = #{matterPhase},
+            matter_business = #{matterBusiness},
+            progress_description = #{progressDescription},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where matter_list_sid = #{matterListSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_prj_matter_list
+            <trim prefix="SET" suffixOverrides=",">
+                matter_name = #{o.matterName},
+                project_sid = #{o.projectSid},
+                project_code = #{o.projectCode},
+                store_sid = #{o.storeSid},
+                store_code = #{o.storeCode},
+                matter_status = #{o.matterStatus},
+                refer_doc_category = #{o.referDocCategory},
+                refer_document_sid = #{o.referDocumentSid},
+                refer_document_code = #{o.referDocumentCode},
+                priority_matter = #{o.priorityMatter},
+                pre_matter = #{o.preMatter},
+                matter_manager = #{o.matterManager},
+                position_type_matter_handler = #{o.positionTypeMatterHandler},
+                matter_handler = #{o.matterHandler},
+                person_notice_matter = #{o.personNoticeMatter},
+                person_attent = #{o.personAttent},
+                plan_start_date = #{o.planStartDate},
+                plan_end_date = #{o.planEndDate},
+                actual_end_date = #{o.actualEndDate},
+                is_picture_upload = #{o.isPictureUpload},
+                picture_path = #{o.picturePath},
+                video_path = #{o.videoPath},
+                toexpire_days_matter = #{o.toexpireDaysMatter},
+                todo_days_matter = #{o.todoDaysMatter},
+                matter_phase = #{o.matterPhase},
+                matter_business = #{o.matterBusiness},
+                progress_description = #{o.progressDescription},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where matter_list_sid = #{o.matterListSid}
+        </foreach>
+    </update>
+
+    <sql id="selectListVo">
+        select t.client_id,
+               t.matter_list_sid,
+               t.matter_name,
+               t.project_sid,
+               ifnull(t.project_code, t1.project_code) as project_code,
+               t.store_sid,
+               ifnull(t.store_code, t3.store_code) as store_code,
+               t.matter_status,
+               t.refer_doc_category,
+               t.refer_document_sid,
+               t.refer_document_code,
+               t.priority_matter,
+               t.pre_matter,
+               t.matter_manager,
+               t.position_type_matter_handler,
+               t.matter_handler,
+               t.person_notice_matter,
+               t.person_attent,
+               t.plan_start_date,
+               t.plan_end_date,
+               t.actual_end_date,
+               t.is_picture_upload,
+               t.picture_path,
+               t.video_path,
+               t.toexpire_days_matter,
+               t.todo_days_matter,
+               t.matter_phase,
+               t.matter_business,
+               t.progress_description,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               u1.nick_name AS creator_account_name,
+               u2.nick_name AS updater_account_name,
+               u3.nick_name AS matter_manager_name,
+               u4.user_id AS matter_handler_id,
+               u4.nick_name AS matter_handler_name,
+               t1.project_name,
+               t1.project_type,
+               t2.refer_doc_category_name,
+               t3.store_name
+        from s_prj_matter_list t
+                 LEFT JOIN sys_user u1 ON t.creator_account = u1.user_name
+                 LEFT JOIN sys_user u2 ON t.updater_account = u2.user_name
+                 LEFT JOIN sys_user u3 ON t.matter_manager = u3.user_name
+                 LEFT JOIN sys_user u4 ON t.matter_handler = u4.user_name
+                 LEFT JOIN s_prj_project t1 ON t.project_sid = t1.project_sid
+                 LEFT JOIN s_con_refer_doc_category t2 ON t.refer_doc_category = t2.refer_doc_category_code
+                 LEFT JOIN s_bas_store t3 ON t.store_sid = t3.store_sid
+    </sql>
+
+    <select id="getNotYetStartMatterList" parameterType="com.platform.ems.domain.PrjMatterList"
+            resultType="com.platform.ems.domain.PrjMatterList">
+        <include refid="selectListVo"/>
+        <where>
+            (t.matter_status = 'WKS' AND t.plan_start_date is not null AND t.todo_days_matter is not null
+            AND t.plan_start_date &lt;= DATE_FORMAT(DATE_ADD(NOW(), INTERVAL t.todo_days_matter DAY), '%Y-%m-%d'))
+            <if test="matterHandler != null and matterHandler != ''">
+                and t.matter_handler = #{matterHandler}
+            </if>
+            <if test="matterHandlerList != null and matterHandlerList.length > 0 ">
+                and t.matter_handler in
+                (<foreach collection="matterHandlerList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="planEndDateBegin != null and planEndDateBegin!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(#{planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="planEndDateEnd != null and planEndDateEnd!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &lt;= date_format(#{planEndDateEnd},'%y%m%d')
+            </if>
+            <if test="projectTypeList != null and projectTypeList.length > 0 ">
+                and t1.project_type in
+                (<foreach collection="projectTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+        </where>
+    </select>
+
+    <select id="getToexpireBusiness" parameterType="com.platform.ems.domain.PrjMatterList"
+            resultType="com.platform.ems.domain.PrjMatterList">
+        <include refid="selectListVo"/>
+        <where>
+            (t.matter_status = 'JXZ' AND t.plan_end_date &gt;= DATE_FORMAT(NOW(), '%Y-%m-%d')
+            AND t.plan_end_date &lt;= DATE_FORMAT(date_add(now(), interval t.toexpire_days_matter day), '%Y-%m-%d'))
+            <if test="matterHandler != null and matterHandler != ''">
+                and t.matter_handler = #{matterHandler}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and (t.store_code = #{storeCode} or t3.store_code = #{storeCode})
+            </if>
+            <if test="matterHandlerList != null and matterHandlerList.length > 0 ">
+                and t.matter_handler in
+                (<foreach collection="matterHandlerList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="planEndDateBegin != null and planEndDateBegin!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(#{planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="planEndDateEnd != null and planEndDateEnd!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &lt;= date_format(#{planEndDateEnd},'%y%m%d')
+            </if>
+            <if test="projectTypeList != null and projectTypeList.length > 0 ">
+                and t1.project_type in
+                (<foreach collection="projectTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+        </where>
+    </select>
+
+    <select id="getOverdueBusiness" parameterType="com.platform.ems.domain.PrjMatterList"
+            resultType="com.platform.ems.domain.PrjMatterList">
+        <include refid="selectListVo"/>
+        <where>
+            (t.matter_status = 'JXZ' AND t.plan_end_date &lt; DATE_FORMAT(NOW(), '%Y-%m-%d'))
+            <if test="matterHandler != null and matterHandler != ''">
+                and t.matter_handler = #{matterHandler}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and (t.store_code = #{storeCode} or t3.store_code = #{storeCode})
+            </if>
+            <if test="matterHandlerList != null and matterHandlerList.length > 0 ">
+                and t.matter_handler in
+                (<foreach collection="matterHandlerList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="planEndDateBegin != null and planEndDateBegin!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(#{planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="planEndDateEnd != null and planEndDateEnd!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &lt;= date_format(#{planEndDateEnd},'%y%m%d')
+            </if>
+            <if test="projectTypeList != null and projectTypeList.length > 0 ">
+                and t1.project_type in
+                (<foreach collection="projectTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasPlantCapacityMapper">
+
+    <resultMap type="com.platform.ems.domain.BasPlantCapacity" id="BasPlantCapacityResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="plantOvercapacitySid" column="plant_overcapacity_sid"/>
+                    <result property="productLineSid" column="product_line_sid"/>
+                    <result property="startDate" column="start_date"/>
+                    <result property="endDate" column="end_date"/>
+                    <result property="isOvercapacity" column="is_overcapacity"/>
+                    <result property="productCategory" column="product_category"/>
+                    <result property="spareOutput" column="spare_output"/>
+                    <result property="unit" column="unit"/>
+                    <result property="remark" column="remark"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+            </resultMap>
+
+    <sql id="selectBasPlantCapacityVo">
+        select t.client_id, t.plant_overcapacity_sid, t.product_line_sid, t.start_date, t.end_date, t.is_overcapacity, t.product_category, t.spare_output, t.unit, t.remark, t.creator_account, t.create_date, t.updater_account, t.update_date, t.data_source_sys from s_bas_plant_capacity t
+    </sql>
+
+    <select id="selectBasPlantCapacityById" parameterType="Long" resultMap="BasPlantCapacityResult">
+        <include refid="selectBasPlantCapacityVo"/>
+        where t.plant_overcapacity_sid = #{plantOvercapacitySid}
+    </select>
+
+
+    <select id="selectBasPlantCapacityList" parameterType="com.platform.ems.domain.BasPlantCapacity"
+            resultMap="BasPlantCapacityResult">
+        <include refid="selectBasPlantCapacityVo"/>
+        <where>
+                                                                                                    <if test="clientId != null  and clientId != ''">
+                                <foreach collection="clientId.split(';')" item="item">or t.client_id like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                                            <if test="productLineSid != null ">
+                                and t.product_line_sid in
+                                (<foreach collection="productLineSid" item="productLineSid" separator=",">
+                                #{companySid}</foreach>)
+                            </if>
+
+                                                                                                                                                                                                <if test="startDate != null ">
+                                    and t.start_date = #{startDate}
+                                </if>
+                                                                                                                                                                                                                            <if test="endDate != null ">
+                                    and t.end_date = #{endDate}
+                                </if>
+                                                                                                                                                                                            <if test="isOvercapacity != null  and isOvercapacity != ''">
+                                <foreach collection="isOvercapacity.split(';')" item="item">or t.is_overcapacity like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                <if test="productCategory != null  and productCategory != ''">
+                                <foreach collection="productCategory.split(';')" item="item">or t.product_category like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                <if test="spareOutput != null ">
+                                and t.spare_output in
+                                (<foreach collection="spareOutput" item="spareOutput" separator=",">
+                                #{companySid}</foreach>)
+                            </if>
+                                                                                                                                                                <if test="unit != null  and unit != ''">
+                                <foreach collection="unit.split(';')" item="item">or t.unit like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                                            <if test="creatorAccount != null  and creatorAccount != ''">
+                                <foreach collection="creatorAccount.split(';')" item="item">or t.creator_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                                                <if test="beginTime != null and beginTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                                </if>
+                                <if test="endTime != null and endTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                                </if>
+                                                                                                                                                                                            <if test="updaterAccount != null  and updaterAccount != ''">
+                                <foreach collection="updaterAccount.split(';')" item="item">or t.updater_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                                                <if test="updateDate != null ">
+                                    and t.update_date = #{updateDate}
+                                </if>
+                                                                                                                                                                                            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                                <foreach collection="dataSourceSys.split(';')" item="item">or t.data_source_sys like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_plant_capacity
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                plant_overcapacity_sid,
+                                                                product_line_sid,
+                                                                start_date,
+                                                                end_date,
+                                                                is_overcapacity,
+                                                                product_category,
+                                                                spare_output,
+                                                                unit,
+                                                                remark,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                data_source_sys,
+                                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                                                            #{clientId},
+                                                                                #{plantOvercapacitySid},
+                                                                                #{productLineSid},
+                                                                                #{startDate},
+                                                                                #{endDate},
+                                                                                #{isOvercapacity},
+                                                                                #{productCategory},
+                                                                                #{spareOutput},
+                                                                                #{unit},
+                                                                                #{remark},
+                                                                                #{creatorAccount},
+                                                                                #{createDate},
+                                                                                #{updaterAccount},
+                                                                                #{updateDate},
+                                                                                #{dataSourceSys},
+                                                </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_plant_capacity
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                                            product_line_sid = #{productLineSid},
+                                                                start_date = #{startDate},
+                                                                end_date = #{endDate},
+                                                                is_overcapacity = #{isOvercapacity},
+                                                                product_category = #{productCategory},
+                                                                spare_output = #{spareOutput},
+                                                                unit = #{unit},
+                                                                remark = #{remark},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where plant_overcapacity_sid = #{plantOvercapacitySid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_plant_capacity
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    product_line_sid = #{productLineSid},
+                                                                                start_date = #{startDate},
+                                                                                end_date = #{endDate},
+                                                                                is_overcapacity = #{isOvercapacity},
+                                                                                product_category = #{productCategory},
+                                                                                spare_output = #{spareOutput},
+                                                                                unit = #{unit},
+                                                                                remark = #{remark},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where plant_overcapacity_sid = #{plantOvercapacitySid}
+        </foreach>
+    </update>
+
+</mapper>

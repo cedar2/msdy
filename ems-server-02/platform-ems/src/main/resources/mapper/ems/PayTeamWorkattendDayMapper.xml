@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PayTeamWorkattendDayMapper">
+
+    <resultMap type="com.platform.ems.domain.PayTeamWorkattendDay" id="PayTeamWorkattendDayResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="teamWorkattendDaySid" column="team_workattend_day_sid"/>
+                    <result property="workattendDate" column="workattend_date"/>
+                    <result property="plantSid" column="plant_sid"/>
+                    <result property="plantCode" column="plant_code"/>
+                    <result property="workCenterSid" column="work_center_sid"/>
+                    <result property="workCenterCode" column="work_center_code"/>
+                    <result property="department" column="department"/>
+                    <result property="workShift" column="work_shift"/>
+                    <result property="yingcq" column="yingcq"/>
+                    <result property="shicq" column="shicq"/>
+                    <result property="qingj" column="qingj"/>
+                    <result property="dail" column="dail"/>
+                    <result property="kuangg" column="kuangg"/>
+                    <result property="quek" column="quek"/>
+                    <result property="chid" column="chid"/>
+                    <result property="zaot" column="zaot"/>
+                    <result property="remark" column="remark"/>
+                    <result property="handleStatus" column="handle_status"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="confirmerAccount" column="confirmer_account"/>
+                    <result property="confirmDate" column="confirm_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+                <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectPayTeamWorkattendDayVo">
+         select t.client_id,
+         t.team_workattend_day_sid,
+         t.team_workattend_day_code,
+         t.workattend_date,
+         t.plant_sid,
+         t.plant_code,
+         t.work_center_sid,
+         t.work_center_code,
+         t.department,
+         t.work_shift,
+         t.yingcq,
+         t.shicq,
+         t.qingj,
+         t.dail,
+         t.kuangg,
+         t.quek,
+         t.chid,
+         t.zaot,
+         t.remark,
+         t.handle_status,
+         t.creator_account,
+         t.create_date,
+         t.updater_account,
+         t.update_date,
+         t.confirmer_account,
+         t.confirm_date,
+         t.data_source_sys ,
+         t2.nick_name AS creator_account_name,
+         t3.nick_name AS updater_account_name,
+         t4.nick_name AS confirmer_account_name,
+         t5.plant_name,
+         t6.name as department_name,
+         t7.work_center_name
+         from s_pay_team_workattend_day t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+        LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t4.client_id
+        LEFT JOIN s_bas_plant t5 ON t5.plant_sid = t.plant_sid
+        left join s_con_manufacture_department  t6 on t6.code=t.department
+        LEFT JOIN s_man_work_center t7 ON t7.work_center_sid = t.work_center_sid
+    </sql>
+
+    <select id="selectPayTeamWorkattendDayById" parameterType="Long" resultMap="PayTeamWorkattendDayResult">
+        <include refid="selectPayTeamWorkattendDayVo"/>
+        where t.team_workattend_day_sid = #{teamWorkattendDaySid}
+    </select>
+    <select id="getPayTeamWorkattendByUserName" parameterType="java.lang.String" resultMap="PayTeamWorkattendDayResult">
+        SELECT
+        t2.default_plant_sid as plant_sid,
+        t2.work_center_sid,
+        t2.work_center_code,
+        t4.code as department
+        FROM sys_user t
+        left join s_bas_staff t2 on t2.staff_sid=t.staff_sid
+        left join s_man_work_center t3 on t3.work_center_sid=t2.work_center_sid
+        left join s_con_manufacture_department t4 on t4.sid=t3.department_sid
+        where t.user_name = #{userName}
+    </select>
+
+
+    <select id="selectPayTeamWorkattendDayList" parameterType="com.platform.ems.domain.PayTeamWorkattendDay"
+            resultMap="PayTeamWorkattendDayResult">
+        <include refid="selectPayTeamWorkattendDayVo"/>
+        <where>
+            <if test="teamWorkattendDayCode != null  and teamWorkattendDayCode != ''">
+                and  t.team_workattend_day_code like concat('%',
+                #{teamWorkattendDayCode}, '%')
+            </if>
+            <if test="departmentList != null and departmentList.length >0">
+                and t.department in
+                (<foreach collection="departmentList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="workShiftList != null and workShiftList.length >0">
+                and t.work_shift in
+                (<foreach collection="workShiftList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="workCenterSidList != null and workCenterSidList.length >0 ">
+                and t.work_center_sid in
+                (<foreach collection="workCenterSidList" item="workCenterSid" separator=",">#{workCenterSid}</foreach>)
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">
+                #{creatorAccount}</foreach>)
+            </if>
+            <if test="workattendBeginTime != null">
+                and date_format(t.workattend_date,'%y%m%d') &gt;= date_format(#{workattendBeginTime},'%y%m%d')
+            </if>
+            <if test="workattendEndTime != null ">
+                and date_format(t.workattend_date,'%y%m%d') &lt;= date_format(#{workattendEndTime},'%y%m%d')
+            </if>
+            <if test="workattendDate != null ">
+                and t.workattend_date = #{workattendDate}
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid = #{plantSid}
+            </if>
+            <if test="plantCode != null and plantCode != ''">
+                and t.plant_code = #{plantCode}
+            </if>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid = #{workCenterSid}
+            </if>
+            <if test="workCenterCode != null and workCenterCode != ''">
+                and t.work_center_code = #{workCenterCode}
+            </if>
+            <if test="department != null and department != ''">
+                and t.department = #{department}
+            </if>
+            <if test="workShift != null and workShift != ''">
+                and t.work_shift = #{workShift}
+            </if>
+        </where>
+        order by t.team_workattend_day_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pay_team_workattend_day
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                team_workattend_day_sid,
+                                                                workattend_date,
+                                                                plant_sid,
+                                                                plant_code,
+                                                                work_center_sid,
+                                                                work_center_code,
+                                                                department,
+                                                                work_shift,
+                                                                yingcq,
+                                                                shicq,
+                                                                qingj,
+                                                                dail,
+                                                                kuangg,
+                                                                quek,
+                                                                chid,
+                                                                zaot,
+                                                                remark,
+                                                                handle_status,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                confirmer_account,
+                                                                confirm_date,
+                                                                data_source_sys,
+                                    </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                                                            #{item.clientId},
+                                                                              #{item.teamWorkattendDaySid},
+                                                                              #{item.workattendDate},
+                                                                                #{item.plantSid},
+                                                                                #{item.plantCode},
+                                                                                #{item.workCenterSid},
+                                                                                #{item.workCenterCode},
+                                                                                #{item.department},
+                                                                                #{item.workShift},
+                                                                                #{item.yingcq},
+                                                                                #{item.shicq},
+                                                                                #{item.qingj},
+                                                                                #{item.dail},
+                                                                                #{item.kuangg},
+                                                                                #{item.quek},
+                                                                                #{item.chid},
+                                                                                #{item.zaot},
+                                                                                #{item.remark},
+                                                                                #{item.handleStatus},
+                                                                                #{item.creatorAccount},
+                                                                                #{item.createDate},
+                                                                                #{item.updaterAccount},
+                                                                                #{item.updateDate},
+                                                                                #{item.confirmerAccount},
+                                                                                #{item.confirmDate},
+                                                                                #{item.dataSourceSys},
+                                                </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pay_team_workattend_day
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                                            workattend_date = #{workattendDate},
+                                                                plant_sid = #{plantSid},
+                                                                plant_code = #{plantCode},
+                                                                work_center_sid = #{workCenterSid},
+                                                                work_center_code = #{workCenterCode},
+                                                                department = #{department},
+                                                                work_shift = #{workShift},
+                                                                yingcq = #{yingcq},
+                                                                shicq = #{shicq},
+                                                                qingj = #{qingj},
+                                                                dail = #{dail},
+                                                                kuangg = #{kuangg},
+                                                                quek = #{quek},
+                                                                chid = #{chid},
+                                                                zaot = #{zaot},
+                                                                remark = #{remark},
+                                                                handle_status = #{handleStatus},
+                                                                                                                        updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                confirmer_account = #{confirmerAccount},
+                                                                confirm_date = #{confirmDate},
+                                                                </trim>
+        where team_workattend_day_sid = #{teamWorkattendDaySid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pay_team_workattend_day
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    workattend_date = #{workattendDate},
+                                                                                plant_sid = #{plantSid},
+                                                                                plant_code = #{plantCode},
+                                                                                work_center_sid = #{workCenterSid},
+                                                                                work_center_code = #{workCenterCode},
+                                                                                department = #{department},
+                                                                                work_shift = #{workShift},
+                                                                                yingcq = #{yingcq},
+                                                                                shicq = #{shicq},
+                                                                                qingj = #{qingj},
+                                                                                dail = #{dail},
+                                                                                kuangg = #{kuangg},
+                                                                                quek = #{quek},
+                                                                                chid = #{chid},
+                                                                                zaot = #{zaot},
+                                                                                remark = #{remark},
+                                                                                handle_status = #{handleStatus},
+                                                                                                                                                        updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                confirmer_account = #{confirmerAccount},
+                                                                                confirm_date = #{confirmDate},
+                                                                                    </trim>
+            where team_workattend_day_sid = #{teamWorkattendDaySid}
+        </foreach>
+    </update>
+
+</mapper>

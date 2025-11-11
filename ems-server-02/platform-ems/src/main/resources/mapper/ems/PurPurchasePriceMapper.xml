@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurPurchasePriceMapper">
+
+    <resultMap type="com.platform.ems.domain.PurPurchasePrice" id="PurPurchasePriceResult">
+        <result property="clientId" column="client_id"/>
+        <result property="purchasePriceSid" column="purchase_price_sid"/>
+        <result property="purchasePriceCode" column="purchase_price_code"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="purchaseOrg" column="purchase_org"/>
+        <result property="priceDimension" column="price_dimension"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="skuTypeRecursion" column="sku_type_recursion"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="barcodeSid" column="barcode_sid"/>
+        <result property="purchaseMode" column="purchase_mode"/>
+        <result property="materialCategory" column="material_category"/>
+    </resultMap>
+
+    <sql id="selectPurPurchasePriceVo">
+        select
+        t.purchase_price_sid,
+        t.purchase_price_code,
+        t.vendor_sid,
+        t.material_sid,
+        t.company_sid,
+        t.purchase_org,
+        t.price_dimension,
+        t.raw_material_mode,
+        t.purchase_mode,
+        t.sku1_sid,
+        t.sku2_sid,
+        t.sku_type_recursion,
+        t.remark,
+        t.status,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.barcode_sid,
+        t.material_category,
+        t.confirm_date,
+        t1.company_name,
+        t2.material_code,
+        t2.material_name,
+        t2.purchase_type,
+        t2.sku1_type,
+        t2.sku2_type,
+     	t2.supplier_product_code,
+        t3.vendor_code,
+        t3.vendor_name,
+        t4.barcode,
+        t5.sku_name as sku1_name,
+        t7.nick_name as creator_account_name,
+        t8.nick_name as updater_account_name,
+        t9.nick_name as confirmer_account_name,
+        t2.unit_base,
+        t2.picture_path,
+        t2.picture_path_second,
+        t10.name as unit_base_name
+        from s_pur_purchase_price t
+        left join s_bas_company t1 on t1.company_sid =t.company_sid
+        left join s_bas_material t2 on t2.material_sid=t.material_sid
+        left join s_bas_vendor t3 on t3.vendor_sid=t.vendor_sid
+        LEFT JOIN s_bas_material_barcode t4 on t4.barcode_sid=t.barcode_sid
+        LEFT JOIN s_bas_sku t5 on t5.sku_sid=t.sku1_sid
+        LEFT JOIN sys_user t7 ON t7.user_name = t.creator_account
+        LEFT JOIN sys_user t8 ON t8.user_name = t.updater_account
+        LEFT JOIN sys_user t9 ON t9.user_name = t.confirmer_account
+        LEFT JOIN s_con_measure_unit t10 ON t10.code = t2.unit_base
+    </sql>
+
+    <select id="selectPurPurchasePriceList" parameterType="com.platform.ems.domain.PurPurchasePrice"
+            resultType="com.platform.ems.domain.PurPurchasePrice">
+        <include refid="selectPurPurchasePriceVo"/>
+        <where>
+            <if test="purchasePriceSidList != null and purchasePriceSidList.length > 0">
+                and t.purchase_price_sid in
+                (<foreach collection="purchasePriceSidList" item="purchasePriceSid" separator=",">#{purchasePriceSid}</foreach>)
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="materialCode" separator="or">t2.material_code
+                like concat('%', #{materialCode}, '%')</foreach>)
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="materialName" separator="or">t2.material_name
+                like concat('%', #{materialName}, '%')</foreach>)
+            </if>
+            <if test="purchasePriceCode != null and purchasePriceCode !=''">
+                and (<foreach collection="purchasePriceCode.split(';')" item="item" separator="or">t.purchase_price_code
+                like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="vendorSids != null  and vendorSids.size > 0">and t.vendor_sid in
+                <foreach collection="vendorSids" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="materialSid != null  and materialSids !=''">
+            	and t.material_sid = #{materialSid}
+            </if>
+            <if test="materialCategory != null">
+                and t.material_category = #{materialCategory}
+            </if>
+            <if test="companySids != null  and companySids.length > 0">and t.company_sid in
+                <foreach collection="companySids" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="handleStatuses != null  and handleStatuses.length >0 ">
+                and (<foreach collection="handleStatuses" item="item" separator="or"> t.handle_status like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="purchaseOrgs != null  and purchaseOrgs.length >0">
+                and (<foreach collection="purchaseOrgs" item="item" separator="or">t.purchase_org like concat('%',
+                #{item}, '%')</foreach>)
+            </if>
+            <if test="purchaseModes != null  and purchaseModes.length >0">
+                and (<foreach collection="purchaseModes" item="item" separator="or">t.purchase_mode like concat('%',
+                #{item}, '%')</foreach>)
+            </if>
+            <if test="rawMaterialModes != null  and rawMaterialModes.length > 0">
+                and (<foreach collection="rawMaterialModes" item="item" separator="or"> t.raw_material_mode like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t7.nick_name like
+                concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="createDateStart != null">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{createDateStart},'%y%m%d')
+            </if>
+            <if test="createDateEnd != null">
+                and date_format(t.create_date,'%y%m%d') &lt;=date_format(#{createDateEnd},'%y%m%d')
+            </if>
+        </where>
+        order by t.purchase_price_code desc
+    </select>
+
+    <select id="selectPurPurchasePriceById" parameterType="Long" resultMap="PurPurchasePriceResult">
+        <include refid="selectPurPurchasePriceVo"/>
+        where purchase_price_sid = #{purchasePriceSid}
+    </select>
+
+      <!--查找商品条码有效期最新的一条-->
+    <select id="selectStartDateDesc" parameterType="Long" resultType="Long">
+      select t1.purchase_price_infor_item_sid from s_pur_purchase_price t
+      left join s_pur_purchase_price_item t1 on t1.purchase_price_sid=t.purchase_price_sid
+      where t.barcode_sid=#{barcodeSid}
+      order by  t1.start_date desc limit 1
+    </select>
+
+    <select id="getPurchaseTaxK1" parameterType="com.platform.ems.domain.PurPurchasePrice" resultType="com.platform.ems.domain.PurPurchasePriceItem">
+        select t1.purchase_price_tax,t1.tax_rate from s_pur_purchase_price t
+        left join s_pur_purchase_price_item t1 on t1.purchase_price_sid=t.purchase_price_sid
+        <where>
+            <if test="priceDimension !=null and priceDimension !=''">
+                and t.price_dimension=#{priceDimension} and t.sku1_sid=#{sku1Sid}
+            </if>
+            <if test="vendorSid !=null and vendorSid !=''">
+                and t.vendor_sid=#{vendorSid}
+            </if>
+            <if test="purchaseMode !=null">
+                and t.purchase_mode=#{purchaseMode}
+            </if>
+            <if test="rawMaterialMode !=null ">
+                and t.raw_material_mode=#{rawMaterialMode}
+            </if>
+            <if test="materialSid !=null ">
+                and t.material_sid=#{materialSid} and t.handle_status ='5' and  now() &gt;= t1.start_date and now() &lt;= t1.end_date
+            </if>
+
+        </where>
+    </select>
+
+    <select id="getPurchaseTaxK" parameterType="com.platform.ems.domain.PurPurchasePrice" resultType="com.platform.ems.domain.PurPurchasePriceItem">
+        select t1.purchase_price_tax,t1.tax_rate from s_pur_purchase_price t
+        left join s_pur_purchase_price_item t1 on t1.purchase_price_sid=t.purchase_price_sid
+        <where>
+            <if test="vendorSid !=null and vendorSid !=''">
+                and t.vendor_sid=#{vendorSid}
+            </if>
+            <if test="purchaseMode !=null">
+                and t.purchase_mode=#{purchaseMode}
+            </if>
+            <if test="rawMaterialMode !=null">
+                and t.raw_material_mode=#{rawMaterialMode}
+            </if>
+            <if test="materialSid !=null">
+                and t.material_sid=#{materialSid} and t.handle_status ='5' and  now() &gt;= t1.start_date and now() &lt;= t1.end_date
+            </if>
+            <if test="priceDimension !=null and priceDimension !=''">
+                and t.price_dimension=#{priceDimension}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertPurPurchasePrice" parameterType="com.platform.ems.domain.PurPurchasePrice">
+        insert into s_pur_purchase_price
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">client_id,</if>
+            <if test="purchasePriceSid != null and purchasePriceSid != ''">purchase_price_sid,</if>
+            <if test="purchasePriceCode != null">purchase_price_code,</if>
+            <if test="vendorSid != null">vendor_sid,</if>
+            <if test="materialSid != null">material_sid,</if>
+            <if test="companySid != null">company_sid,</if>
+            <if test="purchaseOrg != null">purchase_org,</if>
+            <if test="priceDimension != null">price_dimension,</if>
+            <if test="sku1Sid != null">sku1_sid,</if>
+            <if test="sku2Sid != null">sku2_sid,</if>
+            <if test="skuTypeRecursion != null">sku_type_recursion,</if>
+            <if test="remark != null">remark,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="handleStatus != null and handleStatus != ''">handle_status,</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updaterAccount != null">updater_account,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="confirmerAccount != null">confirmer_account,</if>
+            <if test="confirmDate != null">confirm_date,</if>
+            <if test="dataSourceSys != null">data_source_sys,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">#{clientId},</if>
+            <if test="purchasePriceSid != null and purchasePriceSid != ''">#{purchasePriceSid},</if>
+            <if test="purchasePriceCode != null">#{purchasePriceCode},</if>
+            <if test="vendorSid != null">#{vendorSid},</if>
+            <if test="materialSid != null">#{materialSid},</if>
+            <if test="companySid != null">#{companySid},</if>
+            <if test="purchaseOrg != null">#{purchaseOrg},</if>
+            <if test="priceDimension != null">#{priceDimension},</if>
+            <if test="sku1Sid != null">#{sku1Sid},</if>
+            <if test="sku2Sid != null">#{sku2Sid},</if>
+            <if test="skuTypeRecursion != null">#{skuTypeRecursion},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="handleStatus != null and handleStatus != ''">#{handleStatus},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">#{creatorAccount},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updaterAccount != null">#{updaterAccount},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="confirmerAccount != null">#{confirmerAccount},</if>
+            <if test="confirmDate != null">#{confirmDate},</if>
+            <if test="dataSourceSys != null">#{dataSourceSys},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePurPurchasePrice" parameterType="com.platform.ems.domain.PurPurchasePrice">
+        update s_pur_purchase_price
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="purchasePriceCode != null">purchase_price_code = #{purchasePriceCode},</if>
+            <if test="vendorSid != null">vendor_sid = #{vendorSid},</if>
+            <if test="materialSid != null">material_sid = #{materialSid},</if>
+            <if test="companySid != null">company_sid = #{companySid},</if>
+            <if test="purchaseOrg != null">purchase_org = #{purchaseOrg},</if>
+            <if test="priceDimension != null">price_dimension = #{priceDimension},</if>
+            <if test="sku1Sid != null">sku1_sid = #{sku1Sid},</if>
+            <if test="sku2Sid != null">sku2_sid = #{sku2Sid},</if>
+            <if test="skuTypeRecursion != null">sku_type_recursion = #{skuTypeRecursion},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account = #{creatorAccount},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updaterAccount != null">updater_account = #{updaterAccount},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="confirmerAccount != null">confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmDate != null">confirm_date = #{confirmDate},</if>
+            <if test="dataSourceSys != null">data_source_sys = #{dataSourceSys},</if>
+        </trim>
+        where purchase_price_sid = #{purchasePriceSid}
+    </update>
+
+    <delete id="deletePurPurchasePriceById" parameterType="String">
+        delete from s_pur_purchase_price where purchase_price_sid = #{purchasePriceSid}
+    </delete>
+
+    <delete id="deletePurPurchasePriceByIds" parameterType="String">
+        delete from s_pur_purchase_price where purchase_price_sid in
+        <foreach item="purchasePriceSid" collection="array" open="(" separator="," close=")">
+            #{purchasePriceSid}
+        </foreach>
+    </delete>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_purchase_price
+        <trim prefix="SET" suffixOverrides=",">
+            purchase_price_code = #{purchasePriceCode},
+            vendor_sid = #{vendorSid},
+            material_sid = #{materialSid},
+            barcode_sid=#{barcodeSid},
+            company_sid = #{companySid},
+            purchase_org = #{purchaseOrg},
+            price_dimension = #{priceDimension},
+            material_category = #{materialCategory},
+            sku1_sid = #{sku1Sid},
+            sku2_sid = #{sku2Sid},
+            sku_type_recursion = #{skuTypeRecursion},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            raw_material_mode = #{rawMaterialMode},
+            purchase_mode=#{purchaseMode},
+        </trim>
+        where purchase_price_sid = #{purchasePriceSid}
+    </update>
+</mapper>

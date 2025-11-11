@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.plug.mapper.ConDataobjectCodeRuleMapper">
+
+    <resultMap type="com.platform.ems.plug.domain.ConDataobjectCodeRule" id="ConDataobjectCodeRuleResult">
+        <result property="clientId" column="client_id"/>
+        <result property="sid" column="sid"/>
+        <result property="dataobjectCategorySid" column="dataobject_category_sid"/>
+        <result property="dataobjectCategoryCode" column="dataobject_category_code"/>
+        <result property="dataobjectCategoryName" column="dataobject_category_name"/>
+        <result property="codeMode" column="code_mode"/>
+        <result property="prefix" column="prefix"/>
+        <result property="serialNumberFrom" column="serial_number_from"/>
+        <result property="serialNumberTo" column="serial_number_to"/>
+        <result property="serialNumberCurrent" column="serial_number_current"/>
+        <result property="businessCategory" column="business_category"/>
+        <result property="businessCategoryDesc" column="business_category_desc"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectConDataobjectCodeRuleVo">
+        select t.client_id,
+               t.sid,
+               t.dataobject_category_sid,
+               t5.code AS dataobject_category_code,
+               t5.name AS dataobject_category_name,
+               t.code_mode,
+               t.prefix,
+               t.serial_number_from,
+               t.serial_number_to,
+               t.serial_number_current,
+               t.business_category,
+               t.business_category_desc,
+               t.remark,
+               t.status,
+               t.handle_status,
+               t.creator_account,
+               t2.nick_name AS creator_account_name,
+               t.create_date,
+               t.updater_account,
+               t3.nick_name AS updater_account_name,
+               t.update_date,
+               t.confirmer_account,
+               t4.nick_name AS confirmer_account_name,
+               t.confirm_date,
+               t.data_source_sys
+        from s_con_dataobject_code_rule t
+        left join sys_user t2 on t.creator_account = t2.user_name
+        left join sys_user t3 on t.updater_account = t3.user_name
+        left join sys_user t4 on t.confirmer_account = t4.user_name
+        left join s_con_dataobject_category t5 on t.dataobject_category_sid = t5.sid
+    </sql>
+
+    <select id="selectConDataobjectCodeRuleById" parameterType="Long" resultMap="ConDataobjectCodeRuleResult">
+        <include refid="selectConDataobjectCodeRuleVo"/>
+        where t.sid = #{sid}
+    </select>
+
+    <select id="selectCurrentNumberByRule" parameterType="com.platform.ems.plug.domain.ConDataobjectCodeRule"
+            resultType="com.platform.ems.plug.domain.ConDataobjectCodeRule">
+        select t.*, t2.code AS dataobject_category_code, t2.name AS dataobject_category_name
+        from s_con_dataobject_code_rule t
+        left join s_con_dataobject_category t2 on t.dataobject_category_sid = t2.sid
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="dataobjectCategoryCode != null and dataobjectCategoryCode != ''">
+                and t2.code =#{dataobjectCategoryCode}
+            </if>
+            <if test="businessCategory != null  and businessCategory != ''">
+                and t.business_category = #{businessCategory}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <update id="addCurrentNumber" parameterType="com.platform.ems.plug.domain.ConDataobjectCodeRule">
+    update s_con_dataobject_code_rule
+        <set>
+            <if test="serialNumberCurrent != null and serialNumberCurrent != ''">serial_number_current = #{serialNumberCurrent},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+        </set>
+        <where>
+            <if test="dataobjectCategoryCode != null and dataobjectCategoryCode != ''">
+                and dataobject_category_sid in (select sid from s_con_dataobject_category where code = #{dataobjectCategoryCode})
+            </if>
+            <if test="businessCategory != null and businessCategory != ''">
+                and business_category = #{businessCategory}
+            </if>
+        </where>
+    </update>
+
+    <select id="selectConDataobjectCodeRuleList" parameterType="com.platform.ems.plug.domain.ConDataobjectCodeRule"
+            resultMap="ConDataobjectCodeRuleResult">
+        <include refid="selectConDataobjectCodeRuleVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or"> t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="dataobjectCategorySid != null ">
+                and t.dataobject_category_sid =#{dataobjectCategorySid}
+            </if>
+            <if test="dataobjectCategoryCode != null and dataobjectCategoryCode != ''">
+                and t5.code =#{dataobjectCategoryCode}
+            </if>
+            <if test="codeMode != null  and codeMode != ''">
+                and (<foreach collection="codeMode.split(';')" item="item" separator="or"> t.code_mode like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="prefix != null  and prefix != ''">
+                and (<foreach collection="prefix.split(';')" item="item" separator="or"> t.prefix like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="serialNumberFrom != null ">
+                and t.serial_number_from =#{serialNumberFrom}
+            </if>
+            <if test="serialNumberTo != null ">
+                and t.serial_number_to =#{serialNumberTo}
+            </if>
+            <if test="serialNumberCurrent != null ">
+                and t.serial_number_current =#{serialNumberCurrent}
+            </if>
+            <if test="businessCategory != null  and businessCategory != ''">
+                and t.business_category = #{businessCategory}
+            </if>
+            <if test="businessCategoryDesc != null  and businessCategoryDesc != ''">
+                and (<foreach collection="businessCategoryDesc.split(';')" item="item" separator="or"> t.business_category_desc like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="status != null  and status != ''">
+                and (<foreach collection="status.split(';')" item="item" separator="or"> t.status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or"> t.handle_status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t.creator_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or"> t.confirmer_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or"> t.data_source_sys like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_dataobject_code_rule
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sid,
+            dataobject_category_sid,
+            code_mode,
+            prefix,
+            serial_number_from,
+            serial_number_to,
+            serial_number_current,
+            business_category,
+            business_category_desc,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.dataobjectCategorySid},
+                #{item.codeMode},
+                #{item.prefix},
+                #{item.serialNumberFrom},
+                #{item.serialNumberTo},
+                #{item.serialNumberCurrent},
+                #{item.businessCategory},
+                #{item.businessCategoryDesc},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_dataobject_code_rule
+        <trim prefix="SET" suffixOverrides=",">
+            sid = #{sid},
+            dataobject_category_sid = #{dataobjectCategorySid},
+            code_mode = #{codeMode},
+            prefix = #{prefix},
+            serial_number_from = #{serialNumberFrom},
+            serial_number_to = #{serialNumberTo},
+            serial_number_current = #{serialNumberCurrent},
+            business_category = #{businessCategory},
+            business_category_desc = #{businessCategoryDesc},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where sid = #{sid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_dataobject_code_rule
+            <trim prefix="SET" suffixOverrides=",">
+                sid = #{sid},
+                dataobject_category_sid = #{dataobjectCategorySid},
+                code_mode = #{codeMode},
+                prefix = #{prefix},
+                serial_number_from = #{serialNumberFrom},
+                serial_number_to = #{serialNumberTo},
+                serial_number_current = #{serialNumberCurrent},
+                business_category = #{businessCategory},
+                business_category_desc = #{businessCategoryDesc},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where sid = #{sid}
+        </foreach>
+    </update>
+
+</mapper>

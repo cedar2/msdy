@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.FinBookCustomerDeductionMapper">
+    <resultMap type="com.platform.ems.domain.FinBookCustomerDeduction" id="FinBookCustomerDeductionResult">
+        <result property="clientId" column="client_id"/>
+        <result property="bookDeductionSid" column="book_deduction_sid"/>
+        <result property="bookDeductionCode" column="book_deduction_code"/>
+        <result property="bookType" column="book_type"/>
+        <result property="bookSourceCategory" column="book_source_category"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="paymentYear" column="payment_year"/>
+        <result property="paymentMonth" column="payment_month"/>
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="businessChannel" column="business_channel"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="bookTypeName" column="book_type_name"/>
+        <result property="bookSourceCategoryName" column="book_source_category_name"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="currencyAmountTaxKk" column="currency_amount_tax_kk"/>
+        <result property="currencyAmountTaxYhx" column="currency_amount_tax_yhx"/>
+        <result property="currencyAmountTaxHxz" column="currency_amount_tax_hxz"/>
+        <result property="currencyAmountTaxDhx" column="currency_amount_tax_dhx"/>
+        <result property="itemNum" column="item_num"/>
+    </resultMap>
+    <sql id="selectFinBookCustomerDeductionVo">
+        select t.client_id,
+               t.book_deduction_sid,
+               t.book_deduction_code,
+               t.book_type,
+               t.book_source_category,
+               t.customer_sid,
+               t.customer_code,
+               t5.product_season_name,
+               t.company_sid,
+               t.company_code,
+               t.document_date,
+               t.payment_year,
+               t.payment_month,
+               t.company_brand_sid,
+               t.business_channel,
+               t.currency,
+               t.currency_unit,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t4.customer_name
+        from s_fin_book_customer_deduction t
+         LEFT JOIN s_fin_customer_deduction_bill t3 on t2.refer_doc_sid = t3.deduction_bill_sid
+         LEFT JOIN s_bas_customer t4 ON t.customer_sid = t4.customer_sid
+         LEFT JOIN s_bas_product_season t5 on t3.product_season_sid = t5.product_season_sid
+    </sql>
+    <select id="selectFinBookCustomerDeductionById" parameterType="Long" resultMap="FinBookCustomerDeductionResult">
+        <include refid="selectFinBookCustomerDeductionVo"/>
+        where t.book_deduction_sid = #{bookDeductionSid}
+    </select>
+    <select id="selectFinBookCustomerDeductionList" parameterType="com.platform.ems.domain.FinBookCustomerDeduction"
+            resultMap="FinBookCustomerDeductionResult">
+        <include refid="selectFinBookCustomerDeductionVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">and t.client_id = #{clientId}
+            </if>
+            <if test="bookDeductionCode != null ">and t.book_deduction_code =#{bookDeductionCode}</if>
+            <if test="bookType != null  and bookType != ''">and t.book_type = #{bookType}
+            </if>
+            <if test="bookSourceCategory != null  and bookSourceCategory != ''">andt.book_source_category = #{bookSourceCategory}
+            </if>
+            <if test="customerSid != null ">and t.customer_sid =#{customerSid}</if>
+            <if test="companySid != null ">and t.company_sid =#{companySid}</if>
+            <if test="documentDate != null ">and t.document_date = #{documentDate}</if>
+            <if test="paymentYear != null ">and t.payment_year =#{paymentYear}</if>
+            <if test="paymentMonth != null ">and t.payment_month =#{paymentMonth}</if>
+            <if test="companyBrandSid != null ">and t.company_brand_sid =#{companyBrandSid}</if>
+            <if test="businessChannel != null  and businessChannel != ''">and t.business_channel = #{businessChannel}
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">and (
+                <foreach collection="creatorAccountName.split(';')" item="item" separator=" or ">t5.nick_name like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;=
+                date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;=
+                date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">${params.dataScope}</if>
+        </where>
+    </select>
+    <!--添加多个-->
+    <insert id="inserts">insert into s_fin_book_customer_deduction
+        <trim prefix="(" suffix=")" suffixOverrides=",">client_id, book_deduction_sid, book_deduction_code, book_type,
+            book_source_category, customer_sid, customer_code, company_sid, company_code, document_date, payment_year, payment_month,
+            company_brand_sid, business_channel, currency, currency_unit, remark, handle_status, creator_account,
+            create_date, confirmer_account, confirm_date, data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">#{item.clientId}, #{item.bookDeductionSid},
+                #{item.bookDeductionCode}, #{item.bookType}, #{item.bookSourceCategory}, #{item.customerSid}, #{item.customerCode},
+                #{item.companySid}, #{item.companyCode}, #{item.documentDate}, #{item.paymentYear}, #{item.paymentMonth},
+                #{item.companyBrandSid}, #{item.businessChannel}, #{item.currency}, #{item.currencyUnit},
+                #{item.remark}, #{item.handleStatus}, #{item.creatorAccount},
+                #{item.createDate}, #{item.updaterAccount}, #{item.confirmDate}, #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">update s_fin_book_customer_deduction
+        <trim prefix="SET" suffixOverrides=",">
+            book_type = #{bookType}, book_source_category = #{bookSourceCategory}, customer_sid = #{customerSid}, customer_code = #{customerCode},
+            company_sid = #{companySid}, company_code = #{companyCode}, document_date = #{documentDate}, payment_year = #{paymentYear}, payment_month =
+            #{paymentMonth}, company_brand_sid = #{companyBrandSid}, business_channel = #{businessChannel}, currency =
+            #{currency}, currency_unit = #{currencyUnit}, remark = #{remark}, handle_status = #{handleStatus},
+            updater_account = #{updaterAccount}, update_date = #{updateDate}, confirmer_account = #{confirmerAccount}, confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where book_deduction_sid = #{bookDeductionSid}
+    </update>
+
+    <select id="getReportForm" parameterType="com.platform.ems.domain.FinBookCustomerDeduction"
+            resultMap="FinBookCustomerDeductionResult">
+        SELECT
+        t.book_deduction_sid,
+        t2.book_deduction_item_sid,
+        t.book_deduction_code,
+        t2.refer_doc_sid,
+        t6.deduction_bill_code AS refer_doc_code,
+        t6.document_date,
+        t9.nick_name AS sale_person_name,
+        t10.name AS material_type_name,
+        t6.product_season_sid,
+        t8.product_season_name,
+        t.customer_sid,
+        t.customer_code,
+        t3.customer_name,
+        ifnull(t3.short_name,t3.customer_name) as customer_short_name,
+        t.company_sid,
+        t.company_code,
+        t4.company_name,
+        ifnull(t4.short_name,t4.company_name) as company_short_name,
+        t2.clear_status,
+        t2.currency_amount_tax_kk,
+        t2.currency_amount_tax_hxz,
+        t19.currency_amount_tax_yhx,
+        t19.currency_amount_tax_dhx,
+        t2.item_num,
+        t.handle_status,
+        t.remark,
+        t.currency,
+        t.currency_unit,
+        t.create_date,
+        t5.nick_name AS creator_account_name,
+        t.book_type,
+        t11.name AS book_type_name,
+        t.book_source_category,
+        t12.name AS book_source_category_name
+        FROM
+        s_fin_book_customer_deduction t
+        LEFT JOIN s_fin_book_customer_deduction_item t2 ON t.book_deduction_sid = t2.book_deduction_sid
+        LEFT JOIN s_bas_customer t3 ON t.customer_sid = t3.customer_sid
+        LEFT JOIN s_bas_company t4 ON t.company_sid = t4.company_sid
+        LEFT JOIN sys_user t5 on t5.user_name = t.creator_account
+        LEFT JOIN s_fin_customer_deduction_bill t6 on t2.refer_doc_sid = t6.deduction_bill_sid
+        LEFT JOIN s_bas_product_season t8 on t8.product_season_sid = t6.product_season_sid
+        LEFT JOIN sys_user t9 on t9.user_name = t6.sale_person
+        LEFT JOIN s_con_material_type t10 on t10.code = t6.material_type
+        LEFT JOIN s_con_book_type t11 ON t.book_type = t11.code
+        LEFT JOIN s_con_book_source_category t12 ON t.book_source_category = t12.code
+        LEFT JOIN (<include refid="com.platform.ems.mapper.FinBookCustomerDeductionItemMapper.selectFinBookCustomerDeductionItemVo"/>)
+            t19 ON t.book_deduction_sid = t19.book_deduction_sid
+        <where>
+            <if test="clientId != null and clientId != ''">and t.client_id =#{clientId}</if>
+            <if test="clearStatusList != null and clearStatusList.length >0">and t2.clear_status in
+                (<foreach collection="clearStatusList" item="clearStatus" separator=","> #{clearStatus}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=","> #{companySid}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">and t.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=","> #{customerSid}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">and t6.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=","> #{productSeasonSid}</foreach>)
+            </if>
+            <if test="referDocSid != null">and t2.refer_doc_sid =#{referDocSid}</if>
+            <if test="bookDeductionSid != null">and t.book_deduction_sid =#{bookDeductionSid}</if>
+            <if test="customerSid != null ">and t.customer_sid =#{customerSid}</if>
+            <if test="companySid != null">and t.company_sid =#{companySid}</if>
+            <if test="productSeasonSid != null">and t6.product_season_sid
+                =#{productSeasonSid}
+            </if>
+            <if test="clearStatusNot != null and clearStatusNot != ''">and t2.clear_status != #{clearStatusNot}</if>
+            <if test="handleStatusNot != null and handleStatusNot != ''">and t.handle_status != #{handleStatusNot}</if>
+            <if test="clearStatus != null and clearStatus != ''">and t2.clear_status =#{clearStatus}</if>
+            <if test="materialType != null and materialType != ''">and t6.material_type =#{materialType}</if>
+            <if test="salePerson != null and salePerson != ''">and t6.sale_person =#{salePerson}</if>
+            <if test="deductionBillCode != null and deductionBillCode != ''">and t6.deduction_bill_code like concat('%',
+                #{deductionBillCode}, '%')
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">and t.handle_status = #{handleStatus}</if>
+            <if test="handleStatusList != null and handleStatusList.length >0">and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=","> #{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">and (
+                <foreach collection="creatorAccountName.split(';')" item="item" separator=" or ">t5.nick_name like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;=
+                date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;=
+                date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">${params.dataScope}</if>
+        </where>
+        order by t.book_deduction_code desc
+    </select>
+</mapper>

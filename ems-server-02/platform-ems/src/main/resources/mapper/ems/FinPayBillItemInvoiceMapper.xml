@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinPayBillItemInvoiceMapper">
+
+    <resultMap type="com.platform.ems.domain.FinPayBillItemInvoice" id="FinPayBillItemInvoiceResult">
+        <result property="clientId" column="client_id"/>
+        <result property="payBillItemInvoiceSid" column="pay_bill_item_invoice_sid"/>
+        <result property="payBillSid" column="pay_bill_sid"/>
+        <result property="vendorInvoiceRecordSid" column="vendor_invoice_record_sid"/>
+        <result property="vendorInvoiceRecordCode" column="vendor_invoice_record_code"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectFinPayBillItemInvoiceVo">
+        select t.client_id,
+               t.pay_bill_item_invoice_sid,
+               t.pay_bill_sid,
+               t.vendor_invoice_record_sid,
+               t.vendor_invoice_record_code,
+               t.currency_amount_tax,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               u1.nick_name AS creator_account_name,
+               u2.nick_name AS updater_account_name,
+               t1.pay_bill_code,
+               t1.handle_status as bill_handle_status,
+               t1.agent,
+               u3.nick_name AS agent_name,
+               t2.vendor_sid,
+               t2.company_sid,
+               t2.fukuan_status,
+               t2.invoice_num,
+               t2.total_currency_amount_tax,
+               t2.tax_rate,
+               t2.total_tax_amount,
+               t2.total_currency_amount,
+               t2.inovice_code,
+               t2.invoice_date,
+               t2.paper_contract_code,
+               t2.invoice_category,
+               t2.invoice_type,
+               t2.handle_status,
+               t3.vendor_name,
+               t3.short_name as vendor_short_name,
+               t4.company_name,
+               t4.short_name as company_short_name,
+               t5.name as invoice_category_name,
+               t6.name as invoice_type_name,
+               (t2.total_currency_amount_tax - ifnull(t7.currency_amount_tax, 0) + ifnull(t.currency_amount_tax, 0)) as currency_amount_tax_dai
+        from s_fin_pay_bill_item_invoice t
+         LEFT JOIN sys_user u1 ON t.creator_account = u1.user_name
+         LEFT JOIN sys_user u2 ON t.updater_account = u2.user_name
+         LEFT JOIN s_fin_pay_bill t1 ON t.pay_bill_sid = t1.pay_bill_sid
+         LEFT JOIN sys_user u3 ON t1.agent = u3.user_name
+         LEFT JOIN s_fin_vendor_invoice_record t2 ON t.vendor_invoice_record_sid = t2.vendor_invoice_record_sid
+         LEFT JOIN s_bas_vendor t3 ON t2.vendor_sid = t3.vendor_sid
+         LEFT JOIN s_bas_company t4 ON t2.company_sid = t4.company_sid
+         LEFT JOIN s_con_invoice_category t5 ON t2.invoice_category = t5.code
+         LEFT JOIN s_con_invoice_type t6 ON t2.invoice_type = t6.code
+         LEFT JOIN (select t7a.vendor_invoice_record_sid, sum(t7a.currency_amount_tax) as currency_amount_tax
+                    from s_fin_pay_bill_item_invoice t7a
+                             left join s_fin_pay_bill t7b on t7a.pay_bill_sid = t7b.pay_bill_sid
+                    group by t7a.vendor_invoice_record_sid
+         ) t7 ON t2.vendor_invoice_record_sid = t7.vendor_invoice_record_sid
+    </sql>
+
+    <select id="selectFinPayBillItemInvoiceById" parameterType="Long" resultMap="FinPayBillItemInvoiceResult">
+        <include refid="selectFinPayBillItemInvoiceVo"/>
+        where t.pay_bill_item_invoice_sid = #{payBillItemInvoiceSid}
+    </select>
+
+    <select id="selectFinPayBillItemInvoiceList" parameterType="com.platform.ems.domain.FinPayBillItemInvoice"
+            resultMap="FinPayBillItemInvoiceResult">
+        <include refid="selectFinPayBillItemInvoiceVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="payBillItemInvoiceSid != null ">
+                and t.pay_bill_item_invoice_sid = #{payBillItemInvoiceSid}
+            </if>
+            <if test="payBillItemInvoiceSidList != null and payBillItemInvoiceSidList.length >0">
+                and t.pay_bill_item_invoice_sid in
+                (<foreach collection="payBillItemInvoiceSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="payBillSid != null ">
+                and t.pay_bill_sid = #{payBillSid}
+            </if>
+            <if test="payBillCode != null ">
+                and t1.pay_bill_code like concat('%', #{payBillCode}, '%')
+            </if>
+            <if test="payBillSidList != null  and payBillSidList.length >0">
+                and t.pay_bill_sid in (<foreach collection="payBillSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="vendorInvoiceRecordSid != null ">
+                and t.vendor_invoice_record_sid = #{vendorInvoiceRecordSid}
+            </if>
+            <if test="vendorInvoiceRecordSidList != null  and vendorInvoiceRecordSidList.length >0">
+                and t.vendor_invoice_record_sid in (<foreach collection="vendorInvoiceRecordSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="vendorInvoiceRecordCode != null ">
+                and t.vendor_invoice_record_code like concat('%', #{vendorInvoiceRecordCode}, '%')
+            </if>
+            <if test="currencyAmountTax != null ">
+                and t.currency_amount_tax = #{currencyAmountTax}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="billHandleStatus != null and billHandleStatus!=''">
+                and t1.handle_status = #{billHandleStatus}
+            </if>
+            <if test="fukuanStatus != null and fukuanStatus != ''">
+                and t2.fukuan_status = #{fukuanStatus}
+            </if>
+            <if test="vendorSidList != null  and vendorSidList.length >0">
+                and t2.vendor_sid in (<foreach collection="vendorSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companySidList != null  and companySidList.length >0">
+                and t2.company_sid in (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="agentName != null and agentName != ''">
+                and u3.nick_name like concat('%', #{agentName}, '%')
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.create_date desc, t.vendor_invoice_record_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_pay_bill_item_invoice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            pay_bill_item_invoice_sid,
+            pay_bill_sid,
+            vendor_invoice_record_sid,
+            vendor_invoice_record_code,
+            currency_amount_tax,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.payBillItemInvoiceSid},
+                #{item.payBillSid},
+                #{item.vendorInvoiceRecordSid},
+                #{item.vendorInvoiceRecordCode},
+                #{item.currencyAmountTax},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_pay_bill_item_invoice
+        <trim prefix="SET" suffixOverrides=",">
+            pay_bill_sid = #{payBillSid},
+            vendor_invoice_record_sid = #{vendorInvoiceRecordSid},
+            vendor_invoice_record_code = #{vendorInvoiceRecordCode},
+            currency_amount_tax = #{currencyAmountTax},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where pay_bill_item_invoice_sid = #{payBillItemInvoiceSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_pay_bill_item_invoice
+            <trim prefix="SET" suffixOverrides=",">
+                pay_bill_sid = #{o.payBillSid},
+                vendor_invoice_record_sid = #{o.vendorInvoiceRecordSid},
+                vendor_invoice_record_code = #{o.vendorInvoiceRecordCode},
+                currency_amount_tax = #{o.currencyAmountTax},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where pay_bill_item_invoice_sid = #{o.payBillItemInvoiceSid}
+        </foreach>
+    </update>
+
+</mapper>

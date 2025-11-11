@@ -1,0 +1,2044 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurPurchaseOrderItemMapper">
+
+    <resultMap type="com.platform.ems.domain.PurPurchaseOrderItem" id="PurPurchaseOrderItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="purchaseOrderItemSid" column="purchase_order_item_sid"/>
+        <result property="purchaseOrderSid" column="purchase_order_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="barcodeSid" column="barcode_sid"/>
+        <result property="barcode" column="barcode"/>
+        <result property="quantity" column="quantity"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="itemStatus" column="item_status"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="purchasePrice" column="purchase_price"/>
+        <result property="purchasePriceTax" column="purchase_price_tax"/>
+        <result property="taxRate" column="tax_rate"/>
+        <result property="discountType" column="discount_type"/>
+        <result property="currency" column="currency"/>
+        <result property="freeFlag" column="free_flag"/>
+        <result property="contractDate" column="contract_date"/>
+        <result property="storehouseSid" column="storehouse_sid"/>
+        <result property="storehouseLocationSid" column="storehouse_location_sid"/>
+        <result property="deliveryStatus" column="delivery_status"/>
+        <result property="purchaseRequireSid" column="purchase_require_sid"/>
+        <result property="purchaseRequireItemSid" column="purchase_require_item_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="materialName" column="material_name"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="sku1Name" column="sku1_name"/>
+        <result property="sku2Name" column="sku2_name"/>
+        <result property="storehouseCode" column="storehouse_code"/>
+        <result property="storehouseName" column="storehouse_name"/>
+        <result property="locationCode" column="location_code"/>
+        <result property="locationName" column="location_name"/>
+        <result property="unitConversionRate" column="unit_conversion_rate"/>
+        <result property="purchaseOrderCode" column="purchase_order_code"/>
+        <result property="buyer" column="buyer"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="purchaseContractCode" column="purchase_contract_code"/>
+        <result property="purchaseOrg" column="purchase_org"/>
+        <result property="purchaseGroup" column="purchase_group"/>
+        <result property="unitBaseName" column="unit_base_name"/>
+        <result property="buyerName" column="buyer_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="specialBusCategory" column="special_bus_category"/>
+        <result property="referDocCategory" column="refer_doc_category"/>
+        <result property="referDocSid" column="refer_doc_sid"/>
+        <result property="referDocCode" column="refer_doc_code"/>
+        <result property="referDocItemSid" column="refer_doc_item_sid"/>
+        <result property="referDocItemNum" column="refer_doc_item_num"/>
+    </resultMap>
+
+    <sql id="selectPurPurchaseOrderItemVo">
+       SELECT
+	t.client_id,
+	t.purchase_order_item_sid,
+	t.purchase_order_sid,
+	t.material_sid,
+	t1.material_code,
+	t1.sku2_group_sid,
+    t1.specification_size,
+    t1.picture_path,
+	t.sku1_sid,
+	t2.sku_name AS sku1_name,
+	t2.sku_code AS sku1_code,
+	t3.sku_name AS sku2_name,
+	t3.sku_code as sku2_code,
+	t.sku2_sid,
+	t.unit_conversion_rate,
+	t.barcode_sid,
+	t6.barcode,
+    t6.barcode2,
+    t6.status,
+	t.quantity,
+	t.item_num,
+    t.item_status,
+	t.unit_base,
+	t.unit_price,
+	t.purchase_price,
+	t.purchase_price_tax,
+	t.tax_rate,
+	t.refer_doc_category,
+	t.refer_doc_sid,
+	t.refer_doc_code,
+	t.refer_doc_item_sid,
+	t.refer_doc_item_num,
+	t.discount_type,
+	t.currency,
+	t.product_quantity_remark,
+    t.kuan_xiadan_date,
+    t.product_contract_date,
+	t.product_request_partys,
+	t.product_request_bus_type,
+	t.free_flag,
+	t.toexpire_days,
+	t.contract_date,
+	t.storehouse_sid,
+	t4.storehouse_code,
+	t4.storehouse_name,
+	t.storehouse_location_sid,
+	t5.location_code,
+	t5.location_name,
+	t.delivery_status,
+	t.purchase_require_sid,
+	t.purchase_require_item_sid,
+	t.manufacture_order_code,
+	t.product_quantity,
+	t.remark,
+	t.creator_account,
+	t.product_code,
+	ifnull(t.product_codes,"") as product_codes,
+	t.product_po_codes,
+	t.product_so_codes,
+	t.product_mo_codes,
+	t.in_out_stock_status,
+	t.product_sku1_sid,
+	t.product_sku2_sid,
+	t.product_sku1_names,
+	t.product_sku2_names,
+	t10.sku_name AS product_sku1_name,
+	t11.sku_name AS product_sku2_name,
+	t.create_date,
+	t.updater_account,
+	t.update_date,
+	t.confirmer_account,
+	t.new_quantity,
+	t.new_purchase_price,
+	t.new_purchase_price_tax,
+	t.new_contract_date,
+	t.initial_quantity,
+	t.initial_purchase_price,
+	t.initial_contract_date,
+	t.initial_purchase_price_tax,
+	t.initial_tax_rate,
+	t.new_tax_rate,
+	t.confirm_date,
+	t.data_source_sys,
+	t.material_name,
+    t0.purchase_order_code,
+    t0.delivery_type,
+    t0.is_return_goods,
+    t0.is_consignment_settle,
+    t0.inventory_control_mode,
+    t0.is_finance_book_yfzg,
+    t0.purchase_mode,
+	t7.name as unit_base_name,
+	t8.name as unit_price_name,
+	t9.nick_name as creator_account_name,
+	t.sales_order_code,
+	t.refer_purchase_order_code,
+	t13.short_name as customer_short_name,
+	t14.name as sale_business_type_name,
+	t15.sku_group_name as sku2_group_name,
+	t16.tax_rate_value as system_tax_rate,
+    ta.sort as sort1,
+    tb.sort as sort2
+FROM
+	s_pur_purchase_order_item t
+    LEFT JOIN s_bas_material_sku ta on t.material_sid = ta.material_sid and t.sku1_sid = ta.sku_sid
+    LEFT JOIN s_bas_material_sku tb on t.material_sid=tb.material_sid and t.sku2_sid = tb.sku_sid
+    LEFT JOIN s_pur_purchase_order t0 ON t.purchase_order_sid = t0.purchase_order_sid
+	LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+	LEFT JOIN s_bas_sku t2 ON t2.sku_sid = t.sku1_sid
+	LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t.sku2_sid
+	LEFT JOIN s_bas_storehouse t4 ON t4.storehouse_sid = t.storehouse_sid
+	LEFT JOIN s_bas_storehouse_location t5 ON t5.storehouse_location_sid = t.storehouse_location_sid
+	LEFT JOIN s_bas_material_barcode t6 ON t6.barcode_sid = t.barcode_sid
+	LEFT JOIN s_con_measure_unit t7 ON t7.code = t.unit_base
+	LEFT JOIN s_con_measure_unit t8 ON t8.code = t.unit_price
+	LEFT JOIN sys_user t9 ON t9.user_name = t.creator_account
+	LEFT JOIN s_bas_sku t10 ON t10.sku_sid = t.product_sku1_sid
+	LEFT JOIN s_bas_sku t11 ON t11.sku_sid = t.product_sku2_sid
+    left join s_sal_sales_order t12 on t12.sales_order_code=t.sales_order_code
+    LEFT JOIN s_bas_customer t13 on t13.customer_sid=t12.customer_sid
+    left join s_con_bu_type_sales_order t14 on t14.code = t12.business_type
+    left join s_bas_sku_group t15 on t15.sku_group_sid=t1.sku2_group_sid
+    left join s_con_tax_rate t16 on t16.client_id=t.client_id and t16.is_default='Y'
+    </sql>
+    <sql id="getTotalVo">
+        SELECT
+        t.purchase_order_item_sid,
+        t.purchase_price_tax,
+        t.quantity as quantity_temp,
+        t.free_flag,
+        IFNULL(IFNULL(sum(t4.quantity),sum(t5.quantity)),0) as sum_quantity_yrk_temp,
+        sum(IFNULL(IFNULL(t4.quantity,0)*t4.price, IFNULL(t5.quantity,0)*t5.price)) as sum_price_tax_yrk_temp,
+        t10.vendor_sid,
+        t10.product_season_sid,
+        t10.document_type,
+        t11.vendor_name,
+        t12.product_season_name,
+        t13.name as document_type_name
+        from
+        s_pur_purchase_order_item t
+        left join s_del_delivery_note_item t3 on t3.purchase_order_item_sid=t.purchase_order_item_sid
+        left join
+        (
+        select t4.quantity,t4.price,t4.refer_document_item_sid
+        from
+        s_inv_inventory_document_item t4
+        left join s_inv_inventory_document m4 on m4.inventory_document_sid=t4.inventory_document_sid
+        where m4.document_type='CG' and m4.handle_status='5'
+        )t4 on t4.refer_document_item_sid=t3.delivery_note_item_sid
+        left join
+        (
+         select t5.quantity,t5.price,t5.refer_document_item_sid
+         from
+         s_inv_inventory_document_item t5
+        left join s_inv_inventory_document m5 on m5.inventory_document_sid=t5.inventory_document_sid
+        where m5.document_type='CG' and m5.handle_status='5'
+        ) t5 on t5.refer_document_item_sid=t.purchase_order_item_sid
+        LEFT JOIN s_pur_purchase_order t10 ON t10.purchase_order_sid = t.purchase_order_sid
+        LEFT JOIN s_bas_vendor t11 ON t11.vendor_sid = t10.vendor_sid
+        LEFT JOIN s_bas_product_season t12 ON t12.product_season_sid = t10.product_season_sid
+        left join s_con_doc_type_purchase_order t13 on t13.code = t10.document_type
+        <where>
+            <if test="productSeasonSidList != null and productSeasonSidList.length > 0">
+                and t10.product_season_sid in (<foreach collection="productSeasonSidList" separator="," item="item">#{item}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length > 0">
+                and t10.vendor_sid in (<foreach collection="vendorSidList" separator="," item="item">#{item}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length > 0">
+                and t10.handle_status in (<foreach collection="handleStatusList" separator="," item="item">#{item}</foreach>)
+            </if>
+        </where>
+        group by t.purchase_order_item_sid
+    </sql>
+    <select id="getTotal" parameterType="com.platform.ems.domain.dto.request.OrderTotalRequest" resultType="com.platform.ems.domain.dto.response.OrderTotalResponse">
+        select
+        n.*,
+        sum(IFNULL(n.sum_quantity_yrk_temp,0) *if(n.free_flag like 'Y',0,n.purchase_price_tax)) as inv_total_price,
+        sum(IFNULL(n.quantity_temp,0) *if(n.free_flag like 'Y',0,n.purchase_price_tax)) as order_total_price,
+        sum(n.quantity_temp) as order_total_quantity
+        from
+        (<include refid="getTotalVo"/> ) n
+        group by n.product_season_sid,n.vendor_sid,n.document_type
+    </select>
+    <sql id="getTotalItemVo">
+        SELECT
+        t.purchase_order_item_sid,
+        t.purchase_price_tax,
+        t.quantity as quantity_temp,
+        t.free_flag,
+        IFNULL(IFNULL(sum(t4.quantity),sum(t5.quantity)),0) as sum_quantity_yrk_temp,
+        sum(IFNULL(IFNULL(t4.quantity,0)*t4.price, IFNULL(t5.quantity,0)*t5.price)) as sum_price_tax_yrk_temp,
+        t10.vendor_sid,
+        t10.product_season_sid,
+        t10.raw_material_mode,
+        t10.purchase_mode,
+        t10.business_channel,
+        t10.document_type,
+        t14.name as business_type_name
+        from
+        s_pur_purchase_order_item t
+        left join s_del_delivery_note_item t3 on t3.purchase_order_item_sid=t.purchase_order_item_sid
+        left join
+        (
+        select t4.quantity,t4.price,t4.refer_document_item_sid
+        from
+        s_inv_inventory_document_item t4
+        left join s_inv_inventory_document m4 on m4.inventory_document_sid=t4.inventory_document_sid
+        where m4.document_type='CG' and m4.handle_status='5'
+        )t4 on t4.refer_document_item_sid=t3.delivery_note_item_sid
+        left join
+        (
+        select t5.quantity,t5.price,t5.refer_document_item_sid
+        from
+        s_inv_inventory_document_item t5
+        left join s_inv_inventory_document m5 on m5.inventory_document_sid=t5.inventory_document_sid
+        where m5.document_type='CG' and m5.handle_status='5'
+        ) t5 on t5.refer_document_item_sid=t.purchase_order_item_sid
+        LEFT JOIN s_pur_purchase_order t10 ON t10.purchase_order_sid = t.purchase_order_sid
+        left join s_con_bu_type_purchase_order t14 on t14.code = t10.business_type
+        <where>
+            <if test="productSeasonSidList != null and productSeasonSidList.length > 0">
+                and t10.product_season_sid in (<foreach collection="productSeasonSidList" separator="," item="item">#{item}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length > 0">
+                and t10.vendor_sid in (<foreach collection="vendorSidList" separator="," item="item">#{item}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length > 0">
+                and t10.handle_status in (<foreach collection="handleStatusList" separator="," item="item">#{item}</foreach>)
+            </if>
+        </where>
+        group by t.purchase_order_item_sid
+    </sql>
+    <select id="getTotalItem" parameterType="com.platform.ems.domain.dto.request.OrderTotalRequest" resultType="com.platform.ems.domain.dto.response.OrderTotalResponse">
+        select
+        n.*,
+        sum(IFNULL(n.sum_quantity_yrk_temp,0) *if(n.free_flag like 'Y',0,n.purchase_price_tax)) as inv_total_price,
+        sum(IFNULL(n.quantity_temp,0) *if(n.free_flag like 'Y',0,n.purchase_price_tax)) as order_total_price,
+        sum(n.quantity_temp) as order_total_quantity
+        from
+        (<include refid="getTotalItemVo"/> ) n
+        group by
+        n.raw_material_mode,
+        n.purchase_mode,
+        n.business_channel
+    </select>
+    <sql id="getDeliveryProcessVo">
+        SELECT
+        t.purchase_order_item_sid,
+        t.contract_date,
+        t.purchase_price_tax,
+        t.quantity as quantity_temp,
+        t.free_flag,
+        t.material_name,
+        t.material_sid,
+        t.sku1_sid,
+        t.sku2_sid,
+        t1.material_code,
+        IFNULL(IFNULL(sum(t4.quantity),sum(t5.quantity)),0) as sum_quantity_yrk_temp,
+        sum(IFNULL(IFNULL(t4.quantity,0)*t4.price, IFNULL(t5.quantity,0)*t5.price)) as sum_price_tax_yrk_temp,
+        t7.name as unit_base_name,
+        t10.vendor_sid,
+        if(t.toexpire_days is null,ifnull(t8.toexpire_days_cgdd,t9.toexpire_days_cgdd),t.toexpire_days) as toexpire_days,
+        t10.product_season_sid,
+        t11.short_name as vendor_name,
+        t12.product_season_name,
+        t12.product_season_code
+        from
+        s_pur_purchase_order_item t
+        LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+        left join s_del_delivery_note_item t3 on t3.purchase_order_item_sid=t.purchase_order_item_sid
+        left join
+        (
+        select t4.price_quantity as quantity,t4.price,t4.refer_document_item_sid
+        from
+        s_inv_inventory_document_item t4
+        left join s_inv_inventory_document m4 on m4.inventory_document_sid=t4.inventory_document_sid
+        where m4.document_type='CG' and m4.handle_status='B'
+        )t4 on t4.refer_document_item_sid=t3.delivery_note_item_sid
+        left join
+        (
+        select t5.price_quantity as quantity,t5.price,t5.refer_document_item_sid
+        from
+        s_inv_inventory_document_item t5
+        left join s_inv_inventory_document m5 on m5.inventory_document_sid=t5.inventory_document_sid
+        where m5.document_type='CG' and m5.handle_status='B'
+        ) t5 on t5.refer_document_item_sid=t.purchase_order_item_sid
+        LEFT JOIN s_con_measure_unit t7 ON t7.CODE = t.unit_base
+        LEFT JOIN s_sys_default_setting_client t8 ON t1.client_id = t8.client_id
+        LEFT JOIN s_sys_default_setting_system t9 ON t9.client_id = '10000'
+        LEFT JOIN s_pur_purchase_order t10 ON t10.purchase_order_sid = t.purchase_order_sid
+        LEFT JOIN s_bas_vendor t11 ON t11.vendor_sid = t10.vendor_sid
+        LEFT JOIN s_bas_product_season t12 ON t12.product_season_sid = t10.product_season_sid
+        <where>
+            t10.handle_status='5'
+            and t10.is_return_goods='N'
+            <if test="contractDateBeginTime != null and contractDateBeginTime!=''">
+                and date_format(t.contract_date,'%y%m%d') &gt;= date_format(#{contractDateBeginTime},'%y%m%d')
+            </if>
+            <if test="contractDateEndTime != null and contractDateEndTime!=''">
+                and date_format(t.contract_date,'%y%m%d') &lt;= date_format(#{contractDateEndTime},'%y%m%d')
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length > 0">
+                and t10.product_season_sid in (<foreach collection="productSeasonSidList" separator="," item="item">#{item}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length > 0">
+                and t10.vendor_sid in (<foreach collection="vendorSidList" separator="," item="item">#{item}</foreach>)
+            </if>
+        </where>
+        group by t.purchase_order_item_sid
+    </sql>
+    <sql id="getDeliveryProcessVo2">
+        SELECT
+        t.free_flag,
+        t.material_name,
+        t.sku1_sid,
+        t.sku2_sid,
+        t.material_sid,
+        t.contract_date,
+        t1.material_code,
+        t10.vendor_sid,
+        if(t.toexpire_days is null,ifnull(t8.toexpire_days_cgdd,t9.toexpire_days_cgdd),t.toexpire_days) as toexpire_days,
+        t10.product_season_sid,
+        COUNT(DISTINCT t1.material_code) as count
+        from
+        s_pur_purchase_order_item t
+        LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+        LEFT JOIN s_sys_default_setting_client t8 ON t1.client_id = t8.client_id
+        LEFT JOIN s_sys_default_setting_system t9 ON t9.client_id = '10000'
+        LEFT JOIN s_pur_purchase_order t10 ON t10.purchase_order_sid = t.purchase_order_sid
+        <where>
+            t10.handle_status='5'
+            and t10.is_return_goods='N'
+            and
+            datediff(t.contract_date, NOW()) &lt;= if(t.toexpire_days is null,ifnull(t8.toexpire_days_cgdd,t9.toexpire_days_cgdd),t.toexpire_days)
+            and 0&lt;=datediff(t.contract_date, NOW())
+            <if test="contractDateBeginTime != null and contractDateBeginTime!=''">
+                and date_format(t.contract_date,'%y%m%d') &gt;= date_format(#{contractDateBeginTime},'%y%m%d')
+            </if>
+            <if test="contractDateEndTime != null and contractDateEndTime!=''">
+                and date_format(t.contract_date,'%y%m%d') &lt;= date_format(#{contractDateEndTime},'%y%m%d')
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length > 0">
+                and t10.product_season_sid in (<foreach collection="productSeasonSidList" separator="," item="item">#{item}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length > 0">
+                and t10.vendor_sid in (<foreach collection="vendorSidList" separator="," item="item">#{item}</foreach>)
+            </if>
+        </where>
+        group by t10.product_season_sid,t10.vendor_sid
+    </sql>
+    <sql id="getDeliveryProcessVo3">
+        SELECT
+        t.free_flag,
+        t1.material_name,
+        t.sku1_sid,
+        t.sku2_sid,
+        t.material_sid,
+        t.contract_date,
+        t1.material_code,
+        t10.vendor_sid,
+        if(t.toexpire_days is null,ifnull(t8.toexpire_days_cgdd,t9.toexpire_days_cgdd),t.toexpire_days) as toexpire_days,
+        t10.product_season_sid,
+        COUNT(DISTINCT t1.material_code) as count
+        from
+        s_pur_purchase_order_item t
+        LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+        LEFT JOIN s_sys_default_setting_client t8 ON t1.client_id = t8.client_id
+        LEFT JOIN s_sys_default_setting_system t9 ON t9.client_id = '10000'
+        LEFT JOIN s_pur_purchase_order t10 ON t10.purchase_order_sid = t.purchase_order_sid
+        <where>
+            t10.handle_status='5'
+            and t10.is_return_goods='N'
+            and
+            date_format(t.contract_date,'%y%m%d') &lt;date_format(NOW(),'%y%m%d')
+            <if test="contractDateBeginTime != null and contractDateBeginTime!=''">
+                and date_format(t.contract_date,'%y%m%d') &gt;= date_format(#{contractDateBeginTime},'%y%m%d')
+            </if>
+            <if test="contractDateEndTime != null and contractDateEndTime!=''">
+                and date_format(t.contract_date,'%y%m%d') &lt;= date_format(#{contractDateEndTime},'%y%m%d')
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length > 0">
+                and t10.product_season_sid in (<foreach collection="productSeasonSidList" separator="," item="item">#{item}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length > 0">
+                and t10.vendor_sid in (<foreach collection="vendorSidList" separator="," item="item">#{item}</foreach>)
+            </if>
+        </where>
+        group by t10.product_season_sid,t10.vendor_sid
+    </sql>
+    <select id="getDeliveryProcess" parameterType="com.platform.ems.domain.dto.request.OrderProgressRequest" resultType="com.platform.ems.domain.dto.response.OrderProgressResponse">
+        select
+        n.*,
+        sum(if(datediff(n.contract_date, NOW()) &lt;= n.toexpire_days and 0&lt;=datediff(n.contract_date, NOW()),IFNULL(n.quantity_temp-n.sum_quantity_yrk_temp,0) ,0)) as jjdq_quantity,
+        sum(if(date_format(n.contract_date,'%y%m%d') &lt;date_format(NOW(),'%y%m%d'),IFNULL(n.quantity_temp-n.sum_quantity_yrk_temp,0),0)) as yyq_quantity,
+        sum(if(datediff(n.contract_date, NOW()) &lt;= n.toexpire_days and 0&lt;=datediff(n.contract_date, NOW()),IFNULL(n.quantity_temp-n.sum_quantity_yrk_temp,0) ,0)*if(n.free_flag like 'Y',0,n.purchase_price_tax)) as jjdq_price_tax,
+        sum(if(date_format(n.contract_date,'%y%m%d') &lt;date_format(NOW(),'%y%m%d'),IFNULL(n.quantity_temp-n.sum_quantity_yrk_temp,0),0)*if(n.free_flag like 'Y',0,n.purchase_price_tax)) as yyq_price_tax,
+        IFNULL(n2.count,0) as jjdq_count,
+        IFNULL(n3.count,0) as yyq_count
+        from
+        (<include refid="getDeliveryProcessVo"/> ) n
+        left join (<include refid="getDeliveryProcessVo2"/>) n2 on
+        n2.product_season_sid=n.product_season_sid and
+        n2.vendor_sid=n.vendor_sid
+        left join (<include refid="getDeliveryProcessVo3"/>) n3 on
+        n3.product_season_sid=n.product_season_sid and
+        n3.vendor_sid=n.vendor_sid
+        group by n.product_season_sid,n.vendor_sid
+        order by n.product_season_code desc,n.vendor_sid desc
+    </select>
+    <sql id="getDeliveryProcessItemVo">
+        SELECT
+        t.purchase_order_item_sid,
+        t.contract_date,
+        t.purchase_price_tax,
+        t.quantity as quantity_temp,
+        t.free_flag,
+        t.material_name,
+        t.material_sid,
+        t.sku1_sid,
+        t.sku2_sid,
+        t1.material_code,
+        t1.picture_path,
+        IFNULL(IFNULL(sum(t4.quantity),sum(t5.quantity)),0) as sum_quantity_yrk_temp,
+        sum(IFNULL(IFNULL(t4.quantity,0)*t4.price, IFNULL(t5.quantity,0)*t5.price)) as sum_price_tax_yrk_temp,
+        t7.name as unit_base_name,
+        t10.vendor_sid,
+        if(t.toexpire_days is null,ifnull(t8.toexpire_days_cgdd,t9.toexpire_days_cgdd),t.toexpire_days) as toexpire_days,
+        t10.product_season_sid,
+        t11.sku_name as sku1_name,
+        t12.sku_name as sku2_name,
+        t13.short_name as vendor_name,
+        t14.product_season_name
+        from
+        s_pur_purchase_order_item t
+        LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+        left join s_del_delivery_note_item t3 on t3.purchase_order_item_sid=t.purchase_order_item_sid
+        left join
+        (
+        select t4.price_quantity as quantity,t4.price,t4.refer_document_item_sid
+        from
+        s_inv_inventory_document_item t4
+        left join s_inv_inventory_document m4 on m4.inventory_document_sid=t4.inventory_document_sid
+        where m4.document_type='CG' and m4.handle_status='B'
+        )t4 on t4.refer_document_item_sid=t3.delivery_note_item_sid
+        left join
+        (
+        select t5.price_quantity as quantity,t5.price,t5.refer_document_item_sid
+        from
+        s_inv_inventory_document_item t5
+        left join s_inv_inventory_document m5 on m5.inventory_document_sid=t5.inventory_document_sid
+        where m5.document_type='CG' and m5.handle_status='B'
+        ) t5 on t5.refer_document_item_sid=t.purchase_order_item_sid
+        LEFT JOIN s_con_measure_unit t7 ON t7.CODE = t.unit_base
+        LEFT JOIN s_sys_default_setting_client t8 ON t1.client_id = t8.client_id
+        LEFT JOIN s_sys_default_setting_system t9 ON t9.client_id = '10000'
+        LEFT JOIN s_pur_purchase_order t10 ON t10.purchase_order_sid = t.purchase_order_sid
+        LEFT JOIN s_bas_sku t11 ON t11.sku_sid = t.sku1_sid
+        LEFT JOIN s_bas_sku t12 ON t12.sku_sid = t.sku2_sid
+        LEFT JOIN s_bas_vendor t13 ON t13.vendor_sid = t10.vendor_sid
+        LEFT JOIN s_bas_product_season t14 ON t14.product_season_sid = t10.product_season_sid
+        <where>
+            t10.handle_status='5'
+            and t10.is_return_goods='N'
+            <if test="contractDateBeginTime != null and contractDateBeginTime!=''">
+                and date_format(t.contract_date,'%y%m%d') &gt;= date_format(#{contractDateBeginTime},'%y%m%d')
+            </if>
+            <if test="contractDateEndTime != null and contractDateEndTime!=''">
+                and date_format(t.contract_date,'%y%m%d') &lt;= date_format(#{contractDateEndTime},'%y%m%d')
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length > 0">
+                and t10.product_season_sid in (<foreach collection="productSeasonSidList" separator="," item="item">#{item}</foreach>)
+            </if>
+            <if test="productSeasonSid != null and productSeasonSid!=''">
+                and t10.product_season_sid =#{productSeasonSid}
+            </if>
+            <if test="vendorSid != null and vendorSid!=''">
+                and t10.vendor_sid =#{vendorSid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length > 0">
+                and t10.vendor_sid in (<foreach collection="vendorSidList" separator="," item="item">#{item}</foreach>)
+            </if>
+        </where>
+        group by t.purchase_order_item_sid
+    </sql>
+    <select id="getDeliveryProcessItem" parameterType="com.platform.ems.domain.dto.request.OrderProgressRequest" resultType="com.platform.ems.domain.dto.response.OrderProgressItemResponse">
+        select
+        n.*,
+        sum(if(datediff(n.contract_date, NOW()) &lt;= n.toexpire_days and 0&lt;=datediff(n.contract_date, NOW()),IFNULL(n.quantity_temp-n.sum_quantity_yrk_temp,0) ,0)) as jjdq_quantity,
+        sum(if(date_format(n.contract_date,'%y%m%d') &lt;date_format(NOW(),'%y%m%d'),IFNULL(n.quantity_temp-n.sum_quantity_yrk_temp,0),0)) as yyq_quantity,
+        sum(if(datediff(n.contract_date, NOW()) &lt;= n.toexpire_days and 0&lt;=datediff(n.contract_date, NOW()),IFNULL(n.quantity_temp-n.sum_quantity_yrk_temp,0) ,0)*if(n.free_flag like 'Y',0,n.purchase_price_tax)) as jjdq_price_tax,
+        sum(if(date_format(n.contract_date,'%y%m%d') &lt;date_format(NOW(),'%y%m%d'),IFNULL(n.quantity_temp-n.sum_quantity_yrk_temp,0),0)*if(n.free_flag like 'Y',0,n.purchase_price_tax)) as yyq_price_tax
+        from
+        (<include refid="getDeliveryProcessItemVo"/> ) n
+        group by
+        n.material_sid,
+        n.sku1_sid,
+        n.sku2_sid,
+        n.contract_date
+    </select>
+    <sql id="getProcessHeadVo">
+        SELECT
+        t.purchase_order_item_sid,
+        t.contract_date,
+        t.purchase_price_tax,
+        t.quantity as quantity_temp,
+        t.material_name,
+        t1.material_code,
+        IFNULL(IFNULL(sum(t4.quantity),sum(t5.quantity)),0) as sum_quantity_yrk_temp,
+        sum(IFNULL(IFNULL(t4.quantity,0)*t4.price, IFNULL(t5.quantity,0)*t5.price)) as sum_price_tax_yrk_temp,
+        t7.name as unit_base_name,
+        MAX(if(t.toexpire_days is null,ifnull(t8.toexpire_days_scdd,t9.toexpire_days_scdd),t.toexpire_days)) AS toexpire_days,
+        CASE
+        WHEN t.contract_date &lt; NOW() THEN
+        'R'
+        WHEN  datediff(t.contract_date, NOW()) &lt;= MAX(if(t.toexpire_days is null,ifnull(t8.toexpire_days_scdd,t9.toexpire_days_scdd),t.toexpire_days)) THEN
+        'Y'
+        ELSE 'G'
+        END as warning
+        FROM
+        s_pur_purchase_order_item t
+        LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+        left join s_del_delivery_note_item t3 on t3.purchase_order_item_sid=t.purchase_order_item_sid
+        left join
+        (
+        select t4.quantity,t4.price,t4.refer_document_item_sid
+        from
+        s_inv_inventory_document_item t4
+        left join s_inv_inventory_document m4 on m4.inventory_document_sid=t4.inventory_document_sid
+        where m4.document_type='CG' and m4.handle_status='B'
+        )t4 on t4.refer_document_item_sid=t3.delivery_note_item_sid
+        left join
+        (
+        select t5.quantity,t5.price,t5.refer_document_item_sid
+        from
+        s_inv_inventory_document_item t5
+        left join s_inv_inventory_document m5 on m5.inventory_document_sid=t5.inventory_document_sid
+        where m5.document_type='CG' and m5.handle_status='B'
+        ) t5 on t5.refer_document_item_sid=t.purchase_order_item_sid
+        LEFT JOIN s_con_measure_unit t7 ON t7.CODE = t.unit_base
+        LEFT JOIN s_sys_default_setting_client t8 ON t1.client_id = t8.client_id
+        LEFT JOIN s_sys_default_setting_system t9 ON t9.client_id = '10000'
+        LEFT JOIN s_pur_purchase_order t10 ON t10.purchase_order_sid = t.purchase_order_sid
+        <where>
+            t10.handle_status='5'
+            <if test="materialCode != null and materialCode!=''">
+                and t1.material_code like concat('%', #{materialCode}, '%')
+            </if>
+            <if test="contractDateBeginTime != null and contractDateBeginTime!=''">
+                and date_format(t.contract_date,'%y%m%d') &gt;= date_format(#{contractDateBeginTime},'%y%m%d')
+            </if>
+            <if test="contractDateEndTime != null and contractDateEndTime!=''">
+                and date_format(t.contract_date,'%y%m%d') &lt;= date_format(#{contractDateEndTime},'%y%m%d')
+            </if>
+            <if test="buyerList != null and buyerList.length > 0">
+                and t10.buyer in (<foreach collection="buyerList" separator="," item="item">#{item}</foreach>)
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length > 0">
+                and t1.material_type in (<foreach collection="materialTypeList" separator="," item="item">#{item}</foreach>)
+            </if>
+        </where>
+        group by t.purchase_order_item_sid
+    </sql>
+    <sql id="getProcessHeadVo2">
+        SELECT
+        t.purchase_order_item_sid,
+        sum(t6.quantity) as invoice_quantity_temp,
+        sum(t6.currency_amount_tax) as invoice_currency_amount_tax_temp
+        FROM
+        s_pur_purchase_order_item t
+        LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+        left join s_fin_purchase_invoice_item t6 on t6.purchase_order_sid=t.purchase_order_sid and t6.item_num=t.item_num
+        LEFT JOIN s_pur_purchase_order t10 ON t10.purchase_order_sid = t.purchase_order_sid
+        <where>
+            t10.handle_status='5'
+            <if test="materialCode != null and materialCode!=''">
+                and t1.material_code like concat('%', #{materialCode}, '%')
+            </if>
+            <if test="contractDateBeginTime != null and contractDateBeginTime!=''">
+                and date_format(t.contract_date,'%y%m%d') &gt;= date_format(#{contractDateBeginTime},'%y%m%d')
+            </if>
+            <if test="contractDateEndTime != null and contractDateEndTime!=''">
+                and date_format(t.contract_date,'%y%m%d') &lt;= date_format(#{contractDateEndTime},'%y%m%d')
+            </if>
+            <if test="buyerList != null and buyerList.length > 0">
+                and t10.buyer in (<foreach collection="buyerList" separator="," item="item">#{item}</foreach>)
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length > 0">
+                and t1.material_type in (<foreach collection="materialTypeList" separator="," item="item">#{item}</foreach>)
+            </if>
+        </where>
+        group by t.purchase_order_item_sid
+    </sql>
+    <select id="getProcessHead" parameterType="com.platform.ems.domain.dto.request.PurchaseOrderProgressRequest" resultType="com.platform.ems.domain.dto.response.PurchaseOrderProgressResponse">
+        select
+        n.*,
+        sum(n.quantity_temp) as quantity,
+        sum(IFNULL(n.quantity_temp,0)*IFNULL(n.purchase_price_tax,0)) as price_tax,
+        sum(n.sum_quantity_yrk_temp) as sum_quantity_yrk,
+        sum(n.sum_price_tax_yrk_temp) as sum_price_tax_yrk,
+        sum(n2.invoice_quantity_temp) as invoice_quantity,
+        sum(n2.invoice_currency_amount_tax_temp) as invoice_currency_amount_tax
+        from
+        (<include refid="getProcessHeadVo"/> ) n
+        left join (<include refid="getProcessHeadVo2"/>) n2 on n.purchase_order_item_sid=n2.purchase_order_item_sid
+        group by n.material_code , n.contract_date
+    </select>
+    <sql id="getProcessItemVo">
+        SELECT
+        t.purchase_order_item_sid,
+        t.purchase_price_tax,
+        t.quantity,
+        t.contract_date,
+        t.item_num,
+        t.item_status,
+        t.material_name,
+        t1.material_code,
+        IFNULL(t.quantity,0)*IFNULL(t.purchase_price_tax,0) as price_tax,
+        IFNULL(IFNULL(sum(t4.quantity),sum(t5.quantity)),0) as sum_quantity_yrk,
+        IFNULL(sum(IFNULL(t4.quantity,0)*t4.price), sum(IFNULL(t5.quantity,0)*t5.price)) as sum_price_tax_yrk,
+        t7.name as unit_base_name,
+        if(t.toexpire_days is null,ifnull(t8.toexpire_days_scdd,t9.toexpire_days_scdd),t.toexpire_days) AS toexpire_days,
+        t10.sku_name AS sku1_name,
+        t11.sku_name AS sku2_name,
+        t12.purchase_order_code,
+        t12.buyer,
+        t13.NAME AS unit_price_name,
+        t14.vendor_name,
+        t15.name as material_type_name,
+        t16.nick_name as buyer_name
+        FROM
+        s_pur_purchase_order_item t
+        LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+        left join s_del_delivery_note_item t3 on t3.purchase_order_item_sid=t.purchase_order_item_sid
+        left join
+        (
+        select t4.quantity,t4.price,t4.refer_document_item_sid
+        from
+        s_inv_inventory_document_item t4
+        left join s_inv_inventory_document m4 on m4.inventory_document_sid=t4.inventory_document_sid
+        where m4.document_type='CG' and m4.handle_status='5'
+        )t4 on t4.refer_document_item_sid=t3.delivery_note_item_sid
+        left join
+        (
+        select t5.quantity,t5.price,t5.refer_document_item_sid
+        from
+        s_inv_inventory_document_item t5
+        left join s_inv_inventory_document m5 on m5.inventory_document_sid=t5.inventory_document_sid
+        where m5.document_type='CG' and m5.handle_status='5'
+        ) t5 on t5.refer_document_item_sid=t.purchase_order_item_sid
+        LEFT JOIN s_con_measure_unit t7 ON t7.CODE = t.unit_base
+        LEFT JOIN s_sys_default_setting_client t8 ON t1.client_id = t8.client_id
+        LEFT JOIN s_sys_default_setting_system t9 ON t9.client_id = '10000'
+        LEFT JOIN s_bas_sku t10 ON t10.sku_sid = t.sku1_sid
+        LEFT JOIN s_bas_sku t11 ON t11.sku_sid = t.sku2_sid
+        LEFT JOIN s_pur_purchase_order t12 ON t12.purchase_order_sid = t.purchase_order_sid
+        LEFT JOIN s_con_measure_unit t13 ON t13.CODE = t.unit_price and t13.client_id=t.client_id
+        LEFT JOIN s_bas_vendor t14 ON t14.vendor_sid = t12.vendor_sid
+        LEFT JOIN s_con_material_type t15 ON t15.code = t1.material_type
+        LEFT JOIN sys_user t16 ON t12.buyer = t16.user_name
+        <where>
+            t12.handle_status='5'
+            <if test="materialCode != null and materialCode!=''">
+                and t1.material_code like concat('%', #{materialCode}, '%')
+            </if>
+            <if test="contractDateQuery != null and contractDateQuery != ''">
+                and date_format(t.contract_date,'%y%m%d') =date_format(#{contractDateQuery},'%y%m%d')
+            </if>
+            <if test="contractDateQuery == null and contractDateQuery == null">
+                and t.contract_date is null
+            </if>
+            <if test="buyerList != null and buyerList.length > 0">
+                and t12.buyer in (<foreach collection="buyerList" separator="," item="item">#{item}</foreach>)
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length > 0">
+                and t1.material_type in (<foreach collection="materialTypeList" separator="," item="item">#{item}</foreach>)
+            </if>
+        </where>
+        group by t.purchase_order_item_sid
+    </sql>
+    <sql id="getProcessItemVo2">
+        SELECT
+        t.purchase_order_item_sid,
+        sum(t6.quantity) as invoice_quantity,
+        sum(t6.currency_amount_tax) as invoice_currency_amount_tax
+        FROM
+        s_pur_purchase_order_item t
+        LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+        left join s_fin_purchase_invoice_item t6 on t6.purchase_order_sid=t.purchase_order_sid and t6.item_num=t.item_num
+        LEFT JOIN s_pur_purchase_order t2 ON t2.purchase_order_sid = t.purchase_order_sid
+        <where>
+            t2.handle_status='5'
+            <if test="materialCode != null and materialCode!=''">
+                and t1.material_code like concat('%', #{materialCode}, '%')
+            </if>
+            <if test="contractDateQuery != null and contractDateQuery != ''">
+                and date_format(t.contract_date,'%y%m%d') =date_format(#{contractDateQuery},'%y%m%d')
+            </if>
+            <if test="contractDateQuery == null and contractDateQuery != ''">
+                and t.contract_date is null
+            </if>
+            <if test="buyerList != null and buyerList.length > 0">
+                and t2.buyer in (<foreach collection="buyerList" separator="," item="item">#{item}</foreach>)
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length > 0">
+                and t1.material_type in (<foreach collection="materialTypeList" separator="," item="item">#{item}</foreach>)
+            </if>
+        </where>
+        group by t.purchase_order_item_sid
+    </sql>
+    <select id="getProcessItem" parameterType="com.platform.ems.domain.dto.request.PurchaseOrderProgressRequest" resultType="com.platform.ems.domain.dto.response.PurchaseOrderProgressItemResponse">
+        select
+        n.*,
+        n2.invoice_quantity,
+        n2.invoice_currency_amount_tax
+        from
+        (<include refid="getProcessItemVo"/> ) n
+        left join (<include refid="getProcessItemVo2"/>) n2 on n.purchase_order_item_sid=n2.purchase_order_item_sid
+        order by n.sku1_name,n.sku2_name,n.vendor_name,n.purchase_order_code
+    </select>
+    <sql id="getOutPurPurchaseOrderItemVo">
+       SELECT
+	t.purchase_order_item_sid,
+	t.material_sid,
+	t1.material_code,
+	t.sku1_sid as material_sku1_sid,
+	t2.sku_name AS material_sku1_name,
+	t2.sku_code AS material_sku1_code,
+	t3.sku_name AS material_sku2_name,
+	t3.sku_code as material_sku2_code,
+	t.sku2_sid as material_sku2_sid,
+	t.quantity,
+	t.unit_base,
+	t.product_sid,
+	t.product_code,
+	t8.material_name as product_name,
+	t.product_sku1_sid,
+	t.product_sku2_sid,
+	t10.sku_name AS product_sku1_name,
+	t11.sku_name AS product_sku2_name,
+	t.data_source_sys,
+	t7.name as unit_base_name
+FROM
+	s_pur_purchase_order_item t
+	LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+	LEFT JOIN s_bas_sku t2 ON t2.sku_sid = t.sku1_sid
+	LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t.sku2_sid
+	LEFT JOIN s_con_measure_unit t7 ON t7.code = t.unit_base
+	LEFT JOIN s_bas_material t8 ON t8.material_sid = t.product_sid
+	LEFT JOIN s_bas_sku t10 ON t10.sku_sid = t.product_sku1_sid
+	LEFT JOIN s_bas_sku t11 ON t11.sku_sid = t.product_sku2_sid
+    </sql>
+    <select id="selectPurPurchaseOrderItemById" parameterType="Long" resultMap="PurPurchaseOrderItemResult">
+        <include refid="selectPurPurchaseOrderItemVo"/>
+        where t.purchase_order_item_sid = #{purchaseOrderItemSid}
+    </select>
+
+    <select id="getOutPurPurchaseOrderItemById" parameterType="Long" resultType="com.platform.ems.domain.dto.response.PurPurchaseOrderItemOutResponse">
+        <include refid="getOutPurPurchaseOrderItemVo"/>
+        where t.purchase_order_sid = #{purchaseOrderSid}
+    </select>
+
+    <select id="judgeOrderAndMaterial" parameterType="com.platform.ems.domain.PurPurchaseOrderItem" resultType="Long">
+        select  t.purchase_order_item_sid from s_pur_purchase_order_item  t
+        left join s_pur_purchase_order t2 on t2.purchase_order_sid=t.purchase_order_sid
+        <where>
+            <if test="materialSid != null and materialSid != ''">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length > 0">
+                and t2.handle_status in (<foreach collection="handleStatusList" separator="," item="item">#{item}</foreach>)
+            </if>
+            <if test="skuSid != null and skuSid != ''">
+                and (t.sku1_sid = #{skuSid} or t.sku2_sid = #{skuSid})
+            </if>
+        </where>
+    </select>
+    <select id="selectPurPurchaseOrderItemList" parameterType="com.platform.ems.domain.PurPurchaseOrderItem"
+            resultMap="PurPurchaseOrderItemResult">
+        <include refid="selectPurPurchaseOrderItemVo"/>
+        <where>
+            <if test="purchaseOrderItemSid != null ">
+                and t.purchase_order_item_sid in
+                (<foreach collection="purchaseOrderItemSid" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="purchaseOrderSid != null ">
+                and t.purchase_order_sid = #{purchaseOrderSid}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid in
+                (<foreach collection="materialSid" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid in
+                (<foreach collection="sku1Sid" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid in
+                (<foreach collection="sku2Sid" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="barcodeSid != null ">
+                and t.barcode_sid in
+                (<foreach collection="barcodeSid" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="unitBase != null  and unitBase != ''">
+                and (<foreach collection="unitBase.split(';')" item="item" separator=" or ">t.unit_base like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchasePrice != null ">
+                and t.purchase_price = #{purchasePrice}
+            </if>
+            <if test="purchasePriceTax != null ">
+                and t.purchase_price_tax = #{purchasePriceTax}
+            </if>
+            <if test="taxRate != null ">
+                and t.tax_rate = #{taxRate}
+            </if>
+            <if test="discountType != null  and discountType != ''">
+                and (<foreach collection="discountType.split(';')" item="item" separator=" or ">t.discount_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="currency != null  and currency != ''">
+                and (<foreach collection="currency.split(';')" item="item" separator=" or ">t.currency like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="freeFlag != null  and freeFlag != ''">
+                and (<foreach collection="freeFlag.split(';')" item="item" separator=" or ">t.free_flag like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="contractDate != null ">
+                and t.contract_date = #{contractDate}
+            </if>
+            <if test="storehouseSid != null ">
+                and t.storehouse_sid in
+                (<foreach collection="storehouseSid" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="storehouseLocationSid != null ">
+                and t.storehouse_location_sid in
+                (<foreach collection="storehouseLocationSid" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="deliveryStatus != null  and deliveryStatus != ''">
+                and (<foreach collection="deliveryStatus.split(';')" item="item" separator=" or ">t.delivery_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseRequireSid != null ">
+                and t.purchase_require_sid in
+                (<foreach collection="purchaseRequireSid" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="purchaseRequireItemSid != null ">
+                and t.purchase_require_item_sid in
+                (<foreach collection="purchaseRequireItemSid" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="referDocCategory != null  and referDocCategory != ''">
+                and (<foreach collection="referDocCategory.split(';')" item="item" separator=" or ">t.refer_doc_category
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="referDocSid != null ">
+                and t.refer_doc_sid =#{referDocSid}
+            </if>
+            <if test="referDocCode != null  and referDocCode != ''">
+                and (<foreach collection="referDocCode.split(';')" item="item" separator=" or ">t.refer_doc_code like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="referDocItemSid != null ">
+                and t.refer_doc_item_sid =#{referDocItemSid}
+            </if>
+            <if test="referDocItemNum != null ">
+                and t.refer_doc_item_num =#{referDocItemNum}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator=" or ">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator=" or ">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator=" or ">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialName != null  and materialName != ''">and
+                t.material_name like concat('%', #{materialName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_purchase_order_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            purchase_order_item_sid,
+            purchase_order_sid,
+            material_sid,
+            sku1_sid,
+            sku2_sid,
+            barcode_sid,
+            quantity,
+            item_num,
+            item_status,
+            unit_base,
+            unit_price,
+            purchase_price,
+            unit_conversion_rate,
+            purchase_price_tax,
+            tax_rate,
+            discount_type,
+            currency,
+            free_flag,
+            contract_date,
+            storehouse_sid,
+            storehouse_location_sid,
+            delivery_status,
+            purchase_require_sid,
+            purchase_require_item_sid,
+            sales_order_sid,
+            remark,
+            sales_order_code,
+            sales_order_item_sid,
+            creator_account,
+            sales_order_item_num,
+            create_date,
+            manufacture_order_sid,
+            updater_account,
+            manufacture_order_code,
+            update_date,
+            manufacture_order_product_sid,
+            confirmer_account,
+            manufacture_order_product_num,
+            cancel_quantity,
+            confirm_date,
+            data_source_sys,
+            initial_quantity,
+            product_sid,
+            material_name,
+            product_sku1_sid,
+            product_sku2_sid,
+            product_barcode_sid,
+            refer_doc_category,
+            refer_doc_sid,
+            refer_doc_code,
+            refer_doc_item_sid,
+            refer_doc_item_num,
+            require_doc_sid,
+            require_doc_code,
+            require_doc_item_sid,
+            require_doc_item_num,
+            purchase_require_code,
+            purchase_require_item_num,
+            purchase_order_code,
+            accept_status,
+            product_quantity,
+            kuan_xiadan_date,
+            product_contract_date,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.purchaseOrderItemSid},
+                #{item.purchaseOrderSid},
+                #{item.materialSid},
+                #{item.sku1Sid},
+                #{item.sku2Sid},
+                #{item.barcodeSid},
+                #{item.quantity},
+                #{item.itemNum},
+                #{item.itemStatus},
+                #{item.unitBase},
+                #{item.unitPrice},
+                #{item.purchasePrice},
+                #{item.unitConversionRate},
+                #{item.purchasePriceTax},
+                #{item.taxRate},
+                #{item.discountType},
+                #{item.currency},
+                #{item.freeFlag},
+                #{item.contractDate},
+                #{item.storehouseSid},
+                #{item.storehouseLocationSid},
+                #{item.deliveryStatus},
+                #{item.purchaseRequireSid},
+                #{item.purchaseRequireItemSid},
+                #{item.salesOrderSid},
+                #{item.remark},
+                #{item.salesOrderCode},
+                #{item.salesOrderItemSid},
+                #{item.creatorAccount},
+                #{item.salesOrderItemNum},
+                #{item.createDate},
+                #{item.manufactureOrderSid},
+                #{item.updaterAccount},
+                #{item.manufactureOrderCode},
+                #{item.updateDate},
+                #{item.manufactureOrderProductSid},
+                #{item.confirmerAccount},
+                #{item.manufactureOrderProductNum},
+                #{item.cancelQuantity},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+                #{item.initialQuantity},
+                #{item.productSid},
+                #{item.materialName},
+                #{item.productSku1Sid},
+                #{item.productSku2Sid},
+                #{item.productBarcodeSid},
+                #{item.referDocCategory},
+                #{item.referDocSid},
+                #{item.referDocCode},
+                #{item.referDocItemSid},
+                #{item.referDocItemNum},
+                #{item.requireDocSid},
+                #{item.requireDocCode},
+                #{item.requireDocItemSid},
+                #{item.requireDocItemNum},
+                #{item.purchaseRequireCode},
+                #{item.purchaseRequireItemNum},
+                #{item.purchaseOrderCode},
+                #{item.acceptStatus},
+                #{item.productQuantity},
+                #{item.kuanXiadanDate},
+                #{item.productContractDate},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <!--更新-->
+
+    <!--更新-->
+
+    <update id="updateAllById">
+
+        update s_pur_purchase_order_item
+
+        <trim prefix="SET" suffixOverrides=",">
+
+            purchase_order_item_sid = #{purchaseOrderItemSid},
+
+            purchase_order_sid = #{purchaseOrderSid},
+
+            material_sid = #{materialSid},
+
+            sku1_sid = #{sku1Sid},
+
+            sku2_sid = #{sku2Sid},
+
+            barcode_sid = #{barcodeSid},
+
+            product_quantity=#{productQuantity},
+
+            material_name = #{materialName},
+
+            quantity = #{quantity},
+
+            unit_base = #{unitBase},
+
+            unit_price = #{unitPrice},
+
+            unit_conversion_rate = #{unitConversionRate},
+
+            purchase_price = #{purchasePrice},
+
+            purchase_price_tax = #{purchasePriceTax},
+
+            tax_rate = #{taxRate},
+
+            discount_type = #{discountType},
+
+            currency = #{currency},
+
+            free_flag = #{freeFlag},
+
+            contract_date = #{contractDate},
+
+            storehouse_sid = #{storehouseSid},
+
+            storehouse_location_sid = #{storehouseLocationSid},
+
+            delivery_status = #{deliveryStatus},
+
+            item_num = #{itemNum},
+
+            item_status = #{itemStatus},
+
+            sales_order_sid = #{salesOrderSid},
+
+            sales_order_code = #{salesOrderCode},
+
+            sales_order_item_sid = #{salesOrderItemSid},
+
+            sales_order_item_num = #{salesOrderItemNum},
+
+            manufacture_order_sid = #{manufactureOrderSid},
+
+            manufacture_order_code = #{manufactureOrderCode},
+
+            manufacture_order_product_sid = #{manufactureOrderProductSid},
+
+            manufacture_order_product_num = #{manufactureOrderProductNum},
+
+            cancel_quantity = #{cancelQuantity},
+
+            initial_quantity = #{initialQuantity},
+
+            product_sid = #{productSid},
+
+            product_sku1_sid = #{productSku1Sid},
+
+            product_sku2_sid = #{productSku2Sid},
+
+            product_barcode_sid = #{productBarcodeSid},
+
+            refer_doc_category = #{referDocCategory},
+
+            refer_doc_sid = #{referDocSid},
+
+            refer_doc_code = #{referDocCode},
+
+            refer_doc_item_sid = #{referDocItemSid},
+
+            refer_doc_item_num = #{referDocItemNum},
+
+            require_doc_sid = #{requireDocSid},
+
+            require_doc_code = #{requireDocCode},
+
+            require_doc_item_sid = #{requireDocItemSid},
+
+            require_doc_item_num = #{requireDocItemNum},
+
+
+            remark = #{remark},
+
+            updater_account = #{updaterAccount},
+
+            update_date = #{updateDate},
+
+            confirmer_account = #{confirmerAccount},
+
+            confirm_date = #{confirmDate},
+
+            data_source_sys = #{dataSourceSys},
+
+            product_code = #{productCode},
+
+            product_codes = #{productCodes},
+
+            product_sku1_names = #{productSku1Names},
+
+            product_sku2_names = #{productSku2Names},
+
+            product_po_codes = #{productPoCodes},
+
+            product_so_codes = #{productSoCodes},
+
+            product_mo_codes = #{productMoCodes},
+
+            new_quantity = #{newQuantity},
+
+            new_purchase_price = #{newPurchasePrice},
+
+            new_purchase_price_tax = #{newPurchasePriceTax},
+
+            new_contract_date = #{newContractDate},
+
+            initial_purchase_price = #{initialPurchasePrice},
+
+            initial_purchase_price_tax = #{initialPurchasePriceTax},
+
+            initial_contract_date = #{initialContractDate},
+
+            in_out_stock_status = #{inOutStockStatus},
+
+            refer_purchase_order_sid = #{referPurchaseOrderSid},
+
+            refer_purchase_order_code = #{referPurchaseOrderCode},
+
+            refer_purchase_order_item_sid = #{referPurchaseOrderItemSid},
+
+            refer_purchase_order_item_num = #{referPurchaseOrderItemNum},
+
+            product_sku1_code = #{productSku1Code},
+
+            product_sku2_code = #{productSku2Code},
+
+            ycl_beiliao_status = #{yclBeiliaoStatus},
+
+            ycl_caigouxiadan_status = #{yclCaigouxiadanStatus},
+
+            ycl_qitao_status = #{yclQitaoStatus},
+
+            ycl_xugou_status = #{yclXugouStatus},
+
+            ycl_qitao_remark = #{yclQitaoRemark},
+
+            jgl_gongliao_status = #{jglGongliaoStatus},
+
+            product_quantity_remark=#{productQuantityRemark},
+            kuan_xiadan_date = #{kuanXiadanDate},
+            product_contract_date = #{productContractDate},
+            product_request_partys=#{productRequestPartys},
+            product_request_bus_type =#{productRequestBusType},
+            initial_tax_rate=#{initialTaxRate},
+            new_tax_rate =#{newTaxRate},
+
+        </trim>
+
+        where purchase_order_item_sid = #{purchaseOrderItemSid}
+
+    </update>
+
+
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_purchase_order_item
+            <trim prefix="SET" suffixOverrides=",">
+                purchase_order_item_sid = #{purchaseOrderItemSid},
+                purchase_order_sid = #{purchaseOrderSid},
+                material_sid = #{materialSid},
+                sku1_sid = #{sku1Sid},
+                sku2_sid = #{sku2Sid},
+                barcode_sid = #{barcodeSid},
+                quantity = #{quantity},
+                item_num = #{itemNum},
+                item_status = #{itemStatus},
+                unit_base = #{unitBase},
+                purchase_unit = #{purchaseUnit},
+                purchase_price = #{purchasePrice},
+                unit_conversion_rate = #{unitConversionRate},
+                purchase_price_tax = #{purchasePriceTax},
+                tax_rate = #{taxRate},
+                discount_type = #{discountType},
+                currency = #{currency},
+                free_flag = #{freeFlag},
+                contract_date = #{contractDate},
+                storehouse_sid = #{storehouseSid},
+                storehouse_location_sid = #{storehouseLocationSid},
+                delivery_status = #{deliveryStatus},
+                purchase_require_sid = #{purchaseRequireSid},
+                purchase_require_item_sid = #{purchaseRequireItemSid},
+                sales_order_sid = #{salesOrderSid},
+                remark = #{remark},
+                sales_order_code = #{salesOrderCode},
+                sales_order_item_sid = #{salesOrderItemSid},
+                sales_order_item_num = #{salesOrderItemNum},
+                manufacture_order_sid = #{manufactureOrderSid},
+                updater_account = #{updaterAccount},
+                manufacture_order_code = #{manufactureOrderCode},
+                update_date = #{updateDate},
+                manufacture_order_product_sid = #{manufactureOrderProductSid},
+                confirmer_account = #{confirmerAccount},
+                manufacture_order_product_num = #{manufactureOrderProductNum},
+                cancel_quantity = #{cancelQuantity},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+                initial_quantity = #{initialQuantity},
+                product_sid = #{productSid},
+                material_name = #{materialName},
+                product_sku1_sid = #{productSku1Sid},
+                product_sku2_sid = #{productSku2Sid},
+                product_barcode_sid = #{productBarcodeSid},
+                refer_doc_category = #{referDocCategory},
+                refer_doc_sid = #{referDocSid},
+                refer_doc_code = #{referDocCode},
+                refer_doc_item_sid = #{referDocItemSid},
+                refer_doc_item_num = #{referDocItemNum},
+                require_doc_sid = #{requireDocSid},
+                require_doc_code = #{requireDocCode},
+                require_doc_item_sid = #{requireDocItemSid},
+                require_doc_item_num = #{requireDocItemNum},
+                purchase_require_code = #{purchaseRequireCode},
+                purchase_require_item_num = #{purchaseRequireItemNum},
+                purchase_order_code = #{purchaseOrderCode},
+                accept_status = #{acceptStatus},
+                kuan_xiadan_date = #{kuanXiadanDate},
+                product_contract_date = #{productContractDate},
+            </trim>
+            where client_id = #{clientId}
+        </foreach>
+    </update>
+
+    <delete id="deletePurPurchaseOrderItemByIds" parameterType="long">
+        delete from s_pur_purchase_order_item where purchase_order_sid in
+        <foreach item="purchaseOrderSid" collection="array" open="(" separator="," close=")">
+            #{purchaseOrderSid}
+        </foreach>
+    </delete>
+
+    <sql id="getItemListVo">
+        SELECT
+	t.client_id,
+	t.purchase_order_item_sid,
+	t.purchase_order_sid,
+	t.material_sid,
+	t.sku1_sid,
+	t.sku2_sid,
+	t.unit_conversion_rate,
+	t.barcode_sid,
+	t.quantity,
+	t.item_num,
+    t.item_status,
+	t.unit_base,
+	t.unit_price,
+	t.purchase_price,
+	t.purchase_price_tax,
+	t.in_out_stock_status,
+	t.tax_rate,
+	t.tax_rate as tax_rate_name,
+	t.discount_type,
+	t.currency,
+	t.free_flag,
+	t.contract_date,
+	t.storehouse_sid,
+	t.storehouse_location_sid,
+	t.delivery_status,
+	t.purchase_require_sid,
+	t.purchase_require_item_sid,
+	t.remark,
+	t.creator_account,
+	t.refer_purchase_order_code,
+	t.create_date,
+	t.updater_account,
+	t.update_date,
+	t.confirmer_account,
+	t.ycl_beiliao_status,
+	t.ycl_caigouxiadan_status,
+	t.ycl_qitao_status,
+	t.jgl_gongliao_status,
+	t.ycl_xugou_status,
+	t.ycl_qitao_remark,
+	t.confirm_date,
+	t.data_source_sys,
+	t.product_quantity,
+	t.toexpire_days,
+	t.material_name,
+	t.product_po_codes,
+	t.product_so_codes,
+	t.product_mo_codes,
+    t.product_quantity_remark,
+    t.kuan_xiadan_date,
+    t.product_contract_date,
+    t.product_request_partys,
+    t.product_request_bus_type,
+	t1.purchase_order_code,
+    t1.purchase_contract_sid,
+    t1.purchase_contract_code,
+    t1.paper_purchase_contract_code,
+	t1.buyer,
+	t1.purchase_mode,
+	t1.handle_status,
+	t1.special_bus_category,
+	t1.vendor_sid,
+	t1.delivery_type,
+	t1.business_channel,
+	t1.document_type,
+	t1.raw_material_mode,
+    t1.is_consignment_settle,
+    t1.inventory_control_mode,
+    t1.is_return_goods,
+    t1.is_finance_book_yfzg,
+	t2.vendor_code,
+	t2.vendor_name,
+	ifnull(t2.short_name, t2.vendor_name) as vendor_short_name,
+	t3.material_code,
+	t3.material_type,
+	t3.material_category,
+    t3.gram_weight, t3.width, t3.specification_size, t3.material_composition,
+    t3.composition,
+    t3.retail_price,
+    t3.simple_code,
+    t3.sample_code_self,
+    t3.picture_path,
+	t4.sku_name as sku1_name,
+    t4.sku_type as sku1_type,
+	t5.sku_name as sku2_name,
+    t5.sku_type as sku2_type,
+	t6.storehouse_code,
+	t6.storehouse_name,
+	t7.location_code,
+	t7.location_name,
+	t.product_sku1_names,
+	t.product_sku2_names,
+	t9.barcode,
+	t10.name as unit_base_name,
+	t11.name as unit_price_name,
+	t12.nick_name as buyer_name ,
+	t13.nick_name as creator_account_name,
+	t14.sku_name AS product_sku1_name,
+	t15.sku_name AS product_sku2_name,
+	t.product_code,
+	t.product_codes,
+	ifnull(t17.short_name, t17.customer_name) as customer_short_name,
+	t18.name as sale_business_type_name,
+	t.sales_order_code,
+	t.refer_purchase_order_item_num,
+	t.sales_order_item_num,
+	t19.name AS purchase_type_name,
+	t20.name as document_type_name,
+    t21.name as business_type_name,
+    t22.product_season_name,
+    t1.company_sid,
+    t23.short_name as company_name,
+    t24.code as purchase_type_name,
+    t25.name as business_channel_name,
+    'PurchaseOrder' as source_category,
+    '采购订单' as source_category_name,
+    t26.name as material_type_name,
+    t27.name as purchase_group_name,
+    t28.name as purchase_org_name,
+    t29.name as shipment_type_name,
+    t30.model_name,
+    ta.sort as sort1,
+    tb.sort as sort2
+FROM
+	s_pur_purchase_order_item t
+    LEFT JOIN s_bas_material_sku ta on t.material_sid = ta.material_sid and t.sku1_sid = ta.sku_sid
+    LEFT JOIN s_bas_material_sku tb on t.material_sid=tb.material_sid and t.sku2_sid = tb.sku_sid
+	LEFT JOIN s_bas_material t3 ON t3.material_sid = t.material_sid
+	LEFT JOIN s_bas_sku t4 ON t4.sku_sid = t.sku1_sid
+	LEFT JOIN s_bas_sku t5 ON t5.sku_sid = t.sku2_sid
+	LEFT JOIN s_pur_purchase_order t1 ON t1.purchase_order_sid = t.purchase_order_sid
+	LEFT JOIN s_bas_storehouse t6 ON t6.storehouse_sid = t1.storehouse_sid
+	LEFT JOIN s_bas_storehouse_location t7 ON t7.storehouse_location_sid = t1.storehouse_location_sid
+	LEFT JOIN s_bas_material_barcode t9 ON t9.barcode_sid = t.barcode_sid
+	LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t1.vendor_sid
+	LEFT JOIN s_pur_purchase_contract t8 ON t8.purchase_contract_sid = t1.purchase_contract_sid
+	LEFT JOIN s_con_measure_unit t10 ON t10.code = t.unit_base
+	LEFT JOIN s_con_measure_unit t11 ON t11.code = t.unit_price
+	LEFT JOIN sys_user t12 ON t12.user_name = t1.buyer and t1.client_id = t12.client_id
+	LEFT JOIN sys_user t13 ON t13.user_name = t.creator_account and t.client_id = t13.client_id
+	LEFT JOIN s_bas_sku t14 ON t14.sku_sid = t.product_sku1_sid
+	LEFT JOIN s_bas_sku t15 ON t15.sku_sid = t.product_sku2_sid
+	left join s_sal_sales_order t16 on t16.sales_order_code=t.sales_order_code
+    LEFT JOIN s_bas_customer t17 on t17.customer_sid=t16.customer_sid
+    left join s_con_bu_type_sales_order t18 on t18.code = t16.business_type
+    LEFT JOIN s_con_purchase_type t19 ON t19.code = t3.purchase_type
+    left join s_con_doc_type_purchase_order t20 on t20.code = t1.document_type
+	left join s_con_bu_type_purchase_order t21 on t21.code = t1.business_type and t1.client_id = t21.client_id
+	LEFT JOIN s_bas_product_season t22 ON t22.product_season_sid = t1.product_season_sid
+	LEFT JOIN s_bas_company t23 ON t23.company_sid = t1.company_sid
+	LEFT JOIN s_con_purchase_type t24 ON t24.code = t3.purchase_type
+	left join s_con_business_channel t25 on t25.code = t1.business_channel
+	left join s_con_material_type t26 on t26.code=t3.material_type
+	left join s_con_purchase_group t27 on t27.code = t1.purchase_group
+	left join s_con_purchase_org t28 on t28.code = t1.purchase_org
+	left join s_con_shipment_mode t29 on t29.code = t1.shipment_type
+    LEFT JOIN s_tec_model t30 ON t3.model_sid = t30.model_sid
+    </sql>
+
+    <select id="getItemList" parameterType="com.platform.ems.domain.PurPurchaseOrderItem"
+            resultMap="PurPurchaseOrderItemResult">
+        <include refid="getItemListVo"/>
+        <where>
+            t1.purchase_order_code is not null
+            and t3.material_code is not null
+            <if test="purchaseOrderCode != null and purchaseOrderCode != ''">
+                and (<foreach collection="purchaseOrderCode.split(';')" item="item" separator=" or ">
+                t1.purchase_order_code like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="productCodes != null and productCodes!='' ">
+                and t.product_codes like concat('%',#{productCodes}, '%')
+            </if>
+            <if test="purchaseOrderSid != null ">
+                and t.purchase_order_sid = #{purchaseOrderSid}
+            </if>
+            <if test="isNull != null and isNull != ''">
+            <if test="isNull.toString() == 'Y'.toString()">
+                and t.purchase_price_tax is null
+            </if>
+            <if test="isNull.toString() == 'N'.toString()">
+                    and t.purchase_price_tax is not null
+            </if>
+            </if>
+            <if test="itemSidList != null and itemSidList.length >0 ">
+                and t.purchase_order_item_sid in
+                (<foreach collection="itemSidList" item="sid" separator=",">#{sid}</foreach>)
+            </if>
+            <if test="vendorSid != null">
+                and t1.vendor_sid = #{vendorSid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0 ">
+                and t1.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="documentType != null and documentType != ''">
+                and t1.document_type = #{documentType}
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length >0 ">
+                and t1.document_type in
+                (<foreach collection="documentTypeList" item="documentType" separator=",">#{documentType}</foreach>)
+            </if>
+            <if test="businessTypeList != null and businessTypeList.length >0 ">
+                and t1.business_type in
+                (<foreach collection="businessTypeList" item="businessType" separator=",">#{businessType}</foreach>)
+            </if>
+            <if test="buyerList != null and buyerList.length >0 ">
+                and t1.buyer in
+                (<foreach collection="buyerList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="buyer != null  and buyer != ''">
+                and (<foreach collection="buyer.split(';')" item="item" separator=" or ">t1.buyer like concat('%',#{item},
+                '%')</foreach>)
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="materialCode" separator=" or ">t3.material_code
+                like concat('%', #{materialCode}, '%')</foreach>)
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="materialName" separator=" or ">t.material_name
+                like concat('%', #{materialName}, '%')</foreach>)
+            </if>
+            <if test="sku1Name != null and sku1Name != ''">
+                and (<foreach collection="sku1Name.split(';')" item="item" separator=" or ">t4.sku_name
+                like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="sku2Name != null and sku2Name != ''">
+                and (<foreach collection="sku2Name.split(';')" item="item" separator=" or ">t5.sku_name
+                like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="notInHandleStatus != null and notInHandleStatus.length >0 ">
+                and t1.handle_status not in
+                (<foreach collection="notInHandleStatus" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="shipmentTypeList != null and shipmentTypeList.length >0 ">
+                and t1.shipment_type  in
+                (<foreach collection="shipmentTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="deliveryStatusList != null  and deliveryStatusList.length >0">
+                and t.delivery_status in
+                (<foreach collection="deliveryStatusList" item="deliveryStatus" separator=",">
+                #{deliveryStatus}</foreach>)
+            </if>
+            <if test="purchaseContractSid != null">
+                and t1.purchase_contract_sid = #{purchaseContractSid}
+            </if>
+            <if test="purchaseContractCode != null and purchaseContractCode != ''">
+                and (<foreach collection="purchaseContractCode.split(';')" item="purchaseContractCode" separator=" or ">
+                t1.purchase_contract_code like concat('%', #{purchaseContractCode}, '%')</foreach>)
+            </if>
+            <if test="contractCode != null and contractCode != ''">
+                and t1.purchase_contract_code = #{contractCode}
+            </if>
+            <if test="paperPurchaseContractCode != null and paperPurchaseContractCode != '' ">
+                and t1.paper_purchase_contract_code like concat('%', #{paperPurchaseContractCode}, '%')
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0 ">
+                and t1.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">
+                #{productSeasonSid}</foreach>)
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length >0 ">
+                and t3.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=",">#{materialType}</foreach>)
+            </if>
+            <if test="materialType != null and materialType !=''">
+                and t3.material_type = #{materialType}
+            </if>
+            <if test="materialCategoryList != null and materialCategoryList.length >0 ">
+                and t1.material_category in
+                (<foreach collection="materialCategoryList" item="materialType" separator=",">#{materialType}</foreach>)
+            </if>
+            <if test="purchaseOrgList != null and purchaseOrgList.length >0 ">
+                and t1.purchase_org in
+                (<foreach collection="purchaseOrgList" item="purchaseOrg" separator=",">#{purchaseOrg}</foreach>)
+            </if>
+            <if test="purchaseGroupList != null and purchaseGroupList.length >0 ">
+                and t1.purchase_group in
+                (<foreach collection="purchaseGroupList" item="purchaseGroup" separator=",">#{purchaseGroup}</foreach>)
+            </if>
+            <if test="storehouseSidList != null and storehouseSidList.length >0 ">
+                and t1.storehouse_sid in
+                (<foreach collection="storehouseSidList" item="storehouseSid" separator=",">#{storehouseSid}</foreach>)
+            </if>
+            <if test="storehouseLocationSidList != null and storehouseLocationSidList.length >0 ">
+                and t1.storehouse_location_sid in
+                (<foreach collection="storehouseLocationSidList" item="storehouseLocationSid" separator=",">
+                #{storehouseLocationSid}</foreach>)
+            </if>
+            <if test="isReturnGoods != null and isReturnGoods != '' ">
+               and t1.is_return_goods=#{isReturnGoods}
+            </if>
+            <if test="isConsignmentSettle != null and isConsignmentSettle != '' ">
+               and t1.is_consignment_settle=#{isConsignmentSettle}
+            </if>
+            <if test="shipmentTypeList != null and shipmentTypeList.length >0 ">
+                and t1.shipment_type in
+                (<foreach collection="shipmentTypeList" item="shipmentType" separator=",">#{shipmentType}</foreach>)
+            </if>
+            <if test="companySid!= null">
+                and t1.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t1.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="deliveryType != null and deliveryType != ''">
+                and t1.delivery_type = #{deliveryType}
+            </if>
+            <if test="inventoryControlMode != null and inventoryControlMode != ''">
+                and t1.inventory_control_mode = #{inventoryControlMode}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t1.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="rawMaterialModeList != null and rawMaterialModeList.length >0 ">
+                and t1.raw_material_mode in
+                (<foreach collection="rawMaterialModeList" item="rawMaterialMode" separator=",">
+                #{rawMaterialMode}</foreach>)
+            </if>
+            <if test="purchaseModeList != null and purchaseModeList.length >0 ">
+                and t1.purchase_mode in
+                (<foreach collection="purchaseModeList" item="purchaseMode" separator=",">#{purchaseMode}</foreach>)
+            </if>
+            <if test="contractBeginDate != null and contractBeginDate!=''">
+                and date_format(t.contract_date,'%y%m%d') &gt;= date_format(#{contractBeginDate},'%y%m%d')
+            </if>
+            <if test="contractEndDate != null and contractEndDate!=''">
+                and date_format(t.contract_date,'%y%m%d') &lt;= date_format(#{contractEndDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="specialBusCategory != null  and specialBusCategory != ''">
+                and t1.special_bus_category = #{specialBusCategory}
+            </if>
+            <if test="specialBusCategory != null  and specialBusCategory != ''">
+                and t1.special_bus_category = #{specialBusCategory}
+            </if>
+        </where>
+        order by t1.purchase_order_code desc, t3.material_code asc, -ta.sort desc, t4.sku_name asc, -tb.sort desc, t5.sku_name asc, t.contract_date asc
+    </select>
+
+    <select id="selectPurPurchaseProcessTrackingList" parameterType="com.platform.ems.domain.dto.response.form.PurPurchaseOrderProcessTracking"
+            resultType="com.platform.ems.domain.dto.response.form.PurPurchaseOrderProcessTracking">
+        SELECT t.contract_date, t.material_sid, t.sku1_sid, t.sku2_sid, t.unit_price,
+            t1.vendor_sid, t1.buyer,
+            SUM(t.quantity) as quantity,
+            SUM(t2.yiruku_quantity) as yiruku_quantity,
+            IFNULL(SUM(t.quantity),0)-IFNULL(SUM(t2.yiruku_quantity),0) as dairuku_quantity,
+            IF(t.contract_date &lt; DATE_FORMAT(NOW(), '%Y-%m-%d') AND IFNULL(SUM(t.quantity),0)-IFNULL(SUM(t2.yiruku_quantity),0) &gt; 0, '0', '-1') as light,
+            t3.material_code, t3.material_name, t3.material_type, t4.sku_name as sku1_name, t5.sku_name as sku2_name,
+            t6.vendor_name, IFNULL(t6.short_name,t6.vendor_name) as vendor_short_name, t7.nick_name as buyer_name, t8.name as unit_price_name,
+            t9.name as material_type_name
+        FROM s_pur_purchase_order_item t
+        LEFT JOIN s_pur_purchase_order t1 ON t.purchase_order_sid = t1.purchase_order_sid
+        <!-- 待入库量 -->
+        LEFT JOIN (
+            SELECT t.purchase_order_item_sid,
+            IFNULL(SUM(IF(t1.delivery_type = 'JHD', ta.in_out_stock_quantity, IF(t1.delivery_type = 'DD',tb.price_quantity,0))),0) as yiruku_quantity
+            FROM s_pur_purchase_order_item t
+            LEFT JOIN s_pur_purchase_order t1 ON t.purchase_order_sid = t1.purchase_order_sid
+            <!-- 订单的采购交货类型按交货单 -->
+            LEFT JOIN (
+                SELECT t.purchase_order_item_sid, SUM(t.in_out_stock_quantity) as in_out_stock_quantity
+                FROM s_del_delivery_note_item t
+                GROUP BY t.purchase_order_item_sid
+            ) ta ON t.purchase_order_item_sid = ta.purchase_order_item_sid
+            <!-- 订单的采购交货类型按订单 -->
+            LEFT JOIN (
+            SELECT t.refer_document_item_sid as purchase_order_item_sid, SUM(t.price_quantity) as price_quantity
+            FROM s_inv_inventory_document_item t
+            GROUP BY t.refer_document_item_sid
+            ) tb ON t.purchase_order_item_sid = tb.purchase_order_item_sid
+            GROUP BY t.purchase_order_item_sid
+        ) t2 ON t.purchase_order_item_sid = t2.purchase_order_item_sid
+        <!-- 关联其它表 -->
+        LEFT JOIN s_bas_material t3 ON t.material_sid = t3.material_sid
+        LEFT JOIN s_bas_sku t4 ON t.sku1_sid = t4.sku_sid
+        LEFT JOIN s_bas_sku t5 ON t.sku2_sid = t5.sku_sid
+        LEFT JOIN s_bas_vendor t6 ON t1.vendor_sid = t6.vendor_sid
+        LEFT JOIN sys_user t7 ON t1.buyer = t7.user_name AND t1.client_id = t7.client_id
+        LEFT JOIN s_con_measure_unit t8 ON t.unit_price = t8.code
+        LEFT JOIN s_con_material_type t9 ON t3.material_type = t9.code
+        <!-- 条件 -->
+        <where>
+                AND t1.is_consignment_settle = 'N' AND t1.is_return_goods = 'N'
+            <if test="clientId != null and clientId!=''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="contractDateBegin != null and contractDateBegin !=''">
+                AND date_format(t.contract_date,'%y%m%d') &gt;= date_format(#{contractDateBegin},'%y%m%d')
+            </if>
+            <if test="contractDateEnd != null and contractDateEnd !=''">
+                AND date_format(t.contract_date,'%y%m%d') &lt;= date_format(#{contractDateEnd},'%y%m%d')
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0 ">
+                AND t1.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="vendorSid != null">
+                AND t1.vendor_sid = #{vendorSid}
+            </if>
+            <if test="materialCode != null and materialCode!=''">
+                and t3.material_code like concat('%', #{materialCode}, '%')
+            </if>
+            <if test="materialName != null and materialName!=''">
+                and t3.material_name like concat('%', #{materialName}, '%')
+            </if>
+            <if test="buyer != null and buyer!=''">
+                and t1.buyer = #{buyer}
+            </if>
+            <if test="buyerList != null and buyerList.length >0 ">
+                AND t1.buyer in
+                (<foreach collection="buyerList" item="buyer" separator=",">#{buyer}</foreach>)
+            </if>
+            <if test="materialType != null and materialType!=''">
+                and t3.material_type = #{materialType}
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length >0 ">
+                AND t3.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=",">#{materialType}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus!=''">
+                and t1.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                AND t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+        </where>
+        <!-- 分组 -->
+        GROUP BY t.contract_date, t.material_sid, t.sku1_sid, t.sku2_sid, t1.vendor_sid, t1.buyer
+        <!-- 排序 -->
+        ORDER BY light DESC, t.contract_date ASC,
+            CONVERT (IFNULL(t6.short_name,t6.vendor_name) USING gbk) ASC,
+            CONVERT (t7.nick_name USING gbk) ASC,
+            CONVERT (t3.material_name USING gbk) ASC,
+            CONVERT (t4.sku_name USING gbk) ASC,
+            CONVERT (t5.sku_name USING gbk) ASC
+        <if test="pageNum != null and pageSize != null">LIMIT ${pageBegin},${pageSize}</if>
+    </select>
+
+    <select id="getToexpireBusiness" resultType="com.platform.ems.domain.PurPurchaseOrderItem">
+        SELECT t1.*,t.*,
+               t2.vendor_code,
+               t2.vendor_name,
+               ifnull(t2.short_name, t2.vendor_name) as vendor_short_name,
+               t3.user_id    AS creator_account_id,
+               t7.product_season_name,
+               t8.name as business_type_name,
+               t9.name as document_type_name,
+               t10.nick_name as buyer_name,
+               t11.company_code,
+               t11.company_name,
+               ifnull(t11.short_name, t11.company_name) as company_short_name,
+               t12.material_code,
+               t13.sku_code as sku1_code,
+               t14.sku_code as sku2_code,
+               if(t1.delivery_type = 'JHD', t15.in_out_stock_quantity, t16.price_quantity) as quantity_yijh
+        FROM s_pur_purchase_order_item t
+                 LEFT JOIN s_pur_purchase_order t1 ON t.purchase_order_sid = t1.purchase_order_sid
+                 LEFT JOIN s_bas_vendor t2 ON t1.vendor_sid = t2.vendor_sid
+                 LEFT JOIN sys_user t3 ON t.creator_account = t3.user_name AND t.client_id = t3.client_id
+                 LEFT JOIN s_sys_default_setting_client t4 ON t.client_id = t4.client_id
+                 LEFT JOIN s_sys_default_setting_system t5 ON t5.client_id = '10000'
+                 LEFT JOIN s_bas_product_season t7 on t1.product_season_sid = t7.product_season_sid
+                 left join s_con_bu_type_purchase_order t8 on t1.business_type = t8.code and t1.client_id = t8.client_id
+                 left join s_con_doc_type_purchase_order t9 on t1.document_type = t9.code
+                 left join sys_user t10 on t1.buyer = t10.user_name and t1.client_id = t10.client_id
+                 LEFT JOIN s_bas_company t11 on t1.company_sid = t11.company_sid
+                 LEFT JOIN s_bas_material t12 on t.material_sid = t12.material_sid
+                 LEFT JOIN s_bas_sku t13 on t.sku1_sid = t13.sku_sid
+                 LEFT JOIN s_bas_sku t14 on t.sku2_sid = t14.sku_sid
+                 left join (
+                    select t.purchase_order_item_sid, sum(t.in_out_stock_quantity) as in_out_stock_quantity
+                    from s_del_delivery_note_item t
+                    left join s_del_delivery_note t1 on t.delivery_note_sid = t1.delivery_note_sid
+                    where t1.handle_status = '5'
+                    group by t.purchase_order_item_sid
+                 ) t15 on t.purchase_order_item_sid = t15.purchase_order_item_sid
+                 left join (
+                    select t.refer_document_item_sid, sum(t.price_quantity) as price_quantity
+                    from s_inv_inventory_document_item t
+                    left join s_inv_inventory_document t1 on t.inventory_document_sid = t1.inventory_document_sid
+                    where t1.handle_status = 'B' and t1.document_type = 'CG'
+                    group by t.refer_document_item_sid
+                 ) t16 on t.purchase_order_item_sid = t16.refer_document_item_sid
+                 WHERE (t1.handle_status = '5' AND t1.is_return_goods = 'N' AND t.contract_date IS NOT NULL AND t.in_out_stock_status != 'QBRK'
+                   AND ((t.item_status != 'GB' AND t.item_status != 'ZF') OR (t.item_status is null))
+                   AND t.contract_date &gt;= DATE_FORMAT(NOW(), '%Y-%m-%d') AND
+                    t.contract_date &lt;= DATE_FORMAT(date_add(now(), interval ifnull(t.toexpire_days, ifnull(t4.toexpire_days_cgdd, t5.toexpire_days_cgdd)) day), '%Y-%m-%d'))
+    </select>
+
+    <select id="getOverdueBusiness" resultType="com.platform.ems.domain.PurPurchaseOrderItem">
+        SELECT t1.*,t.*,
+               t2.vendor_code,
+               t2.vendor_name,
+               ifnull(t2.short_name, t2.vendor_name) as vendor_short_name,
+               t3.user_id AS creator_account_id,
+               t7.product_season_name,
+               t8.name as business_type_name,
+               t9.name as document_type_name,
+               t10.nick_name as buyer_name,
+               t11.company_code,
+               t11.company_name,
+               ifnull(t11.short_name, t11.company_name) as company_short_name,
+               t12.material_code,
+               t13.sku_code as sku1_code,
+               t14.sku_code as sku2_code,
+               if(t1.delivery_type = 'JHD', t15.in_out_stock_quantity, t16.price_quantity) as quantity_yijh
+        FROM s_pur_purchase_order_item t
+                 LEFT JOIN s_pur_purchase_order t1 ON t.purchase_order_sid = t1.purchase_order_sid
+                 LEFT JOIN s_bas_vendor t2 ON t1.vendor_sid = t2.vendor_sid
+                 LEFT JOIN sys_user t3 ON t.creator_account = t3.user_name AND t.client_id = t3.client_id
+                 LEFT JOIN s_sys_default_setting_client t4 ON t.client_id = t4.client_id
+                 LEFT JOIN s_sys_default_setting_system t5 ON t5.client_id = '10000'
+                 LEFT JOIN s_bas_product_season t7 on t1.product_season_sid = t7.product_season_sid
+                 left join s_con_bu_type_purchase_order t8 on t1.business_type = t8.code and t1.client_id = t8.client_id
+                 left join s_con_doc_type_purchase_order t9 on t1.document_type = t9.code
+                 left join sys_user t10 on t1.buyer = t10.user_name and t1.client_id = t10.client_id
+                 LEFT JOIN s_bas_company t11 on t1.company_sid = t11.company_sid
+                 LEFT JOIN s_bas_material t12 on t.material_sid = t12.material_sid
+                 LEFT JOIN s_bas_sku t13 on t.sku1_sid = t13.sku_sid
+                 LEFT JOIN s_bas_sku t14 on t.sku2_sid = t14.sku_sid
+                 left join (
+                    select t.purchase_order_item_sid, sum(t.in_out_stock_quantity) as in_out_stock_quantity
+                    from s_del_delivery_note_item t
+                    left join s_del_delivery_note t1 on t.delivery_note_sid = t1.delivery_note_sid
+                    where t1.handle_status = '5'
+                    group by t.purchase_order_item_sid
+                 ) t15 on t.purchase_order_item_sid = t15.purchase_order_item_sid
+                 left join (
+                    select t.refer_document_item_sid, sum(t.price_quantity) as price_quantity
+                    from s_inv_inventory_document_item t
+                    left join s_inv_inventory_document t1 on t.inventory_document_sid = t1.inventory_document_sid
+                    where t1.handle_status = 'B' and t1.document_type = 'CG'
+                    group by t.refer_document_item_sid
+                ) t16 on t.purchase_order_item_sid = t16.refer_document_item_sid
+            WHERE (t1.handle_status = '5' AND t1.is_return_goods = 'N' AND t.in_out_stock_status != 'QBRK'
+                   AND ((t.item_status != 'GB' AND t.item_status != 'ZF') OR (t.item_status is null))
+                   AND t.contract_date IS NOT NULL AND t.contract_date &lt; DATE_FORMAT(NOW(), '%Y-%m-%d'))
+    </select>
+
+    <select id="selectMobProcessList" parameterType="com.platform.ems.domain.PurPurchaseOrderItem"
+            resultType="com.platform.ems.domain.PurPurchaseOrderItem">
+        SELECT t.purchase_order_item_sid,
+        t.purchase_order_sid, t.material_sid, t.contract_date, t.barcode_sid,
+        t.unit_base, t.unit_price, t.sku1_sid, t.sku2_sid,
+        t1.vendor_sid, t1.storehouse_sid, t1.storehouse_location_sid, t1.purchase_order_code,
+        t2.purchase_contract_code, t2.contract_name, t3.vendor_code, t3.vendor_name, t3.short_name as vendor_short_name,
+        t4.material_code, t4.material_name, t5.sku_code as sku1_code, t5.sku_name as sku1_name,
+        t6.sku_code as sku2_code, t6.sku_name as sku2_name,
+        t7.storehouse_code, t7.storehouse_name, t8.location_code, t8.location_name,
+        t9.barcode, t10.name as unit_base_name, t11.name as unit_price_name,
+        ifnull(sum(t.quantity), 0) as sum_quantity_dingd, ifnull(sum(t16.sum_quantity_yrk_temp), 0) as sum_quantity_yrk,
+        ifnull((sum(t.quantity) - ifnull(sum(t16.sum_quantity_yrk_temp), 0)), 0) as sum_quantity_drk
+        FROM s_pur_purchase_order_item t
+        LEFT JOIN s_pur_purchase_order t1 ON t.purchase_order_sid = t1.purchase_order_sid
+        LEFT JOIN s_pur_purchase_contract t2 ON t1.purchase_contract_sid = t2.purchase_contract_sid
+        LEFT JOIN s_bas_vendor t3 ON t1.vendor_sid = t3.vendor_sid
+        LEFT JOIN s_bas_material t4 ON t.material_sid = t4.material_sid
+        LEFT JOIN s_bas_sku t5 ON t.sku1_sid = t5.sku_sid
+        LEFT JOIN s_bas_sku t6 ON t.sku2_sid = t6.sku_sid
+        LEFT JOIN s_bas_storehouse t7 ON t1.storehouse_sid = t7.storehouse_sid
+        LEFT JOIN s_bas_storehouse_location t8 ON t1.storehouse_location_sid = t8.storehouse_location_sid
+        LEFT JOIN s_bas_material_barcode t9 ON t.barcode_sid = t9.barcode_sid
+        LEFT JOIN s_con_measure_unit t10 ON t.unit_base = t10.code
+        LEFT JOIN s_con_measure_unit t11 ON t.unit_price = t11.code
+        LEFT JOIN (
+            select t12.purchase_order_item_sid, if(t13.delivery_type = 'FHD', t14.in_out_stock_quantity, t15.price_quantity) as sum_quantity_yrk_temp
+            from s_pur_purchase_order_item t12
+            left join s_pur_purchase_order t13 ON t12.purchase_order_sid = t13.purchase_order_sid
+            left join (
+                select t.purchase_order_item_sid, sum(t.in_out_stock_quantity) as in_out_stock_quantity
+                from s_del_delivery_note_item t
+                left join s_del_delivery_note t1 on t.delivery_note_sid = t1.delivery_note_sid
+                where t1.handle_status = '5'
+                group by t.purchase_order_item_sid
+            ) t14 on t12.purchase_order_item_sid = t14.purchase_order_item_sid
+            left join (
+                select t.refer_document_item_sid, sum(t.price_quantity) as price_quantity
+                from s_inv_inventory_document_item t
+                left join s_inv_inventory_document t1 on t.inventory_document_sid = t1.inventory_document_sid
+                where t1.handle_status = 'B' and t1.document_type = 'CG'
+                group by t.refer_document_item_sid
+            ) t15 on t12.purchase_order_item_sid = t15.refer_document_item_sid
+        ) t16 ON t.purchase_order_item_sid = t16.purchase_order_item_sid
+        <where>
+            <if test="isReturnGoods != null and isReturnGoods != '' ">
+                and t1.is_return_goods = #{isReturnGoods}
+            </if>
+            <if test="handleStatus != null and handleStatus != '' ">
+                and t1.handle_status = #{handleStatus}
+            </if>
+            <if test="contractDateStart != null and contractDateStart!=''">
+                and date_format(t.contract_date,'%y%m%d') &gt;= date_format(#{contractDateStart},'%y%m%d')
+            </if>
+            <if test="contractDateEnd != null and contractDateEnd!=''">
+                and date_format(t.contract_date,'%y%m%d') &lt;= date_format(#{contractDateEnd},'%y%m%d')
+            </if>
+            <if test="contractDateBeginTime != null and contractDateBeginTime!=''">
+                and date_format(t.contract_date,'%y%m%d') &gt;= date_format(#{contractDateBeginTime},'%y%m%d')
+            </if>
+            <if test="contractDateEndTime != null and contractDateEndTime!=''">
+                and date_format(t.contract_date,'%y%m%d') &lt;= date_format(#{contractDateEndTime},'%y%m%d')
+            </if>
+            <if test="buyerList != null and buyerList.length > 0">
+                and t1.buyer in (<foreach collection="buyerList" separator="," item="item">#{item}</foreach>)
+            </if>
+            <if test="buyer != null and buyer != '' ">
+                and t1.buyer = #{buyer}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length > 0">
+                and t1.vendor_sid in (<foreach collection="vendorSidList" separator="," item="item">#{item}</foreach>)
+            </if>
+            <if test="vendorSid != null ">
+                and t1.vendor_sid = #{vendorSid}
+            </if>
+        </where>
+        GROUP BY t.material_sid, t.contract_date, t1.vendor_sid
+    </select>
+
+</mapper>

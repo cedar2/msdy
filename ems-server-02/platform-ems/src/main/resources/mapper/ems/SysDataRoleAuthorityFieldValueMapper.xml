@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.SysDataRoleAuthorityFieldValueMapper">
+
+    <resultMap type="com.platform.ems.domain.SysDataRoleAuthorityFieldValue" id="SysDataRoleAuthorityFieldValueResult">
+        <result property="clientId" column="client_id"/>
+        <result property="dataRoleAuthorityFieldValueSid" column="data_role_authority_field_value_sid"/>
+        <result property="dataRoleAuthorityObjectSid" column="data_role_authority_object_sid"/>
+        <result property="authorityObjectFieldSid" column="authority_object_field_sid"/>
+        <result property="authorityFieldValue" column="authority_field_value"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectSysDataRoleAuthorityFieldValueVo">
+        select t.client_id,
+               t.data_role_authority_field_value_sid,
+               t.data_role_authority_object_sid,
+               t.authority_object_field_sid,
+               t.authority_field_value,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t1.role_data_sid,
+               t2.authority_object_sid,
+               t2.authority_field_sid,
+               t2.authority_field_param,
+               t3.object_code,
+               t3.object_name,
+               t4.field_code,
+               t4.field_name,
+               t5.role_data_code,
+               t5.role_data_name
+        from s_sys_data_role_authority_field_value t
+        left join s_sys_data_role_authority_object t1 on t.data_role_authority_object_sid = t1.data_role_authority_object_sid
+        left join s_sys_authority_object_field t2 on t.authority_object_field_sid = t2.authority_object_field_sid
+        left join s_sys_authority_object t3 on t2.authority_object_sid = t3.authority_object_sid
+        left join s_sys_authority_field t4 on t2.authority_field_sid = t4.authority_field_sid
+        left join sys_role_data t5 on t1.role_data_sid = t5.role_data_sid
+    </sql>
+
+    <select id="selectSysDataRoleAuthorityFieldValueById" parameterType="Long"
+            resultMap="SysDataRoleAuthorityFieldValueResult">
+        <include refid="selectSysDataRoleAuthorityFieldValueVo"/>
+        where t.data_role_authority_field_value_sid = #{dataRoleAuthorityFieldValueSid}
+    </select>
+
+    <select id="selectSysDataRoleAuthorityFieldValueList"
+            parameterType="com.platform.ems.domain.SysDataRoleAuthorityFieldValue"
+            resultMap="SysDataRoleAuthorityFieldValueResult">
+        <include refid="selectSysDataRoleAuthorityFieldValueVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="dataRoleAuthorityFieldValueSidList != null and dataRoleAuthorityFieldValueSidList.length >0 ">
+                and t.data_role_authority_field_value_sid in
+                (<foreach collection="dataRoleAuthorityFieldValueSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="dataRoleAuthorityFieldValueSid != null ">
+                and t.data_role_authority_field_value_sid = #{dataRoleAuthorityFieldValueSid}
+            </if>
+            <if test="dataRoleAuthorityObjectSid != null ">
+                and t.data_role_authority_object_sid = #{dataRoleAuthorityObjectSid}
+            </if>
+            <if test="dataRoleAuthorityObjectSidList != null and dataRoleAuthorityObjectSidList.length >0 ">
+                and t.data_role_authority_object_sid in
+                (<foreach collection="dataRoleAuthorityObjectSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="authorityFieldValue != null and authorityFieldValue != ''">
+                and t.authority_field_value = #{authorityFieldValue}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_sys_data_role_authority_field_value
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            data_role_authority_field_value_sid,
+            data_role_authority_object_sid,
+            authority_object_field_sid,
+            authority_field_value,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.dataRoleAuthorityFieldValueSid},
+                #{item.dataRoleAuthorityObjectSid},
+                #{item.authorityObjectFieldSid},
+                #{item.authorityFieldValue},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_sys_data_role_authority_field_value
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            data_role_authority_object_sid = #{dataRoleAuthorityObjectSid},
+            authority_object_field_sid = #{authorityObjectFieldSid},
+            authority_field_value = #{authorityFieldValue},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where data_role_authority_field_value_sid = #{dataRoleAuthorityFieldValueSid}
+    </update>
+
+</mapper>

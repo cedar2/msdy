@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.DevCategoryPlanItemMapper">
+
+    <resultMap type="com.platform.ems.domain.DevCategoryPlanItem" id="DevCategoryPlanItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="categoryPlanItemSid" column="category_plan_item_sid"/>
+        <result property="categoryPlanSid" column="category_plan_sid"/>
+        <result property="categoryPlanCode" column="category_plan_code"/>
+        <result property="materialClassSid" column="material_class_sid"/>
+        <result property="materialClassCode" column="material_class_code"/>
+        <result property="bigClassSid" column="big_class_sid"/>
+        <result property="bigClassCode" column="big_class_code"/>
+        <result property="middleClassSid" column="middle_class_sid"/>
+        <result property="middleClassCode" column="middle_class_code"/>
+        <result property="smallClassSid" column="small_class_sid"/>
+        <result property="smallClassCode" column="small_class_code"/>
+        <result property="planQuantity" column="plan_quantity"/>
+        <result property="planType" column="plan_type"/>
+        <result property="kuanType" column="kuan_type"/>
+        <result property="series" column="series"/>
+        <result property="groupType" column="group_type"/>
+        <result property="nextReceiverSid" column="next_receiver_sid"/>
+        <result property="nextReceiverCode" column="next_receiver_code"/>
+        <result property="categoryPlanItemNum" column="category_plan_item_num"/>
+        <result property="planRemark" column="plan_remark"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectDevCategoryPlanItemVo">
+        select t.client_id,
+               t.category_plan_item_sid,
+               t.category_plan_sid,
+               t.category_plan_code,
+               t.material_class_sid,
+               t.material_class_code,
+               t.big_class_sid,
+               t.big_class_code,
+               t.middle_class_sid,
+               t.middle_class_code,
+               t.small_class_sid,
+               t.small_class_code,
+               t.plan_quantity,
+               t.plan_type,
+               t.kuan_type,
+               t.series,
+               t.group_type,
+               t.next_receiver_sid,
+               t.next_receiver_code,
+               t.category_plan_item_num,
+               t.plan_remark,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t1.brand_code,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.node_name as material_class_name,
+               t5.node_name as big_class_name,
+               t6.node_name as middle_class_name,
+               t7.node_name as small_class_name,
+               t8.nick_name as next_receiver_name
+        from s_dev_category_plan_item t
+         LEFT JOIN s_dev_category_plan t1 ON t.category_plan_sid = t1.category_plan_sid
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN s_con_material_class t4 ON t.material_class_sid = t4.material_class_sid
+         LEFT JOIN s_con_material_class t5 ON t.big_class_sid = t5.material_class_sid
+         LEFT JOIN s_con_material_class t6 ON t.middle_class_sid = t6.material_class_sid
+         LEFT JOIN s_con_material_class t7 ON t.small_class_sid = t7.material_class_sid
+         LEFT JOIN sys_user t8 ON t.next_receiver_sid = t8.user_id AND t.client_id = t8.client_id
+    </sql>
+
+    <select id="selectDevCategoryPlanItemById" parameterType="Long" resultMap="DevCategoryPlanItemResult">
+        <include refid="selectDevCategoryPlanItemVo"/>
+        where t.category_plan_item_sid = #{categoryPlanItemSid}
+    </select>
+
+    <select id="selectDevCategoryPlanItemList" parameterType="com.platform.ems.domain.DevCategoryPlanItem"
+            resultMap="DevCategoryPlanItemResult">
+        <include refid="selectDevCategoryPlanItemVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="categoryPlanItemSid != null ">
+                and t.category_plan_item_sid = #{categoryPlanItemSid}
+            </if>
+            <if test="categoryPlanItemSidList != null and categoryPlanItemSidList.length >0 ">
+                and t.category_plan_item_sid in
+                (<foreach collection="categoryPlanItemSidList" item="categoryPlanItemSid" separator=",">#{categoryPlanItemSid}</foreach>)
+            </if>
+            <if test="categoryPlanSid != null ">
+                and t.category_plan_sid = #{categoryPlanSid}
+            </if>
+            <if test="categoryPlanCode != null and categoryPlanCode != ''">
+                and t.category_plan_code = #{categoryPlanCode}
+            </if>
+            <if test="materialClassSid != null ">
+                and t.material_class_sid = #{materialClassSid}
+            </if>
+            <if test="materialClassSidList != null and materialClassSidList.length >0 ">
+                and t.material_class_sid in
+                (<foreach collection="materialClassSidList" item="materialClassSid" separator=",">#{materialClassSid}</foreach>)
+            </if>
+            <if test="materialClassCode != null and materialClassCode != ''">
+                and t.material_class_code = #{materialClassCode}
+            </if>
+            <if test="bigClassSid != null ">
+                and t.big_class_sid = #{bigClassSid}
+            </if>
+            <if test="bigClassSidList != null and bigClassSidList.length >0 ">
+                and t.big_class_sid in
+                (<foreach collection="bigClassSidList" item="bigClassSid" separator=",">#{bigClassSid}</foreach>)
+            </if>
+            <if test="bigClassCode != null and bigClassCode != ''">
+                and t.big_class_code = #{bigClassCode}
+            </if>
+            <if test="middleClassSid != null ">
+                and t.middle_class_sid = #{middleClassSid}
+            </if>
+            <if test="middleClassSidList != null and middleClassSidList.length >0 ">
+                and t.middle_class_sid in
+                (<foreach collection="middleClassSidList" item="middleClassSid" separator=",">#{middleClassSid}</foreach>)
+            </if>
+            <if test="middleClassCode != null and middleClassCode != ''">
+                and t.middle_class_code = #{middleClassCode}
+            </if>
+            <if test="smallClassSid != null ">
+                and t.small_class_sid = #{smallClassSid}
+            </if>
+            <if test="smallClassSidList != null and smallClassSidList.length >0 ">
+                and t.small_class_sid in
+                (<foreach collection="smallClassSidList" item="smallClassSid" separator=",">#{smallClassSid}</foreach>)
+            </if>
+            <if test="smallClassCode != null and smallClassCode != ''">
+                and t.small_class_code = #{smallClassCode}
+            </if>
+            <if test="planQuantity != null ">
+                and t.plan_quantity = #{planQuantity}
+            </if>
+            <if test="planType != null and planType != ''">
+                and t.plan_type = #{planType}
+            </if>
+            <if test="planTypeList != null and planTypeList.length >0 ">
+                and t.plan_type in
+                (<foreach collection="planTypeList" item="planType" separator=",">#{planType}</foreach>)
+            </if>
+            <if test="kuanType != null and kuanType != ''">
+                and t.kuan_type = #{kuanType}
+            </if>
+            <if test="series != null and series != ''">
+                and t.series = #{series}
+            </if>
+            <if test="groupType != null and groupType != ''">
+                and t.group_type = #{groupType}
+            </if>
+            <if test="groupTypeList != null and groupTypeList.length >0 ">
+                and t.group_type in
+                (<foreach collection="groupTypeList" item="groupType" separator=",">#{groupType}</foreach>)
+            </if>
+            <if test="nextReceiverSid != null ">
+                and t.next_receiver_sid = #{nextReceiverSid}
+            </if>
+            <if test="nextReceiverCode != null and nextReceiverCode != ''">
+                and t.next_receiver_code = #{nextReceiverCode}
+            </if>
+            <if test="planRemark != null and planRemark != ''">
+                and t.plan_remark = #{planRemark}
+            </if>
+            <if test="year != null and year != ''">
+                and t1.year = #{year}
+            </if>
+            <if test="companySid != null ">
+                and t1.company_sid = #{companySid}
+            </if>
+            <if test="brandCode != null and brandCode != ''">
+                and t1.brand_code = #{brandCode}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="createDate != null ">
+                and date_format(t.create_date,'%y%m%d') = date_format(#{createDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_dev_category_plan_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            category_plan_item_sid,
+            category_plan_sid,
+            category_plan_code,
+            material_class_sid,
+            material_class_code,
+            big_class_sid,
+            big_class_code,
+            middle_class_sid,
+            middle_class_code,
+            small_class_sid,
+            small_class_code,
+            plan_quantity,
+            plan_type,
+            kuan_type,
+            series,
+            group_type,
+            next_receiver_sid,
+            next_receiver_code,
+            category_plan_item_num,
+            plan_remark,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.categoryPlanItemSid},
+                #{item.categoryPlanSid},
+                #{item.categoryPlanCode},
+                #{item.materialClassSid},
+                #{item.materialClassCode},
+                #{item.bigClassSid},
+                #{item.bigClassCode},
+                #{item.middleClassSid},
+                #{item.middleClassCode},
+                #{item.smallClassSid},
+                #{item.smallClassCode},
+                #{item.planQuantity},
+                #{item.planType},
+                #{item.kuanType},
+                #{item.series},
+                #{item.groupType},
+                #{item.nextReceiverSid},
+                #{item.nextReceiverCode},
+                #{item.categoryPlanItemNum},
+                #{item.planRemark},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_dev_category_plan_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            category_plan_sid = #{categoryPlanSid},
+            category_plan_code = #{categoryPlanCode},
+            material_class_sid = #{materialClassSid},
+            material_class_code = #{materialClassCode},
+            big_class_sid = #{bigClassSid},
+            big_class_code = #{bigClassCode},
+            middle_class_sid = #{middleClassSid},
+            middle_class_code = #{middleClassCode},
+            small_class_sid = #{smallClassSid},
+            small_class_code = #{smallClassCode},
+            plan_quantity = #{planQuantity},
+            plan_type = #{planType},
+            kuan_type = #{kuanType},
+            series = #{series},
+            group_type = #{groupType},
+            next_receiver_sid = #{nextReceiverSid},
+            next_receiver_code = #{nextReceiverCode},
+            category_plan_item_num = #{categoryPlanItemNum},
+            plan_remark = #{planRemark},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where category_plan_item_sid = #{categoryPlanItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_dev_category_plan_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{o.clientId},
+                category_plan_sid = #{o.categoryPlanSid},
+                category_plan_code = #{o.categoryPlanCode},
+                material_class_sid = #{o.materialClassSid},
+                material_class_code = #{o.materialClassCode},
+                big_class_sid = #{o.bigClassSid},
+                big_class_code = #{o.bigClassCode},
+                middle_class_sid = #{o.middleClassSid},
+                middle_class_code = #{o.middleClassCode},
+                small_class_sid = #{o.smallClassSid},
+                small_class_code = #{o.smallClassCode},
+                plan_quantity = #{o.planQuantity},
+                plan_type = #{o.planType},
+                kuan_type = #{o.kuanType},
+                series = #{o.series},
+                group_type = #{o.groupType},
+                next_receiver_sid = #{o.nextReceiverSid},
+                next_receiver_code = #{o.nextReceiverCode},
+                category_plan_item_num = #{o.categoryPlanItemNum},
+                plan_remark = #{o.planRemark},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where category_plan_item_sid = #{o.categoryPlanItemSid}
+        </foreach>
+    </update>
+
+    <select id="selectDevCategoryPlanItemForm" parameterType="com.platform.ems.domain.dto.request.form.DevCategoryPlanItemFormRequest"
+            resultType="com.platform.ems.domain.dto.response.form.DevCategoryPlanItemFormResponse">
+        select t.client_id,
+               t.category_plan_item_sid,
+               t.category_plan_sid,
+               t.category_plan_code,
+               t.material_class_sid,
+               t.material_class_code,
+               t.big_class_sid,
+               t.big_class_code,
+               t.middle_class_sid,
+               t.middle_class_code,
+               t.small_class_sid,
+               t.small_class_code,
+               t.plan_quantity,
+               t.plan_type,
+               t.kuan_type,
+               t.series,
+               t.group_type,
+               t.next_receiver_sid,
+               t.next_receiver_code,
+               t.category_plan_item_num,
+               t.plan_remark,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t1.handle_status,
+               t1.year,
+               t1.company_sid,
+               t1.brand_code,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.node_name as material_class_name,
+               t5.node_name as big_class_name,
+               t6.node_name as middle_class_name,
+               t7.node_name as small_class_name,
+               ifnull(t8.short_name, t8.company_name) as company_short_name,
+               t9.brand_name,
+               t10.develop_plan_sid,
+               t10.develop_plan_code,
+               t10.develop_plan_name,
+               t10.develop_level,
+               t10.develop_type,
+               t10.product_season_sid,
+               t10.cost_target,
+               t10.retail_price_target,
+               t10.yearmonth,
+               t11.product_season_name,
+               t12.nick_name as next_receiver_name
+        from s_dev_category_plan_item t
+         LEFT JOIN s_dev_category_plan t1 ON t.category_plan_sid = t1.category_plan_sid
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN s_con_material_class t4 ON t.material_class_sid = t4.material_class_sid
+         LEFT JOIN s_con_material_class t5 ON t.big_class_sid = t5.material_class_sid
+         LEFT JOIN s_con_material_class t6 ON t.middle_class_sid = t6.material_class_sid
+         LEFT JOIN s_con_material_class t7 ON t.small_class_sid = t7.material_class_sid
+         LEFT JOIN s_bas_company t8 ON t1.company_sid = t8.company_sid
+         LEFT JOIN s_bas_company_brand t9 ON t1.company_sid = t9.company_sid AND t1.brand_code = t9.brand_code
+         LEFT JOIN s_dev_develop_plan t10 ON t.category_plan_item_sid = t10.category_plan_item_sid
+         LEFT JOIN s_bas_product_season t11 ON t10.product_season_sid = t11.product_season_sid
+         LEFT JOIN sys_user t12 ON t.next_receiver_sid = t12.user_id AND t.client_id = t12.client_id
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="categoryPlanItemSid != null ">
+                and t.category_plan_item_sid = #{categoryPlanItemSid}
+            </if>
+            <if test="categoryPlanItemSidList != null and categoryPlanItemSidList.length >0 ">
+                and t.category_plan_item_sid in
+                (<foreach collection="categoryPlanItemSidList" item="categoryPlanItemSid" separator=",">#{categoryPlanItemSid}</foreach>)
+            </if>
+            <if test="categoryPlanSid != null ">
+                and t.category_plan_sid = #{categoryPlanSid}
+            </if>
+            <if test="categoryPlanSidList != null and categoryPlanSidList.length >0 ">
+                and t.category_plan_sid in
+                (<foreach collection="categoryPlanSidList" item="categoryPlanSid" separator=",">#{categoryPlanSid}</foreach>)
+            </if>
+            <if test="planType != null and planType != ''">
+                and t.plan_type = #{planType}
+            </if>
+            <if test="planTypeList != null and planTypeList.length >0 ">
+                and t.plan_type in
+                (<foreach collection="planTypeList" item="planType" separator=",">#{planType}</foreach>)
+            </if>
+            <if test="bigClassSid != null ">
+                and t.big_class_sid = #{bigClassSid}
+            </if>
+            <if test="bigClassSidList != null and bigClassSidList.length >0 ">
+                and t.big_class_sid in
+                (<foreach collection="bigClassSidList" item="bigClassSid" separator=",">#{bigClassSid}</foreach>)
+            </if>
+            <if test="middleClassSid != null ">
+                and t.middle_class_sid = #{middleClassSid}
+            </if>
+            <if test="middleClassSidList != null and middleClassSidList.length >0 ">
+                and t.middle_class_sid in
+                (<foreach collection="middleClassSidList" item="middleClassSid" separator=",">#{middleClassSid}</foreach>)
+            </if>
+            <if test="smallClassSid != null ">
+                and t.small_class_sid = #{smallClassSid}
+            </if>
+            <if test="smallClassSidList != null and smallClassSidList.length >0 ">
+                and t.small_class_sid in
+                (<foreach collection="smallClassSidList" item="smallClassSid" separator=",">#{smallClassSid}</foreach>)
+            </if>
+            <if test="nextReceiverSid != null ">
+                and t.next_receiver_sid = #{nextReceiverSid}
+            </if>
+            <if test="nextReceiverCode != null and nextReceiverCode != ''">
+                and t.next_receiver_code = #{nextReceiverCode}
+            </if>
+            <if test="nextReceiverName != null and nextReceiverName != ''">
+                and t12.nick_name like concat('%',#{nextReceiverName},'%')
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (t.creator_account = #{creatorAccount} or t12.user_name = #{creatorAccount})
+            </if>
+            <if test="categoryPlanCode != null and categoryPlanCode != ''">
+                and t1.category_plan_code like concat('%', #{categoryPlanCode}, '%')
+            </if>
+            <if test="year != null and year != ''">
+                and t1.year = #{year}
+            </if>
+            <if test="yearList != null and yearList.length >0 ">
+                and t1.year in
+                (<foreach collection="yearList" item="year" separator=",">#{year}</foreach>)
+            </if>
+            <if test="groupType != null and groupType != ''">
+                and t.group_type = #{groupType}
+            </if>
+            <if test="groupTypeList != null and groupTypeList.length >0 ">
+                and t.group_type in
+                (<foreach collection="groupTypeList" item="groupType" separator=",">#{groupType}</foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t1.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t1.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="brandCode != null and brandCode != ''">
+                and t1.brand_code = #{brandCode}
+            </if>
+            <if test="brandCodeList != null and brandCodeList.length >0 ">
+                and t1.brand_code in
+                (<foreach collection="brandCodeList" item="brandCode" separator=",">#{brandCode}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="createDate != null ">
+                and date_format(t.create_date,'%y%m%d') = date_format(#{createDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+        </where>
+        order by t1.year desc, t.category_plan_code desc
+    </select>
+
+</mapper>

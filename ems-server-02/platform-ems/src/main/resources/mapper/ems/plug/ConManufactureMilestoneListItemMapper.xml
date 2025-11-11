@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.plug.mapper.ConManufactureMilestoneListItemMapper">
+
+    <resultMap type="com.platform.ems.plug.domain.ConManufactureMilestoneListItem"
+               id="ConManufactureMilestoneListItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="manufactureMilestoneListItemSid" column="manufacture_milestone_list_item_sid"/>
+        <result property="manufactureMilestoneListSid" column="manufacture_milestone_list_sid"/>
+        <result property="sort" column="sort"/>
+        <result property="milestone" column="milestone"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectConManufactureMilestoneListItemVo">
+        select t.client_id,
+               t.manufacture_milestone_list_item_sid,
+               t.manufacture_milestone_list_sid,
+               t.sort,
+               t.milestone,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               u1.nick_name AS creator_account_name,
+               u2.nick_name AS updater_account_name
+        from s_con_manufacture_milestone_list_item t
+         LEFT JOIN sys_user u1 ON t.creator_account = u1.user_name
+         LEFT JOIN sys_user u2 ON t.updater_account = u2.user_name
+    </sql>
+
+    <select id="selectConManufactureMilestoneListItemById" parameterType="Long"
+            resultMap="ConManufactureMilestoneListItemResult">
+        <include refid="selectConManufactureMilestoneListItemVo"/>
+        where t.manufacture_milestone_list_item_sid = #{manufactureMilestoneListItemSid}
+    </select>
+
+    <select id="selectConManufactureMilestoneListItemList"
+            parameterType="com.platform.ems.plug.domain.ConManufactureMilestoneListItem"
+            resultMap="ConManufactureMilestoneListItemResult">
+        <include refid="selectConManufactureMilestoneListItemVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="manufactureMilestoneListSid != null ">
+                and t.manufacture_milestone_list_sid = #{manufactureMilestoneListSid}
+            </if>
+            <if test="sort != null ">
+                and t.sort = #{sort}
+            </if>
+            <if test="milestone != null and milestone != ''">
+                and t.milestone = #{milestone}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.sort asc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_manufacture_milestone_list_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            manufacture_milestone_list_item_sid,
+            manufacture_milestone_list_sid,
+            sort,
+            milestone,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.manufactureMilestoneListItemSid},
+                #{item.manufactureMilestoneListSid},
+                #{item.sort},
+                #{item.milestone},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_manufacture_milestone_list_item
+        <trim prefix="SET" suffixOverrides=",">
+            sort = #{sort},
+            milestone = #{milestone},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where manufacture_milestone_list_item_sid = #{manufactureMilestoneListItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_manufacture_milestone_list_item
+            <trim prefix="SET" suffixOverrides=",">
+                sort = #{o.sort},
+                milestone = #{o.milestone},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where manufacture_milestone_list_item_sid = #{o.manufactureMilestoneListItemSid}
+        </foreach>
+    </update>
+
+</mapper>

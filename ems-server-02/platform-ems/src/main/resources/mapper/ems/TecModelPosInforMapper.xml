@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecModelPosInforMapper">
+
+    <resultMap type="com.platform.ems.domain.TecModelPosInfor" id="TecModelPosInforResult">
+        <result property="clientId" column="client_id"/>
+        <result property="modelPositionInforSid" column="model_position_infor_sid"/>
+        <result property="modelSid" column="model_sid"/>
+        <result property="modelPositionSid" column="model_position_sid"/>
+        <result property="deviation" column="deviation"/>
+        <result property="deviationMinus" column="deviation_minus"/>
+        <result property="serialNum" column="serial_num"/>
+        <result property="unit" column="unit"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="modelPositionCode" column="model_position_code"/>
+        <result property="modelPositionName" column="model_position_name"/>
+        <result property="measureDescription" column="measure_description"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+    </resultMap>
+
+    <sql id="selectTecModelPosInforVo">
+        SELECT t.client_id,
+               t.model_position_infor_sid,
+               t.model_sid,
+               t.model_position_sid,
+               t.deviation,
+               t.deviation_minus,
+               t.serial_num,
+               t.unit,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               stmp.model_position_code,
+               stmp.model_position_name,
+               stmp.measure_description,
+               t3.nick_name AS creator_account_name
+        FROM s_tec_model_pos_infor t
+                 left join s_tec_model_position stmp on stmp.model_position_sid = t.model_position_sid
+                 left join sys_user t3 on t.creator_account = t3.user_name
+    </sql>
+
+    <select id="selectTecModelPosInforList" parameterType="com.platform.ems.domain.TecModelPosInfor"
+            resultMap="TecModelPosInforResult">
+        <include refid="selectTecModelPosInforVo"/>
+        <where>
+            <if test="modelSid != null  and modelSid != ''">and t.model_sid = #{modelSid}</if>
+            <if test="modelPositionInforSid != null  and modelPositionInforSid != ''">and t.model_position_infor_sid =
+                #{modelPositionInforSid}
+            </if>
+            <if test="modelPositionSid != null  and modelPositionSid != ''">and t.model_position_sid =
+                #{modelPositionSid}
+            </if>
+            <if test="deviation != null ">and t.deviation = #{deviation}</if>
+            <if test="serialNum != null ">and t.serial_num = #{serialNum}</if>
+            <if test="unit != null  and unit != ''">and t.unit = #{unit}</if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and t.creator_account = #{creatorAccount}</if>
+            <if test="createDate != null ">and t.create_date = #{createDate}</if>
+            <if test="updaterAccount != null  and updaterAccount != ''">and t.updater_account = #{updaterAccount}</if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and t.data_source_sys = #{dataSourceSys}</if>
+        </where>
+        order by t.serial_num asc, stmp.model_position_code asc
+    </select>
+
+    <select id="selectTecModelPosInforById" parameterType="Long" resultMap="TecModelPosInforResult">
+        <include refid="selectTecModelPosInforVo"/>
+        where t.model_position_infor_sid = #{modelPositionInforSid}
+    </select>
+
+    <insert id="insertTecModelPosInfor" parameterType="com.platform.ems.domain.TecModelPosInfor">
+        insert into s_tec_model_pos_infor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">client_id,</if>
+            <if test="modelPositionInforSid != null and modelPositionInforSid != ''">model_position_infor_sid,</if>
+            <if test="modelSid != null">model_sid,</if>
+            <if test="modelPositionSid != null and modelPositionSid != ''">model_position_sid,</if>
+            <if test="deviation != null">deviation,</if>
+            <if test="deviationMinus != null">deviation_minus,</if>
+            <if test="serialNum != null">serial_num,</if>
+            <if test="unit != null">unit,</if>
+            <if test="remark != null">remark,</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updaterAccount != null">updater_account,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="dataSourceSys != null">data_source_sys,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">#{clientId},</if>
+            <if test="modelPositionInforSid != null and modelPositionInforSid != ''">#{modelPositionInforSid},</if>
+            <if test="modelSid != null">#{modelSid},</if>
+            <if test="modelPositionSid != null and modelPositionSid != ''">#{modelPositionSid},</if>
+            <if test="deviation != null">#{deviation},</if>
+            <if test="deviationMinus != null">#{deviationMinus},</if>
+            <if test="serialNum != null">#{serialNum},</if>
+            <if test="unit != null">#{unit},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">#{creatorAccount},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updaterAccount != null">#{updaterAccount},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="dataSourceSys != null">#{dataSourceSys},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTecModelPosInfor" parameterType="com.platform.ems.domain.TecModelPosInfor">
+        update s_tec_model_pos_infor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="modelPositionInforSid != null and modelPositionInforSid != ''">model_position_infor_sid =
+                #{modelPositionInforSid},
+            </if>
+            <if test="modelSid != null">model_sid = #{modelSid},</if>
+            <if test="modelPositionSid != null and modelPositionSid != ''">model_position_sid = #{modelPositionSid},
+            </if>
+            <if test="deviation != null">deviation = #{deviation},</if>
+            <if test="deviationMinus != null">deviation_minus = #{deviationMinus},</if>
+            <if test="serialNum != null">serial_num = #{serialNum},</if>
+            <if test="unit != null">unit = #{unit},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account = #{creatorAccount},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updaterAccount != null">updater_account = #{updaterAccount},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="dataSourceSys != null">data_source_sys = #{dataSourceSys},</if>
+        </trim>
+        where client_id = #{clientId}
+    </update>
+
+    <delete id="deleteTecModelPosInforById" parameterType="Long">
+        delete
+        from s_tec_model_pos_infor
+        where model_position_infor_sid = #{modelPositionInforSid}
+    </delete>
+
+    <delete id="deleteTecModelPosInforByIds" parameterType="Long">
+        delete from s_tec_model_pos_infor where model_position_infor_sid in
+        <foreach item="modelPositionInforSid" collection="array" open="(" separator="," close=")">
+            #{modelPositionInforSid}
+        </foreach>
+    </delete>
+
+</mapper>

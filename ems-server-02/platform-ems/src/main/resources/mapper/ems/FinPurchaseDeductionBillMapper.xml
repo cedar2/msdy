@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.FinPurchaseDeductionBillMapper"> 
+  <resultMap type="com.platform.ems.domain.FinPurchaseDeductionBill" id="FinPurchaseDeductionBillResult"> 
+    <result property="clientId" column="client_id"/>  
+    <result property="purchaseDeductionBillSid" column="purchase_deduction_bill_sid"/>  
+    <result property="purchaseDeductionBillCode" column="purchase_deduction_bill_code"/>  
+    <result property="documentDate" column="document_date"/>  
+    <result property="documentType" column="document_type"/>  
+    <result property="businessType" column="business_type"/>  
+    <result property="vendorSid" column="vendor_sid"/>  
+    <result property="companySid" column="company_sid"/>  
+    <result property="productSeasonSid" column="product_season_sid"/>  
+    <result property="purchaseOrg" column="purchase_org"/>  
+    <result property="buyer" column="buyer"/>  
+    <result property="remark" column="remark"/>  
+    <result property="materialType" column="material_type"/>  
+    <result property="handleStatus" column="handle_status"/>  
+    <result property="accountClear" column="account_clear"/>  
+    <result property="creatorAccount" column="creator_account"/>  
+    <result property="createDate" column="create_date"/>  
+    <result property="updaterAccount" column="updater_account"/>  
+    <result property="updateDate" column="update_date"/>  
+    <result property="confirmerAccount" column="confirmer_account"/>  
+    <result property="confirmDate" column="confirm_date"/>  
+    <result property="dataSourceSys" column="data_source_sys"/> 
+  </resultMap>  
+  <select id="selectFinPurchaseDeductionById" parameterType="Long" resultMap="FinPurchaseDeductionBillResult"> 
+    <include refid="selectFinPurchaseDeductionVo"/> where t.purchase_deduction_bill_sid = #{purchaseDeductionBillSid}
+  </select>  
+  <select id="selectFinPurchaseDeductionList" parameterType="com.platform.ems.domain.FinPurchaseDeductionBill" resultMap="FinPurchaseDeductionBillResult"> 
+    <include refid="selectFinPurchaseDeductionVo"/>  
+    <where> 
+      <if test="clientId != null  and clientId != ''">and (
+        <foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="purchaseDeductionBillSid != null ">and t.purchase_deduction_bill_sid = #{purchaseDeductionBillSid}</if>  
+      <if test="purchaseDeductionBillCode != null ">and t.purchase_deduction_bill_code like concat('%',#{purchaseDeductionBillCode}, '%')</if>  
+      <if test="documentDate != null ">and t.document_date = #{documentDate}</if>  
+      <if test="documentType != null  and documentType != ''">and (
+        <foreach collection="documentType.split(';')" item="item" separator="or">t.document_type like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="businessType != null  and businessType != ''">and (
+        <foreach collection="businessType.split(';')" item="item" separator="or">t.business_type like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="vendorSid != null ">and t.vendor_sid = #{vendorSid}</if>  
+      <if test="companySid != null ">and t.company_sid = #{companySid}</if>  
+      <if test="productSeasonSid != null ">and t.product_season_sid = #{productSeasonSid}</if>  
+      <if test="purchaseOrg != null  and purchaseOrg != ''">and (
+        <foreach collection="purchaseOrg.split(';')" item="item" separator="or">t.purchase_org like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="buyer != null ">and t.buyer in (
+        <foreach collection="buyer" item="item" separator=",">#{item}</foreach>)
+      </if>  
+      <if test="handleStatus != null  and handleStatus != ''">and (
+        <foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="creatorAccount != null  and creatorAccount != ''">and (
+        <foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')</if>  
+      <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')</if>  
+      <if test="updaterAccount != null  and updaterAccount != ''">and (
+        <foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="updateDate != null ">and t.update_date = #{updateDate}</if>  
+      <if test="confirmerAccount != null  and confirmerAccount != ''">and (
+        <foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="confirmDate != null ">and t.confirm_date = #{confirmDate}</if>  
+      <if test="dataSourceSys != null  and dataSourceSys != ''">and (
+        <foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like concat('%', #{item}, '%')</foreach>)
+      </if> 
+    </where> order by t.create_date desc, t.purchase_deduction_bill_code desc
+  </select>  
+  <!--添加多个-->  
+  <insert id="inserts">insert into s_fin_purchase_deduction_bill 
+    <trim prefix="(" suffix=")" suffixOverrides=",">client_id, purchase_deduction_bill_sid, purchase_deduction_bill_code, document_date, document_type, business_type, vendor_sid, company_sid, product_season_sid, purchase_org, buyer, remark, handle_status, creator_account, create_date, updater_account, update_date, confirmer_account, confirm_date, data_source_sys,</trim>  
+    <trim prefix="values (" suffix=")" suffixOverrides=","> 
+      <foreach collection="list" item="o" separator=",">#{clientId}, #{purchaseDeductionBillSid}, #{purchaseDeductionBillCode}, #{documentDate}, #{documentType}, #{businessType}, #{vendorSid}, #{companySid}, #{productSeasonSid}, #{purchaseOrg}, #{buyer}, #{remark}, #{handleStatus}, #{creatorAccount}, #{createDate}, #{updaterAccount}, #{updateDate}, #{confirmerAccount}, #{confirmDate}, #{dataSourceSys},</foreach> 
+    </trim> 
+  </insert>  
+  <!--更新-->  
+  <update id="updateAllById">update s_fin_purchase_deduction_bill 
+    <trim prefix="SET" suffixOverrides=",">purchase_deduction_bill_code = #{purchaseDeductionBillCode}, document_date = #{documentDate}, document_type = #{documentType}, business_type = #{businessType}, vendor_sid = #{vendorSid}, company_sid = #{companySid}, product_season_sid = #{productSeasonSid}, purchase_org = #{purchaseOrg}, buyer = #{buyer}, remark = #{remark}, handle_status = #{handleStatus}, creator_account = #{creatorAccount}, create_date = #{createDate}, updater_account = #{updaterAccount}, update_date = #{updateDate}, confirmer_account = #{confirmerAccount}, confirm_date = #{confirmDate}, data_source_sys = #{dataSourceSys},</trim> where purchase_deduction_bill_sid = #{purchaseDeductionBillSid}
+  </update>  
+  <!--更新多个-->  
+  <update id="updatesAllById"> 
+    <foreach collection="list" item="o" separator=";">update s_fin_purchase_deduction_bill 
+      <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, purchase_deduction_bill_code = #{purchaseDeductionBillCode}, document_date = #{documentDate}, document_type = #{documentType}, business_type = #{businessType}, vendor_sid = #{vendorSid}, company_sid = #{companySid}, product_season_sid = #{productSeasonSid}, purchase_org = #{purchaseOrg}, buyer = #{buyer}, remark = #{remark}, handle_status = #{handleStatus}, creator_account = #{creatorAccount}, create_date = #{createDate}, updater_account = #{updaterAccount}, update_date = #{updateDate}, confirmer_account = #{confirmerAccount}, confirm_date = #{confirmDate}, data_source_sys = #{dataSourceSys},</trim> where purchase_deduction_bill_sid = #{purchaseDeductionBillSid}
+    </foreach> 
+  </update>  
+  <select id="countByDomain" resultType="java.lang.Integer">select count(1) from s_fin_purchase_deduction_bill 
+    <where> 
+      <if test="purchaseDeductionSids != null  and purchaseDeductionSids.length &gt; 0">and purchase_deduction_bill_sid in ( 
+        <foreach collection="purchaseDeductionSids" item="item" separator=",">#{item}</foreach> )
+      </if>  
+      <if test="handleStatus != null  and handleStatus != ''">and handle_status in ( 
+        <foreach collection="handleStatus.split(';')" item="item" separator=",">#{item}</foreach> )
+      </if> 
+    </where> 
+  </select>  
+  <delete id="deleteFinPurchaseDeductionByIds" parameterType="long">delete from s_fin_purchase_deduction_bill where purchase_deduction_bill_sid in 
+    <foreach item="purchaseDeductionBillSid" collection="array" open="(" separator="," close=")">#{purchaseDeductionBillSid}</foreach> 
+  </delete>  
+  <update id="confirm" parameterType="com.platform.ems.domain.FinPurchaseDeductionBill">update s_fin_purchase_deduction_bill 
+    <set> 
+      <if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>  
+      <if test="confirmerAccount != null and confirmerAccount != ''">confirmer_account = #{confirmerAccount},</if>  
+      <if test="confirmDate != null">confirm_date = #{confirmDate},</if> 
+    </set> where purchase_deduction_bill_sid in (
+    <foreach collection="purchaseDeductionSids" item="purchaseDeductionBillSid" separator=",">#{purchaseDeductionBillSid}</foreach>)
+  </update> 
+  <sql id="selectFinPurchaseDeductionVo">
+        SELECT t.client_id, t.purchase_deduction_bill_sid, t.purchase_deduction_bill_code, t.document_date, t.document_type
+			, t.business_type, t.vendor_sid, t.company_sid, t.product_season_sid, t.purchase_org ,t.material_type
+			, t.buyer, t.remark, t.handle_status, t.creator_account, t.create_date
+			, t.updater_account, t.update_date, t.confirmer_account, t.confirm_date, t.data_source_sys
+			, t1.vendor_name, t2.company_name, t3.product_season_name, t4.nick_name
+		FROM s_fin_purchase_deduction_bill t
+			LEFT JOIN s_bas_vendor t1 ON t1.vendor_sid = t.vendor_sid
+			LEFT JOIN s_bas_company t2 ON t2.company_sid = t.company_sid
+			LEFT JOIN s_bas_product_season t3 ON t3.product_season_sid = t.product_season_sid
+			LEFT JOIN sys_user t4 ON t.buyer = t4.user_id
+   </sql>
+</mapper>

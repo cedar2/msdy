@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.flowable.mapper.SysTaskFormMapper">
+
+
+
+	<select id="todoList" parameterType="String" resultType="com.platform.flowable.domain.dto.FlowTaskDto">
+SELECT
+DISTINCT
+	t1.ID_ AS taskId,
+	t1.PROC_INST_ID_ as procInsId,
+		t4.NAME_ AS procDefName,
+	t1.NAME_ AS taskName,
+	t4.VERSION_ AS procDefVersion,
+		t1.CREATE_TIME_ AS createTime,
+	t3.GROUP_ID_ ,
+	t4.DEPLOYMENT_ID_ as deployId,
+	t4.ID_ as procDefId
+FROM
+	ACT_RU_TASK t1
+	LEFT JOIN ACT_RU_IDENTITYLINK t3 ON t3.TASK_ID_ = t1.ID_
+	LEFT JOIN ACT_RE_PROCDEF t4 ON t4.ID_ = t1.PROC_DEF_ID_
+WHERE
+	t1.ASSIGNEE_ = #{userId}
+	OR t3.USER_ID_ = #{userId}
+	OR t3.GROUP_ID_ IN ( SELECT role_id FROM sys_user_role WHERE user_id = #{userId} )
+	</select>
+
+
+	
+</mapper> 

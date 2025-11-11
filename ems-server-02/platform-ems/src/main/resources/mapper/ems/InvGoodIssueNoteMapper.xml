@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.InvGoodIssueNoteMapper">
+
+    <resultMap type="com.platform.ems.domain.InvGoodIssueNote" id="InvGoodIssueNoteResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="documentDate" column="document_date"/>
+                    <result property="movementType" column="movement_type"/>
+                    <result property="documentType" column="document_type"/>
+                    <result property="businessType" column="business_type"/>
+                    <result property="companySid" column="company_sid"/>
+                    <result property="storehouseSid" column="storehouse_sid"/>
+                    <result property="storehouseLocationSid" column="storehouse_location_sid"/>
+                    <result property="accounter" column="accounter"/>
+                    <result property="accountDate" column="account_date"/>
+                    <result property="inOutStockStatus" column="in_out_stock_status"/>
+                    <result property="stockType" column="stock_type"/>
+                    <result property="specialStock" column="special_stock"/>
+                    <result property="vendorSid" column="vendor_sid"/>
+                    <result property="customerSid" column="customer_sid"/>
+                    <result property="materialCategory" column="material_category"/>
+                    <result property="remark" column="remark"/>
+                    <result property="handleStatus" column="handle_status"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="confirmerAccount" column="confirmer_account"/>
+                    <result property="confirmDate" column="confirm_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+            </resultMap>
+
+    <sql id="selectInvGoodIssueNoteVo">
+        select t.client_id,
+        t.note_sid,
+        t.note_code,
+        t.document_date,
+        t.movement_type,
+        t.document_type,
+        t.business_type,
+        t.refer_document,
+        t.company_sid,
+        t.storehouse_sid,
+        t.storehouse_location_sid,
+        t.accounter,
+        t.account_date,
+        t.in_out_stock_status,
+        t.stock_type,
+        t.special_stock,
+        t.vendor_sid,
+        t.customer_sid,
+        t.material_category,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.company_name,
+        t1.company_code,
+        t2.vendor_name as vendorName ,
+        t2.vendor_code as vendorCode,
+        t3.storehouse_name,
+        t3.storehouse_code,
+        t4.location_name,
+        t4.location_code,
+        t5.customer_code,
+	    t5.customer_name,
+	    t6.name as movement_type_name,
+-- 	    t7.inventory_document_code,
+        t8.name as  special_stock_name,
+        t10.nick_name as creator_account_name,
+        t11.name as stock_type_name,
+        t12.nick_name as updater_account_name,
+        t19.approval_node,
+      	t19.approval_user_id,
+	    t19.approval_user_name,
+	    t19.create_date AS submit_date,
+	    t20.nick_name AS submit_user_name
+        from s_inv_good_issue_note t
+        LEFT JOIN s_bas_company t1 ON t1.company_sid = t.company_sid
+	    LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t.vendor_sid
+        LEFT JOIN s_bas_storehouse t3 on t3.storehouse_sid=t.storehouse_sid
+        LEFT JOIN s_bas_storehouse_location t4 on t4.storehouse_location_sid=t.storehouse_location_sid
+        LEFT JOIN s_bas_customer t5 on t5.customer_sid=t.customer_sid
+        LEFT JOIN s_con_movement_type t6 on t6.code=t.movement_type
+        left join s_con_special_stock t8 on t8.code=t.special_stock
+--         left join s_inv_inventory_document  t7 on t7.refer_document_sid=t.note_sid
+        LEFT JOIN sys_user t10 ON t10.user_name = t.creator_account
+        left join s_con_stock_type t11 on t11.code=t.stock_type
+       LEFT JOIN sys_user t12 ON t12.user_name = t.updater_account
+         left join s_sys_form_process t19 on t19.form_id=t.note_sid
+        LEFT JOIN sys_user t20 ON t19.creator_account = t20.user_name
+    </sql>
+
+    <select id="selectInvGoodIssueNoteById" parameterType="Long" resultType="com.platform.ems.domain.InvGoodIssueNote">
+        <include refid="selectInvGoodIssueNoteVo"/>
+        where t.note_sid = #{noteSid}
+        limit 1
+    </select>
+
+
+    <select id="selectInvGoodIssueNoteList" parameterType="com.platform.ems.domain.InvGoodIssueNote"
+            resultType="com.platform.ems.domain.InvGoodIssueNote">
+        <include refid="selectInvGoodIssueNoteVo"/>
+        <where>
+            <if test="approvalUserId != null and approvalUserId != ''">
+                and t19.approval_user_id = #{approvalUserId}
+            </if>
+            <if test="itemSidList != null  and itemSidList.size> 0">and t.note_sid in
+                <foreach collection="itemSidList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="noteCode != null and noteCode !=''">
+                and (<foreach collection="noteCode.split(';')" item="item" separator="or">t.note_code like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="inOutStockStatusList != null and inOutStockStatusList.length >0">
+                and t.in_out_stock_status in
+                (<foreach collection="inOutStockStatusList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and t.customer_sid in
+                (<foreach collection="customerSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="storehouseSid != null and storehouseSid != '' ">
+                and t.storehouse_sid =#{storehouseSid}
+            </if>
+            <if test="storehouseLocationSidList != null and storehouseLocationSidList.length >0">
+                and t.storehouse_location_sid in
+                (<foreach collection="storehouseLocationSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="documentBeginTime != null and documentBeginTime!=''">
+                and date_format(t.document_date,'%y%m%d') &gt;= date_format(#{documentBeginTime},'%y%m%d')
+            </if>
+            <if test="documentEndTime != null and documentEndTime!=''">
+                and date_format(t.document_date,'%y%m%d') &lt;= date_format(#{documentEndTime},'%y%m%d')
+            </if>
+            <if test="movementTypeList != null and movementTypeList.length >0">
+                and t.movement_type in
+                (<foreach collection="movementTypeList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0" >
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+        </where>
+        order by t.note_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_inv_good_issue_note
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            note_sid,
+            note_code,
+            document_date,
+            movement_type,
+            document_type,
+            business_type,
+            refer_document,
+            company_sid,
+            storehouse_sid,
+            storehouse_location_sid,
+            accounter,
+            account_date,
+            in_out_stock_status,
+            stock_type,
+            special_stock,
+            vendor_sid,
+            customer_sid,
+            material_category,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+            product_season_sid,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.noteSid},
+                #{item.noteCode},
+                #{item.documentDate},
+                #{item.movementType},
+                #{item.documentType},
+                #{item.businessType},
+                #{item.referDocument},
+                #{item.companySid},
+                #{item.storehouseSid},
+                #{item.storehouseLocationSid},
+                #{item.accounter},
+                #{item.accountDate},
+                #{item.inOutStockStatus},
+                #{item.stockType},
+                #{item.specialStock},
+                #{item.vendorSid},
+                #{item.customerSid},
+                #{item.materialCategory},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+                #{item.productSeasonSid},
+            </trim>
+        </foreach>
+    </insert>
+
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_inv_good_issue_note
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                note_code = #{noteCode},
+                                                                document_date = #{documentDate},
+                                                                movement_type = #{movementType},
+                                                                document_type = #{documentType},
+                                                                business_type = #{businessType},
+                                                                refer_document = #{referDocument},
+                                                                company_sid = #{companySid},
+                                                                storehouse_sid = #{storehouseSid},
+                                                                storehouse_location_sid = #{storehouseLocationSid},
+                                                                accounter = #{accounter},
+                                                                account_date = #{accountDate},
+                                                                in_out_stock_status = #{inOutStockStatus},
+                                                                stock_type = #{stockType},
+                                                                special_stock = #{specialStock},
+                                                                vendor_sid = #{vendorSid},
+                                                                customer_sid = #{customerSid},
+                                                                material_category = #{materialCategory},
+                                                                remark = #{remark},
+                                                                handle_status = #{handleStatus},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                confirmer_account = #{confirmerAccount},
+                                                                confirm_date = #{confirmDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where note_sid = #{noteSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_inv_good_issue_note
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    good_issue_note_code = #{goodIssueNoteCode},
+                                                                                document_date = #{documentDate},
+                                                                                movement_type = #{movementType},
+                                                                                document_type = #{documentType},
+                                                                                business_type = #{businessType},
+                                                                                reference_document = #{referenceDocument},
+                                                                                company_sid = #{companySid},
+                                                                                storehouse_sid = #{storehouseSid},
+                                                                                storehouse_location_sid = #{storehouseLocationSid},
+                                                                                accounter = #{accounter},
+                                                                                account_date = #{accountDate},
+                                                                                in_out_stock_status = #{inOutStockStatus},
+                                                                                stock_type = #{stockType},
+                                                                                special_stock = #{specialStock},
+                                                                                vendor_sid = #{vendorSid},
+                                                                                customer_sid = #{customerSid},
+                                                                                material_category = #{materialCategory},
+                                                                                remark = #{remark},
+                                                                                handle_status = #{handleStatus},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                confirmer_account = #{confirmerAccount},
+                                                                                confirm_date = #{confirmDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where good_issue_note_sid = #{goodIssueNoteSid}
+        </foreach>
+    </update>
+
+</mapper>

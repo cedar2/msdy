@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecMaterialSizeMapper">
+
+    <resultMap type="com.platform.ems.domain.TecMaterialSize" id="TecMaterialSizeResult">
+        <result property="clientId" column="client_id"/>
+        <result property="materialSizeSid" column="material_size_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="sampleCodeSelf" column="sample_code_self"/>
+        <result property="materialName" column="material_name"/>
+        <result property="designerAccount" column="designer_account"/>
+        <result property="isSuit" column="is_suit"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="standardSku" column="standard_sku"/>
+        <result property="downStandardSku" column="down_standard_sku"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="materialType" column="material_type"/>
+        <result property="materialTypeName" column="material_type_name"/>
+        <result property="materialClass" column="material_class"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyName" column="company_name"/>
+        <result property="companyBrandName" column="company_brand_name"/>
+        <result property="customerBrandName" column="customer_brand_name"/>
+        <result property="productTechniqueType" column="product_technique_type"/>
+        <result property="productTechniqueTypeName" column="product_technique_type_name"/>
+        <result property="styleDetail" column="style_detail"/>
+        <result property="style" column="style"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerBrandSid" column="customer_brand_sid"/>
+        <result property="customerBrandCode" column="customer_brand_code"/>
+        <result property="customerProductCode" column="customer_product_code"/>
+        <result property="className" column="class_name"/>
+        <result property="modelSid" column="model_sid"/>
+        <result property="modelName" column="model_name"/>
+        <result property="upDownSuit" column="up_down_suit"/>
+        <result property="designerAccountName" column="designer_account_name"/>
+        <result property="sampleCodeCustomer" column="sample_code_customer"/>
+    </resultMap>
+
+    <sql id="selectTecMaterialSizeVo">
+    SELECT
+	t.client_id,
+	t.material_size_sid,
+	t.material_sid,
+	t.standard_sku,
+	t.down_standard_sku,
+	t.picture_path,
+	t.remark,
+	t.STATUS,
+	t.handle_status,
+	t.creator_account,
+	t.create_date,
+	t.updater_account,
+	t.update_date,
+	t.confirmer_account,
+	t.confirm_date,
+	t.data_source_sys,
+	t1.sample_code_self,
+	t1.up_down_suit,
+	t1.designer_account,
+	t2.product_season_sid,
+	t2.product_season_code,
+	t2.product_season_name,
+	t1.material_type,
+	t11.name AS material_type_name,
+	t1.material_class_sid,
+	t8.node_name AS class_name,
+	t1.material_name,
+	t1.material_code,
+	t1.company_sid,
+	t3.company_name,
+	t4.brand_name as company_brand_name,
+	t1.model_sid,
+	t5.model_name,
+	t1.product_technique_type,
+	t10.name AS product_technique_type_name,
+	t1.style,
+	t1.style_detail,
+	t7.customer_sid,
+	t1.sample_code_customer,
+	t7.customer_name,
+	t9.customer_brand_sid,
+	t9.brand_name as customer_brand_name,
+	t9.brand_code as customer_brand_code,
+	t1.customer_product_code,
+    t12.nick_name AS designer_account_name,
+    t14.nick_name AS creator_account_name,
+    t15.nick_name AS updater_account_name,
+    t16.nick_name AS confirmer_account_name
+FROM
+	s_tec_material_size t
+	LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+	LEFT JOIN s_bas_product_season t2 ON t2.product_season_sid = t1.product_season_sid
+	LEFT JOIN s_bas_company t3 ON t3.company_sid = t1.company_sid
+	LEFT JOIN s_bas_company_brand t4 ON t4.company_brand_sid = t1.company_brand_sid
+	left join s_tec_model t5 on t5.model_sid =t1.model_sid
+	LEFT JOIN s_bas_customer t7 ON t7.customer_sid = t1.customer_sid
+	LEFT JOIN s_con_material_class t8 on t8.material_class_sid=t1.material_class_sid
+	LEFT JOIN s_bas_customer_brand t9 ON t9.customer_brand_sid = t1.customer_brand_sid
+	LEFT JOIN s_con_product_technique_type t10 ON t10.code = t1.product_technique_type
+	LEFT JOIN s_con_material_type t11 ON t11.code = t1.material_type
+	LEFT JOIN sys_user t12 ON t12.user_name = t1.designer_account
+	LEFT JOIN sys_user t13 ON t13.user_name = t7.customer_name
+	LEFT JOIN sys_user t14 ON t14.user_name = t.creator_account
+    LEFT JOIN sys_user t15 ON t15.user_name = t.updater_account
+    LEFT JOIN sys_user t16 ON t16.user_name = t.confirmer_account
+    </sql>
+
+    <select id="selectTecMaterialSizeList" parameterType="com.platform.ems.domain.TecMaterialSize"
+            resultMap="TecMaterialSizeResult">
+        <include refid="selectTecMaterialSizeVo"/>
+        <where>
+            <if test="designerAccount != null  and designerAccount != ''">
+                and (<foreach collection="designerAccount.split(';')" item="item" separator="or"> t12.nick_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sampleCodeCustomer != null  and sampleCodeCustomer != ''">
+                and (<foreach collection="sampleCodeCustomer.split(';')" item="item" separator="or"> t1.sample_code_customer like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="customerProductCode != null  and customerProductCode != ''">
+                and (<foreach collection="customerProductCode.split(';')" item="item" separator="or"> t1.customer_product_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="modelSid != null  and modelSid != ''">
+                and t1.model_sid = #{modelSid}
+            </if>
+            <if test="modelSidList != null  and modelSidList.length >0">
+                and t1.model_sid in
+                <foreach collection="modelSidList" item="item" open="("  separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="upDownSuit != null  and upDownSuit != ''">
+                and t1.up_down_suit = #{upDownSuit}
+            </if>
+            <if test="customerName != null  and customerName != ''">
+                and (<foreach collection="customerName.split(';')" item="item" separator="or"> t13.nick_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companySid != null  and companySid != ''">
+                and t1.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null  and companySidList.length >0">
+                and t1.company_sid in
+                <foreach collection="companySidList" item="item" open="("  separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">
+                and t2.product_season_sid in
+                <foreach collection="productSeasonSidList" item="item" open="("  separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="materialCode != null  and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator="or"> t1.material_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialName != null  and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="item" separator="or"> t1.material_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialType != null  and materialType != ''">and t1.material_type in (
+                <foreach collection="materialType.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>)
+            </if>
+            <if test="materialSizeSid != null  and materialSizeSid != ''">
+               and (<foreach collection="materialSizeSid.split(';')" item="item" separator="or"> t.material_size_sid like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sampleCodeSelf != null  and sampleCodeSelf != ''">
+                and (<foreach collection="sampleCodeSelf.split(';')" item="item" separator="or"> t1.sample_code_self like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="status != null  and status != ''">
+               and (<foreach collection="status.split(';')" item="item" separator="or"> t.status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+               and (<foreach collection="handleStatus.split(';')" item="item" separator="or"> t.handle_status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0">
+                and t.handle_status in
+                <foreach collection="handleStatusList" item="item" open="("  separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+               and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t14.nick_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+               and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or"> t.confirmer_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+               and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or"> t.data_source_sys like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+        </where>
+        order by t.create_date desc,t1.material_code desc
+    </select>
+
+    <select id="selectTecMaterialSizeById" parameterType="java.lang.Long" resultMap="TecMaterialSizeResult">
+        <include refid="selectTecMaterialSizeVo"/>
+        where t.material_size_sid = #{materialSizeSid}
+    </select>
+
+    <resultMap type="com.platform.ems.domain.BasMaterial" id="BasMaterialResult">
+    <result property="materialSid" column="material_sid"/>
+    <result property="materialCode" column="material_code"/>
+    <result property="materialName" column="material_name"/>
+    <result property="status" column="status"/>
+    <result property="handleStatus" column="handle_status"/>
+    </resultMap>
+
+    <select id="selectBasMaterialList" resultMap="BasMaterialResult">
+                SELECT t.material_sid,t.material_code,t.material_name,t.status,t.handle_status FROM  s_bas_material t
+        left join s_tec_material_size t1 on t1.material_sid =t.material_sid
+        where t1.material_size_sid  IS NOT NULL
+    </select>
+
+    <insert id="insertTecMaterialSize" parameterType="com.platform.ems.domain.TecMaterialSize">
+        insert into s_tec_material_size
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">client_id,</if>
+            <if test="materialSizeSid != null and materialSizeSid != ''">material_size_sid,</if>
+            <if test="standardSku != null and standardSku != ''">standard_sku,</if>
+            <if test="downStandardSku != null and downStandardSku != ''">down_standard_sku,</if>
+            <if test="materialSid != null">material_sid,</if>
+            <if test="picturePath != null">picture_path,</if>
+            <if test="remark != null">remark,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="handleStatus != null and handleStatus != ''">handle_status,</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updaterAccount != null">updater_account,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="confirmerAccount != null">confirmer_account,</if>
+            <if test="confirmDate != null">confirm_date,</if>
+            <if test="dataSourceSys != null">data_source_sys,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">#{clientId},</if>
+            <if test="materialSizeSid != null and materialSizeSid != ''">#{materialSizeSid},</if>
+            <if test="standardSku != null and standardSku != ''">#{standardSku},</if>
+            <if test="downStandardSku != null and downStandardSku != ''">#{downStandardSku},</if>
+            <if test="materialSid != null">#{materialSid},</if>
+            <if test="picturePath != null">#{picturePath},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="handleStatus != null and handleStatus != ''">#{handleStatus},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">#{creatorAccount},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updaterAccount != null">#{updaterAccount},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="confirmerAccount != null">#{confirmerAccount},</if>
+            <if test="confirmDate != null">#{confirmDate},</if>
+            <if test="dataSourceSys != null">#{dataSourceSys},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTecMaterialSize" parameterType="com.platform.ems.domain.TecMaterialSize">
+        update s_tec_material_size
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="materialSizeSid != null and materialSizeSid != ''">material_size_sid = #{materialSizeSid},</if>
+            <if test="standardSku != null and standardSku != ''">standard_sku = #{standardSku},</if>
+            <if test="downStandardSku != null and downStandardSku != ''">down_standard_sku = #{downStandardSku},</if>
+            <if test="materialSid != null">material_sid = #{materialSid},</if>
+            <if test="picturePath != null">picture_path = #{picturePath},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account = #{creatorAccount},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updaterAccount != null">updater_account = #{updaterAccount},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="confirmerAccount != null">confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmDate != null">confirm_date = #{confirmDate},</if>
+            <if test="dataSourceSys != null">data_source_sys = #{dataSourceSys},</if>
+        </trim>
+        where material_size_sid = #{materialSizeSid}
+    </update>
+
+    <delete id="deleteTecMaterialSizeById" parameterType="Long">
+        delete from s_tec_material_size where material_size_sid = #{materialSizeSid}
+    </delete>
+
+    <delete id="deleteTecMaterialSizeByIds" parameterType="Long">
+        delete from s_tec_material_size where material_size_sid in
+        <foreach item="materialSizeSid" collection="array" open="(" separator="," close=")">
+            #{materialSizeSid}
+        </foreach>
+    </delete>
+
+    <select id="getHandleStatus" parameterType="Long" resultType="String">
+        select handle_status
+        from s_tec_material_size
+        where material_size_sid = #{sId}
+    </select>
+
+    <update id="putHandleStatus" parameterType="Long">
+        update s_tec_material_size
+        set handle_status = #{handleStatus}
+        where material_size_sid = #{sId};
+    </update>
+
+    <select id="getStatus" parameterType="Long" resultType="String">
+        select status
+        from s_tec_material_size
+        where material_size_sid = #{sId}
+    </select>
+
+    <update id="putStatus" parameterType="Long">
+        update s_tec_material_size
+        set status = #{status}
+        where material_size_sid = #{sId};
+    </update>
+</mapper>

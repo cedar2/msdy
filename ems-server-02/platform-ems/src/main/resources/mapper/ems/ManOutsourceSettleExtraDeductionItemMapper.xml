@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManOutsourceSettleExtraDeductionItemMapper">
+
+    <resultMap type="com.platform.ems.domain.ManOutsourceSettleExtraDeductionItem"
+               id="ManOutsourceSettleExtraDeductionItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="outsourceSettleExtraDeductionItemSid" column="outsource_settle_extra_deduction_item_sid"/>
+        <result property="manufactureOutsourceSettleSid" column="manufacture_outsource_settle_sid"/>
+        <result property="manufactureOutsourceSettleCode" column="manufacture_outsource_settle_code"/>
+        <result property="extraDeductionInstruction" column="extra_deduction_instruction"/>
+        <result property="extraDeductionTax" column="extra_deduction_tax"/>
+        <result property="extraDeduction" column="extra_deduction"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectManOutsourceSettleExtraDeductionItemVo">
+        select t.client_id,
+               t.outsource_settle_extra_deduction_item_sid,
+               t.manufacture_outsource_settle_sid,
+               t.manufacture_outsource_settle_code,
+               t.extra_deduction_instruction,
+               t.extra_deduction_tax,
+               t.extra_deduction,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name
+        from s_man_outsource_settle_extra_deduction_item t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+    </sql>
+
+    <select id="selectManOutsourceSettleExtraDeductionItemById" parameterType="Long"
+            resultMap="ManOutsourceSettleExtraDeductionItemResult">
+        <include refid="selectManOutsourceSettleExtraDeductionItemVo"/>
+        where t.outsource_settle_extra_deduction_item_sid = #{outsourceSettleExtraDeductionItemSid}
+    </select>
+
+    <select id="selectManOutsourceSettleExtraDeductionItemList"
+            parameterType="com.platform.ems.domain.ManOutsourceSettleExtraDeductionItem"
+            resultMap="ManOutsourceSettleExtraDeductionItemResult">
+        <include refid="selectManOutsourceSettleExtraDeductionItemVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="manufactureOutsourceSettleSid != null ">
+                and t.manufacture_outsource_settle_sid = #{manufactureOutsourceSettleSid}
+            </if>
+            <if test="manufactureOutsourceSettleCode != null and manufactureOutsourceSettleCode != ''">
+                and t.manufacture_outsource_settle_code = #{manufactureOutsourceSettleCode}
+            </if>
+            <if test="extraDeductionInstruction != null and extraDeductionInstruction != ''">
+                and t.extra_deduction_instruction = #{extraDeductionInstruction}
+            </if>
+            <if test="extraDeductionTax != null ">
+                and t.extra_deduction_tax = #{extraDeductionTax}
+            </if>
+            <if test="extraDeduction != null ">
+                and t.extra_deduction = #{extraDeduction}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_outsource_settle_extra_deduction_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            outsource_settle_extra_deduction_item_sid,
+            manufacture_outsource_settle_sid,
+            manufacture_outsource_settle_code,
+            extra_deduction_instruction,
+            extra_deduction_tax,
+            extra_deduction,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.outsourceSettleExtraDeductionItemSid},
+                #{item.manufactureOutsourceSettleSid},
+                #{item.manufactureOutsourceSettleCode},
+                #{item.extraDeductionInstruction},
+                #{item.extraDeductionTax},
+                #{item.extraDeduction},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_outsource_settle_extra_deduction_item
+        <trim prefix="SET" suffixOverrides=",">
+            extra_deduction_instruction = #{extraDeductionInstruction},
+            extra_deduction_tax = #{extraDeductionTax},
+            extra_deduction = #{extraDeduction},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where outsource_settle_extra_deduction_item_sid = #{outsourceSettleExtraDeductionItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_outsource_settle_extra_deduction_item
+            <trim prefix="SET" suffixOverrides=",">
+                extra_deduction_instruction = #{o.extraDeductionInstruction},
+                extra_deduction_tax = #{o.extraDeductionTax},
+                extra_deduction = #{o.extraDeduction},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where outsource_settle_extra_deduction_item_sid = #{o.outsourceSettleExtraDeductionItemSid}
+        </foreach>
+    </update>
+
+</mapper>

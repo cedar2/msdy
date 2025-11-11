@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.plug.mapper.ConBuTypeManufactureOutsourceSettleMapper">
+
+    <resultMap type="com.platform.ems.plug.domain.ConBuTypeManufactureOutsourceSettle"
+               id="ConBuTypeManufactureOutsourceSettleResult">
+        <result property="clientId" column="client_id"/>
+        <result property="sid" column="sid"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="isClientDefine" column="is_client_define"/>
+        <result property="sort" column="sort"/>
+    </resultMap>
+
+    <sql id="selectConBuTypeManOutsourceSettleVo">
+        select t.client_id,
+               t.sid,
+               t.code,
+               t.name,
+               t.is_client_define,
+               t.sort,
+               t.remark,
+               t.status,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t1.nick_name as creator_account_name
+        from s_con_bu_type_manufacture_outsource_settle t
+        left join sys_user t1 on t.creator_account = t1.user_name
+    </sql>
+
+    <select id="selectConBuTypeManOutsourceSettleById" parameterType="Long"
+            resultMap="ConBuTypeManufactureOutsourceSettleResult">
+        <include refid="selectConBuTypeManOutsourceSettleVo"/>
+        where t.sid = #{sid}
+    </select>
+
+    <select id="selectConBuTypeManOutsourceSettleList"
+            parameterType="com.platform.ems.plug.domain.ConBuTypeManufactureOutsourceSettle"
+            resultMap="ConBuTypeManufactureOutsourceSettleResult">
+        <include refid="selectConBuTypeManOutsourceSettleVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="code != null and code != ''">
+                and (<foreach collection="code.split(';')" item="item" separator="or">t.code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="name != null and name != ''">
+                and t.name like concat('%', #{name}, '%')
+            </if>
+            <if test="isClientDefine != null and isClientDefine != ''">
+                and t.is_client_define = #{isClientDefine}
+            </if>
+            <if test="sort != null ">
+                and t.sort =#{sort}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t1.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.create_date desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_bu_type_manufacture_outsource_settle
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sid,
+            code,
+            name,
+            is_client_define,
+            sort,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.sid},
+                #{item.code},
+                #{item.name},
+                #{item.isClientDefine},
+                #{item.sort},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_bu_type_manufacture_outsource_settle
+        <trim prefix="SET" suffixOverrides=",">
+            code = #{code},
+            name = #{name},
+            is_client_define = #{isClientDefine},
+            sort = #{sort},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where sid = #{sid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_bu_type_manufacture_outsource_settle
+            <trim prefix="SET" suffixOverrides=",">
+                code = #{o.code},
+                name = #{o.name},
+                is_client_define = #{o.isClientDefine},
+                sort = #{o.sort},
+                remark = #{o.remark},
+                status = #{o.status},
+                handle_status = #{o.handleStatus},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+                data_source_sys = #{o.dataSourceSys},
+            </trim>
+            where sid = #{o.sid}
+        </foreach>
+    </update>
+
+    <select id="getOutsourceSettleList" resultType="com.platform.ems.plug.domain.ConBuTypeManufactureOutsourceSettle">
+        select
+        client_id,
+        sid,
+        code,
+        name,
+        status,
+        handle_status,
+        creator_account,
+        sort,
+        create_date
+        from s_con_bu_type_manufacture_outsource_settle
+        <where>
+            <if test="handleStatus != null and handleStatus != ''">
+                and handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+        order by sort asc, name asc
+    </select>
+</mapper>

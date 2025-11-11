@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.SBasProductSeasonMapper">
+
+    <resultMap type="com.platform.ems.domain.SBasProductSeason" id="SBasProductSeasonResult">
+        <result property="clientId"    column="client_id"    />
+        <result property="productSeasonSid"    column="product_season_sid"    />
+        <result property="productSeasonCode"    column="product_season_code"    />
+        <result property="productSeasonName"    column="product_season_name"    />
+        <result property="year"    column="year"    />
+        <result property="seasonCode"    column="season_code"    />
+        <result property="companySid"    column="company_sid"    />
+        <result property="productSeasonStage"    column="product_season_stage"    />
+        <result property="remark"    column="remark"    />
+        <result property="status"    column="status"    />
+        <result property="handleStatus"    column="handle_status"    />
+        <result property="creatorAccount"    column="creator_account"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updaterAccount"    column="updater_account"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="confirmerAccount"    column="confirmer_account"    />
+        <result property="confirmDate"    column="confirm_date"    />
+        <result property="dataSourceSys"    column="data_source_sys"    />
+    </resultMap>
+
+    <sql id="selectSBasProductSeasonVo">
+        select client_id, product_season_sid, product_season_code, product_season_name, year, season_code, company_sid, product_season_stage, remark, status, handle_status, creator_account, create_date, updater_account, update_date, confirmer_account, confirm_date, data_source_sys from s_bas_product_season
+    </sql>
+    <sql id="selectSBasProductSeasonListVo">
+        select  product_season_sid, product_season_code, product_season_name, year, season_code, company_sid, product_season_stage, remark, status, handle_status, creator_account, create_date, updater_account, update_date, confirmer_account, confirm_date from s_bas_product_season
+    </sql>
+
+    <select id="selectSBasProductSeasonList" parameterType="com.platform.ems.domain.dto.request.ListSeasonRequest" resultType="com.platform.ems.domain.dto.response.ListSeasonResponse">
+        <include refid="selectSBasProductSeasonListVo"/>
+        <where>
+            <if test="productSeasonCode != null  and productSeasonCode != ''"> and product_season_code in
+                <foreach item="productSeasonCode" collection="productSeasonCode.split(';')" open="(" separator="," close=")">
+                    #{productSeasonCode}
+                </foreach>
+            </if>
+
+            <if test="productSeasonName != null  and productSeasonName != ''"> and product_season_name regexp concat
+                <foreach item="productSeasonName" collection="productSeasonName.split('[;]')"  separator=",'|'," open="('/*'," close=")">
+                    #{productSeasonName}
+                </foreach></if>
+<!--            <if test="productSeasonName != null  and productSeasonName != ''"> and product_season_name like-->
+<!--                <foreach item="productSeasonName" collection="productSeasonName.split('[；;]')"  separator="or product_season_name like" >-->
+<!--                    concat('%', #{productSeasonName}, '%')-->
+<!--                </foreach></if>-->
+            <if test="year != null  and year != ''"> and year in
+                <foreach item="year" collection="year.split('[；;]')" open="(" separator="," close=")">
+                    #{year}
+                </foreach></if>
+            <if test="seasonCode != null  and seasonCode != ''"> and season_code in
+                <foreach item="seasonCode" collection="seasonCode.split('[;；]')" open="(" separator="," close=")">
+                    #{seasonCode}
+                </foreach></if>
+            <if test="companySid != null  and companySid != ''"> and company_sid in
+                <foreach item="companySid" collection="companySid.split('[;；]')" open="(" separator="," close=")">
+                    #{companySid}
+                </foreach></if>
+            <if test="productSeasonStage != null  and productSeasonStage != ''"> and product_season_stage in
+                <foreach item="productSeasonStage" collection="productSeasonStage.split('[；;]')" open="(" separator="," close=")">
+                    #{productSeasonStage}
+                </foreach></if>
+            <if test="status != null  and status != ''"> and status in
+                <foreach item="status" collection="status.split('[；;]')" open="(" separator="," close=")">
+                    #{status}
+                </foreach></if>
+            <if test="handleStatus != null  and handleStatus != ''"> and handle_status in
+                <foreach item="handleStatus" collection="handleStatus.split('[；;]')" open="(" separator="," close=")">
+                    #{handleStatus}
+                </foreach>
+             </if>
+            <if test="creatorAccount != null  and creatorAccount != ''"> and creator_account = #{creatorAccount}</if>
+            <if test="createDateStart != null"> and create_date > #{createDateStart}</if>
+            <if test="createDateEnd != null"> and create_date &lt; #{createDateEnd}</if>
+
+        </where>
+    </select>
+
+    <!--<select id="selectSBasProductSeasonById" parameterType="String" resultType="ListSeasonResponse">
+        <include refid="selectSBasProductSeasonVo"/>
+        where product_season_sid = #{productSeasonSid}
+    </select>-->
+
+    <select id="selectSBasProductSeasonById"  parameterType="Long" resultType="com.platform.ems.domain.dto.response.ListSeasonResponse">
+        select * from s_bas_product_season
+        where product_season_sid = #{productSeasonSid} limit 1
+    </select>
+
+    <select id="selectSBasProductSeasonByIds" parameterType="Long" resultType="com.platform.ems.domain.dto.response.ListSeasonResponse">
+        <include refid="selectSBasProductSeasonVo"/>
+        <where>
+            <if test="productSeasonSid != null  and productSeasonSid != ''"> and product_season_sid in
+                <foreach item="productSeasonSid" collection="productSeasonSid.split('[；;]')" open="(" separator="," close=")">
+                    #{productSeasonSid}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllList" resultType="com.platform.ems.domain.dto.response.ExportSeasonResponse">
+        <include refid="selectSBasProductSeasonVo"/>
+    </select>
+    <insert id="insertSBasProductSeason" parameterType="com.platform.ems.domain.SBasProductSeason">
+        insert into s_bas_product_season
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">client_id,</if>
+            <if test="productSeasonSid != null and productSeasonSid != ''">product_season_sid,</if>
+            <if test="productSeasonCode != null">product_season_code,</if>
+            <if test="productSeasonName != null and productSeasonName != ''">product_season_name,</if>
+            <if test="year != null and year != ''">year,</if>
+            <if test="seasonCode != null and seasonCode != ''">season_code,</if>
+            <if test="companySid != null and companySid != ''">company_sid,</if>
+            <if test="productSeasonStage != null">product_season_stage,</if>
+            <if test="remark != null">remark,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="handleStatus != null and handleStatus != ''">handle_status,</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account,</if>
+            <if test="creatorAccount != null and creatorAccount != ''">create_date,</if>
+
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">#{clientId},</if>
+            <if test="productSeasonSid != null and productSeasonSid != ''">#{productSeasonSid},</if>
+            <if test="productSeasonCode != null">#{productSeasonCode},</if>
+            <if test="productSeasonName != null and productSeasonName != ''">#{productSeasonName},</if>
+            <if test="year != null and year != ''">#{year},</if>
+            <if test="seasonCode != null and seasonCode != ''">#{seasonCode},</if>
+            <if test="companySid != null and companySid != ''">#{companySid},</if>
+            <if test="productSeasonStage != null">#{productSeasonStage},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="handleStatus != null and handleStatus != ''">#{handleStatus},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">#{creatorAccount},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">now(),</if>
+
+         </trim>
+    </insert>
+
+    <update id="updateSBasProductSeason" parameterType="com.platform.ems.domain.SBasProductSeason">
+        update s_bas_product_season
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productSeasonCode != null">product_season_code = #{productSeasonCode},</if>
+            <if test="productSeasonName != null and productSeasonName != ''">product_season_name = #{productSeasonName},</if>
+            <if test="year != null and year != ''">year = #{year},</if>
+            <if test="seasonCode != null and seasonCode != ''">season_code = #{seasonCode},</if>
+            <if test="companySid != null and companySid != ''">company_sid = #{companySid},</if>
+            <if test="productSeasonStage != null">product_season_stage = #{productSeasonStage},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>
+            <if test="updaterAccount != null and updaterAccount != ''">updater_account = #{updaterAccount},</if>
+            <if test="updaterAccount != null and updaterAccount != ''">update_date = now(),</if>
+        </trim>
+        where product_season_sid = #{productSeasonSid}
+    </update>
+    <update id="updateHandleStatus">
+        update s_bas_product_season
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>
+            <if test="updaterAccount != null and updaterAccount != ''">updater_account = #{updaterAccount},</if>
+            <if test="updaterAccount != null and updaterAccount != ''">update_date = now()</if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">confirm_date = now()</if>
+
+        </trim>
+        where product_season_sid in
+        <foreach item="productSeasonSid" collection="productSeasonSid.split('[；;]')" open="(" separator="," close=")">
+            #{productSeasonSid}
+        </foreach>
+    </update>
+    <update id="updateValidStatus">
+        update s_bas_product_season
+        SET status = #{status}
+        where product_season_sid in
+        <foreach item="productSeasonSid" collection="productSeasonSid.split('[；;]')" open="(" separator="," close=")">
+            #{productSeasonSid}
+        </foreach>
+    </update>
+
+<!--    <delete id="deleteSBasProductSeasonById" parameterType="String">-->
+<!--        delete from s_bas_product_season where client_id = #{clientId}-->
+<!--    </delete>-->
+
+    <delete id="deleteSBasProductSeasonByIds" parameterType="Long">
+        delete from s_bas_product_season where handle_status &lt; 2 and product_season_sid in
+        <foreach item="productSeasonSid" collection="productSeasonSid.split('[；;]')" open="(" separator="," close=")">
+            #{productSeasonSid}
+        </foreach>
+    </delete>
+
+    <select id="selectHandleStatusById" resultType="string" parameterType="Long">
+        select handle_status from s_bas_product_season where product_season_sid in
+        <foreach item="productSeasonSid" collection="productSeasonSid.split('[；;]')" open="(" separator="," close=")">
+            #{productSeasonSid}
+        </foreach>
+    </select>
+
+    <select id="getProductSeasonList" resultType="com.platform.ems.domain.SBasProductSeason">
+        select product_season_sid,product_season_code,product_season_name,status,handle_status from s_bas_product_season
+    </select>
+</mapper>

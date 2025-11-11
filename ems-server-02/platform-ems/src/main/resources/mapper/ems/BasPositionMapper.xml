@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasPositionMapper">
+
+    <resultMap type="com.platform.ems.domain.BasPosition" id="BasPositionResult">
+        <result property="clientId" column="client_id"/>
+        <result property="positionSid" column="position_sid"/>
+        <result property="positionCode" column="position_code"/>
+        <result property="positionName" column="position_name"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="positionDuty" column="position_duty"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="remark" column="remark"/>
+        <result property="serialNum" column="serial_num"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="disableRemark" column="disable_remark"/>
+        <result property="companyShortName" column="company_short_name"/>
+    </resultMap>
+
+    <select id="selectBasPositionById" parameterType="Long" resultMap="BasPositionResult">
+        <include refid="selectBasPositionVo"/>
+        where t.position_sid = #{positionSid}
+    </select>
+
+
+    <select id="selectBasPositionList" parameterType="com.platform.ems.domain.BasPosition"
+            resultMap="BasPositionResult">
+        <include refid="selectBasPositionVo"/>
+        <where>
+            <if test="positionSid != null and positionSid != '' ">and t.position_sid = #{positionSid}</if>
+            <if test="positionCode != null  and positionCode != ''">and t.position_code like concat('%',
+                #{positionCode}, '%')
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and t3.nick_name like concat('%',
+                #{creatorAccount}, '%')
+            </if>
+            <if test="positionName != null  and positionName != ''">
+                and (<foreach collection="positionName.split(';')" item="item" separator="or">t.position_name like
+                concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != '' ">and t.handle_status = #{handleStatus}</if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="companySid != null and companySid != '' ">and t.company_sid = #{companySid}</if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+        </where> order by t.create_date desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_position
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            position_sid,
+            position_code,
+            position_name,
+            company_sid,
+            position_duty,
+            remark,
+            disable_remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+            serial_num
+        </trim>
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.positionSid},
+                #{item.positionCode},
+                #{item.positionName},
+                #{item.companySid},
+                #{item.positionDuty},
+                #{item.remark},
+                #{item.disableRemark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+                #{item.serialNum}
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_position
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            position_code = #{positionCode},
+            position_name = #{positionName},
+            company_sid = #{companySid},
+            position_duty = #{positionDuty},
+            remark = #{remark},
+            disable_remark = #{disableRemark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            remark = #{remark},
+            serial_num = #{serialNum}
+        </trim>
+        where position_sid = #{positionSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_position
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                position_code = #{positionCode},
+                position_name = #{positionName},
+                company_sid = #{companySid},
+                position_duty = #{positionDuty},
+                remark = #{remark},
+                disable_remark = #{disableRemark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+                remark = #{remark},
+                serial_num = #{serialNum}
+            </trim>
+            where position_sid = #{positionSid}
+        </foreach>
+    </update>
+
+    <sql id="selectBasPositionVo">
+		SELECT
+			t.client_id,
+			t.position_sid,
+			t.position_code,
+			t.position_name,
+			t.company_sid,
+			t.position_duty,
+			t.remark,
+			t.disable_remark,
+			t.STATUS,
+			t.handle_status,
+			t.creator_account,
+			t.create_date,
+			t.updater_account,
+			t.update_date,
+			t.confirmer_account,
+			t.confirm_date,
+			t.data_source_sys,
+			t.remark,
+			t.serial_num,
+			t2.company_name,
+		    t2.short_name as company_short_name,
+			t3.nick_name AS creator_account_name,
+			t4.nick_name AS updater_account_name,
+			t5.nick_name AS confirmer_account_name
+		FROM
+			s_bas_position t
+		LEFT JOIN s_bas_company t2 ON t.company_sid = t2.company_sid
+		LEFT JOIN sys_user t3 on t.creator_account = t3.user_name
+	    LEFT JOIN sys_user t4 on t.updater_account = t4.user_name
+	    LEFT JOIN sys_user t5 on t.confirmer_account = t5.user_name
+    </sql>
+
+</mapper>

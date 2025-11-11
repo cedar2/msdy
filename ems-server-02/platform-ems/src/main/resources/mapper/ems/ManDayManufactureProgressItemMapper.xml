@@ -1,0 +1,1120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManDayManufactureProgressItemMapper">
+
+    <resultMap type="com.platform.ems.domain.ManDayManufactureProgressItem" id="ManDayManufactureProgressItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="dayManufactureProgressItemSid" column="day_manufacture_progress_item_sid"/>
+        <result property="dayManufactureProgressSid" column="day_manufacture_progress_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku1Type" column="sku1_type"/>
+        <result property="issueQuantity" column="issue_quantity"/>
+        <result property="manufactureOrderSid" column="manufacture_order_sid"/>
+        <result property="manufactureOrderCode" column="manufacture_order_code"/>
+        <result property="manufactureOrderProcessSid" column="manufacture_order_process_sid"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="completeType" column="complete_type"/>
+        <result property="quantity" column="quantity"/>
+        <result property="quantityTg" column="quantity_tg"/>
+        <result property="quantitySp" column="quantity_sp"/>
+        <result property="danjianhaoliang" column="danjianhaoliang"/>
+        <result property="planQuantity" column="plan_quantity"/>
+        <result property="jieshouQuantity" column="jieshou_quantity"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="videoPath" column="video_path"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantName" column="plant_name"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="workCenterSid" column="work_center_sid"/>
+        <result property="workCenterName" column="work_center_name"/>
+        <result property="workCenterCode" column="work_center_code"/>
+        <result property="reporter" column="reporter"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="materialName" column="material_name"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="processSid" column="process_sid"/>
+        <result property="processName" column="process_name"/>
+        <result property="processBatchNum" column="process_batch_num"/>
+        <result property="platQuantity" column="plat_quantity"/>
+        <result property="inDefectiveQuantity" column="in_defective_quantity"/>
+        <result property="currentCompleteQuantity" column="current_complete_quantity"/>
+        <result property="planEndDate" column="plan_end_date"/>
+        <result property="endStatus" column="end_status"/>
+        <result property="processItemNum" column="process_item_num"/>
+        <result property="progressSerialNum" column="progress_serial_num"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="sku1Code" column="sku1_code"/>
+        <result property="sku1Name" column="sku1_name"/>
+        <result property="sku2Code" column="sku2_code"/>
+        <result property="sku2Name" column="sku2_name"/>
+        <result property="barcode" column="barcode"/>
+        <result property="unitBaseName" column="unit_base_name"/>
+        <result property="productionMode" column="production_mode"/>
+        <result property="progressDimension" column="progress_dimension"/>
+        <result property="departmentSid" column="department_sid"/>
+        <result property="departmentCode" column="department_code"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="isCaichuangQuantity" column="is_caichuang_quantity"/>
+        <result property="totalCompleteQuantity" column="total_complete_quantity"/>
+        <result property="planUnfinishedQuantity" column="plan_unfinished_quantity"/>
+        <result property="shicaiUnfinishedQuantity" column="shicai_unfinished_quantity"/>
+    </resultMap>
+
+    <sql id="selectManDayManufactureProgressItemVo">
+        SELECT
+        t.client_id,
+        t.day_manufacture_progress_item_sid,
+        t.day_manufacture_progress_sid,
+        t.material_sid,
+        t.sku1_sid,
+        t.sku1_type,
+        t.issue_quantity,
+        t.manufacture_order_sid,
+        t.manufacture_order_code,
+        t.manufacture_order_process_sid,
+        t.department_sid,
+        t.department_code,
+        t.unit_base,
+        t.complete_type,
+        t.quantity,
+        t.quantity_tg,
+        t.quantity_sp,
+        t.plan_quantity,
+        t.jieshou_quantity,
+        t.in_defective_quantity,
+        t.danjianhaoliang,
+        t.chuhuo_quantity,
+        t.xiangshu,
+        t.item_num,
+        t.picture_path,
+        t.video_path,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+        t1.plant_sid,
+        t.progress_dimension,
+        t9.plant_name,
+        t9.plant_code,
+        t.work_center_sid,
+        t.work_center_code,
+        t10.work_center_name,
+        t1.reporter,
+        t1.document_date,
+        t1.day_manufacture_progress_code,
+        t1.handle_status,
+        t2.material_name,
+        t2.material_code,
+        t3.nick_name as reporter_name,
+        t4.sku_name as sku1_name,
+        t5.name as department_name,
+        t7.process_batch_num,
+        t7.quantity as plat_quantity,
+        t7.current_complete_quantity,
+        t7.special_flag,
+        t6.paichan_batch,
+        t7.plan_end_date,
+        t7.end_status,
+        t7.process_name,
+        t7.process_sid,
+        t7.production_mode,
+        t7.item_num as process_item_num,
+        t7.serial_num as progress_serial_num,
+        t8.name as unit_base_name,
+        t11.nick_name as creator_account_name,
+        IFNULL(t14.total_complete_quantity, 0) as total_complete_quantity,
+        IFNULL(t15.total_complete_quantity, 0) as is_caichuang_quantity,
+        (IFNULL(t7.quantity, 0) - IFNULL(t14.total_complete_quantity, 0)) as plan_unfinished_quantity,
+        t16.quantity_fenpei
+        FROM
+        s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t1.day_manufacture_progress_sid = t.day_manufacture_progress_sid
+        LEFT JOIN s_bas_material t2 ON t2.material_sid = t.material_sid
+        LEFT JOIN sys_user t3 ON t3.user_name = t1.reporter and t1.client_id = t3.client_id
+        LEFT JOIN s_bas_sku t4 ON t.sku1_sid = t4.sku_sid
+        LEFT JOIN s_con_manufacture_department t5 ON t.department_sid = t5.sid
+        LEFT JOIN s_man_manufacture_order t6 ON t6.manufacture_order_sid = t.manufacture_order_sid
+        LEFT JOIN s_man_manufacture_order_process t7 ON t7.manufacture_order_process_sid = t.manufacture_order_process_sid
+        LEFT JOIN s_con_measure_unit t8 ON t8.code = t.unit_base
+        LEFT JOIN s_bas_plant t9 ON t9.plant_sid = t1.plant_sid
+        LEFT JOIN s_man_work_center t10 ON t.work_center_sid = t10.work_center_sid
+        LEFT JOIN sys_user t11 ON t11.user_name = t.creator_account and t.client_id = t11.client_id
+        <!-- 按款按色 已完成量(工序)-->
+        LEFT JOIN (
+        SELECT t.manufacture_order_process_sid, t.work_center_sid, t.sku1_sid, SUM(t.quantity) as total_complete_quantity
+        FROM s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t.day_manufacture_progress_sid = t1.day_manufacture_progress_sid
+        WHERE t1.handle_status = '5'
+        GROUP BY t.manufacture_order_process_sid, t.work_center_sid, t.sku1_sid
+        ) t14 ON t.manufacture_order_process_sid = t14.manufacture_order_process_sid
+        AND ((t.sku1_sid IS NULL AND t14.sku1_sid IS NULL) OR t.sku1_sid = t14.sku1_sid)
+        AND ((t.work_center_sid IS NULL AND t14.work_center_sid IS NULL) OR t.work_center_sid = t14.work_center_sid)
+        <!-- 按款按色 实裁量-->
+        LEFT JOIN (
+        SELECT t.manufacture_order_sid, t.manufacture_order_process_sid, t.sku1_sid, t1.plant_sid, sum(t.quantity) as total_complete_quantity
+        FROM s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t1.day_manufacture_progress_sid = t.day_manufacture_progress_sid
+        LEFT JOIN s_man_manufacture_order_process t3 ON t3.manufacture_order_process_sid = t.manufacture_order_process_sid
+        WHERE t1.handle_status ='5' AND t3.is_first_process ='Y'
+        GROUP BY t.manufacture_order_sid, t.manufacture_order_process_sid, t.sku1_sid, t1.plant_sid
+        ) t15 ON t.manufacture_order_sid = t15.manufacture_order_sid
+        AND t1.plant_sid = t15.plant_sid
+        AND ((t.sku1_sid IS NULL AND t15.sku1_sid IS NULL) OR t.sku1_sid = t15.sku1_sid)
+        <!-- 分配量-->
+        LEFT JOIN (
+        SELECT a.* FROM (
+        SELECT t.week_manufacture_plan_sid,t.week_manufacture_plan_item_sid,t.manufacture_order_process_sid, t.work_center_sid, t.sku1_sid, t.quantity_fenpei, t1.date_start, t1.date_end
+        FROM s_man_week_manufacture_plan_item t
+        LEFT JOIN s_man_week_manufacture_plan t1 ON t.week_manufacture_plan_sid = t1.week_manufacture_plan_sid AND t1.handle_status = '5'
+        ) a WHERE NOT EXISTS (
+        SELECT 1 FROM (
+        SELECT t.week_manufacture_plan_sid,t.week_manufacture_plan_item_sid,t.manufacture_order_process_sid, t.work_center_sid, t.sku1_sid, t1.date_start, t1.date_end
+        FROM s_man_week_manufacture_plan_item t
+        LEFT JOIN s_man_week_manufacture_plan t1 ON t.week_manufacture_plan_sid = t1.week_manufacture_plan_sid AND t1.handle_status = '5'
+        ) b WHERE a.manufacture_order_process_sid = b.manufacture_order_process_sid and a.work_center_sid &lt;=&gt; b.work_center_sid and a.sku1_sid &lt;=&gt; b.sku1_sid AND a.date_end &lt; b.date_end
+        ) AND a.date_end is NOT NULL
+        ) t16 ON t.manufacture_order_process_sid = t16.manufacture_order_process_sid AND t.work_center_sid &lt;=&gt; t16.work_center_sid AND t.sku1_sid &lt;=&gt; t16.sku1_sid
+        <include refid="whereString"/>
+    </sql>
+
+    <select id="getQuantityFenpei" parameterType="com.platform.ems.domain.ManDayManufactureProgressItem"
+            resultType="com.platform.ems.domain.ManDayManufactureProgressItem">
+        SELECT a.*
+        FROM (
+        SELECT t.week_manufacture_plan_sid,
+        t.week_manufacture_plan_item_sid,
+        t.manufacture_order_process_sid,
+        t.work_center_sid,
+        t.sku1_sid,
+        t.quantity_fenpei,
+        t1.date_start,
+        t1.date_end,
+        t2.manufacture_order_sid,
+        t2.department_sid
+        FROM s_man_week_manufacture_plan_item t
+        LEFT JOIN s_man_week_manufacture_plan t1 ON t.week_manufacture_plan_sid = t1.week_manufacture_plan_sid AND t1.handle_status = '5'
+        LEFT JOIN s_man_manufacture_order_process t2 ON t.manufacture_order_process_sid = t2.manufacture_order_process_sid
+        <where>
+            <if test="manufactureOrderProcessSidList != null and manufactureOrderProcessSidList.length > 0">
+                and t.manufacture_order_process_sid in
+                (<foreach collection="manufactureOrderProcessSidList" item="manufactureOrderProcessSid" separator=",">
+                #{manufactureOrderProcessSid}</foreach>)
+            </if>
+            <if test="sku1Sid != null">
+                and t.sku1_sid = #{sku1Sid}
+            </if>
+            <if test="sku1Sid == null and sku1SidIsNull != null and sku1SidIsNull == 'Y'.toString()">
+                and t.sku1_sid is null
+            </if>
+            <if test="workCenterSid != null">
+                and t.work_center_sid = #{workCenterSid}
+            </if>
+        </where>
+        ) a
+        <where>
+            NOT EXISTS(
+            SELECT 1 FROM (
+            SELECT t.week_manufacture_plan_sid,
+            t.week_manufacture_plan_item_sid,
+            t.manufacture_order_process_sid,
+            t.work_center_sid,
+            t.sku1_sid,
+            t1.date_start,
+            t1.date_end
+            FROM s_man_week_manufacture_plan_item t
+            LEFT JOIN s_man_week_manufacture_plan t1 ON t.week_manufacture_plan_sid = t1.week_manufacture_plan_sid AND t1.handle_status = '5'
+            <where>
+                <if test="manufactureOrderProcessSidList != null and manufactureOrderProcessSidList.length > 0">
+                    and t.manufacture_order_process_sid in
+                    (<foreach collection="manufactureOrderProcessSidList" item="manufactureOrderProcessSid" separator=",">
+                    #{manufactureOrderProcessSid}</foreach>)
+                </if>
+                <if test="sku1Sid != null">
+                    and t.sku1_sid = #{sku1Sid}
+                </if>
+                <if test="sku1Sid == null and sku1SidIsNull != null and sku1SidIsNull == 'Y'.toString()">
+                    and t.sku1_sid is null
+                </if>
+                <if test="workCenterSid != null">
+                    and t.work_center_sid = #{workCenterSid}
+                </if>
+            </where>
+            ) b
+            WHERE a.manufacture_order_process_sid = b.manufacture_order_process_sid and a.work_center_sid &lt;=&gt; b.work_center_sid
+            and a.sku1_sid &lt;=&gt; b.sku1_sid AND a.date_end &lt; b.date_end
+            ) AND a.date_end is NOT NULL
+        </where>
+    </select>
+
+    <sql id="whereString">
+        <where>
+            <if test="documentDateBeginTime != null and documentDateBeginTime!=''">
+                and date_format(t1.document_date,'%y%m%d') &gt;= date_format(#{documentDateBeginTime},'%y%m%d')
+            </if>
+            <if test="documentDateEndTime != null and documentDateEndTime!=''">
+                and date_format(t1.document_date,'%y%m%d') &lt;= date_format(#{documentDateEndTime},'%y%m%d')
+            </if>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId} and t3.client_id = #{clientId} and t11.client_id = #{clientId}
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator=" or ">
+                t2.material_code like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="item" separator=" or ">
+                t2.material_name like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="dayManufactureProgressCode != null">
+                and t1.day_manufacture_progress_code like concat('%',#{dayManufactureProgressCode}, '%')
+            </if>
+            <if test="dayManufactureProgressSid != null ">
+                and t.day_manufacture_progress_sid = #{dayManufactureProgressSid}
+            </if>
+            <if test="reporterList != null and reporterList.length > 0">
+                and t1.reporter in
+                (<foreach collection="reporterList" item="reporter" separator=",">#{reporter}</foreach>)
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="sku1Sid != null">
+                and t.sku1_sid = #{sku1Sid}
+            </if>
+            <if test="sku1SidList != null and sku1SidList.length > 0">
+                and t.sku1_sid in
+                (<foreach collection="sku1SidList" item="sku1Sid" separator=",">#{sku1Sid}</foreach>)
+            </if>
+            <if test="sku1Type != null and sku1Type != ''">
+                and t.sku1_type = #{sku1Type}
+            </if>
+            <if test="paichanBatch != null and paichanBatch != ''">
+                and t6.paichan_batch = #{paichanBatch}
+            </if>
+            <if test="progressDimension != null and progressDimension !=''">
+                and t.progress_dimension = #{progressDimension}
+            </if>
+            <if test="progressDimensionList != null and progressDimensionList.length > 0">
+                and t.progress_dimension in
+                (<foreach collection="progressDimensionList" item="progressDimension" separator=",">
+                #{progressDimension}</foreach>)
+            </if>
+            <if test="plantSidList != null and plantSidList.length > 0">
+                and t1.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="workCenterSid != null">
+                and t.work_center_sid = #{workCenterSid}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t1.handle_status = #{handleStatus}
+            </if>
+            <if test="workCenterSidList != null and workCenterSidList.length > 0">
+                and t.work_center_sid in
+                (<foreach collection="workCenterSidList" item="workCenterSid" separator=",">#{workCenterSid}</foreach>)
+            </if>
+            <if test="departmentSidList != null and departmentSidList.length > 0">
+                and t.department_sid in
+                (<foreach collection="departmentSidList" item="departmentSid" separator=",">#{departmentSid}</foreach>)
+            </if>
+            <if test="departmentSid != null ">
+                and t.department_sid = #{departmentSid}
+            </if>
+            <if test="processSidList != null and processSidList.length > 0">
+                and t7.process_sid in
+                (<foreach collection="processSidList" item="processSid" separator=",">#{processSid}</foreach>)
+            </if>
+            <if test="isFirstProcess != null and isFirstProcess != ''">
+                and t7.is_first_process = #{isFirstProcess}
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length > 0">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">
+                #{creatorAccount}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length > 0">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="manufactureOrderSid != null ">
+                and t.manufacture_order_sid = #{manufactureOrderSid}
+            </if>
+            <if test="manufactureOrderCode != null and manufactureOrderCode != ''">
+                and t.manufacture_order_code like concat('%',#{manufactureOrderCode}, '%')
+            </if>
+            <if test="manufactureOrderProcessSid != null ">
+                and t.manufacture_order_process_sid = #{manufactureOrderProcessSid}
+            </if>
+            <if test="manufactureOrderProcessSidList != null and manufactureOrderProcessSidList.length > 0">
+                and t.manufacture_order_process_sid in
+                (<foreach collection="manufactureOrderProcessSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="unitBase != null and unitBase != ''">
+                and t.unit_base = #{unitBase}
+            </if>
+            <if test="completeType != null and completeType != ''">
+                and t.complete_type = #{completeType}
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="planQuantity != null ">
+                and t.plan_quantity = #{planQuantity}
+            </if>
+            <if test="inDefectiveQuantity != null ">
+                and t.in_defective_quantity = #{inDefectiveQuantity}
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num = #{itemNum}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">
+                t.creator_account like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator=" or ">
+                t.updater_account like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator=" or ">
+                t.data_source_sys like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectManDayManufactureProgressItemById" parameterType="Long"
+            resultMap="ManDayManufactureProgressItemResult">
+        <include refid="selectManDayManufactureProgressItemVo"/>
+        where t.day_manufacture_progress_item_sid = #{dayManufactureProgressItemSid}
+    </select>
+
+    <select id="getTotalCompetele" parameterType="com.platform.ems.domain.ManWeekManufacturePlanItem"
+            resultType="java.math.BigDecimal">
+        SELECT SUM(t.quantity) as total_complete_quantity
+        FROM s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t.day_manufacture_progress_sid = t1.day_manufacture_progress_sid
+        WHERE t1.handle_status = '5'
+        <if test="sku1Sid == null">
+            AND t.sku1_sid is null
+        </if>
+        <if test="sku1Sid != null">
+            AND t.sku1_sid = #{sku1Sid}
+        </if>
+        AND t.work_center_sid = #{workCenterSid}
+        AND t.manufacture_order_sid = #{manufactureOrderSid}
+        AND t.manufacture_order_process_sid = #{manufactureOrderProcessSid}
+    </select>
+
+    <select id="selectManDayManufactureProgressItemList"
+            parameterType="com.platform.ems.domain.ManDayManufactureProgressItem"
+            resultMap="ManDayManufactureProgressItemResult">
+        <include refid="selectManDayManufactureProgressItemVo"/>
+        order by CONVERT (t10.work_center_name USING gbk) asc, CONVERT (t2.material_code USING gbk) asc, t6.paichan_batch asc
+        <if test="pageNum != null and pageSize != null">LIMIT ${pageBegin},${pageSize}</if>
+    </select>
+
+    <select id="selectCount" parameterType="com.platform.ems.domain.ManDayManufactureProgressItem"
+            resultType="java.lang.Integer">
+        select count(1) from s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t1.day_manufacture_progress_sid = t.day_manufacture_progress_sid
+        LEFT JOIN s_bas_material t2 ON t2.material_sid = t.material_sid
+        LEFT JOIN sys_user t3 ON t3.user_name = t1.reporter
+        LEFT JOIN s_bas_sku t4 ON t.sku1_sid = t4.sku_sid
+        LEFT JOIN s_man_manufacture_order t6 ON t6.manufacture_order_sid = t.manufacture_order_sid
+        LEFT JOIN s_man_manufacture_order_process t7 ON t7.manufacture_order_process_sid = t.manufacture_order_process_sid
+        LEFT JOIN s_con_measure_unit t8 on t8.code = t.unit_base
+        LEFT JOIN s_bas_plant t9 ON t9.plant_sid = t1.plant_sid
+        LEFT JOIN s_man_work_center t10 ON t10.work_center_sid = t.work_center_sid
+        LEFT JOIN sys_user t11 ON t11.user_name = t.creator_account
+        <include refid="whereString"/>
+    </select>
+
+    <select id="selectManDayManufactureProgressItemForm"
+            parameterType="com.platform.ems.domain.ManDayManufactureProgressItem"
+            resultMap="ManDayManufactureProgressItemResult">
+        SELECT
+        t.client_id,
+        t.day_manufacture_progress_item_sid,
+        t.day_manufacture_progress_sid,
+        t.material_sid,
+        t.sku1_sid,
+        t.sku1_type,
+        t.issue_quantity,
+        t.manufacture_order_sid,
+        t.manufacture_order_code,
+        t.manufacture_order_process_sid,
+        t.unit_base,
+        t.complete_type,
+        t.quantity,
+        t.quantity_tg,
+        t.quantity_sp,
+        t.plan_quantity,
+        t.jieshou_quantity,
+        t.in_defective_quantity,
+        t.danjianhaoliang,
+        t.chuhuo_quantity,
+        t.xiangshu,
+        t.item_num,
+        t.picture_path,
+        t.video_path,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+        t1.plant_sid,
+        t.progress_dimension,
+        t9.plant_name,
+        t9.plant_code,
+        t.work_center_sid,
+        t10.work_center_name,
+        t10.work_center_code,
+        t.department_sid,
+        t1.reporter,
+        t1.document_date,
+        t1.day_manufacture_progress_code,
+        t1.handle_status,
+        t2.material_name,
+        t2.material_code,
+        t3.nick_name as reporter_name,
+        t4.sku_name as sku1_name,
+        t7.process_batch_num,
+        t7.quantity as plat_quantity,
+        t7.current_complete_quantity,
+        t6.quantity as plan_order_quantity,
+        t6.paichan_batch,
+        t7.plan_end_date,
+        t7.end_status,
+        t7.process_name,
+        t7.process_sid,
+        t7.production_mode,
+        t7.item_num as process_item_num,
+        t7.serial_num as progress_serial_num,
+        t8.name as unit_base_name,
+        t11.nick_name as creator_account_name,
+        t14.total_complete_quantity as total_complete_quantity,
+        t15.total_complete_quantity as is_caichuang_quantity,
+        t16.code as department_code,
+        t16.name as department_name
+        FROM
+        s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t1.day_manufacture_progress_sid = t.day_manufacture_progress_sid
+        LEFT JOIN s_bas_material t2 ON t2.material_sid = t.material_sid
+        LEFT JOIN sys_user t3 ON t3.user_name = t1.reporter
+        LEFT JOIN s_bas_sku t4 ON t.sku1_sid = t4.sku_sid
+        LEFT JOIN s_man_manufacture_order t6 ON t6.manufacture_order_sid = t.manufacture_order_sid
+        LEFT JOIN s_man_manufacture_order_process t7 ON t7.manufacture_order_process_sid = t.manufacture_order_process_sid
+        LEFT JOIN s_con_measure_unit t8 on t8.code = t.unit_base
+        LEFT JOIN s_bas_plant t9 ON t9.plant_sid = t1.plant_sid
+        LEFT JOIN s_man_work_center t10 ON t.work_center_sid = t10.work_center_sid
+        LEFT JOIN sys_user t11 ON t11.user_name = t.creator_account
+        <!-- 按款按色 已完成量(工序)-->
+        LEFT JOIN (
+        SELECT t.work_center_sid, t.manufacture_order_process_sid, t.sku1_sid, SUM(t.quantity) as total_complete_quantity
+        FROM s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t.day_manufacture_progress_sid = t1.day_manufacture_progress_sid
+        WHERE t1.handle_status = '5'
+        GROUP BY t.manufacture_order_process_sid, t.work_center_sid, t.sku1_sid
+        ) t14 ON t.manufacture_order_process_sid = t14.manufacture_order_process_sid
+        AND ((t.sku1_sid IS NULL AND t14.sku1_sid IS NULL) OR t.sku1_sid = t14.sku1_sid)
+        AND ((t.work_center_sid IS NULL AND t14.work_center_sid IS NULL) OR t.work_center_sid = t14.work_center_sid)
+        <!-- 按款按色 实裁量-->
+        LEFT JOIN (
+        SELECT t.manufacture_order_sid, t.manufacture_order_process_sid, t.sku1_sid, t1.plant_sid, sum(t.quantity) as total_complete_quantity
+        FROM s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t1.day_manufacture_progress_sid = t.day_manufacture_progress_sid
+        LEFT JOIN s_man_manufacture_order_process t3 ON t3.manufacture_order_process_sid = t.manufacture_order_process_sid
+        WHERE t1.handle_status='5' AND t3.is_first_process='Y'
+        GROUP BY t.manufacture_order_sid, t.manufacture_order_process_sid, t.sku1_sid, t1.plant_sid
+        ) t15 ON t.manufacture_order_sid = t15.manufacture_order_sid
+        AND t1.plant_sid = t15.plant_sid
+        AND ((t.sku1_sid IS NULL AND t15.sku1_sid IS NULL) OR t.sku1_sid = t15.sku1_sid)
+        LEFT JOIN s_con_manufacture_department t16 ON t.department_sid = t16.sid
+        <include refid="whereString"/>
+        ORDER BY t1.document_date desc, CONVERT (t9.plant_name USING gbk) asc, CONVERT (t10.work_center_name USING gbk) asc,
+        CONVERT (t2.material_code USING gbk) asc, t6.paichan_batch asc, CONVERT (t7.process_name USING gbk) asc,
+        t.day_manufacture_progress_item_sid asc
+        <if test="pageNum != null and pageSize != null">LIMIT ${pageBegin},${pageSize}</if>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_day_manufacture_progress_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            day_manufacture_progress_item_sid,
+            day_manufacture_progress_sid,
+            progress_dimension,
+            material_sid,
+            sku1_sid,
+            sku1_type,
+            issue_quantity,
+            manufacture_order_sid,
+            manufacture_order_code,
+            manufacture_order_process_sid,
+            work_center_sid,
+            work_center_code,
+            department_sid,
+            department_code,
+            unit_base,
+            complete_type,
+            quantity,
+            quantity_tg,
+            quantity_sp,
+            plan_quantity,
+            jieshou_quantity,
+            danjianhaoliang,
+            chuhuo_quantity,
+            xiangshu,
+            item_num,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+            in_defective_quantity,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.dayManufactureProgressItemSid},
+                #{item.dayManufactureProgressSid},
+                #{item.progressDimension},
+                #{item.materialSid},
+                #{item.sku1Sid},
+                #{item.sku1Type},
+                #{item.issueQuantity},
+                #{item.manufactureOrderSid},
+                #{item.manufactureOrderCode},
+                #{item.manufactureOrderProcessSid},
+                #{item.workCenterSid},
+                #{item.workCenterCode},
+                #{item.departmentSid},
+                #{item.departmentCode},
+                #{item.unitBase},
+                #{item.completeType},
+                #{item.quantity},
+                #{item.quantityTg},
+                #{item.quantitySp},
+                #{item.planQuantity},
+                #{item.jieshouQuantity},
+                #{item.danjianhaoliang},
+                #{item.chuhuoQuantity},
+                #{item.xiangshu},
+                #{item.itemNum},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+                #{item.inDefectiveQuantity},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_day_manufacture_progress_item
+        <trim prefix="SET" suffixOverrides=",">
+            progress_dimension = #{progressDimension},
+            material_sid = #{materialSid},
+            sku1_sid = #{sku1Sid},
+            sku1_type = #{sku1Type},
+            issue_quantity = #{issueQuantity},
+            manufacture_order_sid = #{manufactureOrderSid},
+            manufacture_order_code = #{manufactureOrderCode},
+            manufacture_order_process_sid = #{manufactureOrderProcessSid},
+            work_center_sid = #{workCenterSid},
+            work_center_code = #{workCenterCode},
+            department_sid = #{departmentSid},
+            department_code = #{departmentCode},
+            unit_base = #{unitBase},
+            complete_type = #{completeType},
+            quantity = #{quantity},
+            quantity_tg = #{quantityTg},
+            quantity_sp = #{quantitySp},
+            plan_quantity = #{planQuantity},
+            jieshou_quantity = #{jieshouQuantity},
+            danjianhaoliang = #{danjianhaoliang},
+            chuhuo_quantity = #{chuhuoQuantity},
+            xiangshu = #{xiangshu},
+            item_num = #{itemNum},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+            in_defective_quantity = #{inDefectiveQuantity},
+        </trim>
+        where day_manufacture_progress_item_sid = #{dayManufactureProgressItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_day_manufacture_progress_item
+            <trim prefix="SET" suffixOverrides=",">
+                progress_dimension = #{progressDimension},
+                material_sid = #{materialSid},
+                sku1_sid = #{sku1Sid},
+                sku1_type = #{sku1Type},
+                issue_quantity = #{issueQuantity},
+                manufacture_order_sid = #{manufactureOrderSid},
+                manufacture_order_code = #{manufactureOrderCode},
+                manufacture_order_process_sid = #{manufactureOrderProcessSid},
+                work_center_sid = #{workCenterSid},
+                work_center_code = #{workCenterCode},
+                department_sid = #{departmentSid},
+                department_code = #{departmentCode},
+                unit_base = #{unitBase},
+                complete_type = #{completeType},
+                quantity = #{quantity},
+                quantity_tg = #{quantityTg},
+                quantity_sp = #{quantitySp},
+                plan_quantity = #{planQuantity},
+                jieshou_quantity = #{jieshouQuantity},
+                danjianhaoliang = #{danjianhaoliang},
+                chuhuo_quantity = #{chuhuoQuantity},
+                xiangshu = #{xiangshu},
+                item_num = #{itemNum},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+                in_defective_quantity = #{inDefectiveQuantity},
+            </trim>
+            where day_manufacture_progress_item_sid = #{dayManufactureProgressItemSid}
+        </foreach>
+    </update>
+
+    <select id="getQuantity" parameterType="com.platform.ems.domain.ManDayManufactureProgressItem"
+            resultType="java.lang.String">
+        SELECT ifnull(MAX(x.quantity_li), 0) as quantity FROM (
+        SELECT SUM(t.quantity) AS quantity_li, t1.handle_status, t1.yearmonth, t.*
+        FROM s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t.day_manufacture_progress_sid = t1.day_manufacture_progress_sid
+        and t1.handle_status = '5'
+        LEFT JOIN s_man_manufacture_order_process t2 ON t.manufacture_order_process_sid =
+        t2.manufacture_order_process_sid
+        <where>
+            <if test="yearmonth != null and yearmonth != ''">and t1.yearmonth = #{yearmonth}</if>
+            <if test="manufactureOrderSid != null">and t.manufacture_order_sid = #{manufactureOrderSid}</if>
+            <if test="productSid != null">and t.material_sid = #{productSid}</if>
+            <if test="processSid != null">and t2.process_sid = #{processSid}</if>
+            <if test="plantSid != null">and t1.plant_sid = #{plantSid}</if>
+            <if test="workCenterSid != null">and t.work_center_sid = #{workCenterSid}</if>
+        </where>
+        GROUP BY t1.yearmonth,t.manufacture_order_sid,t.material_sid,t1.plant_sid,t2.process_sid,t.work_center_sid
+        ) x
+    </select>
+
+    <sql id="selectManDayManufactureProgressMonthFormVo">
+        FROM
+        (
+        SELECT t.manufacture_order_process_sid,t.sku1_sid,t1.document_date,t1.plant_sid,t.work_center_sid
+        FROM s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t.day_manufacture_progress_sid = t1.day_manufacture_progress_sid
+        <where>
+            t1.handle_status = '5'
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="sku1Sid != null">and t.sku1_sid = #{sku1Sid}</if>
+            <if test="sku1SidList != null and sku1SidList.length > 0">
+                and t.sku1_sid in
+                (<foreach collection="sku1SidList" item="sku1Sid" separator=",">#{sku1Sid}</foreach>)
+            </if>
+            <if test="yearmonthday != null and yearmonthday != ''">
+                and t1.document_date BETWEEN #{yearmonthday} AND LAST_DAY(#{yearmonthday})
+            </if>
+            <if test="yearmonthdayBegin != null and yearmonthdayBegin!=''">
+                and date_format(t1.document_date,'%y%m%d') &gt;= date_format(#{yearmonthdayBegin},'%y%m%d')
+            </if>
+            <if test="yearmonthdayEnd != null and yearmonthdayEnd!=''">
+                and date_format(t1.document_date,'%y%m%d') &lt;= date_format(#{yearmonthdayEnd},'%y%m%d')
+            </if>
+            <if test="plantSid != null">and t1.plant_sid = #{plantSid}</if>
+            <if test="plantSidList != null and plantSidList.length > 0">
+                and t1.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+        </where>
+        GROUP BY t.manufacture_order_process_sid,t.sku1_sid,t.work_center_sid
+        ) t
+        LEFT JOIN s_bas_sku t1 ON t.sku1_sid = t1.sku_sid
+        LEFT JOIN s_man_manufacture_order_process t2 ON t.manufacture_order_process_sid = t2.manufacture_order_process_sid
+        LEFT JOIN s_man_manufacture_order t3 ON t2.manufacture_order_sid = t3.manufacture_order_sid
+        LEFT JOIN s_bas_material t4 ON t3.material_sid = t4.material_sid
+        LEFT JOIN s_man_work_center t5 ON t.work_center_sid = t5.work_center_sid
+        LEFT JOIN s_con_manufacture_department t6 ON t5.department_sid = t6.sid
+        LEFT JOIN s_con_measure_unit t7 ON t4.unit_base = t7.code
+        LEFT JOIN s_bas_plant t8 ON t2.plant_sid = t8.plant_sid
+        LEFT JOIN (
+        SELECT t.manufacture_order_sid, t.manufacture_order_process_sid, t.sku1_sid, t1.plant_sid, sum(t.quantity) as total_complete_quantity
+        FROM s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t1.day_manufacture_progress_sid = t.day_manufacture_progress_sid
+        LEFT JOIN s_man_manufacture_order_process t3 ON t3.manufacture_order_process_sid = t.manufacture_order_process_sid
+        WHERE t1.handle_status='5' AND t3.is_first_process='Y'
+        GROUP BY t.manufacture_order_sid, t.manufacture_order_process_sid, t.sku1_sid, t1.plant_sid
+        ) t9 ON t2.manufacture_order_sid = t9.manufacture_order_sid
+        AND t.plant_sid = t9.plant_sid
+        AND ((t.sku1_sid IS NULL AND t9.sku1_sid IS NULL) OR t.sku1_sid = t9.sku1_sid)
+        LEFT JOIN (
+        SELECT t1.manufacture_order_process_sid, SUM(t.plan_quantity) as month_plan_quantity FROM
+        s_man_day_manufacture_plan_item t
+        LEFT JOIN s_man_week_manufacture_plan_item t1 ON t.manufacture_plan_item_sid = t1.week_manufacture_plan_item_sid
+        LEFT JOIN s_man_week_manufacture_plan t2 ON t1.week_manufacture_plan_sid = t2.week_manufacture_plan_sid
+        <where>
+            and t2.handle_status = '5'
+            <if test="yearmonthday != null and yearmonthday != ''">
+                and t.plan_date BETWEEN #{yearmonthday} AND LAST_DAY(#{yearmonthday})
+            </if>
+            <if test="yearmonthdayBegin != null and yearmonthdayBegin!=''">
+                and date_format(t.plan_date,'%y%m%d') &gt;= date_format(#{yearmonthdayBegin},'%y%m%d')
+            </if>
+            <if test="yearmonthdayEnd != null and yearmonthdayEnd!=''">
+                and date_format(t.plan_date,'%y%m%d') &lt;= date_format(#{yearmonthdayEnd},'%y%m%d')
+            </if>
+        </where>
+        GROUP BY t1.manufacture_order_process_sid
+        ) t10 ON t.manufacture_order_process_sid = t10.manufacture_order_process_sid
+        LEFT JOIN (
+        SELECT t.manufacture_order_process_sid, SUM(t.quantity) as total_complete_quantity FROM
+        s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t.day_manufacture_progress_sid = t1.day_manufacture_progress_sid
+        <where>
+            and t1.handle_status = '5'
+            <if test="yearmonthday != null and yearmonthday != ''">
+                and t1.document_date BETWEEN #{yearmonthday} AND LAST_DAY(#{yearmonthday})
+            </if>
+            <if test="yearmonthdayBegin != null and yearmonthdayBegin!=''">
+                and date_format(t1.document_date,'%y%m%d') &gt;= date_format(#{yearmonthdayBegin},'%y%m%d')
+            </if>
+            <if test="yearmonthdayEnd != null and yearmonthdayEnd!=''">
+                and date_format(t1.document_date,'%y%m%d') &lt;= date_format(#{yearmonthdayEnd},'%y%m%d')
+            </if>
+        </where>
+        GROUP BY t.manufacture_order_process_sid
+        ) t11 ON t.manufacture_order_process_sid = t11.manufacture_order_process_sid
+        LEFT JOIN (
+        SELECT t.manufacture_order_process_sid, SUM(t.quantity) as total_complete_quantity FROM
+        s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t.day_manufacture_progress_sid = t1.day_manufacture_progress_sid
+        <where>
+            and t1.handle_status = '5'
+            <if test="lastYearmonthday != null and lastYearmonthday != ''">
+                and t1.document_date BETWEEN #{lastYearmonthday} AND LAST_DAY(#{lastYearmonthday})
+            </if>
+        </where>
+        GROUP BY t.manufacture_order_process_sid
+        ) t12 ON t.manufacture_order_process_sid = t12.manufacture_order_process_sid
+        LEFT JOIN (
+        SELECT t.manufacture_order_process_sid, t.sku1_sid, t.work_center_sid, SUM(t.quantity) as total_complete_quantity
+        FROM s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t.day_manufacture_progress_sid = t1.day_manufacture_progress_sid
+        WHERE t1.handle_status = '5'
+        GROUP BY t.manufacture_order_process_sid, t.sku1_sid, t.work_center_sid
+        ) t13 ON t.manufacture_order_process_sid = t13.manufacture_order_process_sid
+        AND ((t.sku1_sid IS NULL AND t13.sku1_sid IS NULL) OR t.sku1_sid = t13.sku1_sid)
+        AND ((t.work_center_sid IS NULL AND t13.work_center_sid IS NULL) OR t.work_center_sid = t13.work_center_sid)
+        LEFT JOIN (
+        SELECT t1.manufacture_order_process_sid, t1.sku1_sid, t1.work_center_sid, SUM(t.plan_quantity) as current_total_plan_quantity
+        FROM s_man_day_manufacture_plan_item t
+        LEFT JOIN s_man_week_manufacture_plan_item t1 ON t.manufacture_plan_item_sid = t1.week_manufacture_plan_item_sid
+        LEFT JOIN s_man_week_manufacture_plan t2 ON t1.week_manufacture_plan_sid = t2.week_manufacture_plan_sid
+        WHERE t2.handle_status = '5' and t.plan_date &lt;= now()
+        GROUP BY t1.manufacture_order_process_sid, t1.sku1_sid, t1.work_center_sid
+        ) t14 ON t.manufacture_order_process_sid = t14.manufacture_order_process_sid
+        AND ((t.sku1_sid IS NULL AND t14.sku1_sid IS NULL) OR t.sku1_sid = t14.sku1_sid)
+        AND ((t.work_center_sid IS NULL AND t14.work_center_sid IS NULL) OR t.work_center_sid = t14.work_center_sid)
+        LEFT JOIN (
+        SELECT a.* FROM (
+        SELECT t.week_manufacture_plan_sid,t.week_manufacture_plan_item_sid,t.manufacture_order_process_sid, t.work_center_sid, t.sku1_sid, t.quantity_fenpei, t1.date_start, t1.date_end
+        FROM s_man_week_manufacture_plan_item t
+        LEFT JOIN s_man_week_manufacture_plan t1 ON t.week_manufacture_plan_sid = t1.week_manufacture_plan_sid AND t1.handle_status = '5'
+        ) a WHERE NOT EXISTS (
+        SELECT 1 FROM (
+        SELECT t.week_manufacture_plan_sid,t.week_manufacture_plan_item_sid,t.manufacture_order_process_sid, t.work_center_sid, t.sku1_sid, t1.date_start, t1.date_end
+        FROM s_man_week_manufacture_plan_item t
+        LEFT JOIN s_man_week_manufacture_plan t1 ON t.week_manufacture_plan_sid = t1.week_manufacture_plan_sid AND t1.handle_status = '5'
+        ) b WHERE a.manufacture_order_process_sid = b.manufacture_order_process_sid and a.work_center_sid &lt;=&gt; b.work_center_sid and a.sku1_sid &lt;=&gt; b.sku1_sid AND a.date_end &lt; b.date_end
+        ) AND a.date_end is NOT NULL
+        ) t16 ON t.manufacture_order_process_sid = t16.manufacture_order_process_sid AND t.work_center_sid &lt;=&gt; t16.work_center_sid AND t.sku1_sid &lt;=&gt; t16.sku1_sid
+        LEFT JOIN (
+        SELECT t.manufacture_order_process_sid, t.sku1_sid, t.work_center_sid, SUM(t.quantity) as quantity
+        FROM s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t.day_manufacture_progress_sid = t1.day_manufacture_progress_sid
+        <where>
+            and t1.handle_status = '5'
+            <if test="yearmonthdayBegin != null and yearmonthdayBegin!=''">
+                and date_format(t1.document_date,'%y%m%d') &lt; date_format(#{yearmonthdayBegin},'%y%m%d')
+            </if>
+        </where>
+        group by t.manufacture_order_process_sid, t.sku1_sid, t.work_center_sid
+        ) t17 on t.manufacture_order_process_sid = t17.manufacture_order_process_sid AND t.work_center_sid &lt;=&gt; t17.work_center_sid AND t.sku1_sid &lt;=&gt; t17.sku1_sid
+        LEFT JOIN (
+        SELECT t.manufacture_order_process_sid, t.sku1_sid, t.work_center_sid, SUM(t.quantity) as quantity
+        FROM s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t.day_manufacture_progress_sid = t1.day_manufacture_progress_sid
+        <where>
+            and t1.handle_status = '5'
+            <if test="yearmonthdayBegin != null and yearmonthdayBegin!=''">
+                and date_format(t1.document_date,'%y%m%d') &gt;= date_format(#{yearmonthdayBegin},'%y%m%d')
+            </if>
+            <if test="yearmonthdayEnd != null and yearmonthdayEnd!=''">
+                and date_format(t1.document_date,'%y%m%d') &lt;= date_format(#{yearmonthdayEnd},'%y%m%d')
+            </if>
+        </where>
+        group by t.manufacture_order_process_sid, t.sku1_sid, t.work_center_sid
+        ) t18 on t.manufacture_order_process_sid = t18.manufacture_order_process_sid AND t.work_center_sid &lt;=&gt; t18.work_center_sid AND t.sku1_sid &lt;=&gt; t18.sku1_sid
+        <where>
+            <if test="workCenterSid != null">and t.work_center_sid = #{workCenterSid}</if>
+            <if test="workCenterSidList != null and workCenterSidList.length > 0">
+                and t.work_center_sid in
+                (<foreach collection="workCenterSidList" item="workCenterSid" separator=",">#{workCenterSid}</foreach>)
+            </if>
+            <if test="sku1Name != null and sku1Name != ''">
+                and (<foreach collection="sku1Name.split(';')" item="item" separator=" or ">
+                t1.sku_name like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isStageComplete != null and isStageComplete != ''">
+                and t2.is_stage_complete = #{isStageComplete}
+            </if>
+            <if test="processSid != null">and t2.process_sid = #{processSid}</if>
+            <if test="processSidList != null and processSidList.length > 0">
+                and t2.process_sid in
+                (<foreach collection="processSidList" item="processSid" separator=",">#{processSid}</foreach>)
+            </if>
+            <if test="paichanBatch != null and paichanBatch != ''">
+                and t3.paichan_batch = #{paichanBatch}
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator=" or ">t4.material_code like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="departmentSid != null">and t5.department_sid = #{departmentSid}</if>
+            <if test="departmentSidList != null and departmentSidList.length > 0">
+                and t5.department_sid in
+                (<foreach collection="departmentSidList" item="departmentSid" separator=",">#{departmentSid}</foreach>)
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectManDayManufactureProgressMonthForm"
+            parameterType="com.platform.ems.domain.dto.ManDayProgressMonthForm"
+            resultType="com.platform.ems.domain.dto.ManDayProgressMonthForm">
+        SELECT t.manufacture_order_process_sid, t.document_date, t2.client_id, t.work_center_sid, t.sku1_sid, t1.sku_name as sku1_name,
+        t2.manufacture_order_sid, t2.process_sid,t2.process_name, t2.plan_end_date as process_plan_end_date,
+        t2.quantity as process_quantity, t2.plant_sid, t2.is_stage_complete,
+        t3.manufacture_order_code, t3.paichan_batch, t3.quantity as order_quantity, t3.material_code, t3.material_name,
+        t4.unit_base,
+        t5.work_center_code, t5.work_center_name, t5.department_sid, t6.code as department_code, t6.name as department_name,
+        t7.name as unit_base_name,
+        t8.plant_code, t8.plant_name, t8.short_name as plant_short_name,
+        t9.total_complete_quantity as is_caichuang_quantity, t10.month_plan_quantity,
+        t11.total_complete_quantity as month_total_complete_quantity, t12.total_complete_quantity as
+        last_month_total_complete_quantity, t14.current_total_plan_quantity,
+        t16.quantity_fenpei, t13.total_complete_quantity,
+        if(t16.quantity_fenpei is null and t13.total_complete_quantity is null, null, (ifnull(t16.quantity_fenpei,0) - ifnull(t13.total_complete_quantity,0)))  as wei_complete_quantity,
+        t17.quantity as total_complete_quantity_before, t18.quantity as total_complete_quantity_in, (ifnull(t17.quantity, 0) + ifnull(t18.quantity, 0)) as total_complete_quantity_add
+        <include refid="selectManDayManufactureProgressMonthFormVo"/>
+        ORDER BY CONVERT (t8.short_name USING gbk) asc, CONVERT (t6.name USING gbk) asc, CONVERT (t5.work_center_name USING gbk) asc,
+        CONVERT (t3.material_code USING gbk) asc, t3.paichan_batch asc, CONVERT (t1.sku_name USING gbk) asc, t2.serial_num asc, t3.document_date desc
+        <if test="pageNum != null and pageSize != null">LIMIT ${pageBegin},${pageSize}</if>
+    </select>
+
+    <select id="countManDayManufactureProgressMonthForm"
+            parameterType="com.platform.ems.domain.dto.ManDayProgressMonthForm"
+            resultType="java.lang.Integer">
+        select count(1) as row_count
+        <include refid="selectManDayManufactureProgressMonthFormVo"/>
+    </select>
+
+    <select id="selectManDayManufactureProgressMonthDayList"
+            parameterType="com.platform.ems.domain.dto.ManDayProgressMonthForm"
+            resultType="com.platform.ems.domain.dto.ManDayProgressMonthFormDay">
+        SELECT t.manufacture_order_process_sid, t.sku1_sid, t.work_center_sid,
+        DATE_FORMAT(t1.document_date, '%m/%d') as monthday, DATE_FORMAT(t1.document_date, '%y/%m/%d') as yearmonthday,
+        SUM(t.quantity) as day_complete_quantity
+        FROM s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t.day_manufacture_progress_sid = t1.day_manufacture_progress_sid
+        <where>
+            <if test="manufactureOrderProcessSidList != null and manufactureOrderProcessSidList.length > 0">
+                and t.manufacture_order_process_sid in
+                (<foreach collection="manufactureOrderProcessSidList" item="manufactureOrderProcessSid" separator=",">
+                #{manufactureOrderProcessSid}</foreach>)
+            </if>
+            and t1.handle_status = '5'
+            <if test="yearmonthday != null and yearmonthday != ''">
+                and t1.document_date BETWEEN #{yearmonthday} AND LAST_DAY(#{yearmonthday})
+            </if>
+            <if test="yearmonthdayBegin != null and yearmonthdayBegin!=''">
+                and date_format(t1.document_date,'%y%m%d') &gt;= date_format(#{yearmonthdayBegin},'%y%m%d')
+            </if>
+            <if test="yearmonthdayEnd != null and yearmonthdayEnd!=''">
+                and date_format(t1.document_date,'%y%m%d') &lt;= date_format(#{yearmonthdayEnd},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        GROUP BY t.manufacture_order_process_sid,t.sku1_sid,t.work_center_sid,t1.document_date
+    </select>
+
+    <select id="getCompleteQuantity"
+            parameterType="com.platform.ems.domain.ManDayManufactureProgressItem"
+            resultMap="ManDayManufactureProgressItemResult">
+        SELECT
+        t.client_id,
+        t.manufacture_order_process_sid,
+        t.manufacture_order_sid,
+        t.process_sid,
+        t.process_name,
+        t.work_center_sid,
+        t.plant_sid,
+        t.serial_num,
+        t.production_mode,
+        t.is_stage_complete,
+        t.is_produce_complete,
+        t.is_first_process,
+        t.start_flag,
+        t.end_flag,
+        t.end_status,
+        t.current_complete_quantity,
+        t.process_batch_num,
+        t.quantity,
+        t.cancel_flag,
+        t.plan_start_date,
+        t.actual_start_date,
+        t.plan_end_date,
+        t.actual_end_date,
+        t.department_sid,
+        t.department_code,
+        t.director_code,
+        t.chuhuo_quantity,
+        t.xiangshu,
+        t.item_num,
+        t.picture_path,
+        t.video_path,
+        t.quantity_refer_process_sid,
+        t.quantity_refer_process_code,
+        t.quantity_type_refer_process,
+        <if test="progressDimension != null and progressDimension != ''" >
+            IFNULL(t3.total_complete_quantity, 0) AS total_complete_quantity,
+            IFNULL(t4.is_caichuang_quantity, 0) AS is_caichuang_quantity,
+            (IFNULL(t.quantity, 0) - IFNULL(t3.total_complete_quantity, 0)) AS plan_unfinished_quantity,
+            (IFNULL(t4.is_caichuang_quantity, 0) - IFNULL(t3.total_complete_quantity, 0)) AS shicai_unfinished_quantity,
+        </if>
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys
+        FROM s_man_manufacture_order_process t
+        LEFT JOIN s_man_manufacture_order t1 ON t1.manufacture_order_sid = t.manufacture_order_sid
+        <if test="progressDimension != null and progressDimension == 'K'.toString()">
+            LEFT JOIN (
+            SELECT t.work_center_sid, t.manufacture_order_process_sid, sum(t.quantity) as total_complete_quantity
+            FROM s_man_day_manufacture_progress_item t
+            LEFT JOIN s_man_day_manufacture_progress t1 ON t.day_manufacture_progress_sid = t1.day_manufacture_progress_sid
+            WHERE t1.handle_status = '5'
+            <if test="workCenterSid != null">
+                and t.work_center_sid = #{workCenterSid}
+            </if>
+            GROUP BY t.manufacture_order_process_sid, t.work_center_sid
+            ) t3 ON t.manufacture_order_process_sid = t3.manufacture_order_process_sid
+            <if test="workCenterSid != null">AND t3.work_center_sid = #{workCenterSid}</if>
+            <if test="workCenterSid == null">AND t3.work_center_sid is null</if>
+            left join  (
+            SELECT t.manufacture_order_sid, t.manufacture_order_process_sid, sum(t.quantity) as is_caichuang_quantity
+            FROM s_man_day_manufacture_progress_item t
+            LEFT JOIN s_man_day_manufacture_progress t1 ON t1.day_manufacture_progress_sid = t.day_manufacture_progress_sid
+            LEFT JOIN s_man_manufacture_order_process t3 ON t3.manufacture_order_process_sid = t.manufacture_order_process_sid
+            WHERE t1.handle_status='5' AND t3.is_first_process='Y'
+            GROUP BY t.manufacture_order_sid, t.manufacture_order_process_sid
+            ) t4 on t4.manufacture_order_sid = t.manufacture_order_sid
+        </if>
+        <if test="progressDimension != null and progressDimension == 'K1'.toString()">
+            LEFT JOIN (
+            SELECT t.manufacture_order_process_sid, t.work_center_sid, t.sku1_sid,SUM(t.quantity) as total_complete_quantity
+            FROM s_man_day_manufacture_progress_item t
+            LEFT JOIN s_man_day_manufacture_progress t1 ON t.day_manufacture_progress_sid = t1.day_manufacture_progress_sid
+            WHERE t1.handle_status = '5'
+            <if test="workCenterSid != null">
+                and t.work_center_sid = #{workCenterSid}
+            </if>
+            GROUP BY t.manufacture_order_process_sid, t.work_center_sidt.sku1_sid
+            ) t3 ON t.manufacture_order_process_sid = t3.manufacture_order_process_sid
+            <if test="sku1Sid != null">AND t3.sku1_sid = #{sku1Sid}</if>
+            <if test="sku1Sid == null">AND t3.sku1_sid is null</if>
+            <if test="workCenterSid != null">AND t3.work_center_sid = #{workCenterSid}</if>
+            <if test="workCenterSid == null">AND t3.work_center_sid is null</if>
+            LEFT JOIN (
+            SELECT t.manufacture_order_sid, t.manufacture_order_process_sid, t.sku1_sid, sum(t.quantity) as is_caichuang_quantity
+            FROM s_man_day_manufacture_progress_item t
+            LEFT JOIN s_man_day_manufacture_progress t1 ON t1.day_manufacture_progress_sid = t.day_manufacture_progress_sid
+            LEFT JOIN s_man_manufacture_order_process t3 ON t3.manufacture_order_process_sid = t.manufacture_order_process_sid
+            WHERE t1.handle_status='5' AND t3.is_first_process='Y'
+            GROUP BY t.manufacture_order_sid, t.manufacture_order_process_sid, t.sku1_sid
+            ) t4 on t4.manufacture_order_sid = t.manufacture_order_sid
+            <if test="sku1Sid != null">AND t4.sku1_sid = #{sku1Sid}</if>
+            <if test="sku1Sid == null">AND t4.sku1_sid is null</if>
+        </if>
+        <where>
+            <if test="manufactureOrderProcessSid != null">
+                t.manufacture_order_process_sid = #{manufactureOrderProcessSid}
+            </if>
+            <if test="manufactureOrderSid != null">
+                and t1.manufacture_order_sid = #{manufactureOrderSid}
+            </if>
+            <if test="plantSid != null">
+                and t.plant_sid = #{plantSid}
+            </if>
+        </where>
+    </select>
+
+</mapper>

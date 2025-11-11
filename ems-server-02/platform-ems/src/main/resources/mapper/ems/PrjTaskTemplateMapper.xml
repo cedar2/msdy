@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PrjTaskTemplateMapper">
+
+    <resultMap type="com.platform.ems.domain.PrjTaskTemplate" id="PrjTaskTemplateResult">
+        <result property="clientId" column="client_id"/>
+        <result property="taskTemplateSid" column="task_template_sid"/>
+        <result property="taskTemplateName" column="task_template_name"/>
+        <result property="taskTemplateCode" column="task_template_code"/>
+        <result property="projectType" column="project_type"/>
+        <result property="templateTime" column="template_time"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectPrjTaskTemplateVo">
+        select t.client_id,
+        t.task_template_sid,
+        t.task_template_name,
+        t.task_template_code,
+        t.project_type,
+        t.template_time,
+        t.remark,
+        t.status,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t2.nick_name AS creator_account_name,
+        t3.nick_name AS updater_account_name,
+        t4.nick_name AS confirmer_account_name
+        from s_prj_task_template t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+        LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t4.client_id
+    </sql>
+
+    <select id="selectPrjTaskTemplateById" parameterType="Long" resultMap="PrjTaskTemplateResult">
+        <include refid="selectPrjTaskTemplateVo"/>
+        where t.task_template_sid = #{taskTemplateSid}
+    </select>
+
+    <select id="selectPrjTaskTemplateList" parameterType="com.platform.ems.domain.PrjTaskTemplate"
+            resultMap="PrjTaskTemplateResult">
+        <include refid="selectPrjTaskTemplateVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="taskTemplateSid != null">
+                and t.task_template_sid = #{taskTemplateSid}
+            </if>
+            <if test="taskTemplateSidList != null and taskTemplateSidList.length >0 ">
+                and t.task_template_sid in
+                (<foreach collection="taskTemplateSidList" item="taskTemplateSid" separator=",">
+                #{taskTemplateSid}</foreach>)
+            </if>
+            <if test="taskTemplateName != null and taskTemplateName != ''">
+                and t.task_template_name like concat('%', #{taskTemplateName}, '%')
+            </if>
+            <if test="taskTemplateCode != null and taskTemplateCode != ''">
+                and t.task_template_code = #{taskTemplateCode}
+            </if>
+            <if test="projectType != null and projectType != ''">
+                and t.project_type = #{projectType}
+            </if>
+            <if test="projectTypeList != null and projectTypeList.length >0 ">
+                and t.project_type in
+                (<foreach collection="projectTypeList" item="projectType" separator=",">#{projectType}</foreach>)
+            </if>
+            <if test="templateTime != null ">
+                and t.template_time = #{templateTime}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="createDate != null ">
+                and date_format(t.create_date,'%y%m%d') = date_format(#{createDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.task_template_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_prj_task_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            task_template_sid,
+            task_template_name,
+            task_template_code,
+            project_type,
+            template_time,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.taskTemplateSid},
+                #{item.taskTemplateName},
+                #{item.taskTemplateCode},
+                #{item.projectType},
+                #{item.templateTime},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_prj_task_template
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            task_template_name = #{taskTemplateName},
+            task_template_code = #{taskTemplateCode},
+            project_type = #{projectType},
+            template_time = #{templateTime},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where task_template_sid = #{taskTemplateSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_prj_task_template
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                task_template_name = #{taskTemplateName},
+                task_template_code = #{taskTemplateCode},
+                project_type = #{projectType},
+                template_time = #{templateTime},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+            </trim>
+            where task_template_sid = #{taskTemplateSid}
+        </foreach>
+    </update>
+
+
+    <select id="selectPrjTaskTemplateForm"
+            parameterType="com.platform.ems.domain.dto.request.form.PrjTaskTemplateFormRequest"
+            resultType="com.platform.ems.domain.dto.response.form.PrjTaskTemplateFormResponse">
+        select
+        ptt.client_id,
+        ptt.task_template_name,
+        ptt.project_type,
+        tbl_count.num as item_count,
+        ptt.template_time as task_template_time,
+        ptt.handle_status,
+        ptt.status,
+        tti.task_template_sid,
+        tti.task_template_item_sid,
+        tti.sort,
+        tti.task_sid,
+        tti.task_phase,
+        tti.pre_task,
+        tti.template_time as item_template_time,
+        tti.plan_end_date_config,
+        tti.overdue_warn_rate,
+        tti.calendar_type,
+        tti.relate_business_form_code,
+        t9.task_name as pre_task_name,
+        tti.is_monitor,
+        tti.remark,
+        tti.start_position_code,
+        tti.charge_position_code,
+        tti.notice_position_code,
+        tti.handler_task,
+        t8.task_name,
+
+        tti.create_date,
+        t2.nick_name AS creator_account_name,
+        t10.handler_task_id,
+        t10.handler_task_name
+        from s_prj_task_template as ptt
+        left join (select temp.task_template_sid, count(temp.task_template_sid) as num from s_prj_task_template_item
+        temp GROUP BY task_template_sid) tbl_count on
+        ptt.task_template_sid = tbl_count.task_template_sid
+        LEFT JOIN s_prj_task_template_item as tti ON tbl_count.task_template_sid = tti.task_template_sid
+        LEFT JOIN sys_user t2 ON tti.creator_account = t2.user_name AND tti.client_id = t2.client_id
+        LEFT JOIN s_prj_task t8 ON tti.task_sid = t8.task_sid
+        LEFT JOIN s_prj_task t9 ON tti.pre_task = t9.task_code
+        LEFT JOIN (
+            SELECT ta.task_template_item_sid,
+                GROUP_CONCAT(tb.user_id ORDER BY tb.user_name ASC SEPARATOR ';') as handler_task_id,
+                GROUP_CONCAT(tb.nick_name ORDER BY tb.user_name ASC SEPARATOR ';') as handler_task_name
+            FROM s_prj_task_template_item ta
+            LEFT JOIN sys_user tb ON ta.client_id = tb.client_id AND (ta.handler_task = tb.user_name
+                or ta.handler_task like concat('%;', tb.user_name, ';%') or ta.handler_task like concat(tb.user_name, ';%') or ta.handler_task like concat('%;', tb.user_name))
+            GROUP BY ta.task_template_item_sid
+        ) t10 ON tti.task_template_item_sid = t10.task_template_item_sid
+        <where>
+            <if test="taskTemplateName != null and taskTemplateName != ''">
+                and ptt.task_template_name like concat('%', #{taskTemplateName}, '%')
+            </if>
+            <if test="projectType != null and projectType != ''">
+                and ptt.project_type = #{projectType}
+            </if>
+            <if test="projectTypeList != null and projectTypeList.length >0 ">
+                and ptt.project_type in
+                (<foreach collection="projectTypeList" item="projectType" separator=",">#{projectType}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and ptt.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and ptt.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="status != null and status != ''">
+                and ptt.status = #{status}
+            </if>
+            <if test="taskName != null and taskName != ''">
+                and t8.task_name like concat('%', #{taskName}, '%')
+            </if>
+            <if test="taskPhase != null and taskPhase != ''">
+                and tti.task_phase = #{taskPhase}
+            </if>
+            <if test="taskPhaseList != null and taskPhaseList.length >0 ">
+                and tti.task_phase in
+                (<foreach collection="taskPhaseList" item="taskPhase" separator=",">
+                #{taskPhase}
+            </foreach>)
+            </if>
+            <if test="relateBusinessFormCode != null and relateBusinessFormCode != ''">
+                and tti.relate_business_form_code = #{relateBusinessFormCode}
+            </if>
+            <if test="relateBusinessFormCodeList != null and relateBusinessFormCodeList.length >0 ">
+                and tti.relate_business_form_code in
+                (<foreach collection="relateBusinessFormCodeList" item="relateBusinessFormCode" separator=",">
+                #{relateBusinessFormCode}
+            </foreach>)
+            </if>
+            <if test="handlerTaskIsNull != null and handlerTaskIsNull == 'Y'.toString()">
+                and tti.handler_task is null
+            </if>
+            <if test="handlerTaskIsNull != null and handlerTaskIsNull == 'N'.toString()">
+                and tti.handler_task is not null
+            </if>
+            <if test="handlerTask != null and handlerTask != ''">
+                and (tti.handler_task = #{handlerTask}
+                or tti.handler_task like concat('%;', #{handlerTask}, ';%') or tti.handler_task like concat(#{handlerTask}, ';%') or tti.handler_task like concat('%;', #{handlerTask}))
+            </if>
+            <if test="handlerTaskList != null and handlerTaskList.length >0 ">
+                and (<foreach collection="handlerTaskList" item="handlerTask" separator=" or ">
+                (tti.handler_task = #{handlerTask}
+                or tti.handler_task like concat('%;', #{handlerTask}, ';%') or tti.handler_task like concat(#{handlerTask}, ';%') or tti.handler_task like concat('%;', #{handlerTask}))
+            </foreach>)
+            </if>
+        </where>
+
+        order by ptt.task_template_code desc, sort asc, t8.task_name asc
+    </select>
+</mapper>

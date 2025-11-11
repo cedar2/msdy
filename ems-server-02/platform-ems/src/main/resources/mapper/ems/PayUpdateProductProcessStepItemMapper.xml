@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PayUpdateProductProcessStepItemMapper">
+
+    <resultMap type="com.platform.ems.domain.PayUpdateProductProcessStepItem"
+               id="PayUpdateProductProcessStepItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="updateStepItemSid" column="update_step_item_sid"/>
+        <result property="updateProductProcessStepSid" column="update_product_process_step_sid"/>
+        <result property="stepItemSid" column="step_item_sid"/>
+        <result property="stepCategory" column="step_category"/>
+        <result property="processStepCode" column="process_step_code"/>
+        <result property="processStepName" column="process_step_name"/>
+        <result property="processStepSid" column="process_step_sid"/>
+        <result property="price" column="price"/>
+        <result property="priceRate" column="price_rate"/>
+        <result property="priceBgq" column="price_bgq"/>
+        <result property="priceRateBgq" column="price_rate_bgq"/>
+        <result property="standardPrice" column="standard_price"/>
+        <result property="processSid" column="process_sid"/>
+        <result property="isFinal" column="is_final"/>
+        <result property="taskUnit" column="task_unit"/>
+        <result property="sort" column="sort"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="delFlagBiangz" column="del_flag_biangz"/>
+    </resultMap>
+
+    <sql id="selectPayUpdateProductProcessStepItemVo">
+        select t.client_id,
+               t.update_step_item_sid,
+               t.update_product_process_step_sid,
+               t.step_item_sid,
+               t.step_category,
+               t.process_step_code,
+               t.process_step_name,
+               t.process_step_sid,
+               t.price,
+               t.price_rate,
+               t.price_bgq,
+               t.price_rate_bgq,
+               (ifnull(t.price_bgq, 0) * ifnull(t.price_rate_bgq, 0)) as actual_price_bgq,
+               t.standard_price,
+               t.process_sid,
+               t.is_final,
+               t.task_unit,
+               t.sort,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t.del_flag_biangz,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name
+        from s_pay_update_product_process_step_item t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN s_pay_product_process_step_item t4 ON t.step_item_sid = t4.step_item_sid
+    </sql>
+
+    <select id="selectPayUpdateProductProcessStepItemById" parameterType="Long"
+            resultMap="PayUpdateProductProcessStepItemResult">
+        <include refid="selectPayUpdateProductProcessStepItemVo"/>
+        where t.update_step_item_sid = #{updateStepItemSid}
+    </select>
+
+    <select id="selectDeleteListById"
+            parameterType="com.platform.ems.domain.PayUpdateProductProcessStepItem"
+            resultMap="PayUpdateProductProcessStepItemResult">
+        <include refid="selectPayUpdateProductProcessStepItemVo"/>
+        <where>
+                and t.del_flag_biangz = 'Y'
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="updateProductProcessStepSid != null ">
+                and t.update_product_process_step_sid = #{updateProductProcessStepSid}
+            </if>
+            <if test="stepItemSid != null ">
+                and t.step_item_sid = #{stepItemSid}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectPayUpdateProductProcessStepItemList"
+            parameterType="com.platform.ems.domain.PayUpdateProductProcessStepItem"
+            resultMap="PayUpdateProductProcessStepItemResult">
+        <include refid="selectPayUpdateProductProcessStepItemVo"/>
+        <where>
+            ifnull(t.del_flag_biangz,'') = ''
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="updateProductProcessStepSid != null ">
+                and t.update_product_process_step_sid = #{updateProductProcessStepSid}
+            </if>
+            <if test="stepItemSid != null ">
+                and t.step_item_sid = #{stepItemSid}
+            </if>
+            <if test="stepCategory != null and stepCategory != ''">
+                and t.step_category = #{stepCategory}
+            </if>
+            <if test="processStepCode != null and processStepCode != ''">
+                and t.process_step_code = #{processStepCode}
+            </if>
+            <if test="processStepName != null and processStepName != ''">and
+                t.process_step_name like concat('%', #{processStepName}, '%')
+            </if>
+            <if test="processStepSid != null ">
+                and t.process_step_sid = #{processStepSid}
+            </if>
+            <if test="price != null ">
+                and t.price = #{price}
+            </if>
+            <if test="priceRate != null ">
+                and t.price_rate = #{priceRate}
+            </if>
+            <if test="standardPrice != null ">
+                and t.standard_price = #{standardPrice}
+            </if>
+            <if test="processSid != null ">
+                and t.process_sid = #{processSid}
+            </if>
+            <if test="isFinal != null and isFinal != ''">
+                and t.is_final = #{isFinal}
+            </if>
+            <if test="taskUnit != null and taskUnit != ''">
+                and t.task_unit = #{taskUnit}
+            </if>
+            <if test="sort != null ">
+                and t.sort = #{sort}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="delFlagBiangz != null and delFlagBiangz != ''">
+                and t.del_flag_biangz = #{delFlagBiangz}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pay_update_product_process_step_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            update_step_item_sid,
+            update_product_process_step_sid,
+            step_item_sid,
+            step_category,
+            process_step_code,
+            process_step_name,
+            process_step_sid,
+            price,
+            price_rate,
+            price_bgq,
+            price_rate_bgq,
+            standard_price,
+            process_sid,
+            is_final,
+            task_unit,
+            sort,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            del_flag_biangz,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.updateStepItemSid},
+                #{item.updateProductProcessStepSid},
+                #{item.stepItemSid},
+                #{item.stepCategory},
+                #{item.processStepCode},
+                #{item.processStepName},
+                #{item.processStepSid},
+                #{item.price},
+                #{item.priceRate},
+                #{item.priceBgq},
+                #{item.priceRateBgq},
+                #{item.standardPrice},
+                #{item.processSid},
+                #{item.isFinal},
+                #{item.taskUnit},
+                #{item.sort},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.delFlagBiangz},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pay_update_product_process_step_item
+        <trim prefix="SET" suffixOverrides=",">
+            step_category = #{stepCategory},
+            process_step_code = #{processStepCode},
+            process_step_name = #{processStepName},
+            process_step_sid = #{processStepSid},
+            price = #{price},
+            price_rate = #{priceRate},
+            price_bgq = #{priceBgq},
+            price_rate_bgq = #{priceRateBgq},
+            standard_price = #{standardPrice},
+            process_sid = #{processSid},
+            is_final = #{isFinal},
+            task_unit = #{taskUnit},
+            sort = #{sort},
+            del_flag_biangz = #{delFlagBiangz},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where update_step_item_sid = #{updateStepItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pay_update_product_process_step_item
+            <trim prefix="SET" suffixOverrides=",">
+                step_category = #{stepCategory},
+                process_step_code = #{processStepCode},
+                process_step_name = #{processStepName},
+                process_step_sid = #{processStepSid},
+                price = #{price},
+                price_rate = #{priceRate},
+                price_bgq = #{priceBgq},
+                price_rate_bgq = #{priceRateBgq},
+                standard_price = #{standardPrice},
+                process_sid = #{processSid},
+                is_final = #{isFinal},
+                task_unit = #{taskUnit},
+                sort = #{sort},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+            </trim>
+            where update_step_item_sid = #{updateStepItemSid}
+        </foreach>
+    </update>
+
+</mapper>

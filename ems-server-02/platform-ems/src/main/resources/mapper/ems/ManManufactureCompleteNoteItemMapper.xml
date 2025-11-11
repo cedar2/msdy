@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManManufactureCompleteNoteItemMapper">
+
+    <resultMap type="com.platform.ems.domain.ManManufactureCompleteNoteItem" id="ManManufactureCompleteNoteItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="manufactureCompleteNoteItemSid" column="manufacture_complete_note_item_sid"/>
+        <result property="manufactureOrderProductSid" column="manufacture_order_product_sid"/>
+        <result property="manufactureCompleteNoteSid" column="manufacture_complete_note_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="barcodeSid" column="barcode_sid"/>
+        <result property="materialName" column="material_name"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="completeQuantity" column="complete_quantity"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="manufactureCompleteNoteCode" column="manufacture_complete_note_code"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantName" column="plant_name"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="manufactureOrderSid" column="manufacture_order_sid"/>
+        <result property="manufactureOrderCode" column="manufacture_order_code"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="sku1Code" column="sku1_code"/>
+        <result property="sku1Name" column="sku1_name"/>
+        <result property="sku2Code" column="sku2_code"/>
+        <result property="sku2Name" column="sku2_name"/>
+        <result property="barcode" column="barcode"/>
+        <result property="contractDate" column="contract_date"/>
+        <result property="demandDate" column="demand_date"/>
+        <result property="latestDemandDate" column="latest_demand_date"/>
+        <result property="saleUnitBase" column="sale_unit_base"/>
+        <result property="unitSale" column="unit_sale"/>
+        <result property="salePerson" column="sale_person"/>
+        <result property="saleItemNum" column="sale_item_num"/>
+        <result property="orderCompleteQuantity" column="order_complete_quantity"/>
+        <result property="quantity" column="quantity"/>
+        <result property="planStartDate" column="plan_start_date"/>
+        <result property="planEndDate" column="plan_end_date"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="salesOrderSid" column="sales_order_sid"/>
+        <result property="salesOrderCode" column="sales_order_code"/>
+        <result property="salePersonName" column="sale_person_name"/>
+        <result property="unitBaseName" column="unit_base_name"/>
+        <result property="completeUnitBaseName" column="complete_unit_base_name"/>
+    </resultMap>
+
+    <sql id="selectManManufactureCompleteNoteItemVo">
+         SELECT
+	t.client_id,
+	t.manufacture_complete_note_item_sid,
+	t.manufacture_order_product_sid,
+	t.manufacture_complete_note_sid,
+	t.material_sid,
+	t.sku1_sid,
+	t.sku2_sid,
+	t.barcode_sid,
+	t.unit_base,
+	t.complete_quantity,
+	t.item_num,
+	t.remark,
+	t.creator_account,
+	t.create_date,
+	t.updater_account,
+	t.update_date,
+	t.data_source_sys,
+	t1.manufacture_complete_note_code,
+	t1.plant_sid,
+	t8.plant_name,
+	t8.plant_code,
+	t1.manufacture_order_sid,
+	t9.manufacture_order_code,
+	t1.document_date,
+	t2.material_name,
+	t2.material_code,
+	t3.sku_code AS sku1_code,
+	t3.sku_name AS sku1_name,
+	t4.sku_code AS sku2_code,
+	t4.sku_name AS sku2_name,
+	t5.barcode,
+	t9.complete_quantity AS order_complete_quantity,
+	t10.quantity,
+	t10.plan_start_date,
+	t10.plan_end_date,
+	t1.handle_status,
+	t10.sales_order_sid,
+	t11.sales_order_code,
+	t11.sale_person,
+	t11.customer_sid,
+	t12.nick_name as sale_person_name,
+	t13.customer_name,
+	t14.contract_date,
+	t15.name as unit_base_name,
+	t16.name as complete_unit_base_name
+FROM
+	s_man_manufacture_complete_note_item t
+	LEFT JOIN s_man_manufacture_complete_note t1 ON t1.manufacture_complete_note_sid = t.manufacture_complete_note_sid
+	LEFT JOIN s_bas_material t2 ON t2.material_sid = t.material_sid
+	LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t.sku1_sid
+	LEFT JOIN s_bas_sku t4 ON t4.sku_sid = t.sku2_sid
+	LEFT JOIN s_bas_material_barcode t5 ON t5.barcode_sid = t.barcode_sid
+	LEFT JOIN s_bas_plant t8 ON t8.plant_sid = t1.plant_sid
+	LEFT JOIN s_man_manufacture_order t9 ON t9.manufacture_order_sid = t1.manufacture_order_sid
+	LEFT JOIN s_man_manufacture_order_product t10 on t10.manufacture_order_product_sid=t.manufacture_order_product_sid
+	LEFT JOIN s_sal_sales_order t11 on t11.sales_order_sid=t10.sales_order_sid
+	LEFT JOIN sys_user t12 on t12.user_name=t11.sale_person
+	LEFT JOIN s_bas_customer t13 on t13.customer_sid=t11.customer_sid
+	LEFT JOIN s_sal_sales_order_item t14 on t14.sales_order_item_sid=t10.sales_order_item_sid
+	LEFT JOIN s_con_measure_unit t15 ON t15.code = t14.unit_base
+	LEFT JOIN s_con_measure_unit t16 ON t16.code = t.unit_base
+    </sql>
+
+    <select id="selectManManufactureCompleteNoteItemById" parameterType="Long"
+            resultMap="ManManufactureCompleteNoteItemResult">
+        <include refid="selectManManufactureCompleteNoteItemVo"/>
+        where t.manufacture_complete_note_item_sid = #{manufactureCompleteNoteItemSid}
+    </select>
+
+
+    <select id="selectManManufactureCompleteNoteItemList"
+            parameterType="com.platform.ems.domain.ManManufactureCompleteNoteItem"
+            resultMap="ManManufactureCompleteNoteItemResult">
+        <include refid="selectManManufactureCompleteNoteItemVo"/>
+        <where>
+            <if test="customerSid != null ">
+                and t6.customer_sid =#{customerSid}
+            </if>
+            <if test="handleStatus != null and handleStatus!='' ">
+                and t1.handle_status =#{handleStatus}
+            </if>
+            <if test="materialCode != null  and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator="or">t2.material_code like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="manufactureOrderCode != null  and manufactureOrderCode != ''">
+                and (<foreach collection="manufactureOrderCode.split(';')" item="item" separator="or">
+                t9.manufacture_order_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid =#{plantSid}
+            </if>
+            <if test="manufactureCompleteNoteCode != null  and manufactureCompleteNoteCode != ''">
+                and (<foreach collection="manufactureCompleteNoteCode.split(';')" item="item" separator="or">
+                t1.manufacture_complete_note_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="manufactureCompleteNoteSid != null ">
+                and t.manufacture_complete_note_sid =#{manufactureCompleteNoteSid}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid =#{materialSid}
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid =#{sku1Sid}
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid =#{sku2Sid}
+            </if>
+            <if test="barcodeSid != null ">
+                and t.barcode_sid =#{barcodeSid}
+            </if>
+            <if test="materialName != null  and materialName != ''">and
+                t.material_name like concat('%', #{materialName}, '%')
+            </if>
+            <if test="unitBase != null  and unitBase != ''">
+                and (<foreach collection="unitBase.split(';')" item="item" separator="or">t.unit_base like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="completeQuantity != null ">
+                and t.complete_quantity = #{completeQuantity}
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num =#{itemNum}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.create_date desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_manufacture_complete_note_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            manufacture_complete_note_item_sid,
+            manufacture_complete_note_sid,
+            manufacture_order_product_sid,
+            material_sid,
+            sku1_sid,
+            sku2_sid,
+            barcode_sid,
+            material_name,
+            unit_base,
+            complete_quantity,
+            item_num,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.manufactureCompleteNoteItemSid},
+                #{item.manufactureCompleteNoteSid},
+                #{item.manufactureOrderProductSid},
+                #{item.materialSid},
+                #{item.sku1Sid},
+                #{item.sku2Sid},
+                #{item.barcodeSid},
+                #{item.materialName},
+                #{item.unitBase},
+                #{item.completeQuantity},
+                #{item.itemNum},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_manufacture_complete_note_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            manufacture_complete_note_sid = #{manufactureCompleteNoteSid},
+            manufacture_order_product_sid = #{manufactureOrderProductSid},
+            material_sid = #{materialSid},
+            sku1_sid = #{sku1Sid},
+            sku2_sid = #{sku2Sid},
+            barcode_sid = #{barcodeSid},
+            material_name = #{materialName},
+            unit_base = #{unitBase},
+            complete_quantity = #{completeQuantity},
+            item_num = #{itemNum},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where manufacture_complete_note_item_sid = #{manufactureCompleteNoteItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_manufacture_complete_note_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                manufacture_complete_note_sid = #{manufactureCompleteNoteSid},
+                manufacture_order_product_sid = #{manufactureOrderProductSid},
+                material_sid = #{materialSid},
+                sku1_sid = #{sku1Sid},
+                sku2_sid = #{sku2Sid},
+                barcode_sid = #{barcodeSid},
+                material_name = #{materialName},
+                unit_base = #{unitBase},
+                complete_quantity = #{completeQuantity},
+                item_num = #{itemNum},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where manufacture_complete_note_item_sid = #{manufactureCompleteNoteItemSid}
+        </foreach>
+    </update>
+
+</mapper>

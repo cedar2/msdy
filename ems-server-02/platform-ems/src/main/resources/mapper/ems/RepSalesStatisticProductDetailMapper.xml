@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.RepSalesStatisticProductDetailMapper">
+
+    <resultMap type="com.platform.ems.domain.RepSalesStatisticProductDetail" id="RepSalesStatisticProductDetailResult">
+        <result property="clientId" column="client_id"/>
+        <result property="dataRecordSid" column="data_record_sid"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="customerShortName" column="customer_short_name"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="moneyAmount" column="money_amount"/>
+        <result property="quantity" column="quantity"/>
+        <result property="quantityDanju" column="quantity_danju"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="createDate" column="create_date"/>
+    </resultMap>
+
+    <sql id="selectRepSalesStatisticProductDetailVo">
+        select t.client_id,
+               t.data_record_sid,
+               t.product_season_code,
+               t.customer_sid,
+               t.customer_code,
+               t.customer_short_name,
+               t.material_sid,
+               t.material_code,
+               t.money_amount,
+               t.quantity,
+               t.quantity_danju,
+               t.currency,
+               t.currency_unit,
+               t.picture_path,
+               t.create_date
+        from s_rep_sales_statistic_product_detail t
+    </sql>
+
+    <select id="selectRepSalesStatisticProductDetailById" parameterType="Long"
+            resultMap="RepSalesStatisticProductDetailResult">
+        <include refid="selectRepSalesStatisticProductDetailVo"/>
+        where t.data_record_sid = #{dataRecordSid}
+    </select>
+
+    <select id="selectRepSalesStatisticProductDetailList"
+            parameterType="com.platform.ems.domain.RepSalesStatisticProductDetail"
+            resultMap="RepSalesStatisticProductDetailResult">
+        <include refid="selectRepSalesStatisticProductDetailVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id =
+                #{item}</foreach>)
+            </if>
+            <if test="productSeasonCode != null  and productSeasonCode != ''">
+                and (<foreach collection="productSeasonCode.split(';')" item="item" separator="or">t.product_season_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="customerSid != null ">
+                and t.customer_sid =#{customerSid}
+            </if>
+            <if test="customerCode != null  and customerCode != ''">
+                and (<foreach collection="customerCode.split(';')" item="item" separator="or">t.customer_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="customerShortName != null  and customerShortName != ''">and
+                t.customer_short_name like concat('%', #{customerShortName}, '%')
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid =#{materialSid}
+            </if>
+            <if test="materialCode != null  and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator="or">t.material_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="moneyAmount != null ">
+                and t.money_amount = #{moneyAmount}
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="quantityDanju != null ">
+                and t.quantity_danju =#{quantityDanju}
+            </if>
+            <if test="currency != null  and currency != ''">
+                and (<foreach collection="currency.split(';')" item="item" separator="or">t.currency
+                = #{item}</foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">
+                and (<foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit
+                = #{item}</foreach>)
+            </if>
+            <if test="picturePath != null  and picturePath != ''">
+                and (<foreach collection="picturePath.split(';')" item="item" separator="or">t.picture_path =
+                #{item}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_rep_sales_statistic_product_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            data_record_sid,
+            product_season_code,
+            customer_sid,
+            customer_code,
+            customer_short_name,
+            material_sid,
+            material_code,
+            money_amount,
+            quantity,
+            quantity_danju,
+            currency,
+            currency_unit,
+            picture_path,
+            create_date,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.dataRecordSid}
+                #{item.productSeasonCode},
+                #{item.customerSid},
+                #{item.customerCode},
+                #{item.customerShortName},
+                #{item.materialSid},
+                #{item.materialCode},
+                #{item.moneyAmount},
+                #{item.quantity},
+                #{item.quantityDanju},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.picturePath},
+                #{item.createDate},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_rep_sales_statistic_product_detail
+        <trim prefix="SET" suffixOverrides=",">
+            product_season_code = #{productSeasonCode},
+            customer_sid = #{customerSid},
+            customer_code = #{customerCode},
+            customer_short_name = #{customerShortName},
+            material_sid = #{materialSid},
+            material_code = #{materialCode},
+            money_amount = #{moneyAmount},
+            quantity = #{quantity},
+            quantity_danju = #{quantityDanju},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            picture_path = #{picturePath},
+        </trim>
+        where data_record_sid = #{dataRecordSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_rep_sales_statistic_product_detail
+            <trim prefix="SET" suffixOverrides=",">
+                product_season_code = #{productSeasonCode},
+                customer_sid = #{customerSid},
+                customer_code = #{customerCode},
+                customer_short_name = #{customerShortName},
+                material_sid = #{materialSid},
+                material_code = #{materialCode},
+                money_amount = #{moneyAmount},
+                quantity = #{quantity},
+                quantity_danju = #{quantityDanju},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+                picture_path = #{picturePath},
+            </trim>
+            where data_record_sid = #{dataRecordSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinCustomerAccountAdjustBillMapper">
+
+    <resultMap type="com.platform.ems.domain.FinCustomerAccountAdjustBill" id="FinCustomerAccountAdjustBillResult">
+        <result property="clientId" column="client_id"/>
+        <result property="adjustBillSid" column="adjust_bill_sid"/>
+        <result property="adjustBillCode" column="adjust_bill_code"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyName" column="company_name"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="documentType" column="document_type"/>
+        <result property="businessType" column="business_type"/>
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="businessChannel" column="business_channel"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="saleOrg" column="sale_org"/>
+        <result property="salePerson" column="sale_person"/>
+        <result property="salePersonName" column="sale_person_name"/>
+        <result property="materialType" column="material_type"/>
+        <result property="materialTypeName" column="material_type_name"/>
+        <result property="currency" column="currency"/>
+        <result property="remark" column="remark"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="clearStatus" column="clear_status"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="approvalNode" column="approval_node"/>
+        <result property="approvalUserName" column="approval_user_name"/>
+        <result property="submitUserName" column="submit_user_name"/>
+        <result property="submitDate" column="submit_date"/>
+        <result property="approvalUserId" column="approval_user_id"/>
+    </resultMap>
+
+    <sql id="selectFinCustomerAccountAdjustBillVo">
+    SELECT
+		t.client_id,
+		t.adjust_bill_sid,
+		t.adjust_bill_code,
+		t.customer_sid,
+		t2.customer_name AS customer_name,
+		t.company_sid,
+		t3.company_name AS company_name,
+		t.document_date,
+		t.document_type,
+		t.business_type,
+		t.company_brand_sid,
+		t.business_channel,
+		t.product_season_sid,
+		t5.product_season_name AS product_season_name,
+		t.sale_org,
+		t.sale_person,
+		t6.nick_name AS sale_person_name,
+		t.material_type,
+		t7.name AS material_type_name,
+		t.currency,
+		t.remark,
+		t.currency_unit,
+		t.handle_status,
+		t.creator_account,
+		t.create_date,
+		t.updater_account,
+		t.update_date,
+		t.confirmer_account,
+		t.confirm_date,
+		t.data_source_sys,
+		t2.customer_name,
+		t3.company_name,
+		t4.brand_name,
+		t5.product_season_name,
+		t1.clear_status,
+		t9.nick_name AS creator_account_name,
+		t10.nick_name AS updater_account_name,
+        t11.approval_node,
+        t11.approval_user_id,
+        t11.approval_user_name,
+        t11.create_date AS submit_date,
+        t12.nick_name AS submit_user_name
+	FROM
+		s_fin_customer_account_adjust_bill t
+		LEFT JOIN s_bas_customer t2 ON t.customer_sid = t2.customer_sid
+		LEFT JOIN s_bas_company t3 ON t.company_sid = t3.company_sid
+		LEFT JOIN s_bas_company_brand t4 ON t.company_brand_sid = t4.company_brand_sid
+		LEFT JOIN s_bas_product_season t5 ON t.product_season_sid = t5.product_season_sid
+		LEFT JOIN sys_user t6 ON t.sale_person = t6.user_name
+		LEFT JOIN s_con_material_type t7 ON t7.code = t.material_type
+        LEFT JOIN (SELECT DISTINCT t8.refer_doc_sid, t8.clear_status FROM s_fin_book_customer_account_adjust_item t8 ) t1 ON t.adjust_bill_sid = t1.refer_doc_sid
+	    LEFT JOIN sys_user t9 ON t.creator_account = t9.user_name
+	    LEFT JOIN sys_user t10 ON t.updater_account = t10.user_name
+        LEFT JOIN s_sys_form_process t11 ON t.adjust_bill_sid = t11.form_id
+        LEFT JOIN sys_user t12 ON t11.creator_account = t12.user_name
+    </sql>
+
+    <select id="selectFinCustomerAccountAdjustBillById" parameterType="Long"
+            resultMap="FinCustomerAccountAdjustBillResult">
+        <include refid="selectFinCustomerAccountAdjustBillVo"/>
+        where t.adjust_bill_sid = #{adjustBillSid}
+    </select>
+
+
+    <select id="selectFinCustomerAccountAdjustBillList"
+            parameterType="com.platform.ems.domain.FinCustomerAccountAdjustBill"
+            resultMap="FinCustomerAccountAdjustBillResult">
+        <include refid="selectFinCustomerAccountAdjustBillVo"/>
+        <where>
+            <if test="approvalUserIdList != null and approvalUserIdList.length >0">
+                and t11.approval_user_id in (<foreach collection="approvalUserIdList" item="approvalUserId" separator=",">#{approvalUserId}</foreach>)
+            </if>
+            <if test="approvalUserId != null and approvalUserId != ''">
+                and t11.approval_user_id = #{approvalUserId}
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">
+                #{creatorAccount}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="salePersonList != null and salePersonList.length >0">
+                and t.sale_person in
+                (<foreach collection="salePersonList" item="salePerson" separator=",">#{salePerson}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and t.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">
+                and t.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">
+                #{productSeasonSid}</foreach>)
+            </if>
+            <if test="adjustBillCode != null  and adjustBillCode != ''">
+                and t.adjust_bill_code like concat('%', #{adjustBillCode}, '%')
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="customerSid != null ">
+                and t.customer_sid =#{customerSid}
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="documentDate != null ">
+                and t.document_date = #{documentDate}
+            </if>
+            <if test="documentType != null  and documentType != ''">
+                and (<foreach collection="documentType.split(';')" item="item" separator="or">t.document_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="businessType != null  and businessType != ''">
+                and (<foreach collection="businessType.split(';')" item="item" separator="or">t.business_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companyBrandSid != null ">
+                and t.company_brand_sid =#{companyBrandSid}
+            </if>
+            <if test="businessChannel != null  and businessChannel != ''">
+                and (<foreach collection="businessChannel.split(';')" item="item" separator="or">t.business_channel like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="productSeasonSid != null ">
+                and t.product_season_sid =#{productSeasonSid}
+            </if>
+            <if test="saleOrg != null  and saleOrg != ''">
+                and (<foreach collection="saleOrg.split(';')" item="item" separator="or">t.sale_org like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="salePerson != null  and salePerson != ''">
+                and (<foreach collection="salePerson.split(';')" item="item" separator="or">t.sale_person like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialType != null  and materialType != ''">
+                and (<foreach collection="materialType.split(';')" item="item" separator="or">t.material_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="currency != null  and currency != ''">
+                and (<foreach collection="currency.split(';')" item="item" separator="or">t.currency like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">
+                and (<foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t9.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where> order by t.adjust_bill_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_customer_account_adjust_bill
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            adjust_bill_sid,
+            adjust_bill_code,
+            customer_sid,
+            company_sid,
+            document_date,
+            document_type,
+            business_type,
+            company_brand_sid,
+            business_channel,
+            product_season_sid,
+            sale_org,
+            sale_person,
+            material_type,
+            currency,
+            remark,
+            currency_unit,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.adjustBillSid},
+                #{item.adjustBillCode},
+                #{item.customerSid},
+                #{item.companySid},
+                #{item.documentDate},
+                #{item.documentType},
+                #{item.businessType},
+                #{item.companyBrandSid},
+                #{item.businessChannel},
+                #{item.productSeasonSid},
+                #{item.saleOrg},
+                #{item.salePerson},
+                #{item.materialType},
+                #{item.currency},
+                #{item.remark},
+                #{item.currencyUnit},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_customer_account_adjust_bill
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            adjust_bill_code = #{adjustBillCode},
+            customer_sid = #{customerSid},
+            company_sid = #{companySid},
+            document_date = #{documentDate},
+            document_type = #{documentType},
+            business_type = #{businessType},
+            company_brand_sid = #{companyBrandSid},
+            business_channel = #{businessChannel},
+            product_season_sid = #{productSeasonSid},
+            sale_org = #{saleOrg},
+            sale_person = #{salePerson},
+            material_type = #{materialType},
+            currency = #{currency},
+            remark = #{remark},
+            currency_unit = #{currencyUnit},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where adjust_bill_sid = #{adjustBillSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_customer_account_adjust_bill
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                adjust_bill_code = #{adjustBillCode},
+                customer_sid = #{customerSid},
+                company_sid = #{companySid},
+                document_date = #{documentDate},
+                document_type = #{documentType},
+                business_type = #{businessType},
+                company_brand_sid = #{companyBrandSid},
+                business_channel = #{businessChannel},
+                product_season_sid = #{productSeasonSid},
+                sale_org = #{saleOrg},
+                sale_person = #{salePerson},
+                material_type = #{materialType},
+                currency = #{currency},
+                remark = #{remark},
+                currency_unit = #{currencyUnit},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where adjust_bill_sid = #{adjustBillSid}
+        </foreach>
+    </update>
+
+</mapper>

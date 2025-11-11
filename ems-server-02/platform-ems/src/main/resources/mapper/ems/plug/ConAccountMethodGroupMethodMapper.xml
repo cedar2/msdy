@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.plug.mapper.ConAccountMethodGroupMethodMapper">
+
+    <resultMap type="com.platform.ems.plug.domain.ConAccountMethodGroupMethod" id="ConAccountMethodGroupMethodResult">
+        <result property="clientId" column="client_id"/>
+        <result property="sid" column="sid"/>
+        <result property="accountMethodGroupSid" column="account_method_group_sid"/>
+        <result property="accountCategory" column="account_category"/>
+        <result property="paymentMethod" column="payment_method"/>
+        <result property="rate" column="rate"/>
+        <result property="accountValidDays" column="account_valid_days"/>
+        <result property="dayType" column="day_type"/>
+        <result property="itemSort" column="item_sort"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="sort" column="sort"/>
+    </resultMap>
+
+    <sql id="selectConAccountMethodGroupMethodVo">
+       SELECT
+	t.client_id,
+	t.sid,
+	t.account_method_group_sid,
+	t.account_category,
+	t.payment_method,
+	t.rate,
+	t.account_valid_days,
+	t.day_type,
+	t.item_sort,
+	t.remark,
+	t.creator_account,
+	t.create_date,
+	t.updater_account,
+	t.update_date,
+	t.confirmer_account,
+	t.confirm_date,
+	t.data_source_sys,
+	t.sort,
+	t1.NAME AS payment_method_name,
+	t2.nick_name as creator_account_name
+FROM
+	s_con_account_method_group_method t
+	LEFT JOIN s_con_advance_settle_mode t1 ON t1.CODE = t.payment_method
+    LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+    </sql>
+
+    <select id="selectConAccountMethodGroupMethodById" parameterType="Long"
+            resultMap="ConAccountMethodGroupMethodResult">
+        <include refid="selectConAccountMethodGroupMethodVo"/>
+        where t.sid = #{sid}
+    </select>
+
+
+    <select id="selectConAccountMethodGroupMethodList"
+            parameterType="com.platform.ems.plug.domain.ConAccountMethodGroupMethod"
+            resultMap="ConAccountMethodGroupMethodResult">
+        <include refid="selectConAccountMethodGroupMethodVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="accountMethodGroupSid != null ">
+                and t.account_method_group_sid =#{accountMethodGroupSid}
+            </if>
+            <if test="accountCategory != null  and accountCategory != ''">
+                and (<foreach collection="accountCategory.split(';')" item="item" separator="or">t.account_category like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="paymentMethod != null  and paymentMethod != ''">
+                and (<foreach collection="paymentMethod.split(';')" item="item" separator="or">t.payment_method like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="rate != null ">
+                and t.rate = #{rate}
+            </if>
+            <if test="accountValidDays != null ">
+                and t.account_valid_days =#{accountValidDays}
+            </if>
+            <if test="dayType != null  and dayType != ''">
+                and (<foreach collection="dayType.split(';')" item="item" separator="or">t.day_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="itemSort != null ">
+                and t.item_sort =#{itemSort}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t1.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sort != null ">
+                and t.sort =#{sort}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.sort asc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_account_method_group_method
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sid,
+            account_method_group_sid,
+            account_category,
+            payment_method,
+            rate,
+            account_valid_days,
+            day_type,
+            item_sort,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+            sort,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.sid},
+                #{item.accountMethodGroupSid},
+                #{item.accountCategory},
+                #{item.paymentMethod},
+                #{item.rate},
+                #{item.accountValidDays},
+                #{item.dayType},
+                #{item.itemSort},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+                #{item.sort},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_account_method_group_method
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            account_method_group_sid = #{accountMethodGroupSid},
+            account_category = #{accountCategory},
+            payment_method = #{paymentMethod},
+            rate = #{rate},
+            account_valid_days = #{accountValidDays},
+            day_type = #{dayType},
+            item_sort = #{itemSort},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            sort = #{sort},
+        </trim>
+        where sid = #{sid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_account_method_group_method
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                account_method_group_sid = #{accountMethodGroupSid},
+                account_category = #{accountCategory},
+                payment_method = #{paymentMethod},
+                rate = #{rate},
+                account_valid_days = #{accountValidDays},
+                day_type = #{dayType},
+                item_sort = #{itemSort},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+                sort = #{sort},
+            </trim>
+            where sid = #{sid}
+        </foreach>
+    </update>
+
+</mapper>

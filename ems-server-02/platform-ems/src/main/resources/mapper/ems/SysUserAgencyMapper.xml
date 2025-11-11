@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.SysUserAgencyMapper">
+    <resultMap type="com.platform.ems.domain.SysUserAgency" id="SysUserAgencyResult">
+        <result property="clientId" column="client_id"/>
+        <result property="userAgencySid" column="user_agency_sid"/>
+        <result property="userId" column="user_id"/>
+        <result property="agencyUserId" column="agency_user_id"/>
+        <result property="category" column="category"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="dataobjectCategoryCode" column="dataobject_category_code"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="modifyDate" column="modify_date"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="createById" column="create_by_id"/>
+        <result property="modifyById" column="modify_by_id"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+    <sql id="selectSysUserAgencyVo">select t.client_id, t.user_agency_sid, t.user_id, t.agency_user_id, t.category, t.start_date, t.end_date, t.dataobject_category_code, t.handle_status, t.create_date, t.modify_date, t.creator_account, t.updater_account, t.create_by_id, t.modify_by_id, t.remark from s_sys_user_agency t</sql>
+    <select id="selectSysUserAgencyById" parameterType="Long" resultMap="SysUserAgencyResult">
+        <include refid="selectSysUserAgencyVo"/> where t.user_agency_sid = #{userAgencySid}
+    </select>
+    <select id="selectSysUserAgencyList" parameterType="com.platform.ems.domain.SysUserAgency" resultMap="SysUserAgencyResult">
+        <include refid="selectSysUserAgencyVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">and (
+                <foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="userId != null  and userId != ''">and (
+                <foreach collection="userId.split(';')" item="item" separator="or">t.user_id like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="agencyUserId != null  and agencyUserId != ''">and (
+                <foreach collection="agencyUserId.split(';')" item="item" separator="or">t.agency_user_id like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="category != null  and category != ''">and (
+                <foreach collection="category.split(';')" item="item" separator="or">t.category like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="startDate != null ">and t.start_date = #{startDate}</if>
+            <if test="endDate != null ">and t.end_date = #{endDate}</if>
+            <if test="dataobjectCategoryCode != null ">and t.dataobject_category_code =#{dataobjectCategoryCode}</if>
+            <if test="handleStatus != null  and handleStatus != ''">and (
+                <foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')</if>
+            <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')</if>
+            <if test="modifyDate != null ">and t.modify_date = #{modifyDate}</if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and (
+                <foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">and (
+                <foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="createById != null  and createById != ''">and (
+                <foreach collection="createById.split(';')" item="item" separator="or">t.create_by_id like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="modifyById != null  and modifyById != ''">and (
+                <foreach collection="modifyById.split(';')" item="item" separator="or">t.modify_by_id like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">${params.dataScope}</if>
+        </where>
+    </select>
+    <!--添加多个-->
+    <insert id="inserts">insert into s_sys_user_agency
+        <trim prefix="(" suffix=")" suffixOverrides=",">client_id, user_id, agency_user_id, category, start_date, end_date, dataobject_category_code, handle_status, create_date, modify_date, creator_account, updater_account, create_by_id, modify_by_id, remark,</trim> values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">#{item.clientId}, #{item.userId}, #{item.agencyUserId}, #{item.category}, #{item.startDate}, #{item.endDate}, #{item.dataobjectCategoryCode}, #{item.handleStatus}, #{item.createDate}, #{item.modifyDate}, #{item.creatorAccount}, #{item.updaterAccount}, #{item.createById}, #{item.modifyById}, #{item.remark},</trim>
+        </foreach>
+    </insert>
+    <!--更新-->
+    <update id="updateAllById">update s_sys_user_agency
+        <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, user_agency_sid = #{userAgencySid}, user_id = #{userId}, agency_user_id = #{agencyUserId}, category = #{category}, start_date = #{startDate}, end_date = #{endDate}, dataobject_category_code = #{dataobjectCategoryCode}, handle_status = #{handleStatus}, create_date = #{createDate}, modify_date = #{modifyDate}, creator_account = #{creatorAccount}, updater_account = #{updaterAccount}, create_by_id = #{createById}, modify_by_id = #{modifyById}, remark = #{remark},</trim> where user_agency_sid = #{userAgencySid}
+    </update>
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">update s_sys_user_agency
+            <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, user_agency_sid = #{userAgencySid}, user_id = #{userId}, agency_user_id = #{agencyUserId}, category = #{category}, start_date = #{startDate}, end_date = #{endDate}, dataobject_category_code = #{dataobjectCategoryCode}, handle_status = #{handleStatus}, create_date = #{createDate}, modify_date = #{modifyDate}, creator_account = #{creatorAccount}, updater_account = #{updaterAccount}, create_by_id = #{createById}, modify_by_id = #{modifyById}, remark = #{remark},</trim> where user_agency_sid = #{userAgencySid}
+        </foreach>
+    </update>
+</mapper>

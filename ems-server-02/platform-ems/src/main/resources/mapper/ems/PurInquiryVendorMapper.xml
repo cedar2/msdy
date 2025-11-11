@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurInquiryVendorMapper">
+
+    <resultMap type="com.platform.ems.domain.PurInquiryVendor" id="PurInquiryVendorResult">
+        <result property="clientId" column="client_id"/>
+        <result property="inquiryVendorSid" column="inquiry_vendor_sid"/>
+        <result property="inquirySid" column="inquiry_sid"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="shortName" column="short_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="inquiryCode" column="inquiry_code"/>
+    </resultMap>
+
+    <sql id="selectPurInquiryVendorVo">
+        select t.client_id,
+               t.inquiry_vendor_sid,
+               t.inquiry_sid,
+               t.vendor_sid,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.data_source_sys,
+               t1.vendor_code,
+               t1.vendor_name,
+               t1.short_name AS short_name,
+               t2.nick_name AS creator_account_name,
+               t3.inquiry_code
+        from s_pur_inquiry_vendor t
+        left join s_bas_vendor t1 on t.vendor_sid = t1.vendor_sid
+        left join sys_user t2 on t.creator_account = t2.user_name
+        left join s_pur_inquiry t3 on t.inquiry_sid = t3.inquiry_sid
+    </sql>
+
+    <select id="selectPurInquiryVendorById" parameterType="Long" resultMap="PurInquiryVendorResult">
+        <include refid="selectPurInquiryVendorVo"/>
+        where t.inquiry_vendor_sid = #{inquiryVendorSid}
+    </select>
+
+
+    <select id="selectPurInquiryVendorList" parameterType="com.platform.ems.domain.PurInquiryVendor"
+            resultMap="PurInquiryVendorResult">
+        <include refid="selectPurInquiryVendorVo"/>
+        <where>
+            <if test="inquiryVendorSidList != null and inquiryVendorSidList.length >0">and t.inquiry_vendor_sid in
+                (<foreach collection="inquiryVendorSidList" item="inquiryVendorSid" separator=",">#{inquiryVendorSid}</foreach>)
+            </if>
+            <if test="inquirySidList != null and inquirySidList.length >0">and t.inquiry_sid in
+                (<foreach collection="inquirySidList" item="inquirySid" separator=",">#{inquirySid}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="inquirySid != null ">
+                and t.inquiry_sid =#{inquirySid}
+            </if>
+            <if test="vendorSid != null ">
+                and t.vendor_sid =#{vendorSid}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_inquiry_vendor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            inquiry_vendor_sid,
+            inquiry_sid,
+            vendor_sid,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.inquiryVendorSid},
+                #{item.inquirySid},
+                #{item.vendorSid},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_inquiry_vendor
+        <trim prefix="SET" suffixOverrides=",">
+            inquiry_sid = #{inquirySid},
+            vendor_sid = #{vendorSid},
+            remark = #{remark},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where inquiry_vendor_sid = #{inquiryVendorSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_inquiry_vendor
+            <trim prefix="SET" suffixOverrides=",">
+                inquiry_sid = #{inquirySid},
+                vendor_sid = #{vendorSid},
+                remark = #{remark},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where inquiry_vendor_sid = #{inquiryVendorSid}
+        </foreach>
+    </update>
+
+    <select id="selectPurInquiryVendorListById" parameterType="Long" resultMap="PurInquiryVendorResult">
+        <include refid="selectPurInquiryVendorVo"/>
+        where t.inquiry_sid = #{inquirySid}
+    </select>
+
+    <delete id="deletePurInquiryVendorByInquirySids" parameterType="Long">
+        delete
+        from s_pur_inquiry_vendor t
+        where t.inquiry_sid in (<foreach collection="inquirySid" item="sid" separator=",">#{sid}</foreach>)
+    </delete>
+
+    <select id="selectPurInquiryVendorSidListById" resultType="Long">
+        select t.inquiry_vendor_sid
+        from s_pur_inquiry_vendor t
+        where t.inquiry_sid in (<foreach collection="inquirySid" item="sid" separator=",">#{sid}</foreach>)
+    </select>
+
+</mapper>

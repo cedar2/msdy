@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinCustomerInvoiceRecordMapper">
+
+    <resultMap type="com.platform.ems.domain.FinCustomerInvoiceRecord" id="FinCustomerInvoiceRecordResult">
+        <result property="clientId" column="client_id"/>
+        <result property="customerInvoiceRecordSid" column="customer_invoice_record_sid"/>
+        <result property="customerInvoiceRecordCode" column="customer_invoice_record_code"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="invoiceType" column="invoice_type"/>
+        <result property="invoiceCategory" column="invoice_category"/>
+        <result property="materialType" column="material_type"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="invoiceNum" column="invoice_num"/>
+        <result property="inoviceCode" column="inovice_code"/>
+        <result property="sendFlag" column="send_flag"/>
+        <result property="generalLedgerDate" column="general_ledger_date"/>
+        <result property="invoiceDate" column="invoice_date"/>
+        <result property="businessVerifyPeriod" column="business_verify_period"/>
+        <result property="referInvoiceRecordSid" column="refer_invoice_record_sid"/>
+        <result property="referInvoiceRecordCode" column="refer_invoice_record_code"/>
+        <result property="paperContractCode" column="paper_contract_code"/>
+        <result property="shoukuanStatus" column="shoukuan_status"/>
+        <result property="totalCurrencyAmountTax" column="total_currency_amount_tax"/>
+        <result property="totalCurrencyAmount" column="total_currency_amount"/>
+        <result property="totalTaxAmount" column="total_tax_amount"/>
+        <result property="taxRate" column="tax_rate"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="newReceivableUseDate" column="new_receivable_use_date"/>
+        <result property="cancelRemark" column="cancel_remark"/>
+        <result property="hongchongRemark" column="hongchong_remark"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectFinCustomerInvoiceRecordVo">
+        select t.client_id,
+               t.customer_invoice_record_sid,
+               t.customer_invoice_record_code,
+               t.customer_sid,
+               t.customer_code,
+               t.company_sid,
+               t.company_code,
+               t.invoice_type,
+               t.invoice_category,
+               t.material_type,
+               t.product_season_sid,
+               t.invoice_num,
+               t.inovice_code,
+               t.send_flag,
+               t.general_ledger_date,
+               t.invoice_date,
+               t.business_verify_period,
+               t.refer_invoice_record_sid,
+               t.refer_invoice_record_code,
+               t.paper_contract_code,
+               t.shoukuan_status,
+               t.total_currency_amount_tax,
+               t.total_currency_amount,
+               t.total_tax_amount,
+               t.tax_rate,
+               t.currency,
+               t.currency_unit,
+               t.new_receivable_use_date,
+               t.cancel_remark,
+               t.hongchong_remark,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               u1.nick_name AS creator_account_name,
+               u2.nick_name AS updater_account_name,
+               u3.nick_name AS confirmer_account_name,
+               t1.customer_name,
+               t1.short_name as customer_short_name,
+               t2.company_name,
+               t2.short_name as company_short_name,
+               t3.product_season_name,
+               t4.name as invoice_type_name,
+               t5.name as invoice_category_name,
+               t6.name as material_type_name,
+               (t.total_currency_amount_tax - ifnull(t7.currency_amount_tax_yhx, 0) - ifnull(t7.currency_amount_tax_hxz, 0)) as currency_amount_tax_dai,
+               ifnull(t7.currency_amount_tax_yhx, 0) as currency_amount_tax_yi,
+               ifnull(t7.currency_amount_tax_hxz, 0) as currency_amount_tax_zhong
+        from s_fin_customer_invoice_record t
+         LEFT JOIN sys_user u1 ON t.creator_account = u1.user_name
+         LEFT JOIN sys_user u2 ON t.updater_account = u2.user_name
+         LEFT JOIN sys_user u3 ON t.confirmer_account = u3.user_name
+         LEFT JOIN s_bas_customer t1 ON t.customer_sid = t1.customer_sid
+         LEFT JOIN s_bas_company t2 ON t.company_sid = t2.company_sid
+         LEFT JOIN s_bas_product_season t3 ON t.product_season_sid = t3.product_season_sid
+         LEFT JOIN s_con_invoice_type t4 ON t.invoice_type = t4.code
+         LEFT JOIN s_con_invoice_category t5 ON t.invoice_category = t5.code
+         LEFT JOIN s_con_material_type t6 ON t.material_type = t6.code
+         LEFT JOIN (select t7a.customer_invoice_record_sid,
+                    sum(if(t7b.handle_status = '3', t7a.currency_amount_tax, 0)) as currency_amount_tax_hxz,
+                    sum(if(t7b.handle_status = '5', t7a.currency_amount_tax, 0)) as currency_amount_tax_yhx
+                    from s_fin_receivable_bill_item_invoice t7a
+                    left join s_fin_receivable_bill t7b on t7a.receivable_bill_sid = t7b.receivable_bill_sid
+                    group by t7a.customer_invoice_record_sid
+        ) t7 ON t.customer_invoice_record_sid = t7.customer_invoice_record_sid
+    </sql>
+
+    <select id="selectFinCustomerInvoiceRecordById" parameterType="Long" resultMap="FinCustomerInvoiceRecordResult">
+        <include refid="selectFinCustomerInvoiceRecordVo"/>
+        where t.customer_invoice_record_sid = #{customerInvoiceRecordSid}
+    </select>
+
+    <select id="selectFinCustomerInvoiceRecordList" parameterType="com.platform.ems.domain.FinCustomerInvoiceRecord"
+            resultMap="FinCustomerInvoiceRecordResult">
+        <include refid="selectFinCustomerInvoiceRecordVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="customerInvoiceRecordSid != null ">
+                and t.customer_invoice_record_sid = #{customerInvoiceRecordSid}
+            </if>
+            <if test="customerInvoiceRecordSidList != null and customerInvoiceRecordSidList.length >0">
+                and t.customer_invoice_record_sid in
+                (<foreach collection="customerInvoiceRecordSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="customerInvoiceRecordCode != null ">
+                and t.customer_invoice_record_code = #{customerInvoiceRecordCode}
+            </if>
+            <if test="customerSid != null ">
+                and t.customer_sid = #{customerSid}
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and t.customer_sid in
+                (<foreach collection="customerSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="customerCode != null ">
+                and t.customer_code = #{customerCode}
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companyCode != null ">
+                and t.company_code = #{companyCode}
+            </if>
+            <if test="invoiceType != null and invoiceType != ''">
+                and t.invoice_type = #{invoiceType}
+            </if>
+            <if test="invoiceTypeList != null and invoiceTypeList.length >0">
+                and t.invoice_type in
+                (<foreach collection="invoiceTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="invoiceCategory != null and invoiceCategory != ''">
+                and t.invoice_category = #{invoiceCategory}
+            </if>
+            <if test="invoiceCategoryList != null and invoiceCategoryList.length >0">
+                and t.invoice_category in
+                (<foreach collection="invoiceCategoryList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="materialType != null and materialType != ''">
+                and t.material_type = #{materialType}
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length >0">
+                and t.material_type in
+                (<foreach collection="materialTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="productSeasonSid != null ">
+                and t.product_season_sid = #{productSeasonSid}
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">
+                and t.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="invoiceNum != null and invoiceNum != ''">
+                and t.invoice_num like concat('%', #{invoiceNum}, '%')
+            </if>
+            <if test="inoviceCode != null and inoviceCode != ''">
+                and t.inovice_code like concat('%', #{inoviceCode}, '%')
+            </if>
+            <if test="sendFlag != null and sendFlag != ''">
+                and t.send_flag = #{sendFlag}
+            </if>
+            <if test="sendFlagList != null and sendFlagList.length >0">
+                and t.send_flag in
+                (<foreach collection="sendFlagList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="generalLedgerDate != null ">
+                and t.general_ledger_date = #{generalLedgerDate}
+            </if>
+            <if test="generalLedgerDateBegin != null and generalLedgerDateBegin!=''">
+                and date_format(t.general_ledger_date,'%y%m%d') &gt;= date_format(#{generalLedgerDateBegin},'%y%m%d')
+            </if>
+            <if test="generalLedgerDateEnd != null and generalLedgerDateEnd!=''">
+                and date_format(t.general_ledger_date,'%y%m%d') &lt;= date_format(#{generalLedgerDateEnd},'%y%m%d')
+            </if>
+            <if test="invoiceDate != null ">
+                and t.invoice_date = #{invoiceDate}
+            </if>
+            <if test="invoiceDateBegin != null and invoiceDateBegin!=''">
+                and date_format(t.invoice_date,'%y%m%d') &gt;= date_format(#{invoiceDateBegin},'%y%m%d')
+            </if>
+            <if test="invoiceDateEnd != null and invoiceDateEnd!=''">
+                and date_format(t.invoice_date,'%y%m%d') &lt;= date_format(#{invoiceDateEnd},'%y%m%d')
+            </if>
+            <if test="referInvoiceRecordSid != null ">
+                and t.refer_invoice_record_sid = #{referInvoiceRecordSid}
+            </if>
+            <if test="referInvoiceRecordCode != null ">
+                and t.refer_invoice_record_code like concat('%', #{referInvoiceRecordCode}, '%')
+            </if>
+            <if test="paperContractCode != null and paperContractCode != ''">
+                and t.paper_contract_code like concat('%', #{paperContractCode}, '%')
+            </if>
+            <if test="shoukuanStatus != null and shoukuanStatus != ''">
+                and t.shoukuan_status = #{shoukuanStatus}
+            </if>
+            <if test="shoukuanStatusList != null and shoukuanStatusList.length >0">
+                and t.shoukuan_status in
+                (<foreach collection="shoukuanStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="totalCurrencyAmountTax != null ">
+                and t.total_currency_amount_tax = #{totalCurrencyAmountTax}
+            </if>
+            <if test="totalCurrencyAmount != null ">
+                and t.total_currency_amount = #{totalCurrencyAmount}
+            </if>
+            <if test="totalTaxAmount != null ">
+                and t.total_tax_amount = #{totalTaxAmount}
+            </if>
+            <if test="taxRate != null ">
+                and t.tax_rate = #{taxRate}
+            </if>
+            <if test="currency != null and currency != ''">
+                and t.currency = #{currency}
+            </if>
+            <if test="currencyUnit != null and currencyUnit != ''">
+                and t.currency_unit = #{currencyUnit}
+            </if>
+            <if test="cancelRemark != null and cancelRemark != ''">
+                and t.cancel_remark = #{cancelRemark}
+            </if>
+            <if test="hongchongRemark != null and hongchongRemark != ''">
+                and t.hongchong_remark = #{hongchongRemark}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and u1.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.customer_invoice_record_code desc , t.create_date desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_customer_invoice_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            customer_invoice_record_sid,
+            customer_invoice_record_code,
+            customer_sid,
+            customer_code,
+            company_sid,
+            company_code,
+            invoice_type,
+            invoice_category,
+            material_type,
+            product_season_sid,
+            invoice_num,
+            inovice_code,
+            send_flag,
+            general_ledger_date,
+            invoice_date,
+            business_verify_period,
+            refer_invoice_record_sid,
+            refer_invoice_record_code,
+            paper_contract_code,
+            shoukuan_status,
+            total_currency_amount_tax,
+            total_currency_amount,
+            total_tax_amount,
+            tax_rate,
+            currency,
+            currency_unit,
+            new_receivable_use_date,
+            cancel_remark,
+            hongchong_remark,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.customerInvoiceRecordSid},
+                #{item.customerInvoiceRecordCode},
+                #{item.customerSid},
+                #{item.customerCode},
+                #{item.companySid},
+                #{item.companyCode},
+                #{item.invoiceType},
+                #{item.invoiceCategory},
+                #{item.materialType},
+                #{item.productSeasonSid},
+                #{item.invoiceNum},
+                #{item.inoviceCode},
+                #{item.sendFlag},
+                #{item.generalLedgerDate},
+                #{item.invoiceDate},
+                #{item.businessVerifyPeriod},
+                #{item.referInvoiceRecordSid},
+                #{item.referInvoiceRecordCode},
+                #{item.paperContractCode},
+                #{item.shoukuanStatus},
+                #{item.totalCurrencyAmountTax},
+                #{item.totalCurrencyAmount},
+                #{item.totalTaxAmount},
+                #{item.taxRate},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.newReceivableUseDate},
+                #{item.cancelRemark},
+                #{item.hongchongRemark},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_customer_invoice_record
+        <trim prefix="SET" suffixOverrides=",">
+            customer_sid = #{customerSid},
+            customer_code = #{customerCode},
+            company_sid = #{companySid},
+            company_code = #{companyCode},
+            invoice_type = #{invoiceType},
+            invoice_category = #{invoiceCategory},
+            material_type = #{materialType},
+            product_season_sid = #{productSeasonSid},
+            invoice_num = #{invoiceNum},
+            inovice_code = #{inoviceCode},
+            send_flag = #{sendFlag},
+            general_ledger_date = #{generalLedgerDate},
+            invoice_date = #{invoiceDate},
+            business_verify_period = #{businessVerifyPeriod},
+            refer_invoice_record_sid = #{referInvoiceRecordSid},
+            refer_invoice_record_code = #{referInvoiceRecordCode},
+            paper_contract_code = #{paperContractCode},
+            shoukuan_status = #{shoukuanStatus},
+            total_currency_amount_tax = #{totalCurrencyAmountTax},
+            total_currency_amount = #{totalCurrencyAmount},
+            total_tax_amount = #{totalTaxAmount},
+            tax_rate = #{taxRate},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            new_receivable_use_date = #{newReceivableUseDate},
+            cancel_remark = #{cancelRemark},
+            hongchong_remark = #{hongchongRemark},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where customer_invoice_record_sid = #{customerInvoiceRecordSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_customer_invoice_record
+            <trim prefix="SET" suffixOverrides=",">
+                customer_sid = #{o.customerSid},
+                customer_code = #{o.customerCode},
+                company_sid = #{o.companySid},
+                company_code = #{o.companyCode},
+                invoice_type = #{o.invoiceType},
+                invoice_category = #{o.invoiceCategory},
+                material_type = #{o.materialType},
+                product_season_sid = #{o.productSeasonSid},
+                invoice_num = #{o.invoiceNum},
+                inovice_code = #{o.inoviceCode},
+                send_flag = #{o.sendFlag},
+                general_ledger_date = #{o.generalLedgerDate},
+                invoice_date = #{o.invoiceDate},
+                business_verify_period = #{o.businessVerifyPeriod},
+                refer_invoice_record_sid = #{o.referInvoiceRecordSid},
+                refer_invoice_record_code = #{o.referInvoiceRecordCode},
+                paper_contract_code = #{o.paperContractCode},
+                shoukuan_status = #{o.shoukuanStatus},
+                total_currency_amount_tax = #{o.totalCurrencyAmountTax},
+                total_currency_amount = #{o.totalCurrencyAmount},
+                total_tax_amount = #{o.totalTaxAmount},
+                tax_rate = #{o.taxRate},
+                currency = #{o.currency},
+                currency_unit = #{o.currencyUnit},
+                new_receivable_use_date = #{o.newReceivableUseDate},
+                cancel_remark = #{o.cancelRemark},
+                hongchong_remark = #{o.hongchongRemark},
+                remark = #{o.remark},
+                handle_status = #{o.handleStatus},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+            </trim>
+            where customer_invoice_record_sid = #{o.customerInvoiceRecordSid}
+        </foreach>
+    </update>
+
+</mapper>

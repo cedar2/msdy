@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PrjProjectTaskAttachMapper">
+
+    <resultMap type="com.platform.ems.domain.PrjProjectTaskAttach" id="PrjProjectTaskAttachResult">
+        <result property="clientId" column="client_id"/>
+        <result property="projectTaskAttachSid" column="project_task_attach_sid"/>
+        <result property="projectSid" column="project_sid"/>
+        <result property="projectCode" column="project_code"/>
+        <result property="projectTaskSid" column="project_task_sid"/>
+        <result property="fileType" column="file_type"/>
+        <result property="fileName" column="file_name"/>
+        <result property="filePath" column="file_path"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectPrjProjectTaskAttachVo">
+        select t.client_id,
+               t.project_task_attach_sid,
+               t.project_sid,
+               t.project_code,
+               t.project_task_sid,
+               t.file_type,
+               t.file_name,
+               t.file_path,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name
+        from s_prj_project_task_attach t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+    </sql>
+
+    <select id="selectPrjProjectTaskAttachById" parameterType="Long" resultMap="PrjProjectTaskAttachResult">
+        <include refid="selectPrjProjectTaskAttachVo"/>
+        where t.project_task_attach_sid = #{projectTaskAttachSid}
+    </select>
+
+    <select id="selectPrjProjectTaskAttachList" parameterType="com.platform.ems.domain.PrjProjectTaskAttach"
+            resultMap="PrjProjectTaskAttachResult">
+        <include refid="selectPrjProjectTaskAttachVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="projectTaskAttachSid != null ">
+                and t.project_task_attach_sid = #{projectTaskAttachSid}
+            </if>
+            <if test="projectSid != null ">
+                and t.project_sid = #{projectSid}
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                and t.project_code = #{projectCode}
+            </if>
+            <if test="projectTaskSid != null ">
+                and t.project_task_sid = #{projectTaskSid}
+            </if>
+            <if test="fileType != null and fileType != ''">
+                and t.file_type = #{fileType}
+            </if>
+            <if test="fileName != null and fileName != ''">and
+                t.file_name like concat('%', #{fileName}, '%')
+            </if>
+            <if test="filePath != null and filePath != ''">
+                and t.file_path = #{filePath}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_prj_project_task_attach
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            project_task_attach_sid,
+            project_sid,
+            project_code,
+            project_task_sid,
+            file_type,
+            file_name,
+            file_path,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.projectTaskAttachSid},
+                #{item.projectSid},
+                #{item.projectCode},
+                #{item.projectTaskSid},
+                #{item.fileType},
+                #{item.fileName},
+                #{item.filePath},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_prj_project_task_attach
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            project_sid = #{projectSid},
+            project_task_sid = #{projectTaskSid},
+            project_code = #{projectCode},
+            file_type = #{fileType},
+            file_name = #{fileName},
+            file_path = #{filePath},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where project_task_attach_sid = #{projectTaskAttachSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_prj_project_task_attach
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{o.clientId},
+                project_sid = #{o.projectSid},
+                project_code = #{o.projectCode},
+                project_task_sid = #{o.projectTaskSid},
+                file_type = #{o.fileType},
+                file_name = #{o.fileName},
+                file_path = #{o.filePath},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where project_task_attach_sid = #{o.projectTaskAttachSid}
+        </foreach>
+    </update>
+
+</mapper>

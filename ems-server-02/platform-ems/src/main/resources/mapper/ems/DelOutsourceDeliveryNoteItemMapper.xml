@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.DelOutsourceDeliveryNoteItemMapper">
+
+    <resultMap type="com.platform.ems.domain.DelOutsourceDeliveryNoteItem" id="DelOutsourceDeliveryNoteItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="deliveryNoteItemSid" column="delivery_note_item_sid"/>
+        <result property="deliveryNoteSid" column="delivery_note_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="itemCategory" column="item_category"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="quantity" column="quantity"/>
+        <result property="inStockQuantity" column="in_stock_quantity"/>
+        <result property="price" column="price"/>
+        <result property="priceTax" column="price_tax"/>
+        <result property="taxRate" column="tax_rate"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="outsourcePurchaseOrderItemSid" column="outsource_purchase_order_item_sid"/>
+        <result property="manufactureOrderSid" column="manufacture_order_sid"/>
+        <result property="manufactureOrderCode" column="manufacture_order_code"/>
+        <result property="manufactureOrderProcessSid" column="manufacture_order_process_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="deliveryNoteCode" column="delivery_note_code"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="plantName" column="plant_name"/>
+        <result property="inStockStatus" column="in_stock_status"/>
+        <result property="expectedArrivalDate" column="expected_arrival_date"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="sku1Code" column="sku1_code"/>
+        <result property="sku1Name" column="sku1_name"/>
+        <result property="sku2Code" column="sku2_code"/>
+        <result property="sku2Name" column="sku2_name"/>
+        <result property="materiaUnitBase" column="materia_unit_base"/>
+        <result property="processCode" column="process_code"/>
+        <result property="processName" column="process_name"/>
+        <result property="consignee" column="consignee"/>
+        <result property="supplierDeliveryCode" column="supplier_delivery_code"/>
+        <result property="carrierNoteCode" column="carrier_note_code"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="documentType" column="document_type"/>
+        <result property="businessType" column="business_type"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="unitBaseName" column="unit_base_name"/>
+        <result property="processSid" column="process_sid"/>
+        <result property="processName" column="process_name"/>
+        <result property="productionBatchNum" column="production_batch_num"/>
+        <result property="itemCategoryName" column="item_category_name"/>
+        <result property="planQuantity" column="plan_quantity"/>
+        <result property="planEndDate" column="plan_end_date"/>
+        <result property="processItemNum" column="process_item_num"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+    </resultMap>
+
+    <sql id="selectDelOutsourceDeliveryNoteItemVo">
+        select
+        t.client_id,
+        t.delivery_note_item_sid,
+        t.delivery_note_sid,
+        t.material_sid,
+        t.item_category,
+        t.unit_base,
+        t.quantity,
+        t.in_stock_quantity,
+        t.price,
+        t.price_tax,
+        t.tax_rate,
+        t.item_num,
+        t.outsource_purchase_order_item_sid,
+        t.manufacture_order_sid,
+        t.manufacture_order_code,
+        t.manufacture_order_process_sid,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+        t1.material_code,
+        t1.material_name,
+        t2.name as unit_base_name,
+        t3.process_sid,
+        t3.process_name,
+        t3.production_batch_num,
+        t3.quantity as plan_quantity,
+        t3.plan_end_date,
+        t3.item_num as process_item_num,
+        t4.name as item_category_name
+  from s_del_outsource_delivery_note_item t
+      LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+      LEFT JOIN s_con_measure_unit t2 ON t2.code = t.unit_base
+      LEFT JOIN s_man_manufacture_order_process t3 ON t3.manufacture_order_process_sid = t.manufacture_order_process_sid
+      LEFT JOIN s_con_outsource_process_item_category t4 ON t4.code = t.item_category
+    </sql>
+
+    <select id="selectDelOutsourceDeliveryNoteItemById" parameterType="Long"
+            resultMap="DelOutsourceDeliveryNoteItemResult">
+        <include refid="selectDelOutsourceDeliveryNoteItemVo"/>
+        where t.delivery_note_item_sid = #{deliveryNoteItemSid}
+    </select>
+
+
+    <select id="selectDelOutsourceDeliveryNoteItemList"
+            parameterType="com.platform.ems.domain.DelOutsourceDeliveryNoteItem"
+            resultMap="DelOutsourceDeliveryNoteItemResult">
+        <include refid="selectDelOutsourceDeliveryNoteItemVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="deliveryNoteItemSid != null ">
+                and t.delivery_note_item_sid =#{deliveryNoteItemSid}
+            </if>
+            <if test="deliveryNoteSid != null ">
+                and t.delivery_note_sid =#{deliveryNoteSid}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid =#{materialSid}
+            </if>
+            <if test="itemCategory != null  and itemCategory != ''">
+                and (<foreach collection="itemCategory.split(';')" item="item" separator="or">t.item_category like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="unitBase != null  and unitBase != ''">
+                and (<foreach collection="unitBase.split(';')" item="item" separator="or">t.unit_base like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="inStockQuantity != null ">
+                and t.in_stock_quantity = #{inStockQuantity}
+            </if>
+            <if test="price != null ">
+                and t.price = #{price}
+            </if>
+            <if test="priceTax != null ">
+                and t.price_tax = #{priceTax}
+            </if>
+            <if test="taxRate != null ">
+                and t.tax_rate = #{taxRate}
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num =#{itemNum}
+            </if>
+            <if test="outsourcePurchaseOrderItemSid != null ">
+                and t.outsource_purchase_order_item_sid =#{outsourcePurchaseOrderItemSid}
+            </if>
+            <if test="manufactureOrderSid != null ">
+                and t.manufacture_order_sid =#{manufactureOrderSid}
+            </if>
+            <if test="manufactureOrderCode != null ">
+                and t.manufacture_order_code =#{manufactureOrderCode}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_del_outsource_delivery_note_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            delivery_note_item_sid,
+            delivery_note_sid,
+            material_sid,
+            manufacture_order_process_sid,
+            item_category,
+            unit_base,
+            quantity,
+            in_stock_quantity,
+            price,
+            price_tax,
+            tax_rate,
+            item_num,
+            outsource_purchase_order_item_sid,
+            manufacture_order_sid,
+            manufacture_order_code,
+            outsource_purchase_order_sid,
+            remark,
+            creator_account,
+            outsource_purchase_order_code,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.deliveryNoteItemSid},
+                #{item.deliveryNoteSid},
+                #{item.materialSid},
+                #{item.manufactureOrderProcessSid},
+                #{item.itemCategory},
+                #{item.unitBase},
+                #{item.quantity},
+                #{item.inStockQuantity},
+                #{item.price},
+                #{item.priceTax},
+                #{item.taxRate},
+                #{item.itemNum},
+                #{item.outsourcePurchaseOrderItemSid},
+                #{item.manufactureOrderSid},
+                #{item.manufactureOrderCode},
+                #{item.outsourcePurchaseOrderSid},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.outsourcePurchaseOrderCode},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_del_outsource_delivery_note_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            delivery_note_sid = #{deliveryNoteSid},
+            material_sid = #{materialSid},
+            manufacture_order_process_sid = #{manufactureOrderProcessSid},
+            item_category = #{itemCategory},
+            unit_base = #{unitBase},
+            quantity = #{quantity},
+            in_stock_quantity = #{inStockQuantity},
+            price = #{price},
+            price_tax = #{priceTax},
+            tax_rate = #{taxRate},
+            item_num = #{itemNum},
+            outsource_purchase_order_item_sid = #{outsourcePurchaseOrderItemSid},
+            manufacture_order_sid = #{manufactureOrderSid},
+            manufacture_order_code = #{manufactureOrderCode},
+            outsource_purchase_order_sid = #{outsourcePurchaseOrderSid},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            outsource_purchase_order_code = #{outsourcePurchaseOrderCode},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where delivery_note_item_sid = #{deliveryNoteItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_del_outsource_delivery_note_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                delivery_note_sid = #{deliveryNoteSid},
+                material_sid = #{materialSid},
+                manufacture_order_process_sid = #{manufactureOrderProcessSid},
+                item_category = #{itemCategory},
+                unit_base = #{unitBase},
+                quantity = #{quantity},
+                in_stock_quantity = #{inStockQuantity},
+                price = #{price},
+                price_tax = #{priceTax},
+                tax_rate = #{taxRate},
+                item_num = #{itemNum},
+                outsource_purchase_order_item_sid = #{outsourcePurchaseOrderItemSid},
+                manufacture_order_sid = #{manufactureOrderSid},
+                manufacture_order_code = #{manufactureOrderCode},
+                outsource_purchase_order_sid = #{outsourcePurchaseOrderSid},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                outsource_purchase_order_code = #{outsourcePurchaseOrderCode},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where delivery_note_item_sid = #{deliveryNoteItemSid}
+        </foreach>
+    </update>
+
+    <delete id="deleteOutsourceDeliveryNoteItemByIds" parameterType="long">
+        delete from s_del_outsource_delivery_note_item where delivery_note_sid in
+        <foreach item="deliveryNoteSid" collection="list" open="(" separator="," close=")">
+            #{deliveryNoteSid}
+        </foreach>
+    </delete>
+
+    <sql id="getItemListVo">
+       SELECT
+	t.client_id,
+	t.delivery_note_item_sid,
+	t.delivery_note_sid,
+	t.material_sid,
+	t.unit_base,
+	t.quantity,
+	t.in_stock_quantity,
+	t.price,
+	t.price_tax,
+	t.tax_rate,
+	t.item_num,
+	t.outsource_purchase_order_item_sid,
+	t.manufacture_order_sid,
+	t.manufacture_order_code,
+	t.manufacture_order_process_sid,
+	t.remark,
+	t.item_category,
+	t.creator_account,
+	t.create_date,
+	t.updater_account,
+	t.update_date,
+	t.data_source_sys,
+	t1.delivery_note_code,
+	t1.in_stock_status,
+	t1.operator,
+	t1.vendor_sid,
+	t1.carrier_note_code,
+	t1.carrier,
+	t1.document_type,
+	t1.business_type,
+	t2.plant_name,
+	t3.material_code,
+	t3.material_name,
+	t4.name as unit_base_name,
+	t5.process_name,
+	t5.process_sid,
+	t5.production_batch_num,
+	t5.serial_num,
+	t5.item_num as process_item_num,
+	t6.nick_name as creator_account_name,
+	t7.name as item_category_name,
+	t8.nick_name as operator_name,
+	t9.vendor_name,
+	t10.vendor_name as carrier_name,
+	t11.name as document_type_name,
+	t12.name as business_type_name
+FROM
+	s_del_outsource_delivery_note_item t
+	LEFT JOIN s_del_outsource_delivery_note t1 ON t1.delivery_note_sid = t.delivery_note_sid
+	LEFT JOIN s_bas_plant t2 ON t2.plant_sid = t1.plant_sid
+	LEFT JOIN s_bas_material t3 ON t3.material_sid = t.material_sid
+	LEFT JOIN s_con_measure_unit t4 ON t4.code = t.unit_base
+	LEFT JOIN s_man_manufacture_order_process t5 ON t5.manufacture_order_process_sid = t.manufacture_order_process_sid
+	LEFT JOIN sys_user t6 ON t6.user_name = t.creator_account
+	LEFT JOIN s_con_outsource_process_item_category t7 ON t7.code = t.item_category
+	LEFT JOIN sys_user t8 ON t8.user_name = t1.operator
+	LEFT JOIN s_bas_vendor t9 ON t9.vendor_sid = t1.vendor_sid
+	LEFT JOIN s_bas_vendor t10 ON t10.vendor_sid = t1.carrier
+	LEFT JOIN s_con_doc_type_outsource_dn t11 ON t11.code = t1.document_type
+	LEFT JOIN s_con_bu_type_outsource_dn t12 ON t12.code = t1.business_type
+    </sql>
+
+    <select id="getItemList" parameterType="com.platform.ems.domain.DelOutsourceDeliveryNoteItem"
+            resultMap="DelOutsourceDeliveryNoteItemResult">
+        <include refid="getItemListVo"/>
+        <where>
+            <if test="deliveryNoteCode != null and deliveryNoteCode != ''">
+                and t1.delivery_note_code like concat('%',#{deliveryNoteCode}, '%')
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0 ">
+                and t1.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length >0 ">
+                and t1.document_type in
+                (<foreach collection="documentTypeList" item="documentType" separator=",">#{documentType}</foreach>)
+            </if>
+            <if test="businessTypeList != null and businessTypeList.length >0 ">
+                and t1.business_type in
+                (<foreach collection="businessTypeList" item="businessType" separator=",">#{businessType}</foreach>)
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t1.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="supplierDeliveryCode != null and supplierDeliveryCode != ''">
+                and (<foreach collection="supplierDeliveryCode.split(';')" item="item" separator="or">
+                t1.supplier_delivery_code like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="carrierNoteCode != null and carrierNoteCode != ''">
+                and (<foreach collection="carrierNoteCode.split(';')" item="item" separator="or">t1.carrier_note_code
+                like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t6.nick_name like
+                concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator="or">t3.material_code like
+                concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="processSidList != null and processSidList.length >0 ">
+                and t5.process_sid in
+                (<foreach collection="processSidList" item="processSid" separator=",">#{processSid}</foreach>)
+            </if>
+            <if test="itemCategoryList != null and itemCategoryList.length >0 ">
+                and t.item_category in
+                (<foreach collection="itemCategoryList" item="itemCategory" separator=",">#{itemCategory}</foreach>)
+            </if>
+            <if test="outsourcePurchaseOrderCode != null and outsourcePurchaseOrderCode != ''">
+                and t.outsource_purchase_order_code like concat('%',#{outsourcePurchaseOrderCode}, '%')
+            </if>
+            <if test="manufactureOrderCode != null and manufactureOrderCode != ''">
+                and t.manufacture_order_code like concat('%',#{manufactureOrderCode}, '%')
+            </if>
+            <if test="consignee != null and consignee != ''">
+                and (<foreach collection="consignee.split(';')" item="item" separator="or">t1.consignee like
+                concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t1.handle_status in (<foreach collection="handleStatusList" item="handleStatus" separator=",">
+                #{handleStatus}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="expectedArrivalBeginDate != null and expectedArrivalBeginDate!=''">
+                and date_format(t1.expected_arrival_date,'%y%m%d') &gt;=
+                date_format(#{expectedArrivalBeginDate},'%y%m%d')
+            </if>
+            <if test="expectedArrivaEndlDate != null and expectedArrivaEndlDate!=''">
+                and date_format(t1.expected_arrival_date,'%y%m%d') &lt;= date_format(#{expectedArrivaEndlDate},'%y%m%d')
+            </if>
+        </where>
+        order by t1.delivery_note_code desc, t.item_num asc
+    </select>
+</mapper>

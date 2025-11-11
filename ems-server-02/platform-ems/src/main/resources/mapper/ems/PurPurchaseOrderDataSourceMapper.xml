@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurPurchaseOrderDataSourceMapper">
+
+    <resultMap type="com.platform.ems.domain.PurPurchaseOrderDataSource" id="PurPurchaseOrderDataSourceResult">
+        <result property="clientId" column="client_id"/>
+        <result property="purchaseOrderDataSourceSid" column="purchase_order_data_source_sid"/>
+        <result property="purchaseOrderSid" column="purchase_order_sid"/>
+        <result property="purchaseOrderCode" column="purchase_order_code"/>
+        <result property="purchaseOrderItemSid" column="purchase_order_item_sid"/>
+        <result property="purchaseOrderItemNum" column="purchase_order_item_num"/>
+        <result property="referDocSid" column="refer_doc_sid"/>
+        <result property="referDocCode" column="refer_doc_code"/>
+        <result property="referDocItemSid" column="refer_doc_item_sid"/>
+        <result property="referDocItemNum" column="refer_doc_item_num"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="quantity" column="quantity"/>
+        <result property="newQuantity" column="new_quantity"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="quantityReferOtherSum" column="quantity_refer_other_sum"/>
+        <result property="unitBaseName" column="unit_base_name"/>
+        <result property="referDocCategory" column="refer_doc_category"/>
+        <result property="referDocCategoryName" column="refer_doc_category_name"/>
+        <association property="purchaseRequireItem" column="refer_doc_item_sid" resultMap="PurchaseRequireItem"/>
+    </resultMap>
+
+    <resultMap type="com.platform.ems.domain.ReqPurchaseRequireItem" id="PurchaseRequireItem">
+        <result property="materialSid" column="material_sid"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku1Code" column="sku1_code"/>
+        <result property="sku1Name" column="sku1_name"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="sku2Code" column="sku2_code"/>
+        <result property="sku2Name" column="sku2_name"/>
+        <result property="barcodeSid" column="barcode_sid"/>
+        <result property="barcodeCode" column="barcode_code"/>
+        <result property="quantity" column="require_item_quantity"/>
+    </resultMap>
+
+    <sql id="selectPurPurchaseOrderDataSourceVo">
+        SELECT t.client_id,
+               t.purchase_order_data_source_sid,
+               t.purchase_order_sid,
+               t.purchase_order_code,
+               t.purchase_order_item_sid,
+               t.purchase_order_item_num,
+               t.refer_doc_sid,
+               t.refer_doc_code,
+               t.refer_doc_item_sid,
+               t.refer_doc_item_num,
+               t.unit_base,
+               t.quantity,
+               t.new_quantity,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name as creator_account_name,
+               t3.nick_name as updater_account_name,
+               t4.handle_status,
+               t5.refer_doc_category,
+               t6.material_sid,
+               t6.material_code,
+               t6.sku1_sid,
+               t6.sku1_code,
+               t6.sku2_sid,
+               t6.sku2_code,
+               t6.barcode_sid,
+               t6.barcode_code,
+               t6.quantity as require_item_quantity,
+               t7.sku_name as sku1_name,
+               t7.sku_type as sku1_type,
+               t8.sku_name as sku2_name,
+               t8.sku_type as sku2_type,
+               t9.name as unit_base_name,
+               t10.name as refer_doc_category_name,
+               (ifnull(t11.total,0)-(if(ifnull(t.quantity,0) > ifnull(t.new_quantity,0), ifnull(t.quantity,0), ifnull(t.new_quantity,0)))) as quantity_refer_other_sum,
+               t12.material_name
+        FROM s_pur_purchase_order_data_source t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN s_pur_purchase_order t4 ON t.purchase_order_sid = t4.purchase_order_sid
+         LEFT JOIN s_pur_purchase_order_item t5 ON t.purchase_order_item_sid = t5.purchase_order_item_sid
+         LEFT JOIN s_req_purchase_require_item t6 ON t.refer_doc_item_sid = t6.purchase_require_item_sid
+         LEFT JOIN s_bas_sku t7 ON t6.sku1_sid = t7.sku_sid
+         LEFT JOIN s_bas_sku t8 ON t6.sku2_sid = t8.sku_sid
+         LEFT JOIN s_con_measure_unit t9 ON t.unit_base = t9.code
+         LEFT JOIN s_con_dataobject_category t10 ON t5.refer_doc_category = t10.code
+         LEFT JOIN (
+             SELECT a.refer_doc_item_sid, SUM(if(ifnull(a.quantity,0) &gt; ifnull(a.new_quantity,0), ifnull(a.quantity,0), ifnull(a.new_quantity,0))) AS total
+             FROM s_pur_purchase_order_data_source a
+             GROUP BY a.refer_doc_item_sid
+         ) t11 ON t.refer_doc_item_sid = t11.refer_doc_item_sid
+         LEFT JOIN s_bas_material t12 ON t6.material_sid = t12.material_sid
+    </sql>
+
+    <select id="selectPurPurchaseOrderDataSourceById" parameterType="Long" resultMap="PurPurchaseOrderDataSourceResult">
+        <include refid="selectPurPurchaseOrderDataSourceVo"/>
+        where t.purchase_order_data_source_sid = #{purchaseOrderDataSourceSid}
+    </select>
+
+    <select id="selectPurPurchaseOrderDataSourceList" parameterType="com.platform.ems.domain.PurPurchaseOrderDataSource"
+            resultMap="PurPurchaseOrderDataSourceResult">
+        <include refid="selectPurPurchaseOrderDataSourceVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="purchaseOrderSid != null ">
+                and t.purchase_order_sid = #{purchaseOrderSid}
+            </if>
+            <if test="purchaseOrderSidList != null and purchaseOrderSidList.length >0 ">
+                and t.purchase_order_sid in
+                (<foreach collection="purchaseOrderSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="purchaseOrderCode != null ">
+                and t.purchase_order_code = #{purchaseOrderCode}
+            </if>
+            <if test="purchaseOrderItemSid != null ">
+                and t.purchase_order_item_sid = #{purchaseOrderItemSid}
+            </if>
+            <if test="purchaseOrderItemSidList != null and purchaseOrderItemSidList.length >0 ">
+                and t.purchase_order_item_sid in
+                (<foreach collection="purchaseOrderItemSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="purchaseOrderItemNum != null ">
+                and t.purchase_order_item_num = #{purchaseOrderItemNum}
+            </if>
+            <if test="referDocSid != null ">
+                and t.refer_doc_sid = #{referDocSid}
+            </if>
+            <if test="referDocCode != null ">
+                and t.refer_doc_code = #{referDocCode}
+            </if>
+            <if test="referDocItemSid != null ">
+                and t.refer_doc_item_sid = #{referDocItemSid}
+            </if>
+            <if test="referDocItemSidList != null and referDocItemSidList.length >0 ">
+                and t.refer_doc_item_sid in
+                (<foreach collection="referDocItemSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="referDocItemNum != null ">
+                and t.refer_doc_item_num = #{referDocItemNum}
+            </if>
+            <if test="unitBase != null and unitBase != ''">
+                and t.unit_base = #{unitBase}
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        ORDER BY t.purchase_order_code DESC, t.purchase_order_item_num ASC
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_purchase_order_data_source
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            purchase_order_data_source_sid,
+            purchase_order_sid,
+            purchase_order_code,
+            purchase_order_item_sid,
+            purchase_order_item_num,
+            refer_doc_sid,
+            refer_doc_code,
+            refer_doc_item_sid,
+            refer_doc_item_num,
+            unit_base,
+            quantity,
+            new_quantity,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.purchaseOrderDataSourceSid},
+                #{item.purchaseOrderSid},
+                #{item.purchaseOrderCode},
+                #{item.purchaseOrderItemSid},
+                #{item.purchaseOrderItemNum},
+                #{item.referDocSid},
+                #{item.referDocCode},
+                #{item.referDocItemSid},
+                #{item.referDocItemNum},
+                #{item.unitBase},
+                #{item.quantity},
+                #{item.newQuantity},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_purchase_order_data_source
+        <trim prefix="SET" suffixOverrides=",">
+            purchase_order_sid = #{purchaseOrderSid},
+            purchase_order_code = #{purchaseOrderCode},
+            purchase_order_item_sid = #{purchaseOrderItemSid},
+            purchase_order_item_num = #{purchaseOrderItemNum},
+            refer_doc_sid = #{referDocSid},
+            refer_doc_code = #{referDocCode},
+            refer_doc_item_sid = #{referDocItemSid},
+            refer_doc_item_num = #{referDocItemNum},
+            unit_base = #{unitBase},
+            quantity = #{quantity},
+            new_quantity = #{newQuantity},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where purchase_order_data_source_sid = #{purchaseOrderDataSourceSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_purchase_order_data_source
+            <trim prefix="SET" suffixOverrides=",">
+                purchase_order_sid = #{o.purchaseOrderSid},
+                purchase_order_code = #{o.purchaseOrderCode},
+                purchase_order_item_sid = #{o.purchaseOrderItemSid},
+                purchase_order_item_num = #{o.purchaseOrderItemNum},
+                refer_doc_sid = #{o.referDocSid},
+                refer_doc_code = #{o.referDocCode},
+                refer_doc_item_sid = #{o.referDocItemSid},
+                refer_doc_item_num = #{o.referDocItemNum},
+                unit_base = #{o.unitBase},
+                quantity = #{o.quantity},
+                new_quantity = #{o.newQuantity},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where purchase_order_data_source_sid = #{o.purchaseOrderDataSourceSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.plug.mapper.ConBuTypeInoutMapper">
+
+    <!--所属业务类型_出入库-->
+
+    <resultMap type="com.platform.ems.plug.domain.ConBuTypeInout" id="ConBuTypeInoutResult">
+        <result property="clientId" column="client_id"/>
+        <result property="sid" column="sid"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="sort" column="sort"/>
+        <result property="documentCategory" column="document_category"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="documentCategoryName" column="document_category_name"/>
+    </resultMap>
+
+    <sql id="selectConBuTypeInoutVo">
+        select t.client_id,
+               t.sid,
+               t.code,
+               t.name,
+               t.sort,
+               t.document_category,
+               t.remark,
+               t.status,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               doc.name AS document_category_name
+        from s_con_bu_type_inout t
+                 LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+                 LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+                 LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t3.client_id
+                 LEFT JOIN s_con_inventory_document_category doc ON t.document_category = doc.code
+    </sql>
+
+    <select id="selectConInvDocCatAndCodeMap" resultType="java.util.Map">
+        select code, name from s_con_inventory_document_category
+    </select>
+
+    <select id="selectConBuTypeInoutById" parameterType="Long" resultMap="ConBuTypeInoutResult">
+        <include refid="selectConBuTypeInoutVo"/>
+        where t.sid = #{sid}
+    </select>
+
+<!--    查询所有库存凭证类别 wp 2022-10-11 | 未使用-->
+    <select id="selectAllConInventoryDocumentCategory" resultType="com.platform.ems.plug.domain.ConInventoryDocumentCategory">
+        select * from s_con_inventory_document_category
+    </select>
+
+    <select id="selectConBuTypeInoutList" parameterType="com.platform.ems.plug.domain.ConBuTypeInout"
+            resultMap="ConBuTypeInoutResult">
+        <include refid="selectConBuTypeInoutVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="code != null and code != ''">
+                and t.code = #{code}
+            </if>
+            <if test="name != null and name != ''">and
+                t.name like concat('%', #{name}, '%')
+            </if>
+            <if test="sort != null ">
+                and t.sort = #{sort}
+            </if>
+            <if test="documentCategory != null and documentCategory != ''">
+                and t.document_category = #{documentCategory}
+            </if>
+            <if test="documentCategoryList != null and documentCategoryList.length >0 ">
+                and
+                (<foreach collection="documentCategoryList" item="item" separator=" or ">
+                    t.document_category like concat('%', #{item}, '%')
+                </foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_bu_type_inout
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sid,
+            code,
+            name,
+            sort,
+            document_category,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.code},
+                #{item.name},
+                #{item.sort},
+                #{item.documentCategory},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_bu_type_inout
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            code = #{code},
+            name = #{name},
+            sort = #{sort},
+            document_category = #{documentCategory},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where sid = #{sid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_bu_type_inout
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                code = #{code},
+                name = #{name},
+                sort = #{sort},
+                document_category = #{documentCategory},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+            </trim>
+            where sid = #{sid}
+        </foreach>
+    </update>
+
+    <select id="getConBuTypeInoutList" parameterType="com.platform.ems.plug.domain.ConBuTypeInout"
+            resultMap="ConBuTypeInoutResult">
+        select t.client_id,t.sid,t.code,t.name,t.sort,t.document_category,t.data_source_sys
+        from s_con_bu_type_inout t
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="sort != null ">
+                and t.sort = #{sort}
+            </if>
+            <if test="documentCategory != null and documentCategory != ''">
+                and t.document_category like concat('%', #{documentCategory}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+</mapper>

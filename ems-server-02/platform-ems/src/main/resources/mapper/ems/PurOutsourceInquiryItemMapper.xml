@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurOutsourceInquiryItemMapper">
+
+    <resultMap type="com.platform.ems.domain.PurOutsourceInquiryItem" id="PurOutsourceInquiryItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="outsourceInquiryItemSid" column="outsource_inquiry_item_sid"/>
+        <result property="outsourceInquirySid" column="outsource_inquiry_sid"/>
+        <result property="processSid" column="process_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="barcodeSid" column="barcode_sid"/>
+        <result property="priceDimension" column="price_dimension"/>
+        <result property="priceEnterMode" column="price_enter_mode"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="processDesc" column="process_desc"/>
+        <result property="processPicture" column="process_picture"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="sku1Name" column="sku1_name"/>
+        <result property="sku1Code" column="sku1_code"/>
+        <result property="sku1Type" column="sku1_type"/>
+        <result property="sku2Code" column="sku2_code"/>
+        <result property="sku2Name" column="sku2_name"/>
+        <result property="sku2Type" column="sku2_type"/>
+        <result property="unitBaseName" column="unit_base_name"/>
+        <result property="processName" column="process_name"/>
+        <result property="outsourceInquiryCode" column="outsource_inquiry_code"/>
+        <result property="buyerName" column="buyer_name"/>
+        <result property="purchaseGroupName" column="purchase_group_name"/>
+        <result property="purchaseOrgName" column="purchase_org_name"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="companyName" column="company_name"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="buyerTelephone" column="buyer_telephone"/>
+        <result property="buyerEmail" column="buyer_email"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="materialSkuSid" column="material_sku_sid"/>
+        <result property="isQuoteProcess" column="is_quote_process"/>
+        <result property="dateQuote" column="date_quote"/>
+        <result property="quoteBargainCode" column="quote_bargain_code"/>
+    </resultMap>
+
+    <sql id="selectPurOutsourceInquiryItemVo">
+        select t.client_id,
+               t.outsource_inquiry_item_sid,
+               t.outsource_inquiry_sid,
+               t.process_sid,
+               t.material_sid,
+               t.sku1_sid,
+               t.sku2_sid,
+               t.barcode_sid,
+               t.price_dimension,
+               t.price_enter_mode,
+               t.unit_base,
+               t.item_num,
+               t.process_desc,
+               t.process_picture,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.material_code,
+               t4.material_name,
+               t5.sku_name  AS sku1_name,
+               t5.sku_code  AS sku1_code,
+               t5.sku_type  AS sku1_type,
+               t6.sku_name  AS sku2_name,
+               t6.sku_code  AS sku2_code,
+               t6.sku_type  AS sku2_type,
+               t7.name      AS unit_base_name,
+               t8.process_name AS process_name,
+               t9.outsource_inquiry_code,
+               t11.material_sku_sid
+        from s_pur_outsource_inquiry_item t
+         left join sys_user t2 on t.creator_account = t2.user_name
+         left join sys_user t3 on t.updater_account = t3.user_name
+         left join s_bas_material t4 on t.material_sid = t4.material_sid
+         left join s_bas_sku t5 on t.sku1_sid = t5.sku_sid
+         left join s_bas_sku t6 on t.sku2_sid = t6.sku_sid
+         left join s_con_measure_unit t7 on t.unit_base = t7.code
+         left join s_man_process t8 on t.process_sid = t8.process_sid
+         left join s_pur_outsource_inquiry t9 on t.outsource_inquiry_sid = t9.outsource_inquiry_sid
+         left join s_bas_material_sku t11 on t.material_sid = t11.material_sid and t.sku1_sid = t11.sku_sid
+    </sql>
+
+    <select id="selectPurOutsourceInquiryItemById" parameterType="Long" resultMap="PurOutsourceInquiryItemResult">
+        <include refid="selectPurOutsourceInquiryItemVo"/>
+        where t.outsource_inquiry_item_sid = #{outsourceInquiryItemSid}
+    </select>
+
+    <select id="selectPurOutsourceInquiryItemListById" parameterType="Long" resultMap="PurOutsourceInquiryItemResult">
+        <include refid="selectPurOutsourceInquiryItemVo"/>
+        where t.outsource_inquiry_sid = #{outsourceInquirySid}
+    </select>
+
+    <delete id="deletePurOutsourceInquiryItemByInquirySids" parameterType="Long">
+        delete
+        from s_pur_outsource_inquiry_item t
+        where t.outsource_inquiry_sid in (<foreach collection="outsourceInquirySid" item="sid" separator=",">#{sid}</foreach>)
+    </delete>
+
+    <select id="selectPurOutsourceInquiryItemSidListById" parameterType="Long" resultType="Long">
+        select t.outsource_inquiry_item_sid
+        from s_pur_outsource_inquiry_item t
+        where t.outsource_inquiry_sid in (<foreach collection="outsourceInquirySid" item="sid" separator=",">#{sid}</foreach>)
+    </select>
+
+    <select id="selectPurOutsourceInquiryItemList" parameterType="com.platform.ems.domain.PurOutsourceInquiryItem"
+            resultMap="PurOutsourceInquiryItemResult">
+        <include refid="selectPurOutsourceInquiryItemVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="outsourceInquirySid != null ">
+                and t.outsource_inquiry_sid =#{outsourceInquirySid}
+            </if>
+            <if test="processSid != null ">
+                and t.process_sid =#{processSid}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid =#{materialSid}
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid =#{sku1Sid}
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid =#{sku2Sid}
+            </if>
+            <if test="barcodeSid != null ">
+                and t.barcode_sid =#{barcodeSid}
+            </if>
+            <if test="priceDimension != null and priceDimension != ''">
+                and t.price_dimension =#{priceDimension}
+            </if>
+            <if test="priceEnterMode != null and priceEnterMode != ''">
+                and t.price_enter_mode =#{priceEnterMode}
+            </if>
+            <if test="unitBase != null  and unitBase != ''">
+                and (<foreach collection="unitBase.split(';')" item="item" separator="or">t.unit_base like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num =#{itemNum}
+            </if>
+            <if test="processDesc != null  and processDesc != ''">
+                and (<foreach collection="processDesc.split(';')" item="item" separator="or">t.process_desc like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="processPicture != null  and processPicture != ''">
+                and (<foreach collection="processPicture.split(';')" item="item" separator="or">t.process_picture like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_outsource_inquiry_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            outsource_inquiry_item_sid,
+            outsource_inquiry_sid,
+            process_sid,
+            material_sid,
+            sku1_sid,
+            sku2_sid,
+            barcode_sid,
+            price_dimension,
+            price_enter_mode,
+            unit_base,
+            item_num,
+            process_desc,
+            process_picture,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.outsourceInquiryItemSid},
+                #{item.outsourceInquirySid},
+                #{item.processSid},
+                #{item.materialSid},
+                #{item.sku1Sid},
+                #{item.sku2Sid},
+                #{item.barcodeSid},
+                #{item.priceDimension},
+                #{item.priceEnterMode},
+                #{item.unitBase},
+                #{item.itemNum},
+                #{item.processDesc},
+                #{item.processPicture},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_outsource_inquiry_item
+        <trim prefix="SET" suffixOverrides=",">
+            outsource_inquiry_sid = #{outsourceInquirySid},
+            process_sid = #{processSid},
+            material_sid = #{materialSid},
+            sku1_sid = #{sku1Sid},
+            sku2_sid = #{sku2Sid},
+            barcode_sid = #{barcodeSid},
+            price_dimension = #{priceDimension},
+            price_enter_mode = #{priceEnterMode},
+            unit_base = #{unitBase},
+            item_num = #{itemNum},
+            process_desc = #{processDesc},
+            process_picture = #{processPicture},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where outsource_inquiry_item_sid = #{outsourceInquiryItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_outsource_inquiry_item
+            <trim prefix="SET" suffixOverrides=",">
+                outsource_inquiry_sid = #{outsourceInquirySid},
+                process_sid = #{processSid},
+                material_sid = #{materialSid},
+                sku1_sid = #{sku1Sid},
+                sku2_sid = #{sku2Sid},
+                barcode_sid = #{barcodeSid},
+                price_dimension = #{priceDimension},
+                price_enter_mode = #{priceEnterMode},
+                unit_base = #{unitBase},
+                item_num = #{itemNum},
+                process_desc = #{processDesc},
+                process_picture = #{processPicture},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where outsource_inquiry_item_sid = #{outsourceInquiryItemSid}
+        </foreach>
+    </update>
+
+    <sql id="selectPurOutsourceInquiryItemReport">
+        select t.client_id,
+               t.outsource_inquiry_item_sid,
+               t.outsource_inquiry_sid,
+               t.process_sid,
+               t.material_sid,
+               t.sku1_sid,
+               t.sku2_sid,
+               t.barcode_sid,
+               t.price_dimension,
+               t.price_enter_mode,
+               t.unit_base,
+               t.item_num,
+               t.process_desc,
+               t.process_picture,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t1.outsource_inquiry_code,
+               t1.buyer_telephone,
+               t1.buyer_email,
+               t1.quoteprice_deadline,
+               t1.date_request,
+               t1.currency,
+               t1.currency_unit,
+               t1.remark AS outsource_inquiry_remark,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.material_code,
+               t4.material_name,
+               t5.sku_name  AS sku1_name,
+               t5.sku_code  AS sku1_code,
+               t5.sku_type  AS sku1_type,
+               t6.sku_name  AS sku2_name,
+               t6.sku_code  AS sku2_code,
+               t6.sku_type  AS sku2_type,
+               t7.name      AS unit_base_name,
+               t8.process_name AS process_name,
+               t10.nick_name AS buyer_name,
+               t12.company_name,
+               t13.product_season_name,
+               t14.name AS purchase_group_name,
+               t15.name AS purchase_org_name
+        from s_pur_outsource_inquiry_item t
+                 left join s_pur_outsource_inquiry t1 on t.outsource_inquiry_sid = t1.outsource_inquiry_sid
+                 left join sys_user t2 on t.creator_account = t2.user_name
+                 left join sys_user t3 on t.updater_account = t3.user_name
+                 left join s_bas_material t4 on t.material_sid = t4.material_sid
+                 left join s_bas_sku t5 on t.sku1_sid = t5.sku_sid
+                 left join s_bas_sku t6 on t.sku2_sid = t6.sku_sid
+                 left join s_con_measure_unit t7 on t.unit_base = t7.code
+                 left join s_man_process t8 on t.process_sid = t8.process_sid
+                 left join sys_user t10 on t1.buyer = t10.user_name
+                 left join s_bas_company t12 on t1.company_sid = t12.company_sid
+                 left join s_bas_product_season t13 on t1.product_season_sid = t13.product_season_sid
+                 left join s_con_purchase_group t14 on t1.purchase_group = t14.code
+                 left join s_con_purchase_org t15 on t1.purchase_org = t15.code
+    </sql>
+
+    <select id="getReportForm" parameterType="com.platform.ems.domain.PurOutsourceInquiryItem"
+            resultMap="PurOutsourceInquiryItemResult">
+        <include refid="selectPurOutsourceInquiryItemReport"/>
+        <where>
+            <if test="outsourceInquirySid != null ">
+                and t.outsource_inquiry_sid =#{outsourceInquirySid}
+            </if>
+            <if test="outsourceInquiryCode != null ">
+                and t1.outsource_inquiry_code like concat('%', #{outsourceInquiryCode}, '%')
+            </if>
+            <if test="materialCode != null  and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator="or">t4.material_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialName != null  and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="item" separator="or">t4.material_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="quotepriceDeadlineBegin != null and quotepriceDeadlineBegin!=''">
+                and date_format(t1.quoteprice_deadline,'%y%m%d') &gt;= date_format(#{quotepriceDeadlineBegin},'%y%m%d')
+            </if>
+            <if test="quotepriceDeadlineEnd != null and quotepriceDeadlineEnd!=''">
+                and date_format(t1.quoteprice_deadline,'%y%m%d') &lt;= date_format(#{quotepriceDeadlineEnd},'%y%m%d')
+            </if>
+            <if test="buyerName != null  and buyerName != ''">
+                and (<foreach collection="buyerName.split(';')" item="item" separator="or">t10.nick_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseOrgList != null and purchaseOrgList.length >0">and t1.purchase_org in
+                (<foreach collection="purchaseOrgList" item="purchaseOrg" separator=",">#{purchaseOrg}</foreach>)
+            </if>
+            <if test="purchaseGroupList != null and purchaseGroupList.length >0">and t1.purchase_group in
+                (<foreach collection="purchaseGroupList" item="purchaseGroup" separator=",">#{purchaseGroup}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">and t1.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">and t1.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">#{productSeasonSid}</foreach>)
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="outsourceInquirySid != null ">
+                and t.outsource_inquiry_sid =#{outsourceInquirySid}
+            </if>
+            <if test="processSid != null ">
+                and t.process_sid =#{processSid}
+            </if>
+            <if test="priceDimension != null and priceDimension != ''">
+                and t.price_dimension =#{priceDimension}
+            </if>
+            <if test="priceEnterMode != null and priceEnterMode != ''">
+                and t.price_enter_mode =#{priceEnterMode}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+</mapper>

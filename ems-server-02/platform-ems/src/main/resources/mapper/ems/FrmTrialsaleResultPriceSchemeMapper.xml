@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FrmTrialsaleResultPriceSchemeMapper">
+
+    <resultMap type="com.platform.ems.domain.FrmTrialsaleResultPriceScheme" id="FrmTrialsaleResultPriceSchemeResult">
+        <result property="clientId" column="client_id"/>
+        <result property="trialsaleResultPriceSchemeSid" column="trialsale_result_price_scheme_sid"/>
+        <result property="trialsaleResultSid" column="trialsale_result_sid"/>
+        <result property="scheme" column="scheme"/>
+        <result property="fixedPrice" column="fixed_price"/>
+        <result property="discountVat" column="discount_vat"/>
+        <result property="salePrice" column="sale_price"/>
+        <result property="productCost" column="product_cost"/>
+        <result property="logisticsCost" column="logistics_cost"/>
+        <result property="saleCost" column="sale_cost"/>
+        <result property="rakeoff" column="rakeoff"/>
+        <result property="operateCost" column="operate_cost"/>
+        <result property="advertiseCostRate" column="advertise_cost_rate"/>
+        <result property="advertiseCost" column="advertise_cost"/>
+        <result property="otherComment" column="other_comment"/>
+        <result property="profit" column="profit"/>
+        <result property="profitRate" column="profit_rate"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectFrmTrialsaleResultPriceSchemeVo">
+        select t.client_id,
+               t.trialsale_result_price_scheme_sid,
+               t.trialsale_result_sid,
+               t.scheme,
+               t.fixed_price,
+               t.discount_vat,
+               t.sale_price,
+               t.product_cost,
+               t.logistics_cost,
+               t.sale_cost,
+               t.rakeoff,
+               t.operate_cost,
+               t.advertise_cost_rate,
+               if(t.advertise_cost_rate is null, null, concat(round(t.advertise_cost_rate*100,2), '')) as advertise_cost_rate_string,
+               t.advertise_cost,
+               t.other_comment,
+               t.profit,
+               t.profit_rate,
+               if(t.profit_rate is null, null, concat(round(t.profit_rate*100,2), '')) as profit_rate_string,
+               t.currency,
+               t.currency_unit,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name
+        from s_frm_trialsale_result_price_scheme t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+    </sql>
+
+    <select id="selectFrmTrialsaleResultPriceSchemeById" parameterType="Long"
+            resultMap="FrmTrialsaleResultPriceSchemeResult">
+        <include refid="selectFrmTrialsaleResultPriceSchemeVo"/>
+        where t.trialsale_result_price_scheme_sid = #{trialsaleResultPriceSchemeSid}
+    </select>
+
+    <select id="selectFrmTrialsaleResultPriceSchemeList"
+            parameterType="com.platform.ems.domain.FrmTrialsaleResultPriceScheme"
+            resultMap="FrmTrialsaleResultPriceSchemeResult">
+        <include refid="selectFrmTrialsaleResultPriceSchemeVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="trialsaleResultPriceSchemeSid != null ">
+                and t.trialsale_result_price_scheme_sid = #{trialsaleResultPriceSchemeSid}
+            </if>
+            <if test="trialsaleResultSid != null ">
+                and t.trialsale_result_sid = #{trialsaleResultSid}
+            </if>
+            <if test="scheme != null and scheme != ''">
+                and t.scheme = #{scheme}
+            </if>
+            <if test="fixedPrice != null ">
+                and t.fixed_price = #{fixedPrice}
+            </if>
+            <if test="discountVat != null ">
+                and t.discount_vat = #{discountVat}
+            </if>
+            <if test="salePrice != null ">
+                and t.sale_price = #{salePrice}
+            </if>
+            <if test="productCost != null ">
+                and t.product_cost = #{productCost}
+            </if>
+            <if test="logisticsCost != null ">
+                and t.logistics_cost = #{logisticsCost}
+            </if>
+            <if test="saleCost != null ">
+                and t.sale_cost = #{saleCost}
+            </if>
+            <if test="rakeoff != null ">
+                and t.rakeoff = #{rakeoff}
+            </if>
+            <if test="operateCost != null ">
+                and t.operate_cost = #{operateCost}
+            </if>
+            <if test="advertiseCostRate != null ">
+                and t.advertise_cost_rate = #{advertiseCostRate}
+            </if>
+            <if test="advertiseCost != null ">
+                and t.advertise_cost = #{advertiseCost}
+            </if>
+            <if test="otherComment != null and otherComment != ''">
+                and t.other_comment = #{otherComment}
+            </if>
+            <if test="profit != null ">
+                and t.profit = #{profit}
+            </if>
+            <if test="profitRate != null ">
+                and t.profit_rate = #{profitRate}
+            </if>
+            <if test="currency != null and currency != ''">
+                and t.currency = #{currency}
+            </if>
+            <if test="currencyUnit != null and currencyUnit != ''">
+                and t.currency_unit = #{currencyUnit}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="createDate != null ">
+                and date_format(t.create_date,'%y%m%d') = date_format(#{createDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_frm_trialsale_result_price_scheme
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            trialsale_result_price_scheme_sid,
+            trialsale_result_sid,
+            scheme,
+            fixed_price,
+            discount_vat,
+            sale_price,
+            product_cost,
+            logistics_cost,
+            sale_cost,
+            rakeoff,
+            operate_cost,
+            advertise_cost_rate,
+            advertise_cost,
+            other_comment,
+            profit,
+            profit_rate,
+            currency,
+            currency_unit,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.trialsaleResultSchemeSid},
+                #{item.trialsaleResultSid},
+                #{item.scheme},
+                #{item.fixedPrice},
+                #{item.discountVat},
+                #{item.salePrice},
+                #{item.productCost},
+                #{item.logisticsCost},
+                #{item.saleCost},
+                #{item.rakeoff},
+                #{item.operateCost},
+                #{item.advertiseCostRate},
+                #{item.advertiseCost},
+                #{item.otherComment},
+                #{item.profit},
+                #{item.profitRate},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_frm_trialsale_result_price_scheme
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            trialsale_result_sid = #{trialsaleResultSid},
+            scheme = #{scheme},
+            fixed_price = #{fixedPrice},
+            discount_vat = #{discountVat},
+            sale_price = #{salePrice},
+            product_cost = #{productCost},
+            logistics_cost = #{logisticsCost},
+            sale_cost = #{saleCost},
+            rakeoff = #{rakeoff},
+            operate_cost = #{operateCost},
+            advertise_cost_rate = #{advertiseCostRate},
+            advertise_cost = #{advertiseCost},
+            other_comment = #{otherComment},
+            profit = #{profit},
+            profit_rate = #{profitRate},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where trialsale_result_price_scheme_sid = #{trialsaleResultPriceSchemeSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_frm_trialsale_result_price_scheme
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                trialsale_result_sid = #{trialsaleResultSid},
+                scheme = #{scheme},
+                fixed_price = #{fixedPrice},
+                discount_vat = #{discountVat},
+                sale_price = #{salePrice},
+                product_cost = #{productCost},
+                logistics_cost = #{logisticsCost},
+                sale_cost = #{saleCost},
+                rakeoff = #{rakeoff},
+                operate_cost = #{operateCost},
+                advertise_cost_rate = #{advertiseCostRate},
+                advertise_cost = #{advertiseCost},
+                other_comment = #{otherComment},
+                profit = #{profit},
+                profit_rate = #{profitRate},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+            </trim>
+            where trialsale_result_price_scheme_sid = #{trialsaleResultPriceSchemeSid}
+        </foreach>
+    </update>
+
+</mapper>

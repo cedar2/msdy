@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinReceivableBillItemKoukuanMapper">
+
+    <resultMap type="com.platform.ems.domain.FinReceivableBillItemKoukuan" id="FinReceivableBillItemKoukuanResult">
+        <result property="clientId" column="client_id"/>
+        <result property="receivableBillItemKoukuanSid" column="receivable_bill_item_koukuan_sid"/>
+        <result property="receivableBillSid" column="receivable_bill_sid"/>
+        <result property="bookDeductionSid" column="book_deduction_sid"/>
+        <result property="bookDeductionCode" column="book_deduction_code"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectFinReceivableBillItemKoukuanVo">
+        select t.client_id,
+               t.receivable_bill_item_koukuan_sid,
+               t.receivable_bill_sid,
+               t.book_deduction_sid,
+               t.book_deduction_code,
+               t.currency_amount_tax,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               u1.nick_name AS creator_account_name,
+               u2.nick_name AS updater_account_name,
+               t1.receivable_bill_code,
+               t1.agent,
+               t1.handle_status,
+               u3.nick_name AS agent_name,
+               t2.currency_amount_tax_yhx,
+               t2.currency_amount_tax_dhx,
+               t2.currency_amount_tax_kk,
+               t2.refer_doc_sid,
+               t2.refer_doc_code,
+               t2.document_date,
+               t2.clear_status,
+               t2.product_season_name,
+               t2.sale_person,
+               t2.sale_person_name,
+               t3.company_name,
+               t3.short_name as company_short_name,
+               t4.customer_name,
+               t4.short_name as customer_short_name
+        from s_fin_receivable_bill_item_koukuan t
+         LEFT JOIN sys_user u1 ON t.creator_account = u1.user_name
+         LEFT JOIN sys_user u2 ON t.updater_account = u2.user_name
+        LEFT JOIN s_fin_receivable_bill t1 ON t.receivable_bill_sid = t1.receivable_bill_sid
+        LEFT JOIN sys_user u3 ON t1.agent = u3.user_name
+        LEFT JOIN (<include refid="com.platform.ems.mapper.FinBookCustomerDeductionItemMapper.selectFinBookCustomerDeductionItemVo"/>)
+            t2 ON t.book_deduction_sid = t2.book_deduction_sid
+        LEFT JOIN s_bas_company t3 ON t1.company_sid = t3.company_sid
+        LEFT JOIN s_bas_customer t4 ON t1.customer_sid = t4.customer_sid
+    </sql>
+
+    <select id="selectFinReceivableBillItemKoukuanById" parameterType="Long"
+            resultMap="FinReceivableBillItemKoukuanResult">
+        <include refid="selectFinReceivableBillItemKoukuanVo"/>
+        where t.receivable_bill_item_koukuan_sid = #{receivableBillItemKoukuanSid}
+    </select>
+
+    <select id="selectFinReceivableBillItemKoukuanList"
+            parameterType="com.platform.ems.domain.FinReceivableBillItemKoukuan"
+            resultMap="FinReceivableBillItemKoukuanResult">
+        <include refid="selectFinReceivableBillItemKoukuanVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="receivableBillItemKoukuanSid != null ">
+                and t.receivable_bill_item_koukuan_sid = #{receivableBillItemKoukuanSid}
+            </if>
+            <if test="receivableBillItemKoukuanSidList != null and receivableBillItemKoukuanSidList.length >0">
+                and t.receivable_bill_item_koukuan_sid in
+                (<foreach collection="receivableBillItemKoukuanSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="receivableBillSid != null ">
+                and t.receivable_bill_sid = #{receivableBillSid}
+            </if>
+            <if test="bookDeductionCode != null and bookDeductionCode != ''">
+                and  t.book_deduction_code like concat('%', #{bookDeductionCode},'%')
+            </if>
+            <if test="receivableBillSidList != null  and receivableBillSidList.length >0">
+                and t.receivable_bill_sid in (<foreach collection="receivableBillSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="bookDeductionSid != null ">
+                and t.book_deduction_sid = #{bookDeductionSid}
+            </if>
+            <if test="bookDeductionSidList != null  and bookDeductionSidList.length >0">
+                and t.book_deduction_sid in (<foreach collection="bookDeductionSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="currencyAmountTax != null ">
+                and t.currency_amount_tax = #{currencyAmountTax}
+            </if>
+            <if test="receivableBillCode != null and receivableBillCode != ''">
+                and  t1.receivable_bill_code like concat('%', #{receivableBillCode},'%')
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t1.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0">
+                and t1.handle_status in (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="agent != null and agent != ''">
+                and  t1.agent = #{agent}
+            </if>
+            <if test="agentList != null  and agentList.length >0">
+                and t1.agent in (<foreach collection="agentList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="agentName != null and agentName != ''">
+                and u3.nick_name like concat('%', #{agentName},'%')
+            </if>
+            <if test="referDocCode != null and referDocCode != ''">
+                and t2.refer_doc_code like concat('%', #{referDocCode},'%')
+            </if>
+            <if test="clearStatus != null and clearStatus != ''">
+                and t2.clear_status = #{clearStatus}
+            </if>
+            <if test="clearStatusList != null  and clearStatusList.length >0">
+                and t2.clear_status in (<foreach collection="clearStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t3.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t3.company_sid in
+                (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="customerSid != null ">
+                and t4.customer_sid = #{customerSid}
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and t4.customer_sid in
+                (<foreach collection="customerSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and u1.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.create_date desc, t2.refer_doc_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_receivable_bill_item_koukuan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            receivable_bill_item_koukuan_sid,
+            receivable_bill_sid,
+            book_deduction_sid,
+            book_deduction_code,
+            currency_amount_tax,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.receivableBillItemKoukuanSid},
+                #{item.receivableBillSid},
+                #{item.bookDeductionSid},
+                #{item.bookDeductionCode},
+                #{item.currencyAmountTax},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_receivable_bill_item_koukuan
+        <trim prefix="SET" suffixOverrides=",">
+            currency_amount_tax = #{currencyAmountTax},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where receivable_bill_item_koukuan_sid = #{receivableBillItemKoukuanSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_receivable_bill_item_koukuan
+            <trim prefix="SET" suffixOverrides=",">
+                currency_amount_tax = #{o.currencyAmountTax},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where receivable_bill_item_koukuan_sid = #{o.receivableBillItemKoukuanSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.RepBusinessRemindMoMapper">
+
+    <resultMap type="com.platform.ems.domain.RepBusinessRemindMo" id="RepBusinessRemindMoResult">
+        <result property="clientId" column="client_id"/>
+        <result property="dataRecordSid" column="data_record_sid"/>
+        <result property="remindType" column="remind_type"/>
+        <result property="manufactureOrderSid" column="manufacture_order_sid"/>
+        <result property="manufactureOrderCode" column="manufacture_order_code"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="companyName" column="company_name"/>
+        <result property="manufactureOrderProductSid" column="manufacture_order_product_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku1Code" column="sku1_code"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="sku2Code" column="sku2_code"/>
+        <result property="planEndDateMo" column="plan_end_date_mo"/>
+        <result property="planEndDateProduct" column="plan_end_date_product"/>
+        <result property="quantityJih" column="quantity_jih"/>
+        <result property="quantityYiwc" column="quantity_yiwc"/>
+        <result property="quantityWeiwc" column="quantity_weiwc"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="customerShortName" column="customer_short_name"/>
+        <result property="salesOrderSid" column="sales_order_sid"/>
+        <result property="salesOrderCode" column="sales_order_code"/>
+        <result property="salesOrderItemSid" column="sales_order_item_sid"/>
+        <result property="createDate" column="create_date"/>
+        <result property="creatorAccountId" column="creator_account_id"/>
+        <result property="materialName" column="material_name"/>
+        <result property="sku1Name" column="sku1_name"/>
+        <result property="sku2Name" column="sku2_name"/>
+        <result property="contractDate" column="contract_date"/>
+        <result property="plantName" column="plant_name"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="itemNum" column="item_num"/>
+    </resultMap>
+
+    <sql id="selectRepBusinessRemindMoVo">
+        select t.client_id,
+               t.data_record_sid,
+               t.remind_type,
+               t.manufacture_order_sid,
+               t.manufacture_order_code,
+               t.company_code,
+               t.company_name,
+               t.manufacture_order_product_sid,
+               t.material_sid,
+               t.material_code,
+               t.sku1_sid,
+               t.sku1_code,
+               t.sku2_sid,
+               t.sku2_code,
+               t.plan_end_date_mo,
+               t.plan_end_date_product,
+               t.quantity_jih,
+               t.quantity_yiwc,
+               t.quantity_weiwc,
+               t.customer_sid,
+               t.customer_code,
+               t.customer_short_name,
+               t.sales_order_sid,
+               t.sales_order_code,
+               t.sales_order_item_sid,
+               t.create_date,
+               t1.paichan_batch,
+               t2.material_name,
+               t3.sku_name as sku1_name,
+               t4.sku_name as sku2_name,
+               t6.contract_date,
+               t9.plant_name,
+               t10.product_season_name,
+               t11.item_num,
+               t12.is_caichuang_quantity,
+               ta.sort as sort1,
+               tb.sort as sort2
+        from s_rep_business_remind_mo t
+         LEFT JOIN s_man_manufacture_order t1 ON t.manufacture_order_sid = t1.manufacture_order_sid
+         LEFT JOIN s_bas_material t2 ON t.material_sid = t2.material_sid
+         LEFT JOIN s_bas_sku t3 ON t.sku1_sid = t3.sku_sid
+         LEFT JOIN s_bas_sku t4 ON t.sku2_sid = t4.sku_sid
+         LEFT JOIN s_sal_sales_order t5 ON t.sales_order_sid = t5.sales_order_sid
+         LEFT JOIN s_sal_sales_order_item t6 ON t.sales_order_item_sid = t6.sales_order_item_sid
+         LEFT JOIN s_bas_customer t7 ON t5.customer_sid = t7.customer_sid
+         LEFT JOIN s_bas_company t8 ON t1.company_sid = t8.company_sid
+         LEFT JOIN s_bas_plant t9 ON t1.plant_sid = t9.plant_sid
+         LEFT JOIN s_bas_product_season t10 ON t5.product_season_sid = t10.product_season_sid
+         LEFT JOIN s_man_manufacture_order_product t11 ON t1.manufacture_order_sid = t11.manufacture_order_sid
+         LEFT JOIN  (
+            SELECT t.manufacture_order_sid, SUM(t.quantity) as is_caichuang_quantity
+            FROM s_man_day_manufacture_progress_item t
+             LEFT JOIN s_man_day_manufacture_progress t1 ON t1.day_manufacture_progress_sid = t.day_manufacture_progress_sid
+             LEFT JOIN s_man_manufacture_order_process t3 ON t3.manufacture_order_process_sid = t.manufacture_order_process_sid
+             LEFT JOIN s_man_day_manufacture_progress t4 ON t4.day_manufacture_progress_sid = t.day_manufacture_progress_sid
+            WHERE t3.is_first_process = 'Y' AND t4.handle_status = '5'
+            GROUP BY t.manufacture_order_sid
+        ) t12 on t.manufacture_order_sid = t12.manufacture_order_sid
+         LEFT JOIN s_bas_material_sku ta on t.material_sid = ta.material_sid and t.sku1_sid = ta.sku_sid
+         LEFT JOIN s_bas_material_sku tb on t.material_sid = tb.material_sid and t.sku2_sid = tb.sku_sid
+    </sql>
+
+    <select id="selectRepBusinessRemindMoById" parameterType="Long" resultMap="RepBusinessRemindMoResult">
+        <include refid="selectRepBusinessRemindMoVo"/>
+        where t.data_record_sid = #{dataRecordSid}
+    </select>
+
+    <select id="selectRepBusinessRemindMoList" parameterType="com.platform.ems.domain.RepBusinessRemindMo"
+            resultMap="RepBusinessRemindMoResult">
+        <include refid="selectRepBusinessRemindMoVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id =
+                #{item}</foreach>)
+            </if>
+            <if test="remindType != null  and remindType != ''">
+                and (<foreach collection="remindType.split(';')" item="item" separator="or">t.remind_type
+                = #{item}</foreach>)
+            </if>
+            <if test="manufactureOrderSid != null ">
+                and t.manufacture_order_sid =#{manufactureOrderSid}
+            </if>
+            <if test="manufactureOrderCode != null ">
+                and t.manufacture_order_code =#{manufactureOrderCode}
+            </if>
+            <if test="companyCode != null  and companyCode != ''">
+                and (<foreach collection="companyCode.split(';')" item="item" separator="or">t.company_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companyName != null  and companyName != ''">and
+                t.company_name like concat('%', #{companyName}, '%')
+            </if>
+            <if test="manufactureOrderProductSid != null ">
+                and t.manufacture_order_product_sid =#{manufactureOrderProductSid}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid =#{materialSid}
+            </if>
+            <if test="materialCode != null  and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator="or">t.material_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid =#{sku1Sid}
+            </if>
+            <if test="sku1Code != null  and sku1Code != ''">
+                and (<foreach collection="sku1Code.split(';')" item="item" separator="or">t.sku1_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid =#{sku2Sid}
+            </if>
+            <if test="sku2Code != null  and sku2Code != ''">
+                and (<foreach collection="sku2Code.split(';')" item="item" separator="or">t.sku2_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="planEndDateMo != null ">
+                and t.plan_end_date_mo = #{planEndDateMo}
+            </if>
+            <if test="planEndDateProduct != null ">
+                and t.plan_end_date_product = #{planEndDateProduct}
+            </if>
+            <if test="quantityJih != null ">
+                and t.quantity_jih = #{quantityJih}
+            </if>
+            <if test="quantityYiwc != null ">
+                and t.quantity_yiwc = #{quantityYiwc}
+            </if>
+            <if test="quantityWeiwc != null ">
+                and t.quantity_weiwc = #{quantityWeiwc}
+            </if>
+            <if test="customerSid != null ">
+                and t.customer_sid =#{customerSid}
+            </if>
+            <if test="customerCode != null  and customerCode != ''">
+                and (<foreach collection="customerCode.split(';')" item="item" separator="or">t.customer_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="customerShortName != null  and customerShortName != ''">and
+                t.customer_short_name like concat('%', #{customerShortName}, '%')
+            </if>
+            <if test="salesOrderSid != null ">
+                and t.sales_order_sid =#{salesOrderSid}
+            </if>
+            <if test="salesOrderCode != null ">
+                and t.sales_order_code =#{salesOrderCode}
+            </if>
+            <if test="salesOrderItemSid != null ">
+                and t.sales_order_item_sid =#{salesOrderItemSid}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t3.sku_name ASC, t4.sku_name ASC, t9.plant_name ASC, t.customer_short_name ASC
+    </select>
+
+    <sql id="inserts">
+        insert into s_rep_business_remind_mo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            data_record_sid,
+            remind_type,
+            manufacture_order_sid,
+            manufacture_order_code,
+            company_code,
+            company_name,
+            manufacture_order_product_sid,
+            material_sid,
+            material_code,
+            sku1_sid,
+            sku1_code,
+            sku2_sid,
+            sku2_code,
+            plan_end_date_mo,
+            plan_end_date_product,
+            quantity_jih,
+            quantity_yiwc,
+            quantity_weiwc,
+            customer_sid,
+            customer_code,
+            customer_short_name,
+            sales_order_sid,
+            sales_order_code,
+            sales_order_item_sid,
+            create_date,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.dataRecordSid},
+                #{item.remindType},
+                #{item.manufactureOrderSid},
+                #{item.manufactureOrderCode},
+                #{item.companyCode},
+                #{item.companyName},
+                #{item.manufactureOrderProductSid},
+                #{item.materialSid},
+                #{item.materialCode},
+                #{item.sku1Sid},
+                #{item.sku1Code},
+                #{item.sku2Sid},
+                #{item.sku2Code},
+                #{item.planEndDateMo},
+                #{item.planEndDateProduct},
+                #{item.quantityJih},
+                #{item.quantityYiwc},
+                #{item.quantityWeiwc},
+                #{item.customerSid},
+                #{item.customerCode},
+                #{item.customerShortName},
+                #{item.salesOrderSid},
+                #{item.salesOrderCode},
+                #{item.salesOrderItemSid},
+                #{item.createDate},
+            </trim>
+        </foreach>
+    </sql>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        <include refid="inserts"/>
+    </insert>
+
+    <!--添加多个 跳过租户自动注入-->
+    <insert id="insertAll">
+        <include refid="inserts"/>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_rep_business_remind_mo
+        <trim prefix="SET" suffixOverrides=",">
+            remind_type = #{remindType},
+            manufacture_order_sid = #{manufactureOrderSid},
+            manufacture_order_code = #{manufactureOrderCode},
+            company_code = #{companyCode},
+            company_name = #{companyName},
+            manufacture_order_product_sid = #{manufactureOrderProductSid},
+            material_sid = #{materialSid},
+            material_code = #{materialCode},
+            sku1_sid = #{sku1Sid},
+            sku1_code = #{sku1Code},
+            sku2_sid = #{sku2Sid},
+            sku2_code = #{sku2Code},
+            plan_end_date_mo = #{planEndDateMo},
+            plan_end_date_product = #{planEndDateProduct},
+            quantity_jih = #{quantityJih},
+            quantity_yiwc = #{quantityYiwc},
+            quantity_weiwc = #{quantityWeiwc},
+            customer_sid = #{customerSid},
+            customer_code = #{customerCode},
+            customer_short_name = #{customerShortName},
+            sales_order_sid = #{salesOrderSid},
+            sales_order_code = #{salesOrderCode},
+            sales_order_item_sid = #{salesOrderItemSid},
+        </trim>
+        where data_record_sid = #{dataRecordSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_rep_business_remind_mo
+            <trim prefix="SET" suffixOverrides=",">
+                remind_type = #{remindType},
+                manufacture_order_sid = #{manufactureOrderSid},
+                manufacture_order_code = #{manufactureOrderCode},
+                company_code = #{companyCode},
+                company_name = #{companyName},
+                manufacture_order_product_sid = #{manufactureOrderProductSid},
+                material_sid = #{materialSid},
+                material_code = #{materialCode},
+                sku1_sid = #{sku1Sid},
+                sku1_code = #{sku1Code},
+                sku2_sid = #{sku2Sid},
+                sku2_code = #{sku2Code},
+                plan_end_date_mo = #{planEndDateMo},
+                plan_end_date_product = #{planEndDateProduct},
+                quantity_jih = #{quantityJih},
+                quantity_yiwc = #{quantityYiwc},
+                quantity_weiwc = #{quantityWeiwc},
+                customer_sid = #{customerSid},
+                customer_code = #{customerCode},
+                customer_short_name = #{customerShortName},
+                sales_order_sid = #{salesOrderSid},
+                sales_order_code = #{salesOrderCode},
+                sales_order_item_sid = #{salesOrderItemSid},
+            </trim>
+            where data_record_sid = #{dataRecordSid}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="com.platform.ems.domain.RepBusinessRemindMo">
+        DELETE FROM s_rep_business_remind_mo t
+    </delete>
+
+    <select id="getFormData" parameterType="com.platform.ems.domain.RepBusinessRemindMo" resultMap="RepBusinessRemindMoResult">
+        SELECT
+            t.client_id,
+            t.manufacture_order_product_sid,
+            t.manufacture_order_sid,
+            t.sku1_sid,
+            t.sku2_sid,
+            t.plan_end_date as plan_end_date_product,
+            t.sales_order_sid,
+            t.sales_order_code,
+            t.sales_order_item_sid,
+            '${remindType}' as remind_type,
+            t.creator_account,
+            t.create_date,
+            t1.manufacture_order_code,
+            t1.material_sid,
+            t1.company_sid,
+            ifnull(t1.quantity, 0) as quantity_jih,
+            ifnull(t1.complete_quantity, 0) as quantity_yiwc,
+            t1.plan_end_date as plan_end_date_mo,
+            ifnull(t1.toexpire_days,t8.toexpire_days_scdd) as toexpire_days,
+            (ifnull(t1.quantity, 0) - ifnull(t1.complete_quantity,0)) as quantity_weiwc,
+            t2.material_code,
+            t3.sku_code as sku1_code,
+            t3.sku_name sku1_name,
+            t4.sku_code as sku2_code,
+            t4.sku_name as sku2_name,
+            t5.customer_sid,
+            t6.customer_code,
+            t6.customer_name,
+            t6.short_name as customer_short_name,
+            t7.company_code,
+            t7.company_name,
+            t7.short_name as company_short_name,
+            t10.user_id as creator_account_id
+        FROM s_man_manufacture_order_product t
+         LEFT JOIN s_man_manufacture_order t1 ON t.manufacture_order_sid = t1.manufacture_order_sid
+         LEFT JOIN s_bas_material t2 ON t1.material_sid = t2.material_sid
+         LEFT JOIN s_bas_sku t3 ON t.sku1_sid = t3.sku_sid
+         LEFT JOIN s_bas_sku t4 ON t.sku2_sid = t4.sku_sid
+         LEFT JOIN s_sal_sales_order t5 ON t.sales_order_sid = t5.sales_order_sid
+         LEFT JOIN s_bas_customer t6 ON t5.customer_sid = t6.customer_sid
+         LEFT JOIN s_bas_company t7 ON t1.company_sid = t7.company_sid
+         LEFT JOIN s_sys_default_setting_client t8 ON t1.client_id = t8.client_id
+         LEFT JOIN s_sys_default_setting_system t9 ON t9.client_id = '10000'
+         LEFT JOIN sys_user t10 ON t1.creator_account = t10.user_name and t.client_id = t10.client_id
+        <where>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t1.handle_status = #{handleStatus}
+            </if>
+            <if test="remindType != null and remindType == 'YYQ'.toString()">
+                and date_format(t1.plan_end_date,'%y%m%d') &lt; NOW()
+            </if>
+            <if test="remindType != null and remindType == 'JJDQ'.toString()">
+                and t1.plan_end_date &gt;= DATE_FORMAT(NOW(), '%Y-%m-%d') AND
+                t1.plan_end_date &lt;= DATE_FORMAT(date_add(NOW(), interval if(t1.toexpire_days is null,ifnull(t8.toexpire_days_scdd,t9.toexpire_days_scdd),t1.toexpire_days) day), '%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+
+    <select id="getCountForm" parameterType="com.platform.ems.domain.RepBusinessRemindMo"
+            resultMap="RepBusinessRemindMoResult">
+        SELECT ifnull(SUM(t.quantity_jih), 0) as quantity_jih,
+               ifnull(SUM(t.quantity_yiwc), 0) as quantity_yiwc,
+               ifnull(SUM(t.quantity_weiwc), 0) as quantity_weiwc,
+                t.client_id,
+                t.data_record_sid,
+                t.remind_type,
+                t.manufacture_order_sid,
+                t.manufacture_order_code,
+                t.company_code,
+                t.company_name,
+                t.manufacture_order_product_sid,
+                t.material_sid,
+                t.material_code,
+                t.sku1_sid,
+                t.sku1_code,
+                t.sku2_sid,
+                t.sku2_code,
+                t.plan_end_date_mo,
+                t.plan_end_date_product,
+                t.customer_sid,
+                t.customer_code,
+                t.customer_short_name,
+                t.sales_order_sid,
+                t.sales_order_code,
+                t.sales_order_item_sid,
+                t.create_date,
+               t1.material_name
+        FROM s_rep_business_remind_mo t
+        LEFT JOIN s_bas_material t1 ON t.material_sid = t1.material_sid
+        GROUP BY t.plan_end_date_mo,t.material_sid
+        HAVING 1=1
+        <if test="remindType != null and remindType != ''">
+            and t.remind_type = #{remindType}
+        </if>
+        <if test="materialCode != null and materialCode != ''">
+            and t.material_code like concat('%', #{materialCode}, '%')
+        </if>
+        <if test="materialSid != null and materialSid != ''">
+            and t.material_sid = #{materialSid}
+        </if>
+        <if test="planEndDateMoBegin != null and planEndDateMoBegin != ''">
+            and date_format(t.plan_end_date_mo,'%y%m%d') &gt;= date_format(#{planEndDateMoBegin},'%y%m%d')
+        </if>
+        <if test="planEndDateMoEnd != null and planEndDateMoEnd != ''">
+            and date_format(t.plan_end_date_mo,'%y%m%d') &lt;= date_format(#{planEndDateMoEnd},'%y%m%d')
+        </if>
+        <if test="planEndDateMo != null">
+            and date_format(t.plan_end_date_mo,'%y%m%d') = date_format(#{planEndDateMo},'%y%m%d')
+        </if>
+        order by t.material_code ASC
+    </select>
+
+</mapper>

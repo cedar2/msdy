@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasStorehouseMapper">
+
+    <resultMap type="com.platform.ems.domain.BasStorehouse" id="BasStorehouseResult">
+        <result property="clientId" column="client_id"/>
+        <result property="storehouseSid" column="storehouse_sid"/>
+        <result property="storehouseCode" column="storehouse_code"/>
+        <result property="storehouseName" column="storehouse_name"/>
+        <result property="storehouseAttribute" column="storehouse_attribute"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="plantName" column="plant_name"/>
+        <result property="plantShortName" column="plant_short_name"/>
+        <result property="countryRegion" column="country_region"/>
+        <result property="isVirtual" column="is_virtual"/>
+        <result property="supervisor" column="supervisor"/>
+        <result property="address" column="address"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="businessType" column="business_type"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="companyName" column="company_name"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="disableRemark" column="disable_remark"/>
+        <result property="companyShortName" column="company_short_name"/>
+        <result property="vendorShortName" column="vendor_short_name"/>
+    </resultMap>
+
+    <select id="selectBasStorehouseById" parameterType="Long" resultMap="BasStorehouseResult">
+        <include refid="selectBasStorehouseVo"/>
+        where t.storehouse_sid = #{storehouseSid}
+    </select>
+
+
+    <select id="selectBasStorehouseList" parameterType="com.platform.ems.domain.BasStorehouse"
+            resultMap="BasStorehouseResult">
+        <include refid="selectBasStorehouseVo"/>
+        <where>
+            <if test="storehouseCodeName != null and storehouseCodeName != ''">
+                and (t.storehouse_code like concat('%', #{storehouseCodeName}, '%')
+                or t.storehouse_name like concat('%', #{storehouseCodeName}, '%'))
+            </if>
+            <if test="storehouseSidList != null and storehouseSidList.length > 0">
+                and t.storehouse_sid in
+                (<foreach collection="storehouseSidList" item="storehouseSid" separator=",">#{storehouseSid}</foreach>)
+            </if>
+            <if test="storehouseCode != null  and storehouseCode != ''">and t.storehouse_code like concat('%',
+                #{storehouseCode}, '%')
+            </if>
+            <if test="storehouseName != null  and storehouseName != ''">
+                and (<foreach collection="storehouseName.split(';')" item="item" separator="or">t.storehouse_name like
+                concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="storehouseAttribute != null  and storehouseAttribute != ''">
+                and t.storehouse_attribute in (
+                <foreach collection="storehouseAttribute.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="storehouseAttributeList != null and storehouseAttributeList.length >0 ">
+                and t.storehouse_attribute in
+                (<foreach collection="storehouseAttributeList" item="storehouseAttribute" separator=",">
+                #{storehouseAttribute}</foreach>)
+            </if>
+            <if test="isVirtual != null  and isVirtual != ''">
+                and t.is_virtual in (
+                <foreach collection="isVirtual.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="isVirtualList != null and isVirtualList.length >0 ">
+                and t.is_virtual in
+                (<foreach collection="isVirtualList" item="isVirtual" separator=",">#{isVirtual}</foreach>)
+            </if>
+            <if test="companySid != null  and companySid != ''">
+                and t.company_sid in (
+                <foreach collection="companySid.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="vendorSid != null  and vendorSid != ''">and t.vendor_sid in (
+                <foreach collection="vendorSid.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0 ">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="plantSid != null and plantSid != ''">and t.plant_sid in (
+                <foreach collection="plantSid.split(';')" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="supervisor != null  and supervisor != ''">
+                and (<foreach collection="supervisor.split(';')" item="item" separator="or">t.supervisor like
+                concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and t.handle_status in (
+                <foreach collection="handleStatus.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t3.nick_name like
+                concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="status != null  and status != ''">
+                and t.status in (
+                <foreach collection="status.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="beginTime != null "><!-- 开始时间检索 -->
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null "><!-- 结束时间检索 -->
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+        </where>
+        order by t.create_date desc, t.storehouse_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_storehouse
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            storehouse_sid,
+            storehouse_code,
+            storehouse_name,
+            storehouse_attribute,
+            company_sid,
+            vendor_sid,
+            plant_sid,
+            plant_code,
+            country,
+            province,
+            city,
+            is_virtual,
+            supervisor,
+            address,
+            picture_path,
+            business_type,
+            remark,
+            disable_remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{clientId},
+                #{storehouseSid},
+                #{storehouseCode},
+                #{storehouseName},
+                #{storehouseAttribute},
+                #{companySid},
+                #{vendorSid},
+                #{plantSid},
+                #{plantCode},
+                #{country},
+                #{province},
+                #{city},
+                #{isVirtual},
+                #{supervisor},
+                #{address},
+                #{picturePath},
+                #{businessType},
+                #{remark},
+                #{disableRemark},
+                #{status},
+                #{handleStatus},
+                #{creatorAccount},
+                #{createDate},
+                #{updaterAccount},
+                #{updateDate},
+                #{confirmerAccount},
+                #{confirmDate},
+                #{dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_storehouse
+        <trim prefix="SET" suffixOverrides=",">
+            storehouse_code = #{storehouseCode},
+            storehouse_name = #{storehouseName},
+            storehouse_attribute = #{storehouseAttribute},
+            company_sid = #{companySid},
+            vendor_sid = #{vendorSid},
+            plant_sid = #{plantSid},
+            plant_code = #{plantCode},
+            country_region = #{countryRegion},
+            is_virtual = #{isVirtual},
+            supervisor = #{supervisor},
+            address = #{address},
+            picture_path = #{picturePath},
+            business_type = #{businessType},
+            remark = #{remark},
+            disable_remark = #{disableRemark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where storehouse_sid = #{storehouseSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_storehouse
+            <trim prefix="SET" suffixOverrides=",">
+                storehouse_sid = #{storehouseSid},
+                storehouse_code = #{storehouseCode},
+                storehouse_name = #{storehouseName},
+                storehouse_attribute = #{storehouseAttribute},
+                company_sid = #{companySid},
+                vendor_sid = #{vendorSid},
+                plant_sid = #{plantSid},
+                plant_code = #{plantCode},
+                country = #{country},
+                province = #{province},
+                city = #{city},
+                is_virtual = #{isVirtual},
+                supervisor = #{supervisor},
+                address = #{address},
+                picture_path = #{picturePath},
+                business_type = #{businessType},
+                remark = #{remark},
+                disable_remark = #{disableRemark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where client_id = #{clientId}
+        </foreach>
+    </update>
+
+
+    <sql id="selectBasStorehouseVo">
+        select t.client_id, t.storehouse_sid, t.storehouse_code, t.storehouse_name, t.storehouse_attribute, t.company_sid, t.vendor_sid,
+               t.plant_sid, t.plant_code,
+        t.country_region, t.is_virtual, t.supervisor, t.address, t.picture_path, t.business_type, t.remark, t.disable_remark, t.status,
+        t.handle_status, t.creator_account, t.create_date, t.updater_account, t.update_date, t.confirmer_account, t.confirm_date,
+        t.data_source_sys , t1.company_name , t1.short_name as company_short_name , t1.company_code, t2.vendor_name, t2.short_name as vendor_short_name, t2.vendor_code, t3.nick_name AS creator_account_name,
+        t5.nick_name AS confirmer_account_name, t4.nick_name AS updater_account_name, t6.plant_name, t6.short_name as plant_short_name, t7.user_id as supervisor_id,
+               t7.nick_name as supervisor_name
+        from s_bas_storehouse t
+        LEFT JOIN s_bas_company t1 ON t1.company_sid = t.company_sid
+        LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t.vendor_sid
+        LEFT JOIN sys_user t3 ON t.creator_account = t3.user_name
+        LEFT JOIN sys_user t4 ON t.updater_account = t4.user_name
+        LEFT JOIN sys_user t5 ON t.confirmer_account = t5.user_name
+        LEFT JOIN s_bas_plant t6 ON t.plant_sid = t6.plant_sid
+        LEFT JOIN sys_user t7 ON t.supervisor = t7.user_name
+    </sql>
+
+    <select id="checkCodeUnique" resultType="java.lang.Integer">
+        select count(*) from s_bas_storehouse where storehouse_code = #{storehouseCode} limit 1
+    </select>
+
+    <select id="checkNameUnique" resultType="java.lang.Integer">
+        select count(*) from s_bas_storehouse where storehouse_name = #{storehouseName} limit 1
+    </select>
+
+    <delete id="deleteBasStorehouseByIds" parameterType="Long">
+        delete from s_bas_storehouse where storehouse_sid in
+        <foreach item="storehouseSid" collection="array" open="(" separator="," close=")">
+            #{storehouseSid}
+        </foreach>
+    </delete>
+
+    <select id="countByDomain" resultType="java.lang.Integer">
+        select count(1) from s_bas_storehouse
+        <where>
+            <if test="storehouseSid != null  and storehouseSid != ''">
+                and storehouse_sid in (
+                <foreach collection="storehouseSid.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and handle_status in (
+                <foreach collection="handleStatus.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+
+    <update id="confirm" parameterType="com.platform.ems.domain.BasStorehouse">
+        update s_bas_storehouse
+        <set>
+            <if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmDate != null">confirm_date = #{confirmDate},</if>
+        </set>
+        where storehouse_sid in
+        (<foreach collection="storehouseSidList" item="storehouseSid" separator=",">#{storehouseSid}</foreach>)
+    </update>
+
+    <select id="getStorehouseList" parameterType="com.platform.ems.domain.BasStorehouse" resultType="com.platform.ems.domain.BasStorehouse">
+        select storehouse_sid,storehouse_code,storehouse_name,company_sid,plant_sid,plant_code,status,handle_status from s_bas_storehouse
+        <where>
+            <if test="storehouseCodeName != null and storehouseCodeName != ''">
+                and (storehouse_code like concat('%', #{storehouseCodeName}, '%')
+                or storehouse_name like concat('%', #{storehouseCodeName}, '%'))
+            </if>
+            <if test="plantSid != null and plantSid != ''">and plant_sid = #{plantSid}</if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and plant_sid in (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">and handle_status = #{handleStatus} </if>
+            <if test="status != null and status != ''">and status = #{status}</if>
+        </where>
+        order by storehouse_name
+    </select>
+
+    <resultMap type="com.platform.ems.domain.BasStorehouseLocation" id="BasStorehouseLocationResult">
+        <result property="clientId" column="client_id"/>
+        <result property="storehouseLocationSid" column="storehouse_location_sid"/>
+        <result property="storehouseSid" column="storehouse_sid"/>
+        <result property="locationCode" column="location_code"/>
+        <result property="locationName" column="location_name"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+    </resultMap>
+
+    <select id="getStorehouseLocationListById" resultMap="BasStorehouseLocationResult">
+        select client_id, storehouse_location_sid, storehouse_sid, location_code, location_name, status, handle_status
+        from s_bas_storehouse_location where storehouse_sid = #{storehouseSid} and handle_status = '5' and status = '1' order by location_name
+    </select>
+
+
+    <select id="getLocationList" parameterType="com.platform.ems.domain.BasStorehouse" resultMap="BasStorehouseLocationResult">
+        select client_id, storehouse_location_sid, storehouse_sid, location_code, location_name, status, handle_status
+        from s_bas_storehouse_location
+        <where>
+            <if test="storehouseSidList != null and storehouseSidList.length > 0">
+                and storehouse_sid in
+                (<foreach collection="storehouseSidList" item="storehouseSid" separator=",">#{storehouseSid}</foreach>)
+            </if>
+            <if test="storehouseSid != null and storehouseSid != ''">
+                and storehouse_sid = #{storehouseSid}
+            </if>
+            <if test="materialFlag != null and materialFlag != ''">
+                and (material_flag = #{materialFlag} or material_flag is null)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and handle_status = #{handleStatus}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+        </where> order by location_name
+    </select>
+</mapper>

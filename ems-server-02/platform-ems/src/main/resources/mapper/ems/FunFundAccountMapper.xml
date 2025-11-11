@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FunFundAccountMapper">
+
+    <resultMap type="com.platform.ems.domain.FunFundAccount" id="FunFundAccountResult">
+        <result property="clientId" column="client_id"/>
+        <result property="fundAccountSid" column="fund_account_sid"/>
+        <result property="fundAccountCode" column="fund_account_code"/>
+        <result property="accountType" column="account_type"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="companyName" column="company_name"/>
+        <result property="accountName" column="account_name"/>
+        <result property="currencyAmount" column="currency_amount"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="latestUpdateDate" column="latest_update_date"/>
+        <result property="accountNumber" column="account_number"/>
+        <result property="bankName" column="bank_name"/>
+        <result property="bankBranchName" column="bank_branch_name"/>
+        <result property="currencyAmountBgq" column="currency_amount_bgq"/>
+        <result property="currencyAmountZfq" column="currency_amount_zfq"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="approvalNode" column="approval_node"/>
+        <result property="approvalUserName" column="approval_user_name"/>
+        <result property="submitUserName" column="submit_user_name"/>
+        <result property="submitDate" column="submit_date"/>
+        <result property="approvalUserId" column="approval_user_id"/>
+        <result property="huipiaoCurrencyAmount" column="huipiao_currency_amount"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="huipiaoLatestUpdateDate" column="huipiao_latest_update_date"/>
+    </resultMap>
+
+    <sql id="selectFunFundAccountVo">
+        select t.client_id,
+               t.fund_account_sid,
+               t.fund_account_code,
+               t.account_type,
+               t.company_sid,
+               t.account_name,
+               t.currency_amount,
+               t.currency,
+               t.currency_unit,
+               t.latest_update_date,
+               t.account_number,
+               t.bank_name,
+               t.bank_branch_name,
+               t.currency_amount_bgq,
+               t.currency_amount_zfq,
+               t.remark,
+               t.huipiao_currency_amount,
+               t.picture_path,
+               t.huipiao_latest_update_date,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t5.company_code,
+               t5.company_name,
+               t6.approval_node,t6.approval_user_id,t6.approval_user_name,t6.create_date AS submit_date,t7.nick_name AS submit_user_name
+        from s_fun_fund_account t
+                 LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name
+                 LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name
+                 LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name
+                 LEFT JOIN s_bas_company t5 ON t.company_sid = t5.company_sid
+                 LEFT JOIN s_sys_form_process t6 ON t.fund_account_sid = t6.form_id
+                 LEFT JOIN sys_user t7 ON t6.creator_account = t7.user_name
+    </sql>
+
+    <sql id="selectStatisticalFunFundAccountVo">
+        select t.client_id,
+               t.fund_account_sid,
+               t.fund_account_code,
+               t.account_type,
+               t.company_sid,
+               t.account_name,
+               ROUND((SUM(t.currency_amount)/10000) , 4) AS currency_amount,
+               t.currency,
+               t.currency_unit,
+               t.latest_update_date,
+               t.account_number,
+               t.bank_name,
+               t.bank_branch_name,
+               t.currency_amount_bgq,
+               t.currency_amount_zfq,
+               t.remark,
+               t.huipiao_currency_amount,
+               t.picture_path,
+               t.huipiao_latest_update_date,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t5.company_code,
+               ifnull(t5.short_name , t5.company_name) as company_name,
+               t6.approval_node,t6.approval_user_id,t6.approval_user_name,t6.create_date AS submit_date,t7.nick_name AS submit_user_name
+        from s_fun_fund_account t
+                 LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name
+                 LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name
+                 LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name
+                 LEFT JOIN s_bas_company t5 ON t.company_sid = t5.company_sid
+                 LEFT JOIN s_sys_form_process t6 ON t.fund_account_sid = t6.form_id
+                 LEFT JOIN sys_user t7 ON t6.creator_account = t7.user_name
+    </sql>
+
+    <select id="selectFunFundAccountById" parameterType="Long" resultMap="FunFundAccountResult">
+        <include refid="selectFunFundAccountVo"/>
+        where t.fund_account_sid = #{fundAccountSid}
+    </select>
+
+    <select id="selectFunFundAccountList" parameterType="com.platform.ems.domain.FunFundAccount"
+            resultMap="FunFundAccountResult">
+        <include refid="selectFunFundAccountVo"/>
+        <where>
+            <if test="approvalUserId != null  and approvalUserId != ''">
+                and t6.approval_user_id = #{approvalUserId}
+            </if>
+            <if test="approvalUserIdList != null  and approvalUserIdList.length >0">
+                and t6.approval_user_id in (<foreach collection="approvalUserIdList" item="approvalUserId" separator=",">#{approvalUserId}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="accountTypeList != null and accountTypeList.length >0">and t.account_type in
+                (<foreach collection="accountTypeList" item="accountType" separator=",">#{accountType}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and (<foreach collection="creatorAccountName.split(';')" item="item" separator="or">t2.nick_name like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="fundAccountSid != null">
+                and t.fund_account_sid =#{fundAccountSid}
+            </if>
+            <if test="fundAccountSidList != null and fundAccountSidList.length > 0">
+                and t.fund_account_sid in
+                (<foreach collection="fundAccountSidList" item="fundAccountSid" separator=",">#{fundAccountSid}</foreach>)
+            </if>
+            <if test="fundAccountCode != null ">
+                and t.fund_account_code like concat('%', #{fundAccountCode}, '%')
+            </if>
+            <if test="accountType != null  and accountType != ''">
+                and (<foreach collection="accountType.split(';')" item="item" separator="or">t.account_type = #{item}
+            </foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="accountName != null  and accountName != ''">
+                and t.account_name like concat('%', #{accountName}, '%')
+            </if>
+            <if test="currencyAmount != null ">
+                and t.currency_amount = #{currencyAmount}
+            </if>
+            <if test="currency != null  and currency != ''">
+                and (<foreach collection="currency.split(';')" item="item" separator="or">t.currency = #{item}
+            </foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">
+                and (<foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit = #{item}
+            </foreach>)
+            </if>
+            <if test="latestUpdateDate != null ">
+                and t.latest_update_date = #{latestUpdateDate}
+            </if>
+            <if test="accountNumber != null  and accountNumber != ''">
+                and (<foreach collection="accountNumber.split(';')" item="item" separator=" or ">
+                t.account_number like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="bankName != null  and bankName != ''">
+                and t.bank_name like concat('%', #{bankName}, '%')
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where> order by t.fund_account_code desc
+    </select>
+
+    <select id="selectStatisticalFunFundAccountList" resultType="com.platform.ems.domain.FunFundAccount"
+            resultMap="FunFundAccountResult">
+        <include refid="selectStatisticalFunFundAccountVo"></include>
+        <where>
+            <if test="250 == 250 ">
+                t.handle_status = '5'
+            </if>
+            <if test="accountTypeList != null  and accountTypeList.length > 0">
+                and  t.account_type in (
+                <foreach collection="accountTypeList" item="item" separator=",">
+                    #{item}
+                </foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length > 0">
+                and t.company_sid in (
+                <foreach collection="companySidList" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+        group by t.account_type , t.company_sid
+        order by currency_amount DESC
+    </select>
+
+    <select id="selectStatisticalFunFundAccountDetail" resultType="com.platform.ems.domain.FunFundAccount"
+            resultMap="FunFundAccountResult">
+        <include refid="selectStatisticalFunFundAccountVo"></include>
+        where t.company_sid =#{companySid} and t.account_type = #{accountType} and t.handle_status = '5'
+        group by t.account_name
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fun_fund_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            fund_account_sid,
+            fund_account_code,
+            account_type,
+            company_sid,
+            account_name,
+            currency_amount,
+            currency,
+            currency_unit,
+            latest_update_date,
+            account_number,
+            bank_name,
+            bank_branch_name,
+            currency_amount_bgq,
+            currency_amount_zfq,
+            remark,
+            huipiao_currency_amount,
+            picture_path,
+            huipiao_latest_update_date,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.fundAccountSid},
+                #{item.fundAccountCode},
+                #{item.accountType},
+                #{item.companySid},
+                #{item.accountName},
+                #{item.currencyAmount},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.latestUpdateDate},
+                #{item.accountNumber},
+                #{item.bankName},
+                #{item.bankBranchName},
+                #{item.currencyAmountBgq},
+                #{item.currencyAmountZfq},
+                #{item.remark},
+                #{item.huipiaoCurrencyAmount},
+                #{item.picturePath},
+                #{item.huipiaoLatestUpdateDate},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fun_fund_account
+        <trim prefix="SET" suffixOverrides=",">
+            fund_account_code = #{fundAccountCode},
+            account_type = #{accountType},
+            company_sid = #{companySid},
+            account_name = #{accountName},
+            currency_amount = #{currencyAmount},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            latest_update_date = #{latestUpdateDate},
+            account_number = #{accountNumber},
+            bank_name = #{bankName},
+            bank_branch_name = #{bankBranchName},
+            currency_amount_bgq = #{currencyAmountBgq},
+            currency_amount_zfq = #{currencyAmountZfq},
+            remark = #{remark},
+            huipiao_currency_amount = #{huipiaoCurrencyAmount},
+            picture_path = #{picturePath},
+            huipiao_latest_update_date = #{huipiaoLatestUpdateDate},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where fund_account_sid = #{fundAccountSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fun_fund_account
+            <trim prefix="SET" suffixOverrides=",">
+                fund_account_code = #{fundAccountCode},
+                account_type = #{accountType},
+                company_sid = #{companySid},
+                account_name = #{accountName},
+                currency_amount = #{currencyAmount},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+                latest_update_date = #{latestUpdateDate},
+                account_number = #{accountNumber},
+                bank_name = #{bankName},
+                bank_branch_name = #{bankBranchName},
+                currency_amount_bgq = #{currencyAmountBgq},
+                currency_amount_zfq = #{currencyAmountZfq},
+                remark = #{remark},
+                huipiao_currency_amount = #{huipiaoCurrencyAmount},
+                picture_path = #{picturePath},
+                huipiao_latest_update_date = #{huipiaoLatestUpdateDate},
+                handle_status = #{handleStatus},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where fund_account_sid = #{fundAccountSid}
+        </foreach>
+    </update>
+
+    <select id="getList" parameterType="com.platform.ems.domain.FunFundAccount" resultType="com.platform.ems.domain.FunFundAccount">
+        select
+        t.client_id,
+        t.fund_account_sid,
+        t.fund_account_code,
+        t.account_type,
+        t.account_name,
+        t.account_number,
+        concat(t.account_name, '-', t.account_number) as name_number
+        from s_fun_fund_account t
+        <where>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t.company_sid = #{companySid}
+            </if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.plug.mapper.ConDataobjectHandleStatusMapper">
+
+    <resultMap type="com.platform.ems.plug.domain.ConDataobjectHandleStatus" id="ConDataobjectHandleStatusResult">
+        <result property="clientId" column="client_id"/>
+        <result property="sid" column="sid"/>
+        <result property="dataobjectCategorySid" column="dataobject_category_sid"/>
+        <result property="dataobjectCategoryCode" column="dataobject_category_code"/>
+        <result property="dataobjectCategoryName" column="dataobject_category_name"/>
+        <result property="dataobjectHandleStatus" column="dataobject_handle_status"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectConDataobjectHandleStatusVo">
+        select t.client_id,
+               t.sid,
+               t.dataobject_category_sid,
+               t.dataobject_category_code,
+               t.dataobject_handle_status,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS confirmer_account_name,
+               t4.name as dataobject_category_name
+        from s_con_dataobject_handle_status t
+         LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+         LEFT JOIN sys_user t3 ON t3.user_name = t.confirmer_account
+         LEFT JOIN s_con_dataobject_category t4 ON t.dataobject_category_sid = t4.sid
+    </sql>
+
+    <select id="selectConDataobjectHandleStatusById" parameterType="Long" resultMap="ConDataobjectHandleStatusResult">
+        <include refid="selectConDataobjectHandleStatusVo"/>
+        where t.sid = #{sid}
+    </select>
+
+    <select id="selectConDataobjectHandleStatusList" parameterType="com.platform.ems.plug.domain.ConDataobjectHandleStatus"
+            resultMap="ConDataobjectHandleStatusResult">
+        <include refid="selectConDataobjectHandleStatusVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="dataobjectCategorySid != null ">
+                and t.dataobject_category_sid =#{dataobjectCategorySid}
+            </if>
+            <if test="dataobjectCategoryCode != null and dataobjectCategoryCode != ''">
+                and t.dataobject_category_code = #{dataobjectCategoryCode}
+            </if>
+            <if test="dataobjectHandleStatus != null and dataobjectHandleStatus != ''">
+                and t.dataobject_handle_status like concat("%" , #{dataobjectHandleStatus} , "%")
+            </if>
+            <if test="dataobjectCategorySidList != null and dataobjectCategorySidList.length > 0">
+                and t.dataobject_category_sid in
+                (<foreach collection="dataobjectCategorySidList" item="dataobjectCategorySid" separator=",">#{dataobjectCategorySid}</foreach>)
+            </if>
+            <if test="dataobjectHandleStatusList != null and dataobjectHandleStatusList.length > 0">
+                and t.dataobject_handle_status in
+                (<foreach collection="dataobjectHandleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%',#{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where> order by t.dataobject_category_code asc
+    </select>
+
+    <select id="selectConDataobjectHandleStatusGroup" parameterType="com.platform.ems.plug.domain.ConDataobjectHandleStatus"
+            resultMap="ConDataobjectHandleStatusResult">
+        select
+            t.dataobject_category_sid,
+            t.dataobject_category_code,
+            t1.name as dataobject_category_name
+        from s_con_dataobject_handle_status t
+        LEFT JOIN s_con_dataobject_category t1 ON t.dataobject_category_sid = t1.sid
+        LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="dataobjectCategorySid != null ">
+                and t.dataobject_category_sid =#{dataobjectCategorySid}
+            </if>
+            <if test="dataobjectCategoryCode != null and dataobjectCategoryCode != ''">
+                and t.dataobject_category_code = #{dataobjectCategoryCode}
+            </if>
+            <if test="dataobjectHandleStatus != null and dataobjectHandleStatus != ''">
+                and t.dataobject_handle_status = #{dataobjectHandleStatus}
+            </if>
+            <if test="dataobjectHandleStatusList != null and dataobjectHandleStatusList.length > 0">
+                and t.dataobject_handle_status in
+                (<foreach collection="dataobjectHandleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and (<foreach collection="creatorAccountName.split(';')" item="item" separator="or">t2.nick_name
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        group by t.dataobject_category_sid
+        order by t.dataobject_category_code asc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_dataobject_handle_status
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sid,
+            dataobject_category_sid,
+            dataobject_category_code,
+            dataobject_handle_status,
+            remark,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.sid},
+                #{item.dataobjectCategorySid},
+                #{item.dataobjectCategoryCode},
+                #{item.dataobjectHandleStatus},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_dataobject_handle_status
+        <trim prefix="SET" suffixOverrides=",">
+            dataobject_category_sid = #{dataobjectCategorySid},
+            dataobject_category_code = #{dataobjectCategoryCode},
+            dataobject_handle_status = #{dataobjectHandleStatus},
+            remark = #{remark},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where sid = #{sid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_dataobject_handle_status
+            <trim prefix="SET" suffixOverrides=",">
+                dataobject_category_sid = #{dataobjectCategorySid},
+                dataobject_category_code = #{dataobjectCategoryCode},
+                dataobject_handle_status = #{dataobjectHandleStatus},
+                remark = #{remark},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where sid = #{sid}
+        </foreach>
+    </update>
+
+</mapper>

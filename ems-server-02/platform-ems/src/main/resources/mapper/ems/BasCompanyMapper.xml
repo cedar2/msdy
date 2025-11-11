@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasCompanyMapper">
+
+    <resultMap type="com.platform.ems.domain.BasCompany" id="BasCompanyResult">
+        <result property="clientId" column="client_id"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="companyName" column="company_name"/>
+        <result property="shortName" column="short_name"/>
+        <result property="internetUrl" column="internet_url"/>
+        <result property="ownerName" column="owner_name"/>
+        <result property="companyType" column="company_type"/>
+        <result property="companyCategory" column="company_category"/>
+        <result property="creditCode" column="credit_code"/>
+        <result property="creditStartDate" column="credit_start_date"/>
+        <result property="creditEndDate" column="credit_end_date"/>
+        <result property="invoiceTel" column="invoice_tel"/>
+        <result property="officeAddr" column="office_addr"/>
+        <result property="invoiceAddr" column="invoice_addr"/>
+        <result property="registerAddr" column="register_addr"/>
+        <result property="businessScope" column="business_scope"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="taxpayerIdentifyNumber" column="taxpayer_identify_number"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="disableRemark" column="disable_remark"/>
+    </resultMap>
+
+    <sql id="selectBasCompanyVo">
+        SELECT
+	t.client_id,
+	t.company_sid,
+	t.company_code,
+	t.company_name,
+    t.short_name,
+	t.internet_url ,
+	t.owner_name,
+	t.company_type,
+	t.company_category,
+	t.credit_code,
+	t.credit_start_date,
+	t.credit_end_date,
+	t.invoice_tel,
+	t.office_addr,
+	t.invoice_addr,
+	t.register_addr,
+	t.business_scope,
+	t.picture_path,
+	t.taxpayer_identify_number,
+	t.remark,
+	t.disable_remark,
+	t.STATUS,
+	t.handle_status,
+	t.creator_account,
+	t.create_date,
+	t.updater_account,
+	t.update_date,
+	t.confirmer_account,
+	t.confirm_date,
+	t.data_source_sys,
+	t1.nick_name as creator_account_name,
+	t2.nick_name as updater_account_name,
+	t3.nick_name as confirmer_account_name
+FROM
+	s_bas_company t
+	LEFT JOIN sys_user t1 on t1.user_name = t.creator_account
+	LEFT JOIN sys_user t2 on t2.user_name = t.updater_account
+	LEFT JOIN sys_user t3 on t3.user_name = t.confirmer_account
+    </sql>
+
+    <select id="selectBasCompanyList" parameterType="com.platform.ems.domain.BasCompany"
+            resultType="com.platform.ems.domain.BasCompany">
+        <include refid="selectBasCompanyVo"/>
+        <where>
+            <if test="companySid != null ">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="companyName != null and companyName != ''">
+                and (<foreach collection="companyName.split(';')" item="companyName" separator="or">t.company_name like
+                concat('%', #{companyName}, '%')</foreach>)
+            </if>
+            <if test="shortName != null and shortName != ''">
+                and (<foreach collection="shortName.split(';')" item="shortName" separator="or">t.short_name like
+                concat('%', #{shortName}, '%')</foreach>)
+            </if>
+            <if test="internetUrl != null and internetUrl != ''">
+                and (<foreach collection="internetUrl.split(';')" item="internetUrl" separator="or">t.internet_url like
+                concat('%', #{internetUrl}, '%')</foreach>)
+            </if>
+            <if test="ownerName != null and ownerName != ''">
+                and ( <foreach collection="ownerName.split(';')" item="ownerName" separator="or">t.owner_name like
+                concat('%', #{ownerName}, '%')</foreach>)
+            </if>
+            <if test="companyTypeList != null and companyTypeList.length >0">
+                and t.company_type in
+                (<foreach collection="companyTypeList" item="companyType" separator=",">#{companyType}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and (<foreach collection="creatorAccountName.split(';')" item="creatorAccount" separator="or">
+                t1.nick_name like concat('%', #{creatorAccount}, '%')</foreach>)
+            </if>
+            <if test="companyCode != null and companyCode != ''">
+                and (<foreach collection="companyCode.split(';')" item="companyCode" separator="or">t.company_code like
+                concat('%', #{companyCode}, '%')</foreach>)
+            </if>
+            <if test="creditCode != null and creditCode != ''">
+                and (<foreach collection="creditCode.split(';')" item="creditCode" separator="or">t.credit_code like
+                concat('%', #{creditCode}, '%')</foreach>)
+            </if>
+            <if test="companyCategoryList != null and companyCategoryList.length>0">
+                and t.company_category in
+                (<foreach collection="companyCategoryList" item="companyCategory" separator=",">
+                #{companyCategory}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length>0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status in
+                (<foreach collection="handleStatus.split(';')" item="handleStatus" separator=",">
+                #{handleStatus}</foreach>)
+            </if>
+            <if test="status != null and status != ''">
+                and t.status in
+                (<foreach collection="status.split(';')" item="status" separator=",">#{status}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+               ${params.dataScope}
+            </if>
+        </where>
+        order by t.create_date desc, t.company_code desc
+    </select>
+
+    <resultMap type="com.platform.common.core.domain.model.DictData" id="DictDataResult">
+        <result property="dictType" column="dict_type"/>
+        <collection property="dataList" ofType="com.platform.common.core.domain.model.DictData">
+            <result property="dictLabel" column="dict_label"/>
+            <result property="dictValue" column="dict_value"/>
+        </collection>
+    </resultMap>
+
+    <select id="getDictDataList" resultMap="DictDataResult">
+        select   t.dict_type,t.dict_label,t.dict_value  from sys_dict_data t
+    </select>
+
+             <select id="selectDictData" resultType="com.platform.common.core.domain.model.DictData">
+        select   t.dict_type,t.dict_label,t.dict_value,t.status,t.handle_status  from sys_dict_data t where t.dict_type=#{dictType}
+    </select>
+
+    <select id="getDictDataPrtvateList" resultMap="DictDataResult">
+       select
+	t.dict_type,
+	t.dict_value,
+	t1.dict_label
+from
+	sys_dict_data t
+	left join sys_dict_data_alias  t1 on t1.dict_code=t.dict_code
+	where t1.client_id =#{clientId}
+    </select>
+
+    <select id="selectBasCompanyById" parameterType="long" resultType="com.platform.ems.domain.BasCompany">
+        select t.*, t2.nick_name AS creator_account_name from s_bas_company t LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name
+        where t.company_sid = #{companySid} limit 1
+    </select>
+
+    <insert id="insertBasCompany" parameterType="com.platform.ems.domain.BasCompany">
+        insert into s_bas_company
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">client_id,</if>
+            <if test="companySid != null and companySid != ''">company_sid,</if>
+            <if test="companyName != null and companyName != ''">company_name,</if>
+            <if test="shortName != null and shortName != ''">short_name,</if>
+            <if test="internetUrl != null and internetUrl != ''">internet_url,</if>
+            <if test="ownerName != null">owner_name,</if>
+            <if test="companyType != null">company_type,</if>
+            <if test="companyCategory != null">company_category,</if>
+            <if test="creditCode != null">credit_code,</if>
+            <if test="creditStartDate != null">credit_start_date,</if>
+            <if test="creditEndDate != null">credit_end_date,</if>
+            <if test="invoiceTel != null">invoice_tel,</if>
+            <if test="officeAddr != null">office_addr,</if>
+            <if test="invoiceAddr != null">invoice_addr,</if>
+            <if test="registerAddr != null">register_addr,</if>
+            <if test="businessScope != null">business_scope,</if>
+            <if test="picturePath != null">picture_path,</if>
+            <if test="taxpayerIdentifyNumber != null">taxpayer_identify_number,</if>
+            <if test="remark != null">remark,</if>
+            <if test="disableRemark != null">disable_remark,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="handleStatus != null and handleStatus != ''">handle_status,</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account,</if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">confirmer_account,</if>
+            <if test="confirmDate != null and confirmDate != ''">confirm_data,</if>
+            create_date
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">#{clientId},</if>
+            <if test="companySid != null and companySid != ''">#{companySid},</if>
+            <if test="internetUrl != null and internetUrl != ''">#{internetUrl},</if>
+            <if test="ownerName != null">#{ownerName},</if>
+            <if test="companyType != null">#{companyType},</if>
+            <if test="companyCategory != null">#{companyCategory},</if>
+            <if test="creditCode != null">#{creditCode},</if>
+            <if test="creditStartDate != null">#{creditStartDate},</if>
+            <if test="creditEndDate != null">#{creditEndDate},</if>
+            <if test="invoiceTel != null">#{invoiceTel},</if>
+            <if test="officeAddr != null">#{officeAddr},</if>
+            <if test="invoiceAddr != null">#{invoiceAddr},</if>
+            <if test="registerAddr != null">#{registerAddr},</if>
+            <if test="businessScope != null">#{businessScope},</if>
+            <if test="picturePath != null">#{picturePath},</if>
+            <if test="taxpayerIdentifyNumber != null">#{taxpayerIdentifyNumber},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="disableRemark != null">#{disableRemark},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="handleStatus != null and handleStatus != ''">#{handleStatus},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">#{creatorAccount},</if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">#{confirmerAccount},</if>
+            <if test="confirmDate != null and confirmDate != ''">#{confirmDate},</if>
+            now()
+        </trim>
+    </insert>
+
+    <update id="updateBasCompany" parameterType="com.platform.ems.domain.BasCompany">
+        update s_bas_company
+        <trim prefix="set" suffixOverrides=",">
+            company_code = #{companyCode},
+            company_name = #{companyName},
+            short_name = #{shortName},
+            internet_url = #{internetUrl},
+            owner_name = #{ownerName},
+            company_type = #{companyType},
+            company_category = #{companyCategory},
+            credit_code = #{creditCode},
+            credit_start_date = #{creditStartDate},
+            credit_end_date = #{creditEndDate},
+            invoice_tel = #{invoiceTel},
+            office_addr = #{officeAddr},
+            invoice_addr = #{invoiceAddr},
+            register_addr = #{registerAddr},
+            business_scope = #{businessScope},
+            remark = #{remark},
+            disable_remark = #{disableRemark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where company_sid = #{companySid}
+    </update>
+
+    <delete id="deleteBasCompanyById" parameterType="long">
+        delete from s_bas_company where company_sid = #{companySid}
+    </delete>
+
+    <delete id="deleteBasCompanyByIds" parameterType="long">
+        delete from s_bas_company where company_sid in
+        <foreach item="companySid" collection="array" open="(" separator="," close=")">
+            #{companySid}
+        </foreach>
+    </delete>
+
+    <select id="checkNameUnique" resultType="int">
+        select count(*) from s_bas_company where company_name = #{companyName} limit 1
+    </select>
+
+    <select id="checkCodeUnique" resultType="int">
+        select count(*) from s_bas_company where company_code = #{companyCode} limit 1
+    </select>
+
+    <select id="getHandleStatus" resultType="string">
+        select handle_status from s_bas_company where company_sid = #{companySid}
+    </select>
+
+    <update id="editStatus" parameterType="com.platform.ems.domain.dto.request.BasButtonRequest">
+        update s_bas_company
+        <set>
+            <if test="status != null and handleStatus != ''">status = #{status},</if>
+            update_date = now()
+        </set>
+        where company_sid in
+        <foreach item="companySid" collection="ids" open="(" separator="," close=")">
+            #{companySid}
+        </foreach>
+    </update>
+
+    <update id="confirmCompanyById" parameterType="com.platform.ems.domain.BasCompany">
+        update s_bas_company
+        <set>
+            <if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmDate != null">confirm_date = #{confirmDate},</if>
+        </set>
+        where company_sid in (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+    </update>
+
+
+    <select id="selectBasCompanyListByIds" resultType="com.platform.ems.domain.BasCompany">
+        select * from s_bas_company where company_sid in
+        <foreach item="companySid" collection="companySids" open="(" separator="," close=")">
+            #{companySid}
+        </foreach>
+    </select>
+
+    <select id="getCompanyList" parameterType="com.platform.ems.domain.BasCompany" resultType="com.platform.ems.domain.BasCompany">
+        select client_id,company_sid,company_code,company_name,
+               ifnull(short_name,company_name) as short_name,
+               status,handle_status
+        from s_bas_company
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and client_id = #{clientId}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length>0 ">
+                and handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+        </where>
+        order by short_name asc
+    </select>
+</mapper>

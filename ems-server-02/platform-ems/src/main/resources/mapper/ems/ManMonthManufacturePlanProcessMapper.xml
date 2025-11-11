@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManMonthManufacturePlanProcessMapper">
+
+    <resultMap type="com.platform.ems.domain.ManMonthManufacturePlanProcess" id="ManMonthManufacturePlanProcessResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="manufacturePlanProcessSid" column="manufacture_plan_process_sid"/>
+                    <result property="monthManufacturePlanItemSid" column="month_manufacture_plan_item_sid"/>
+                    <result property="processSid" column="process_sid"/>
+                    <result property="processCode" column="process_code"/>
+                    <result property="planEndDate" column="plan_end_date"/>
+                    <result property="remark" column="remark"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+                <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectManMonthManufacturePlanProcessVo">
+select t.client_id, t.manufacture_plan_process_sid, t.month_manufacture_plan_item_sid, t.process_sid, t.process_code, t.plan_end_date, t.remark, t.creator_account, t.create_date, t.updater_account, t.update_date, t.data_source_sys ,t2.nick_name AS creator_account_name,t3.nick_name AS updater_account_name,t4.nick_name AS confirmer_account_name from s_man_month_manufacture_plan_process t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+        LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t3.client_id
+    </sql>
+
+    <select id="selectManMonthManufacturePlanProcessById" parameterType="Long" resultMap="ManMonthManufacturePlanProcessResult">
+        <include refid="selectManMonthManufacturePlanProcessVo"/>
+        where t.manufacture_plan_process_sid = #{manufacturePlanProcessSid}
+    </select>
+
+    <select id="selectManMonthManufacturePlanProcessList" parameterType="com.platform.ems.domain.ManMonthManufacturePlanProcess"
+            resultMap="ManMonthManufacturePlanProcessResult">
+        <include refid="selectManMonthManufacturePlanProcessVo"/>
+        <where>
+                                                                                                    <if test="clientId != null and clientId != ''">
+                                and t.client_id = #{clientId}
+                            </if>
+                                                                                                                                                                                            <if test="monthManufacturePlanItemSid != null ">
+                                and t.month_manufacture_plan_item_sid = #{monthManufacturePlanItemSid}
+                            </if>
+                                                                                                                                                                <if test="processSid != null ">
+                                and t.process_sid = #{processSid}
+                            </if>
+                                                                                                                                                                <if test="processCode != null and processCode != ''">
+                                and t.process_code = #{processCode}
+                            </if>
+                                                                                                                                                                                                <if test="planEndDate != null ">
+                                    and t.plan_end_date = #{planEndDate}
+                                </if>
+                                                                                                                                                                                                                        <if test="creatorAccount != null and creatorAccount != ''">
+                                and t.creator_account = #{creatorAccount}
+                            </if>
+                                                                                                                                                                                                <if test="beginTime != null and beginTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                                </if>
+                                <if test="endTime != null and endTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                                </if>
+                                                                                                                                                                                            <if test="updaterAccount != null and updaterAccount != ''">
+                                and t.updater_account = #{updaterAccount}
+                            </if>
+                                                                                                                                                                                                <if test="updateDate != null ">
+                                    and t.update_date = #{updateDate}
+                                </if>
+                                                                                                                                                                                            <if test="dataSourceSys != null and dataSourceSys != ''">
+                                and t.data_source_sys = #{dataSourceSys}
+                            </if>
+                                                                                    <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_month_manufacture_plan_process
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                manufacture_plan_process_sid,
+                                                                month_manufacture_plan_item_sid,
+                                                                process_sid,
+                                                                process_code,
+                                                                plan_end_date,
+                                                                remark,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                data_source_sys,
+                                    </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                                                            #{item.clientId},
+                                                                                #{item.manufacturePlanProcessSid},
+                                                                                #{item.monthManufacturePlanItemSid},
+                                                                                #{item.processSid},
+                                                                                #{item.processCode},
+                                                                                #{item.planEndDate},
+                                                                                #{item.remark},
+                                                                                #{item.creatorAccount},
+                                                                                #{item.createDate},
+                                                                                #{item.updaterAccount},
+                                                                                #{item.updateDate},
+                                                                                #{item.dataSourceSys},
+                                                </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_month_manufacture_plan_process
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                                            month_manufacture_plan_item_sid = #{monthManufacturePlanItemSid},
+                                                                process_sid = #{processSid},
+                                                                process_code = #{processCode},
+                                                                plan_end_date = #{planEndDate},
+                                                                remark = #{remark},
+                                                                                                                        updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                </trim>
+        where manufacture_plan_process_sid = #{manufacturePlanProcessSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_month_manufacture_plan_process
+            <trim prefix="SET" suffixOverrides=",">
+             plan_end_date = #{o.planEndDate},
+             </trim>
+            where manufacture_plan_process_sid = #{o.manufacturePlanProcessSid}
+        </foreach>
+    </update>
+
+</mapper>

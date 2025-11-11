@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FrmTrialsalePlanCategoryAnalysisMapper">
+
+    <resultMap type="com.platform.ems.domain.FrmTrialsalePlanCategoryAnalysis"
+               id="FrmTrialsalePlanCategoryAnalysisResult">
+        <result property="clientId" column="client_id"/>
+        <result property="trialsalePlanCategoryAnalysisSid" column="trialsale_plan_category_analysis_sid"/>
+        <result property="newproductTrialsalePlanSid" column="newproduct_trialsale_plan_sid"/>
+        <result property="rankNum" column="rank_num"/>
+        <result property="brand" column="brand"/>
+        <result property="salePriceAverage" column="sale_price_average"/>
+        <result property="saleQuantity" column="sale_quantity"/>
+        <result property="coreSalePoint" column="core_sale_point"/>
+        <result property="sorePoint" column="sore_point"/>
+        <result property="summary" column="summary"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectFrmTrialsalePlanCategoryAnalysisVo">
+        select t.client_id,
+               t.trialsale_plan_category_analysis_sid,
+               t.newproduct_trialsale_plan_sid,
+               t.rank_num,
+               t.brand,
+               t.sale_price_average,
+               t.sale_quantity,
+               t.core_sale_point,
+               t.sore_point,
+               t.summary,
+               t.currency,
+               t.currency_unit,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name
+        from s_frm_trialsale_plan_category_analysis t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+    </sql>
+
+    <select id="selectFrmTrialsalePlanCategoryAnalysisById" parameterType="Long"
+            resultMap="FrmTrialsalePlanCategoryAnalysisResult">
+        <include refid="selectFrmTrialsalePlanCategoryAnalysisVo"/>
+        where t.trialsale_plan_category_analysis_sid = #{trialsalePlanCategoryAnalysisSid}
+    </select>
+
+    <select id="selectFrmTrialsalePlanCategoryAnalysisList"
+            parameterType="com.platform.ems.domain.FrmTrialsalePlanCategoryAnalysis"
+            resultMap="FrmTrialsalePlanCategoryAnalysisResult">
+        <include refid="selectFrmTrialsalePlanCategoryAnalysisVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="trialsalePlanCategoryAnalysisSid != null ">
+                and t.trialsale_plan_category_analysis_sid = #{trialsalePlanCategoryAnalysisSid}
+            </if>
+            <if test="trialsalePlanCategoryAnalysisSidList != null and trialsalePlanCategoryAnalysisSidList.length >0 ">
+                and t.trialsale_plan_category_analysis_sid in
+                (<foreach collection="trialsalePlanCategoryAnalysisSidList" item="trialsalePlanCategoryAnalysisSid" separator=",">
+                #{trialsalePlanCategoryAnalysisSid}</foreach>)
+            </if>
+            <if test="newproductTrialsalePlanSid != null ">
+                and t.newproduct_trialsale_plan_sid = #{newproductTrialsalePlanSid}
+            </if>
+            <if test="rankNum != null ">
+                and t.rank_num = #{rankNum}
+            </if>
+            <if test="brand != null and brand != ''">
+                and t.brand = #{brand}
+            </if>
+            <if test="salePriceAverage != null ">
+                and t.sale_price_average = #{salePriceAverage}
+            </if>
+            <if test="saleQuantity != null ">
+                and t.sale_quantity = #{saleQuantity}
+            </if>
+            <if test="coreSalePoint != null and coreSalePoint != ''">
+                and t.core_sale_point = #{coreSalePoint}
+            </if>
+            <if test="sorePoint != null and sorePoint != ''">
+                and t.sore_point = #{sorePoint}
+            </if>
+            <if test="summary != null and summary != ''">
+                and t.summary = #{summary}
+            </if>
+            <if test="currency != null and currency != ''">
+                and t.currency = #{currency}
+            </if>
+            <if test="currencyUnit != null and currencyUnit != ''">
+                and t.currency_unit = #{currencyUnit}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="createDate != null ">
+                and date_format(t.create_date,'%y%m%d') = date_format(#{createDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_frm_trialsale_plan_category_analysis
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            trialsale_plan_category_analysis_sid,
+            newproduct_trialsale_plan_sid,
+            rank_num,
+            brand,
+            sale_price_average,
+            sale_quantity,
+            core_sale_point,
+            sore_point,
+            summary,
+            currency,
+            currency_unit,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.trialsalePlanCategoryAnalysisSid},
+                #{item.newproductTrialsalePlanSid},
+                #{item.rankNum},
+                #{item.brand},
+                #{item.salePriceAverage},
+                #{item.saleQuantity},
+                #{item.coreSalePoint},
+                #{item.sorePoint},
+                #{item.summary},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_frm_trialsale_plan_category_analysis
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            newproduct_trialsale_plan_sid = #{newproductTrialsalePlanSid},
+            rank_num = #{rankNum},
+            brand = #{brand},
+            sale_price_average = #{salePriceAverage},
+            sale_quantity = #{saleQuantity},
+            core_sale_point = #{coreSalePoint},
+            sore_point = #{sorePoint},
+            summary = #{summary},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where trialsale_plan_category_analysis_sid = #{trialsalePlanCategoryAnalysisSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_frm_trialsale_plan_category_analysis
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                newproduct_trialsale_plan_sid = #{newproductTrialsalePlanSid},
+                rank_num = #{rankNum},
+                brand = #{brand},
+                sale_price_average = #{salePriceAverage},
+                sale_quantity = #{saleQuantity},
+                core_sale_point = #{coreSalePoint},
+                sore_point = #{sorePoint},
+                summary = #{summary},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+            </trim>
+            where trialsale_plan_category_analysis_sid = #{trialsalePlanCategoryAnalysisSid}
+        </foreach>
+    </update>
+
+</mapper>

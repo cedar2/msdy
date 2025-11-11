@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.DevMarketSurveyMapper">
+
+    <resultMap type="com.platform.ems.domain.DevMarketSurvey" id="DevMarketSurveyResult">
+        <result property="clientId" column="client_id"/>
+        <result property="marketSurveySid" column="market_survey_sid"/>
+        <result property="marketSurveyCode" column="market_survey_code"/>
+        <result property="year" column="year"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="brandCode" column="brand_code"/>
+        <result property="groupType" column="group_type"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectDevMarketSurveyVo">
+        select t.client_id,
+        t.market_survey_sid,
+        t.market_survey_code,
+        t.year,
+        t.product_season_sid,
+        t.product_season_code,
+        t.company_sid,
+        t6.company_code,
+        t.brand_code,
+        t.group_type,
+        t.remark,
+        t.status,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t2.nick_name AS creator_account_name,
+        t3.nick_name AS updater_account_name,
+        t4.nick_name AS confirmer_account_name,
+        t5.product_season_name,
+        t6.company_name,
+        ifnull(t6.short_name, t6.company_name) as company_short_name,
+        t7.brand_name
+        from s_dev_market_survey t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+        LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t4.client_id
+        LEFT JOIN s_bas_product_season t5 ON t.product_season_sid = t5.product_season_sid
+        LEFT JOIN s_bas_company t6 ON t.company_sid = t6.company_sid
+        LEFT JOIN s_bas_company_brand t7 ON t.company_sid = t7.company_sid AND t.brand_code = t7.brand_code
+    </sql>
+
+    <select id="selectDevMarketSurveyById" parameterType="Long" resultMap="DevMarketSurveyResult">
+        <include refid="selectDevMarketSurveyVo"/>
+        where t.market_survey_sid = #{marketSurveySid}
+    </select>
+
+    <select id="selectDevMarketSurveyListOrderByDesc" parameterType="com.platform.ems.domain.DevMarketSurvey"
+            resultMap="DevMarketSurveyResult">
+        <include refid="selectDevMarketSurveyVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="marketSurveySid != null ">
+                and t.market_survey_sid = #{marketSurveySid}
+            </if>
+            <if test="marketSurveySidList != null and marketSurveySidList.length >0 ">
+                and t.market_survey_sid in
+                (<foreach collection="marketSurveySidList" item="marketSurveySid" separator=",">
+                #{marketSurveySid}</foreach>)
+            </if>
+            <if test="year != null and year != ''">
+                and t.year = #{year}
+            </if>
+            <if test="yearList != null and yearList.length >0 ">
+                and t.year in
+                (<foreach collection="yearList" item="year" separator=",">#{year}</foreach>)
+            </if>
+            <if test="productSeasonSid != null ">
+                and t.product_season_sid = #{productSeasonSid}
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0 ">
+                and t.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">
+                #{productSeasonSid}</foreach>)
+            </if>
+            <if test="productSeasonCode != null and productSeasonCode != ''">
+                and t.product_season_code = #{productSeasonCode}
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="companyCode != null and companyCode != ''">
+                and t.company_code = #{companyCode}
+            </if>
+            <if test="brandCode != null and brandCode != ''">
+                and t.brand_code = #{brandCode}
+            </if>
+            <if test="brandCodeList != null and brandCodeList.length >0 ">
+                and t.brand_code in
+                (<foreach collection="brandCodeList" item="brandCode" separator=",">#{brandCode}</foreach>)
+            </if>
+            <if test="groupType != null and groupType != ''">
+                and t.group_type = #{groupType}
+            </if>
+            <if test="groupTypeList != null and groupTypeList.length >0 ">
+                and t.group_type in
+                (<foreach collection="groupTypeList" item="groupType" separator=",">#{groupType}</foreach>)
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by market_survey_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_dev_market_survey
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            market_survey_sid,
+            market_survey_code,
+            year,
+            product_season_sid,
+            product_season_code,
+            company_sid,
+            company_code,
+            brand_code,
+            group_type,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.marketSurveySid},
+                #{item.marketSurveyCode},
+                #{item.year},
+                #{item.productSeasonSid},
+                #{item.productSeasonCode},
+                #{item.companySid},
+                #{item.companyCode},
+                #{item.brandCode},
+                #{item.groupType},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_dev_market_survey
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            market_survey_code = #{marketSurveyCode},
+            year = #{year},
+            product_season_sid = #{productSeasonSid},
+            product_season_code = #{productSeasonCode},
+            company_sid = #{companySid},
+            company_code = #{companyCode},
+            brand_code = #{brandCode},
+            group_type = #{groupType},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where market_survey_sid = #{marketSurveySid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_dev_market_survey
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                market_survey_code = #{marketSurveyCode},
+                year = #{year},
+                product_season_sid = #{productSeasonSid},
+                product_season_code = #{productSeasonCode},
+                company_sid = #{companySid},
+                company_code = #{companyCode},
+                brand_code = #{brandCode},
+                group_type = #{groupType},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+            </trim>
+            where market_survey_sid = #{marketSurveySid}
+        </foreach>
+    </update>
+
+    <select id="selectByYearAndCompanySidAndBrandCode" resultType="com.platform.ems.domain.DevMarketSurvey">
+        <include refid="selectDevMarketSurveyVo"/>
+        where t.year = #{year}
+        <choose>
+            <when test="companySid != null">
+                AND t.company_sid = #{companySid}
+            </when>
+            <otherwise>
+                AND t.company_sid is null
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="brandCode != null and brandCode != ''">
+                AND t.brand_code = #{brandCode}
+            </when>
+            <otherwise>
+                AND t.brand_code is null
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="groupType != null and groupType != ''">
+                AND t.group_type = #{groupType}
+            </when>
+            <otherwise>
+                AND t.group_type is null
+            </otherwise>
+        </choose>
+    </select>
+
+</mapper>

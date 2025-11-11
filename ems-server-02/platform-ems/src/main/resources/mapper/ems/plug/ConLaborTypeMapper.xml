@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.plug.mapper.ConLaborTypeMapper">
+
+    <resultMap type="com.platform.ems.plug.domain.ConLaborType" id="ConLaborTypeResult">
+        <result property="clientId" column="client_id"/>
+        <result property="laborTypeSid" column="labor_type_sid"/>
+        <result property="laborTypeCode" column="labor_type_code"/>
+        <result property="laborTypeName" column="labor_type_name"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyName" column="company_name"/>
+        <result property="category" column="category"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="sort" column="sort"/>
+    </resultMap>
+
+    <sql id="selectConLaborTypeVo">
+        select
+        t.client_id,
+        t.labor_type_sid,
+        t.labor_type_code,
+        t.labor_type_name,
+        t.company_sid,
+        t2.company_name AS company_name,
+        t.category,
+        t.remark,
+        t.status,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t.sort,
+        t3.nick_name AS creator_account_name,
+        t4.nick_name AS updater_account_name,
+        t5.nick_name AS confirmer_account_name
+  from s_con_labor_type t
+        LEFT JOIN s_bas_company t2 ON t2.company_sid = t.company_sid
+        LEFT JOIN sys_user t3 ON t.creator_account = t3.user_name
+        LEFT JOIN sys_user t4 ON t.updater_account = t4.user_name
+        LEFT JOIN sys_user t5 ON t.confirmer_account = t5.user_name
+    </sql>
+
+    <select id="selectConLaborTypeById" parameterType="Long" resultMap="ConLaborTypeResult">
+        <include refid="selectConLaborTypeVo"/>
+        where t.labor_type_sid = #{laborTypeSid}
+    </select>
+
+
+    <select id="selectConLaborTypeList" parameterType="com.platform.ems.plug.domain.ConLaborType"
+            resultMap="ConLaborTypeResult">
+        <include refid="selectConLaborTypeVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="laborTypeSidList != null and laborTypeSidList.length >0 ">
+                and t.labor_type_sid in
+                (<foreach collection="laborTypeSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="laborTypeSid != null ">
+                and t.labor_type_sid =#{laborTypeSid}
+            </if>
+            <if test="laborTypeCode != null  and laborTypeCode != ''">
+                and (<foreach collection="laborTypeCode.split(';')" item="item" separator="or">t.labor_type_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="laborTypeName != null  and laborTypeName != ''">
+                and (<foreach collection="laborTypeName.split(';')" item="item" separator="or">t.labor_type_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="status != null  and status != ''">
+                and t.status =#{status}
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t3.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sort != null ">
+                and t.sort =#{sort}
+            </if>
+        </where>
+        order by t.sort asc, t.labor_type_name asc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_labor_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            labor_type_sid,
+            labor_type_code,
+            labor_type_name,
+            company_sid,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+            sort,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.laborTypeSid},
+                #{item.laborTypeCode},
+                #{item.laborTypeName},
+                #{item.companySid},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+                #{item.sort},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_labor_type
+        <trim prefix="SET" suffixOverrides=",">
+            labor_type_code = #{laborTypeCode},
+            labor_type_name = #{laborTypeName},
+            company_sid = #{companySid},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            sort = #{sort},
+        </trim>
+        where labor_type_sid = #{laborTypeSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_labor_type
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                labor_type_code = #{laborTypeCode},
+                labor_type_name = #{laborTypeName},
+                company_sid = #{companySid},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+                sort = #{sort},
+            </trim>
+            where labor_type_sid = #{laborTypeSid}
+        </foreach>
+    </update>
+
+    <select id="getConLaborTypeList" resultType="com.platform.ems.plug.domain.ConLaborType">
+        select labor_type_sid,labor_type_code,labor_type_name,status,handle_status,create_date,sort from s_con_labor_type order by sort asc, labor_type_name asc
+    </select>
+
+</mapper>

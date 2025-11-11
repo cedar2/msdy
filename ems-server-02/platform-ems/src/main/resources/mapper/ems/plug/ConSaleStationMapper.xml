@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.plug.mapper.ConSaleStationMapper">
+
+    <resultMap type="com.platform.ems.plug.domain.ConSaleStation" id="ConSaleStationResult">
+        <result property="clientId" column="client_id"/>
+        <result property="sid" column="sid"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="remark" column="remark"/>
+        <result property="region" column="region"/>
+        <result property="platformDianshang" column="platform_dianshang"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectConSaleStationVo">
+        select t.client_id,
+               t.sid,
+               t.code,
+               t.name,
+               t.region,
+               t.platform_dianshang,
+               t.remark,
+               t.status,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name
+        from s_con_sale_station t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t4.client_id
+    </sql>
+
+    <select id="selectConSaleStationById" parameterType="Long" resultMap="ConSaleStationResult">
+        <include refid="selectConSaleStationVo"/>
+        where t.sid = #{sid}
+    </select>
+
+    <select id="selectConSaleStationList" parameterType="com.platform.ems.plug.domain.ConSaleStation"
+            resultMap="ConSaleStationResult">
+        <include refid="selectConSaleStationVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="sid != null">
+                and t.sid = #{sid}
+            </if>
+            <if test="sidList != null and sidList.length >0 ">
+                and t.sid in
+                (<foreach collection="sidList" item="sid" separator=",">#{sid}</foreach>)
+            </if>
+            <if test="code != null and code != ''">
+                and t.code = #{code}
+            </if>
+            <if test="name != null and name != ''">
+                and t.name like concat('%', #{name}, '%')
+            </if>
+            <if test="region != null and region != ''">
+                and t.region = #{region}
+            </if>
+            <if test="regionList != null and regionList.length >0 ">
+                and t.region in
+                (<foreach collection="regionList" item="region" separator=",">#{region}</foreach>)
+            </if>
+            <if test="platformDianshang != null and platformDianshang != ''">
+                and t.platform_dianshang = #{platformDianshang}
+            </if>
+            <if test="platformDianshangList != null and platformDianshangList.length >0 ">
+                and t.platform_dianshang in
+                (<foreach collection="platformDianshangList" item="platformDianshang" separator=",">#{platformDianshang}</foreach>)
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName},'%')
+            </if>
+            <if test="createDate != null ">
+                and date_format(t.create_date,'%y%m%d') = date_format(#{createDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_sale_station
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sid,
+            code,
+            name,
+            region,
+            platform_dianshang,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.sid},
+                #{item.code},
+                #{item.name},
+                #{item.region},
+                #{item.platformDianshang},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_sale_station
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            code = #{code},
+            name = #{name},
+            region = #{region},
+            platform_dianshang = #{platformDianshang},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where sid = #{sid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_sale_station
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                code = #{code},
+                name = #{name},
+                region = #{region},
+                platform_dianshang = #{platformDianshang},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+            </trim>
+            where sid = #{sid}
+        </foreach>
+    </update>
+
+</mapper>

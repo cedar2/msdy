@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManProduceConcernTaskMapper">
+
+    <resultMap type="com.platform.ems.domain.ManProduceConcernTask" id="ManProduceConcernTaskResult">
+        <result property="clientId" column="client_id"/>
+        <result property="concernTaskSid" column="concern_task_sid"/>
+        <result property="concernTaskCode" column="concern_task_code"/>
+        <result property="concernTaskName" column="concern_task_name"/>
+        <result property="produceStage" column="produce_stage"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="produceStageName" column="produce_stage_name"/>
+        <result property="isPictureUpload" column="is_picture_upload"/>
+        <result property="isAttachUpload" column="is_attach_upload"/>
+    </resultMap>
+
+    <sql id="selectManProduceConcernTaskVo">
+        select t.client_id, t.concern_task_sid, t.concern_task_code, t.concern_task_name,
+               t.is_picture_upload,
+               t.is_attach_upload,
+               t.produce_stage,
+               t.concern_task_type,
+               t.remark, t.status, t.handle_status, t.creator_account, t.create_date, t.updater_account,
+               t.update_date, t.confirmer_account, t.confirm_date, t.data_source_sys ,t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,t4.nick_name AS confirmer_account_name,s.name AS produce_stage_name
+        from s_man_produce_concern_task t
+            LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+            LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+            LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t4.client_id
+            LEFT JOIN s_con_produce_stage s ON t.produce_stage = s.code
+    </sql>
+
+    <select id="selectManProduceConcernTaskById" parameterType="Long" resultMap="ManProduceConcernTaskResult">
+        <include refid="selectManProduceConcernTaskVo"/>
+        where t.concern_task_sid = #{concernTaskSid}
+    </select>
+
+    <select id="selectManProduceConcernTaskList" parameterType="com.platform.ems.domain.ManProduceConcernTask"
+            resultMap="ManProduceConcernTaskResult">
+        <include refid="selectManProduceConcernTaskVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="concernTaskCode != null and concernTaskCode != ''">
+                and t.concern_task_code LIKE concat('%', #{concernTaskCode}, '%')
+            </if>
+            <if test="concernTaskName != null and concernTaskName != ''">
+                and t.concern_task_name LIKE concat('%', #{concernTaskName}, '%')
+            </if>
+            <if test="isPictureUpload != null and isPictureUpload != ''">
+                and t.is_picture_upload LIKE concat('%', #{isPictureUpload}, '%')
+            </if>
+            <if test="isAttachUpload != null and isAttachUpload != ''">
+                and t.is_attach_upload LIKE concat('%', #{isAttachUpload}, '%')
+            </if>
+            <if test="produceStage != null and produceStage != ''">
+                and t.produce_stage = #{produceStage}
+            </if>
+            <if test="produceStageList != null and produceStageList.size > 0">
+                and t.produce_stage in (
+                    <foreach collection="produceStageList" item="produceStage" separator=",">
+                        #{produceStage}
+                    </foreach>
+                )
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.size > 0">
+                and t.handle_status in (
+                    <foreach collection="handleStatusList" item="handleStatus" separator=",">
+                        #{handleStatus}
+                    </foreach>
+                )
+            </if>
+            <if test="concernTaskTypeList != null and concernTaskTypeList.length > 0">
+                and t.concern_task_type in (
+                <foreach collection="concernTaskTypeList" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat("%" , #{creatorAccountName} , "%")
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.create_date desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_produce_concern_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            concern_task_sid,
+            concern_task_code,
+            concern_task_name,
+            is_picture_upload,
+            is_attach_upload,
+            produce_stage,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+            concern_task_type,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.concernTaskCode},
+                #{item.concernTaskName},
+                #{item.isPictureUpload},
+                #{item.isAttachUpload},
+                #{item.produceStage},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+                #{item.concernTaskType},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_produce_concern_task
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            concern_task_code = #{concernTaskCode},
+            concern_task_name = #{concernTaskName},
+            is_picture_upload = #{isPictureUpload},
+            is_attach_upload = #{isAttachUpload},
+            produce_stage = #{produceStage},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            concern_task_type=#{concernTaskType},
+        </trim>
+        where concern_task_sid = #{concernTaskSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_produce_concern_task
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                concern_task_code = #{concernTaskCode},
+                concern_task_name = #{concernTaskName},
+                is_picture_upload = #{isPictureUpload},
+                is_attach_upload = #{isAttachUpload},
+                produce_stage = #{produceStage},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+            </trim>
+            where concern_task_sid = #{concernTaskSid}
+        </foreach>
+    </update>
+
+</mapper>

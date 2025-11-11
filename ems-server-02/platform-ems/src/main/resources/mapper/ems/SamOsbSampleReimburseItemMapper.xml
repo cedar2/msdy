@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.SamOsbSampleReimburseItemMapper">
+    <resultMap type="com.platform.ems.domain.SamOsbSampleReimburseItem" id="SamOsbSampleReimburseItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="reimburseItemSid" column="reimburse_item_sid"/>
+        <result property="reimburseSid" column="reimburse_sid"/>
+        <result property="sampleSid" column="sample_sid"/>
+        <result property="sampleCode" column="sample_code"/>
+        <result property="quantity" column="quantity"/>
+        <result property="purchasePrice" column="purchase_price"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="materialName" column="material_name"/>
+        <result property="osbSampleBuyer" column="osb_sample_buyer"/>
+        <result property="osbSampleBuyerName" column="osb_sample_buyer_name"/>
+        <result property="purchaseDate" column="purchase_date"/>
+        <result property="purchaseCompany" column="purchase_company"/>
+        <result property="purchaseCompanyName" column="purchase_company_name"/>
+        <result property="purchaseOrg" column="purchase_org"/>
+        <result property="purchaseOrgName" column="purchase_org_name"/>
+        <result property="purchaseFrom" column="purchase_from"/>
+        <result property="osbSampleBrand" column="osb_sample_brand"/>
+        <result property="osbSampleCode" column="osb_sample_code"/>
+        <result property="osbSampleColor" column="osb_sample_color"/>
+        <result property="osbSampleSize" column="osb_sample_size"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="purchaseQuantity" column="purchase_quantity"/>
+        <result property="reimburseStatus" column="reimburse_status"/>
+        <result property="materialType" column="material_type"/>
+        <result property="materialTypeName" column="material_type_name"/>
+        <result property="materialClassSid" column="material_class_sid"/>
+        <result property="materialClassName" column="material_class_name"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonName" column="product_season_name"/>
+    </resultMap>
+    <sql id="selectSamOsbSampleReimburseItemVo">
+        SELECT
+            t.client_id,
+            t.reimburse_item_sid,
+            t.reimburse_sid,
+            t.sample_sid,
+            t.sample_code,
+            t.quantity,
+            t.purchase_price,
+            t.unit_base,
+            t.item_num,
+            t.remark,
+            t.creator_account,
+            t.create_date,
+            t.updater_account,
+            t.update_date,
+            t.data_source_sys,
+            t2.material_name,
+            t2.osb_sample_buyer,
+            t2.purchase_date,
+            t2.purchase_company,
+            t2.purchase_org,
+            t2.purchase_from,
+            t2.osb_sample_brand,
+            t2.osb_sample_code,
+            t2.osb_sample_color,
+            t2.osb_sample_size,
+            t2.currency,
+            t2.currency_unit,
+            t2.purchase_quantity,
+            t2.reimburse_status,
+            t2.material_type,
+            t2.material_class_sid,
+            t2.product_season_sid,
+            t3.nick_name as osb_sample_buyer_name,
+            t4.company_name as purchase_company_name,
+            t5.department_name as purchase_org_name,
+            t6.brand_name as osb_sample_brand_name,
+            t7.name as material_type_name,
+            t8.node_name AS material_class_name,
+            t9.product_season_name,
+            t10.reimburse_code
+        FROM
+            s_sam_osb_sample_reimburse_item t
+        LEFT JOIN s_bas_material t2 ON t2.material_sid = t.sample_sid
+        LEFT JOIN sys_user t3 ON t3.user_name = t2.osb_sample_buyer
+        LEFT JOIN s_bas_company t4 ON t4.company_sid = t2.purchase_company
+        LEFT JOIN s_bas_department t5 ON t5.department_sid = t2.purchase_org
+        LEFT JOIN s_bas_company_brand t6 ON t6.company_brand_sid = t2.osb_sample_brand
+        LEFT JOIN s_con_material_type t7 ON t7.code = t2.material_type
+        LEFT JOIN s_con_material_class t8 ON t8.material_class_sid = t2.material_class_sid
+        LEFT JOIN s_bas_product_season t9 on t9.product_season_sid = t2.product_season_sid
+        LEFT JOIN s_sam_osb_sample_reimburse t10 on t10.reimburse_sid = t.reimburse_sid
+    </sql>
+    <select id="selectSamOsbSampleReimburseItemById" parameterType="Long" resultMap="SamOsbSampleReimburseItemResult">
+        <include refid="selectSamOsbSampleReimburseItemVo"/> where t.reimburse_item_sid = #{reimburseItemSid}
+    </select>
+    <select id="selectSamOsbSampleReimburseItemList" parameterType="com.platform.ems.domain.SamOsbSampleReimburseItem" resultMap="SamOsbSampleReimburseItemResult">
+        <include refid="selectSamOsbSampleReimburseItemVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">and (
+                <foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="reimburseSid != null ">and t.reimburse_sid =#{reimburseSid}</if>
+            <if test="sampleSid != null ">and t.sample_sid =#{sampleSid}</if>
+            <if test="sampleCode != null  and sampleCode != ''">and (
+                <foreach collection="sampleCode.split(';')" item="item" separator="or">t.sample_code like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="materialSidList != null and materialSidList.size() >0 ">
+                and t.sample_sid in(<foreach collection="materialSidList" item="materialSid" separator=",">#{materialSid}</foreach>)
+            </if>
+            <if test="quantity != null ">and t.quantity =#{quantity}</if>
+            <if test="purchasePrice != null ">and t.purchase_price = #{purchasePrice}</if>
+            <if test="unitBase != null  and unitBase != ''">and (
+                <foreach collection="unitBase.split(';')" item="item" separator="or">t.unit_base like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="itemNum != null ">and t.item_num =#{itemNum}</if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and (
+                <foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')</if>
+            <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')</if>
+            <if test="updaterAccount != null  and updaterAccount != ''">and (
+                <foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and (
+                <foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">${params.dataScope}</if>
+        </where>
+    </select>
+    <!--添加多个-->
+    <insert id="inserts">insert into s_sam_osb_sample_reimburse_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">client_id, reimburse_item_sid, reimburse_sid, sample_sid, sample_code, quantity, purchase_price, unit_base, item_num, remark, creator_account, create_date, updater_account, update_date, data_source_sys,</trim> values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">#{item.clientId}, #{item.reimburseSid}, #{item.sampleSid}, #{item.sampleCode}, #{item.quantity}, #{item.purchasePrice}, #{item.unitBase}, #{item.itemNum}, #{item.remark}, #{item.creatorAccount}, #{item.createDate}, #{item.updaterAccount}, #{item.updateDate}, #{item.dataSourceSys},</trim>
+        </foreach>
+    </insert>
+    <!--更新-->
+    <update id="updateAllById">update s_sam_osb_sample_reimburse_item
+        <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, reimburse_item_sid = #{reimburseItemSid}, reimburse_sid = #{reimburseSid}, sample_sid = #{sampleSid}, sample_code = #{sampleCode}, quantity = #{quantity}, purchase_price = #{purchasePrice}, unit_base = #{unitBase}, item_num = #{itemNum}, remark = #{remark}, creator_account = #{creatorAccount}, create_date = #{createDate}, updater_account = #{updaterAccount}, update_date = #{updateDate}, data_source_sys = #{dataSourceSys},</trim> where reimburse_item_sid = #{reimburseItemSid}
+    </update>
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">update s_sam_osb_sample_reimburse_item
+            <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, reimburse_item_sid = #{reimburseItemSid}, reimburse_sid = #{reimburseSid}, sample_sid = #{sampleSid}, sample_code = #{sampleCode}, quantity = #{quantity}, purchase_price = #{purchasePrice}, unit_base = #{unitBase}, item_num = #{itemNum}, remark = #{remark}, creator_account = #{creatorAccount}, create_date = #{createDate}, updater_account = #{updaterAccount}, update_date = #{updateDate}, data_source_sys = #{dataSourceSys},</trim> where reimburse_item_sid = #{reimburseItemSid}
+        </foreach>
+    </update>
+</mapper>

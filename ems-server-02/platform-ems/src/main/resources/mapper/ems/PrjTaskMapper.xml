@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PrjTaskMapper">
+
+    <resultMap type="com.platform.ems.domain.PrjTask" id="PrjTaskResult">
+        <result property="clientId" column="client_id"/>
+        <result property="taskSid" column="task_sid"/>
+        <result property="taskName" column="task_name"/>
+        <result property="taskCode" column="task_code"/>
+        <result property="taskPhase" column="task_phase"/>
+        <result property="businessSection" column="business_section"/>
+        <result property="nodeLevel" column="node_level"/>
+        <result property="startPositionSid" column="start_position_sid"/>
+        <result property="chargePositionSid" column="charge_position_sid"/>
+        <result property="noticePositionSid" column="notice_position_sid"/>
+        <result property="startPositionCode" column="start_position_code"/>
+        <result property="chargePositionCode" column="charge_position_code"/>
+        <result property="noticePositionCode" column="notice_position_code"/>
+        <result property="relateBusinessFormSid" column="relate_business_form_sid"/>
+        <result property="relateBusinessFormCode" column="relate_business_form_code"/>
+        <result property="endFlag" column="end_flag"/>
+        <result property="standardTime" column="standard_time"/>
+        <result property="calendarType" column="calendar_type"/>
+        <result property="isMonitor" column="is_monitor"/>
+        <result property="taskShortName" column="task_short_name"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectPrjTaskVo">
+        select t.client_id,
+               t.task_sid,
+               t.task_name,
+               t.task_code,
+               t.task_phase,
+               t.business_section,
+               t.node_level,
+               t.start_position_sid,
+               t.charge_position_sid,
+               t.notice_position_sid,
+               t.start_position_code,
+               t.charge_position_code,
+               t.notice_position_code,
+               t.relate_business_form_sid,
+               t.relate_business_form_code,
+               t.end_flag,
+               t.standard_time,
+               t.calendar_type,
+               t.is_monitor,
+               t.task_short_name,
+               t.remark,
+               t.status,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name
+        from s_prj_task t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t4.client_id
+    </sql>
+
+    <select id="selectPrjTaskById" parameterType="Long" resultMap="PrjTaskResult">
+        <include refid="selectPrjTaskVo"/>
+        where t.task_sid = #{taskSid}
+    </select>
+
+    <select id="selectPrjTaskList" parameterType="com.platform.ems.domain.PrjTask"
+            resultMap="PrjTaskResult">
+        <include refid="selectPrjTaskVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="taskSid != null ">
+                and t.task_sid = #{taskSid}
+            </if>
+            <if test="taskSidList != null and taskSidList.length >0 ">
+                and t.task_sid in
+                (<foreach collection="taskSidList" item="taskSid" separator=",">#{taskSid}</foreach>)
+            </if>
+            <if test="taskName != null and taskName != ''">and
+                t.task_name like concat('%', #{taskName}, '%')
+            </if>
+            <if test="taskCode != null and taskCode != ''">
+                and t.task_code like concat('%', #{taskCode}, '%')
+            </if>
+            <if test="taskCodeList != null and taskCodeList.length >0 ">
+                and t.task_code in
+                (<foreach collection="taskCodeList" item="taskCode" separator=",">#{taskCode}</foreach>)
+            </if>
+            <if test="taskPhase != null and taskPhase != ''">
+                and t.task_phase = #{taskPhase}
+            </if>
+            <if test="taskPhaseList != null and taskPhaseList.length >0 ">
+                and t.task_phase in
+                (<foreach collection="taskPhaseList" item="taskPhase" separator=",">#{taskPhase}</foreach>)
+            </if>
+            <if test="businessSection != null and businessSection != ''">
+                and t.business_section = #{businessSection}
+            </if>
+            <if test="nodeLevel != null and nodeLevel != ''">
+                and t.node_level = #{nodeLevel}
+            </if>
+            <if test="startPositionSid != null ">
+                and t.start_position_sid = #{startPositionSid}
+            </if>
+            <if test="startPositionSidList != null and startPositionSidList.length >0 ">
+                and t.start_position_sid in
+                (<foreach collection="startPositionSidList" item="startPositionSid" separator=",">#{startPositionSid}</foreach>)
+            </if>
+            <if test="startPositionCode != null and startPositionCode != ''">and
+                t.start_position_code like concat('%', #{startPositionCode}, '%')
+            </if>
+            <if test="startPositionCodeList != null and startPositionCodeList.length >0 ">
+                and (<foreach collection="startPositionCodeList" item="startPositionCode" separator=" or ">
+                    t.start_position_code like concat('%', #{startPositionCode}, ';%')
+                </foreach>)
+            </if>
+            <if test="chargePositionSid != null ">
+                and t.charge_position_sid = #{chargePositionSid}
+            </if>
+            <if test="chargePositionSidList != null and chargePositionSidList.length >0 ">
+                and t.charge_position_sid in
+                (<foreach collection="chargePositionSidList" item="chargePositionSid" separator=",">#{chargePositionSid}</foreach>)
+            </if>
+            <if test="chargePositionCode != null and chargePositionCode != ''">and
+                t.charge_position_code like concat('%', #{chargePositionCode}, '%')
+            </if>
+            <if test="chargePositionCodeList != null and chargePositionCodeList.length >0 ">
+                and (<foreach collection="chargePositionCodeList" item="chargePositionCode" separator=" or ">
+                t.charge_position_code like concat('%', #{chargePositionCode}, ';%')
+                </foreach>)
+            </if>
+            <if test="noticePositionSid != null ">
+                and t.notice_position_sid = #{noticePositionSid}
+            </if>
+            <if test="noticePositionSidList != null and noticePositionSidList.length >0 ">
+                and t.notice_position_sid in
+                (<foreach collection="noticePositionSidList" item="noticePositionSid" separator=",">#{noticePositionSid}</foreach>)
+            </if>
+            <if test="noticePositionCode != null and noticePositionCode != ''">and
+                t.notice_position_code like concat('%', #{noticePositionCode}, '%')
+            </if>
+            <if test="noticePositionCodeList != null and noticePositionCodeList.length >0 ">
+                and (<foreach collection="noticePositionCodeList" item="noticePositionCode" separator=" or ">
+                t.notice_position_code like concat('%', #{noticePositionCode}, ';%')
+                </foreach>)
+            </if>
+            <if test="relateBusinessFormSid != null ">
+                and t.relate_business_form_sid = #{relateBusinessFormSid}
+            </if>
+            <if test="relateBusinessFormSidList != null and relateBusinessFormSidList.length >0 ">
+                and t.relate_business_form_sid in
+                (<foreach collection="relateBusinessFormSidList" item="relateBusinessFormSid" separator=",">#{relateBusinessFormSid}</foreach>)
+            </if>
+            <if test="relateBusinessFormCode != null and relateBusinessFormCode != ''">
+                and t.relate_business_form_code = #{relateBusinessFormCode}
+            </if>
+            <if test="relateBusinessFormCodeList != null and relateBusinessFormCodeList.length >0 ">
+                and t.relate_business_form_code in
+                (<foreach collection="relateBusinessFormCodeList" item="relateBusinessFormCode" separator=",">#{relateBusinessFormCode}</foreach>)
+            </if>
+            <if test="endFlag != null and endFlag != ''">
+                and t.end_flag = #{endFlag}
+            </if>
+            <if test="standardTime != null ">
+                and t.standard_time = #{standardTime}
+            </if>
+            <if test="calendarType != null and calendarType != ''">
+                and t.calendar_type = #{calendarType}
+            </if>
+            <if test="isMonitor != null and isMonitor != ''">
+                and t.is_monitor = #{isMonitor}
+            </if>
+            <if test="taskShortName != null and taskShortName != ''">and
+                t.task_short_name like concat('%', #{taskShortName}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="createDate != null ">
+                and date_format(t.create_date,'%y%m%d') = date_format(#{createDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.task_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_prj_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            task_sid,
+            task_name,
+            task_code,
+            task_phase,
+            business_section,
+            node_level,
+            start_position_sid,
+            charge_position_sid,
+            notice_position_sid,
+            t.start_position_code,
+            t.charge_position_code,
+            t.notice_position_code,
+            relate_business_form_sid,
+            relate_business_form_code,
+            end_flag,
+            standard_time,
+            calendar_type,
+            is_monitor,
+            task_short_name,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.taskName},
+                #{item.taskCode},
+                #{item.taskPhase},
+                #{item.businessSection},
+                #{item.nodeLevel},
+                #{item.startPositionSid},
+                #{item.chargePositionSid},
+                #{item.noticePositionSid},
+                #{item.startPositionCode},
+                #{item.chargePositionCode},
+                #{item.noticePositionCode},
+                #{item.relateBusinessFormSid},
+                #{item.relateBusinessFormCode},
+                #{item.endFlag},
+                #{item.standardTime},
+                #{item.calendarType},
+                #{item.isMonitor},
+                #{item.taskShortName},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_prj_task
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            task_name = #{taskName},
+            task_code = #{taskCode},
+            task_phase = #{taskPhase},
+            business_section = #{businessSection},
+            node_level = #{nodeLevel},
+            start_position_sid = #{startPositionSid},
+            charge_position_sid = #{chargePositionSid},
+            notice_position_sid = #{noticePositionSid},
+            start_position_code = #{startPositionCode},
+            charge_position_code = #{chargePositionCode},
+            notice_position_code = #{noticePositionCode},
+            relate_business_form_sid = #{relateBusinessFormSid},
+            relate_business_form_code = #{relateBusinessFormCode},
+            end_flag = #{endFlag},
+            standard_time = #{standardTime},
+            calendar_type = #{calendarType},
+            is_monitor = #{isMonitor},
+            task_short_name = #{taskShortName},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where task_sid = #{taskSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_prj_task
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                task_name = #{taskName},
+                task_code = #{taskCode},
+                task_phase = #{taskPhase},
+                business_section = #{businessSection},
+                node_level = #{nodeLevel},
+                start_position_sid = #{startPositionSid},
+                charge_position_sid = #{chargePositionSid},
+                notice_position_sid = #{noticePositionSid},
+                start_position_code = #{startPositionCode},
+                charge_position_code = #{chargePositionCode},
+                notice_position_code = #{noticePositionCode},
+                relate_business_form_sid = #{relateBusinessFormSid},
+                relate_business_form_code = #{relateBusinessFormCode},
+                end_flag = #{endFlag},
+                standard_time = #{standardTime},
+                calendar_type = #{calendarType},
+                is_monitor = #{isMonitor},
+                task_short_name = #{taskShortName},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+            </trim>
+            where task_sid = #{taskSid}
+        </foreach>
+    </update>
+
+</mapper>

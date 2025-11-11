@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.system.mapper.SysClientMapper">
+
+    <resultMap type="com.platform.common.core.domain.entity.SysClient" id="SysClientResult">
+        <result property="clientId" column="client_id"/>
+        <result property="clientCode" column="client_code"/>
+        <result property="clientName" column="client_name"/>
+        <result property="subdomain" column="subdomain"/>
+        <result property="ownerName" column="owner_name"/>
+        <result property="creditCode" column="credit_code"/>
+        <result property="currency" column="currency"/>
+        <result property="creditStartDate" column="credit_start_date"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="creditEndDate" column="credit_end_date"/>
+        <result property="industryField" column="industry_field"/>
+        <result property="startDate" column="start_date"/>
+        <result property="payduesLatestDate" column="paydues_latest_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="payduesLatestAmount" column="paydues_latest_amount"/>
+        <result property="annualTurnover" column="annual_turnover"/>
+        <result property="logonPicturePath" column="logon_picture_path"/>
+        <result property="logoPicturePath" column="logo_picture_path"/>
+        <result property="sysShortName" column="sys_short_name"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="imSoftware" column="im_software"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="isAutoAdvanceAccount" column="is_auto_advance_account"/>
+        <result property="isAutoEstimationAccount" column="is_auto_estimation_account"/>
+        <result property="operateCategory" column="operate_category"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="isBusinessFinance" column="is_business_finance"/>
+        <result property="isPandianApproval" column="is_pandian_approval"/>
+        <result property="clientType" column="client_type"/>
+        <result property="clientScale" column="client_scale"/>
+        <result property="dingtalkAppkey" column="dingtalk_appkey"/>
+        <result property="dingtalkAppsecret" column="dingtalk_appsecret"/>
+        <result property="dingtalkAgentid" column="dingtalk_agentid"/>
+        <result property="workWechatAppkey" column="work_wechat_appkey"/>
+        <result property="workWechatAppsecret" column="work_wechat_appsecret"/>
+        <result property="workWechatAgentid" column="work_wechat_agentid"/>
+        <result property="wxGzhAppkey" column="wx_gzh_appkey"/>
+        <result property="wxGzhAppsecret" column="wx_gzh_appsecret"/>
+        <result property="wxGzhAgentid" column="wx_gzh_agentid"/>
+        <result property="feishuAppAgentid" column="feishu_app_agentid"/>
+        <result property="companyName" column="company_name"/>
+        <result property="telephone" column="telephone"/>
+        <result property="accountNumLimitType" column="account_num_limit_type"/>
+        <result property="systemFeeType" column="system_fee_type"/>
+        <result property="authorizeAccountNum" column="authorize_account_num"/>
+        <result property="feishuAppId" column="feishu_app_id"/>
+        <result property="feishuAppSecret" column="feishu_app_secret"/>
+        <result property="jiandaoyunUrl" column="jiandaoyun_url"/>
+        <result property="jiandaoyunAcs" column="jiandaoyun_acs"/>
+        <result property="jiandaoyunIssuer" column="jiandaoyun_issuer"/>
+        <result property="jiandaoyunSecret" column="jiandaoyun_secret"/>
+        <result property="deviceAppId" column="device_app_id"/>
+        <result property="deviceAppSecret" column="device_app_secret"/>
+        <result property="licenseDianqianNum" column="license_dianqian_num"/>
+        <result property="dianqianStartDate" column="dianqian_start_date"/>
+        <result property="dianqianEndDate" column="dianqian_end_date"/>
+        <result property="useDianqianNum" column="use_dianqian_num"/>
+        <result property="totalUseDianqianNum" column="total_use_dianqian_num"/>
+        <result property="lockDianqianNum" column="lock_dianqian_num"/>
+    </resultMap>
+
+    <sql id="selectSysClientVo">
+        select
+            t.client_id,
+            t.client_code,
+            t.client_name,
+            t.subdomain,
+            t.owner_name,
+            t.credit_code,
+            t.currency,
+            t.credit_start_date,
+            t.currency_unit,
+            t.credit_end_date,
+            t.industry_field,
+            t.start_date,
+            t.paydues_latest_date,
+            t.end_date,
+            t.paydues_latest_amount,
+            t.annual_turnover,
+            t.logon_picture_path,
+            t.logo_picture_path,
+            t.sys_short_name,
+            t.remark,
+            t.status,
+            t.im_software,
+            t.handle_status,
+            t.creator_account,
+            t.create_date,
+            t.updater_account,
+            t.update_date,
+            t.confirmer_account,
+            t.confirm_date,
+            t.data_source_sys,
+            t.is_auto_advance_account,
+            t.is_auto_estimation_account,
+            t.operate_category,
+            t.is_business_finance,
+            t.is_pandian_approval,
+            t.client_type,
+            t.client_scale,
+            t.dingtalk_appkey,
+            t.dingtalk_appsecret,
+            t.dingtalk_agentid,
+            t.work_wechat_appkey,
+            t.work_wechat_appsecret,
+            t.work_wechat_agentid,
+            t.wx_gzh_appkey,
+            t.wx_gzh_appsecret,
+            t.wx_gzh_agentid,
+            t.feishu_app_agentid,
+            t.company_name,
+            t.telephone,
+            t.account_num_limit_type,
+            t.system_fee_type,
+            t.authorize_account_num,
+            t.feishu_app_id,
+            t.feishu_app_secret,
+            t.jiandaoyun_url,
+            t.jiandaoyun_acs,
+            t.jiandaoyun_issuer,
+            t.jiandaoyun_secret,
+            t.device_app_id,
+            t.device_app_secret,
+            t.license_dianqian_num,
+            t.dianqian_start_date,
+            t.dianqian_end_date,
+            t.use_dianqian_num,
+            t.total_use_dianqian_num,
+            t.lock_dianqian_num,
+            t1.nick_name as creator_account_name,
+            t2.nick_name as updater_account_name,
+            t3.nick_name as confirmer_account_name
+        from s_sys_client t
+                 LEFT JOIN sys_user t1 ON t1.user_name = t.creator_account
+                 LEFT JOIN sys_user t2 ON t2.user_name = t.updater_account
+                 LEFT JOIN sys_user t3 ON t3.user_name = t.confirmer_account
+    </sql>
+
+    <select id="selectSysClientById" parameterType="String" resultMap="SysClientResult">
+        <include refid="selectSysClientVo"/>
+        where t.client_id = #{clientId}
+    </select>
+
+    <select id="selectSysClientList" parameterType="com.platform.common.core.domain.entity.SysClient"
+            resultMap="SysClientResult">
+        <include refid="selectSysClientVo"/>
+        <where>
+            <if test="clientId != null and clientId!=''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="clientCode != null and clientCode != ''">
+                and t.client_code like concat('%', #{clientCode}, '%')
+            </if>
+            <if test="clientName != null and clientName != ''">and
+                t.client_name like concat('%', #{clientName}, '%')
+            </if>
+            <if test="companyName != null and companyName != ''">and
+                t.company_name like concat('%', #{companyName}, '%')
+            </if>
+            <if test="telephone != null and telephone != ''">and
+                t.telephone like concat('%', #{telephone}, '%')
+            </if>
+            <if test="accountNumLimitType != null and accountNumLimitType != ''">
+                and t.account_num_limit_type = #{accountNumLimitType}
+            </if>
+            <if test="systemFeeType != null and systemFeeType != ''">
+                and t.system_fee_type = #{systemFeeType}
+            </if>
+            <if test="authorizeAccountNum != null and authorizeAccountNum != ''">and
+                t.authorize_account_num like concat('%', #{authorizeAccountNum}, '%')
+            </if>
+            <if test="subdomain != null and subdomain != ''">
+                and (<foreach collection="subdomain.split(';')" item="item" separator=" or ">
+                t.subdomain like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="ownerName != null and ownerName != ''">
+                and t.owner_name like concat('%', #{ownerName}, '%')
+            </if>
+            <if test="creditCode != null and creditCode != ''">
+                and (<foreach collection="creditCode.split(';')" item="item" separator=" or ">
+                t.credit_code like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="currency != null and currency != ''">
+                and t.currency = #{currency}
+            </if>
+            <if test="creditStartDate != null ">
+                and t.credit_start_date = #{creditStartDate}
+            </if>
+            <if test="currencyUnit != null and currencyUnit != ''">
+                and t.currency_unit = #{currencyUnit}
+            </if>
+            <if test="creditEndDate != null ">
+                and t.credit_end_date = #{creditEndDate}
+            </if>
+            <if test="industryField != null and industryField != ''">
+                and t.industry_field = #{industryField}
+            </if>
+            <if test="startDate != null ">
+                and t.start_date = #{startDate}
+            </if>
+            <if test="payduesLatestDate != null ">
+                and t.paydues_latest_date = #{payduesLatestDate}
+            </if>
+            <if test="endDate != null ">
+                and t.end_date = #{endDate}
+            </if>
+            <if test="endDateY != null">
+                and date_format(t.end_date,'%y%m%d') &lt; date_format(now(),'%y%m%d')
+            </if>
+            <if test="endDateN != null">
+                and date_format(t.end_date,'%y%m%d') &gt; date_format(now(),'%y%m%d')
+            </if>
+            <if test="payduesLatestAmount != null and payduesLatestAmount != ''">
+                and t.paydues_latest_amount like concat('%', #{payduesLatestAmount}, '%')
+            </if>
+            <if test="annualTurnover != null and annualTurnover != ''">
+                and t.annual_turnover like concat('%', #{annualTurnover}, '%')
+            </if>
+            <if test="logonPicturePath != null and logonPicturePath != ''">
+                and (<foreach collection="logonPicturePath.split(';')" item="item" separator=" or ">
+                t.logon_picture_path like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="logoPicturePath != null and logoPicturePath != ''">
+                and (<foreach collection="logoPicturePath.split(';')" item="item" separator=" or ">
+                t.logo_picture_path like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sysShortName != null and sysShortName != ''">
+                and t.sys_short_name like concat('%', #{sysShortName}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">
+                t1.nick_name like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator=" or ">
+                t.updater_account like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator=" or ">
+                t.confirmer_account like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="isAutoAdvanceAccount != null and isAutoAdvanceAccount != ''">
+                and t.is_auto_advance_account = #{isAutoAdvanceAccount}
+            </if>
+            <if test="isAutoEstimationAccount != null and isAutoEstimationAccount != ''">
+                and t.is_auto_estimation_account = #{isAutoEstimationAccount}
+            </if>
+            <if test="operateCategory != null and operateCategory != ''">
+                and t.operate_category = #{operateCategory}
+            </if>
+            <if test="isBusinessFinance != null and isBusinessFinance != ''">
+                and t.is_business_finance = #{isBusinessFinance}
+            </if>
+            <if test="isPandianApproval != null and isPandianApproval != ''">
+                and t.is_pandian_approval = #{isPandianApproval}
+            </if>
+            <if test="clientType != null and clientType != ''">
+                and t.client_type = #{clientType}
+            </if>
+            <if test="clientScale != null and clientScale != ''">
+                and t.client_scale = #{clientScale}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.client_id asc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_sys_client
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            client_code,
+            client_name,
+            subdomain,
+            owner_name,
+            credit_code,
+            currency,
+            credit_start_date,
+            currency_unit,
+            credit_end_date,
+            industry_field,
+            start_date,
+            paydues_latest_date,
+            end_date,
+            paydues_latest_amount,
+            annual_turnover,
+            logon_picture_path,
+            logo_picture_path,
+            sys_short_name,
+            is_auto_advance_account,
+            is_auto_estimation_account,
+            operate_category,
+            is_business_finance,
+            is_pandian_approval,
+            client_type,
+            client_scale,
+            dingtalk_appkey,
+            dingtalk_appsecret,
+            dingtalk_agentid,
+            work_wechat_appkey,
+            work_wechat_appsecret,
+            work_wechat_agentid,
+            wx_gzh_agentid,
+            feishu_app_agentid,
+            company_name,
+            telephone,
+            account_num_limit_type,
+            system_fee_type,
+            authorize_account_num,
+            wx_gzh_appkey,
+            wx_gzh_appsecret,
+            feishu_app_id,
+            feishu_app_secret,
+            jiandaoyun_url,
+            jiandaoyun_acs,
+            jiandaoyun_issuer,
+            jiandaoyun_secret,
+            device_app_id,
+            device_app_secret,
+            remark,
+            status,
+            im_software,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+            license_dianqian_num,
+            dianqian_start_date,
+            dianqian_end_date,
+            use_dianqian_num,
+            total_use_dianqian_num,
+            lock_dianqian_num,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientCode},
+                #{item.clientName},
+                #{item.subdomain},
+                #{item.ownerName},
+                #{item.creditCode},
+                #{item.currency},
+                #{item.creditStartDate},
+                #{item.currencyUnit},
+                #{item.creditEndDate},
+                #{item.industryField},
+                #{item.startDate},
+                #{item.payduesLatestDate},
+                #{item.endDate},
+                #{item.payduesLatestAmount},
+                #{item.annualTurnover},
+                #{item.logonPicturePath},
+                #{item.logoPicturePath},
+                #{item.sysShortName},
+                #{item.isAutoAdvanceAccount},
+                #{item.isAutoEstimationAccount},
+                #{item.operateCategory},
+                #{item.isBusinessFinance},
+                #{item.isPandianApproval},
+                #{item.clientType},
+                #{item.clientScale},
+                #{item.dingtalkAppkey},
+                #{item.dingtalkAppsecret},
+                #{item.dingtalkAgentid},
+                #{item.workWechatAppkey},
+                #{item.workWechatAppsecret},
+                #{item.workWechatAgentid},
+                #{item.wxGzhAgentid},
+                #{item.feishuAppAgentid},
+                #{item.companyName},
+                #{item.telephone},
+                #{item.accountNumLimitType},
+                #{item.systemFeeType},
+                #{item.authorizeAccountNum},
+                #{item.wxGzhAppkey},
+                #{item.wxGzhAppsecret},
+                #{item.feishuAppId},
+                #{item.feishuAppSecret},
+                #{item.jiandaoyunUrl},
+                #{item.jiandaoyunAcs},
+                #{item.jiandaoyunIssuer},
+                #{item.jiandaoyunSecret},
+                #{item.deviceAppId},
+                #{item.deviceAppSecret},
+                #{item.remark},
+                #{item.status},
+                #{tiem.imSoftware},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+                #{item.licenseDianqianNum},
+                #{item.dianqianStartDate},
+                #{item.dianqianEndDate},
+                #{item.useDianqianNum},
+                #{item.totalUseDianqianNum},
+                #{item.lockDianqianNum},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_sys_client
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            client_code = #{clientCode},
+            client_name = #{clientName},
+            subdomain = #{subdomain},
+            owner_name = #{ownerName},
+            credit_code = #{creditCode},
+            currency = #{currency},
+            credit_start_date = #{creditStartDate},
+            currency_unit = #{currencyUnit},
+            credit_end_date = #{creditEndDate},
+            industry_field = #{industryField},
+            start_date = #{startDate},
+            paydues_latest_date = #{payduesLatestDate},
+            end_date = #{endDate},
+            paydues_latest_amount = #{payduesLatestAmount},
+            annual_turnover = #{annualTurnover},
+            logon_picture_path = #{logonPicturePath},
+            logo_picture_path = #{logoPicturePath},
+            sys_short_name = #{sysShortName},
+            is_auto_advance_account = #{isAutoAdvanceAccount},
+            is_auto_estimation_account = #{isAutoEstimationAccount},
+            operate_category = #{operateCategory},
+            is_business_finance = #{isBusinessFinance},
+            is_pandian_approval = #{isPandianApproval},
+            client_type = #{clientType},
+            client_scale = #{clientScale},
+            dingtalk_appkey = #{dingtalkAppkey},
+            dingtalk_appsecret = #{dingtalkAppsecret},
+            dingtalk_agentid = #{dingtalkAgentid},
+            work_wechat_appkey = #{workWechatAppkey},
+            work_wechat_appsecret = #{workWechatAppsecret},
+            work_wechat_agentid = #{workWechatAgentid},
+            company_name = #{companyName},
+            telephone = #{telephone},
+            account_num_limit_type = #{accountNumLimitType},
+            system_fee_type = #{systemFeeType},
+            authorize_account_num = #{authorizeAccountNum},
+            wx_gzh_appkey = #{wxGzhAppkey},
+            wx_gzh_appsecret = #{wxGzhAppsecret},
+            wx_gzh_agentid = #{wxGzhAgentid},
+            feishu_app_agentid = #{feishuAppAgentid},
+            feishu_app_id = #{feishuAppId},
+            feishu_app_secret = #{feishuAppSecret},
+            jiandaoyun_url = #{jiandaoyunUrl},
+            jiandaoyun_acs = #{jiandaoyunAcs},
+            jiandaoyun_issuer = #{jiandaoyunIssuer},
+            jiandaoyun_secret = #{jiandaoyunSecret},
+            device_app_id = #{deviceAppId},
+            device_app_secret = #{deviceAppSecret},
+            remark = #{remark},
+            status = #{status},
+            im_software = #{imSoftware},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            license_dianqian_num = #{licenseDianqianNum},
+            dianqian_start_date = #{dianqianStartDate},
+            dianqian_end_date = #{dianqianEndDate},
+            use_dianqian_num = #{useDianqianNum},
+            total_use_dianqian_num = #{totalUseDianqianNum},
+            lock_dianqian_num = #{lockDianqianNum},
+        </trim>
+        where client_id = #{clientId}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_sys_client
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{o.clientId},
+                client_code = #{o.clientCode},
+                client_name = #{o.clientName},
+                subdomain = #{o.subdomain},
+                owner_name = #{o.ownerName},
+                credit_code = #{o.creditCode},
+                currency = #{o.currency},
+                credit_start_date = #{o.creditStartDate},
+                currency_unit = #{o.currencyUnit},
+                credit_end_date = #{o.creditEndDate},
+                industry_field = #{o.industryField},
+                start_date = #{o.startDate},
+                paydues_latest_date = #{o.payduesLatestDate},
+                end_date = #{o.endDate},
+                paydues_latest_amount = #{o.payduesLatestAmount},
+                annual_turnover = #{o.annualTurnover},
+                logon_picture_path = #{o.logonPicturePath},
+                logo_picture_path = #{o.logoPicturePath},
+                sys_short_name = #{o.sysShortName},
+                is_auto_advance_account = #{o.isAutoAdvanceAccount},
+                is_auto_estimation_account = #{o.isAutoEstimationAccount},
+                operate_category = #{o.operateCategory},
+                is_business_finance = #{o.isBusinessFinance},
+                is_pandian_approval = #{o.isPandianApproval},
+                client_type = #{o.clientType},
+                client_scale = #{o.clientScale},
+                dingtalk_appkey = #{o.dingtalkAppkey},
+                dingtalk_appsecret = #{o.dingtalkAppsecret},
+                dingtalk_agentid = #{o.dingtalkAgentid},
+                work_wechat_appkey = #{o.workWechatAppkey},
+                work_wechat_appsecret = #{o.workWechatAppsecret},
+                work_wechat_agentid = #{o.workWechatAgentid},
+                wx_gzh_agentid = #{o.wxGzhAgentid},
+                feishu_app_agentid =  #{o.feishuAppAgentid},
+                company_name = #{o.companyName},
+                telephone = #{o.telephone},
+                account_num_limit_type = #{o.accountNumLimitType},
+                system_fee_type = #{o.systemFeeType},
+                authorize_account_num = #{o.authorizeAccountNum},
+                wx_gzh_appkey = #{o.wxGzhAppkey},
+                wx_gzh_appsecret = #{o.wxGzhAppsecret},
+                feishu_app_id = #{o.feishuAppId},
+                feishu_app_secret = #{o.feishuAppSecret},
+                jiandaoyun_url = #{o.jiandaoyunUrl},
+                jiandaoyun_acs = #{o.jiandaoyunAcs},
+                jiandaoyun_issuer = #{o.jiandaoyunIssuer},
+                jiandaoyun_secret = #{o.jiandaoyunSecret},
+                device_app_id = #{o.deviceAppId},
+                device_app_secret = #{o.deviceAppSecret},
+                remark = #{o.remark},
+                status = #{o.status},
+                im_software = #{o.imSoftware}
+                handle_status = #{o.handleStatus},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+                data_source_sys = #{o.dataSourceSys},
+                license_dianqian_num = #{licenseDianqianNum},
+                dianqian_start_date = #{dianqianStartDate},
+                dianqian_end_date = #{dianqianEndDate},
+                use_dianqian_num = #{useDianqianNum},
+                total_use_dianqian_num = #{totalUseDianqianNum},
+                lock_dianqian_num = #{lockDianqianNum},
+            </trim>
+            where client_id = #{clientId}
+        </foreach>
+    </update>
+
+    <select id="getList" resultType="com.platform.common.core.domain.entity.SysClient">
+        select
+        client_id,
+        client_code,
+        client_name,
+        status,
+        handle_status,
+        creator_account,
+        create_date,
+        company_name,
+        telephone,
+        account_num_limit_type,
+        system_fee_type,
+        authorize_account_num
+        from s_sys_client
+        <where>
+            <if test="handleStatus != null and handleStatus != ''">
+                and handle_status = #{handleStatus}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+        order by client_id asc
+    </select>
+</mapper>

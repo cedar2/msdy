@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecModelLinePosMapper">
+
+    <resultMap type="com.platform.ems.domain.TecModelLinePos" id="TecModelLinePosResult">
+        <result property="clientId" column="client_id"/>
+        <result property="modelLinePosSid" column="model_line_pos_sid"/>
+        <result property="modelLineSid" column="model_line_sid"/>
+        <result property="modelSid" column="model_sid"/>
+        <result property="linePositionSid" column="line_position_sid"/>
+        <result property="quantity" column="quantity"/>
+        <result property="linePositionCategory" column="line_position_category"/>
+        <result property="unit" column="unit"/>
+        <result property="linePositionName" column="line_position_name"/>
+        <result property="serialNum" column="serial_num"/>
+        <result property="remark" column="remark"/>
+        <result property="measureDescription" column="measure_description"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="linePositionCode" column="line_position_code"/>
+        <result property="unitName" column="unit_name"/>
+    </resultMap>
+
+    <sql id="selectTecModelLinePosVo">
+        select
+        t.client_id,
+        t.model_line_pos_sid,
+        t.model_line_sid,
+        t.model_sid,
+        t.line_position_sid,
+        t.quantity,
+        t1.line_position_category,
+        t.unit,
+        t1.line_position_name,
+        t.serial_num,
+        t.remark,
+        t1.measure_description,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+        t1.line_position_code,
+        t2.name as unit_name,
+        t3.model_code
+  from s_tec_model_line_pos t
+        LEFT JOIN s_tec_line_position t1 ON t1.line_position_sid = t.line_position_sid
+        LEFT JOIN s_con_measure_unit t2 ON t2.code = t.unit
+        LEFT JOIN s_tec_model t3 ON t3.model_sid = t.model_sid
+    </sql>
+
+    <select id="selectTecModelLinePosById" parameterType="Long" resultMap="TecModelLinePosResult">
+        <include refid="selectTecModelLinePosVo"/>
+        where t.model_line_pos_sid = #{modelLinePosSid}
+    </select>
+
+
+    <select id="selectTecModelLinePosList" parameterType="com.platform.ems.domain.TecModelLinePos"
+            resultMap="TecModelLinePosResult">
+        <include refid="selectTecModelLinePosVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="linePositionSids != null and linePositionSids.size() > 0">
+                and t.line_position_sid in(<foreach collection="linePositionSids" item="item" separator=","> #{item}</foreach>)
+            </if>
+            <if test="modelLineSid != null ">
+                and t.model_line_sid =#{modelLineSid}
+            </if>
+            <if test="modelSid != null ">
+                and t.model_sid =#{modelSid}
+            </if>
+            <if test="linePositionSid != null ">
+                and t.line_position_sid =#{linePositionSid}
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="linePositionCategory != null  and linePositionCategory != ''">
+                and (<foreach collection="linePositionCategory.split(';')" item="item" separator="or">
+                t.line_position_category like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="unit != null  and unit != ''">
+                and (<foreach collection="unit.split(';')" item="item" separator="or">t.unit like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="linePositionName != null  and linePositionName != ''">and
+                t1.line_position_name like concat('%', #{linePositionName}, '%')
+            </if>
+            <if test="serialNum != null ">
+                and t.serial_num =#{serialNum}
+            </if>
+            <if test="measureDescription != null  and measureDescription != ''">
+                and (<foreach collection="measureDescription.split(';')" item="item" separator="or">
+                t.measure_description like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.serial_num asc, t1.line_position_code asc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_tec_model_line_pos
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            model_line_sid,
+            model_sid,
+            line_position_sid,
+            quantity,
+            line_position_category,
+            unit,
+            line_position_name,
+            serial_num,
+            remark,
+            measure_description,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.modelLineSid},
+                #{item.modelSid},
+                #{item.linePositionSid},
+                #{item.quantity},
+                #{item.linePositionCategory},
+                #{item.unit},
+                #{item.linePositionName},
+                #{item.serialNum},
+                #{item.remark},
+                #{item.measureDescription},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_tec_model_line_pos
+        <trim prefix="SET" suffixOverrides=",">
+            model_line_pos_sid = #{modelLinePosSid},
+            model_line_sid = #{modelLineSid},
+            model_sid = #{modelSid},
+            line_position_sid = #{linePositionSid},
+            quantity = #{quantity},
+            line_position_category = #{linePositionCategory},
+            unit = #{unit},
+            line_position_name = #{linePositionName},
+            serial_num = #{serialNum},
+            remark = #{remark},
+            measure_description = #{measureDescription},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where model_line_pos_sid = #{modelLinePosSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_tec_model_line_pos
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                model_line_pos_sid = #{modelLinePosSid},
+                model_line_sid = #{modelLineSid},
+                model_sid = #{modelSid},
+                line_position_sid = #{linePositionSid},
+                quantity = #{quantity},
+                line_position_category = #{linePositionCategory},
+                unit = #{unit},
+                line_position_name = #{linePositionName},
+                serial_num = #{serialNum},
+                remark = #{remark},
+                measure_description = #{measureDescription},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where model_line_pos_sid = #{modelLinePosSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinCustomerFundsFreezeBillMapper">
+
+    <resultMap type="com.platform.ems.domain.FinCustomerFundsFreezeBill" id="FinCustomerFundsFreezeBillResult">
+        <result property="clientId" column="client_id"/>
+        <result property="fundsFreezeBillSid" column="funds_freeze_bill_sid"/>
+        <result property="fundsFreezeBillCode" column="funds_freeze_bill_code"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="documentType" column="document_type"/>
+        <result property="businessType" column="business_type"/>
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="businessChannel" column="business_channel"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="saleOrg" column="sale_org"/>
+        <result property="salePerson" column="sale_person"/>
+        <result property="materialType" column="material_type"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="unfreezeStatus" column="unfreeze_status"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="companyName" column="company_name"/>
+        <result property="documentTypeName" column="document_type_name"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="salePersonName" column="sale_person_name"/>
+        <result property="approvalNode" column="approval_node"/>
+        <result property="approvalUserName" column="approval_user_name"/>
+        <result property="submitUserName" column="submit_user_name"/>
+        <result property="submitDate" column="submit_date"/>
+        <result property="approvalUserId" column="approval_user_id"/>
+    </resultMap>
+
+    <sql id="selectFinCustomerFundsFreezeBillVo">
+        select t.client_id,
+               t.funds_freeze_bill_sid,
+               t.funds_freeze_bill_code,
+               t.customer_sid,
+               t.customer_code,
+               t.company_sid,
+               t.company_code,
+               t.document_date,
+               t.document_type,
+               t.business_type,
+               t.company_brand_sid,
+               t.business_channel,
+               t.product_season_sid,
+               t.sale_org,
+               t.sale_person,
+               t.material_type,
+               t.currency,
+               t.currency_unit,
+               t.unfreeze_status,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t5.company_name,
+               t6.customer_name,
+               t7.product_season_name,
+               t8.nick_name AS sale_person_name,
+               t9.name AS document_type_name,
+               t10.approval_node,
+               t10.approval_user_id,
+               t10.approval_user_name,
+               t10.create_date AS submit_date,
+               t11.nick_name AS submit_user_name,
+               t12.name as business_type_name
+        from s_fin_customer_funds_freeze_bill t
+        left join sys_user t2 on t.creator_account = t2.user_name
+        left join sys_user t3 on t.updater_account = t3.user_name
+        left join sys_user t4 on t.confirmer_account = t4.user_name
+        left join s_bas_company t5 on t.company_sid = t5.company_sid
+        left join s_bas_customer t6 on t.customer_sid = t6.customer_sid
+        left join s_bas_product_season t7 on t.product_season_sid = t7.product_season_sid
+        left join sys_user t8 on t.sale_person = t8.user_name
+        left join s_con_doc_type_customer_funds_freeze t9 on t.document_type = t9.code
+        LEFT JOIN s_sys_form_process t10 ON t.funds_freeze_bill_sid = t10.form_id
+        LEFT JOIN sys_user t11 ON t10.creator_account = t11.user_name
+        LEFT JOIN s_con_bu_type_customer_funds_freeze t12 ON t.business_type = t12.code
+    </sql>
+
+    <select id="selectFinCustomerFundsFreezeBillById" parameterType="Long" resultMap="FinCustomerFundsFreezeBillResult">
+        <include refid="selectFinCustomerFundsFreezeBillVo"/>
+        where t.funds_freeze_bill_sid = #{fundsFreezeBillSid}
+    </select>
+
+    <select id="selectFinCustomerFundsFreezeBillList" parameterType="com.platform.ems.domain.FinCustomerFundsFreezeBill"
+            resultMap="FinCustomerFundsFreezeBillResult">
+        <include refid="selectFinCustomerFundsFreezeBillVo"/>
+        <where>
+            <if test="approvalUserIdList != null and approvalUserIdList.length >0">
+                and t10.approval_user_id in (<foreach collection="approvalUserIdList" item="approvalUserId" separator=",">#{approvalUserId}</foreach>)
+            </if>
+            <if test="approvalUserId != null and approvalUserId != ''">
+                and t10.approval_user_id = #{approvalUserId}
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="unfreezeStatusList != null and unfreezeStatusList.length >0">
+                and t.unfreeze_status in
+                (<foreach collection="unfreezeStatusList" item="unfreezeStatus" separator=",">#{unfreezeStatus}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="salePersonList != null and salePersonList.length >0">
+                and t.sale_person in
+                (<foreach collection="salePersonList" item="salePerson" separator=",">#{salePerson}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and t.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">
+                and t.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">
+                #{productSeasonSid}</foreach>)
+            </if>
+            <if test="fundsFreezeBillSidList != null and fundsFreezeBillSidList.length >0">
+                and t.funds_freeze_bill_sid in
+                (<foreach collection="fundsFreezeBillSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="fundsFreezeBillSid != null ">
+                and t.funds_freeze_bill_sid =#{fundsFreezeBillSid}
+            </if>
+            <if test="fundsFreezeBillCode != null  and fundsFreezeBillCode != ''">
+                and t.funds_freeze_bill_code like concat('%',#{fundsFreezeBillCode}, '%')
+            </if>
+            <if test="customerSid != null">
+                and t.customer_sid =#{customerSid}
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="documentDate != null ">
+                and t.document_date = #{documentDate}
+            </if>
+            <if test="documentType != null and documentType != ''">
+                and t.document_type = #{documentType}
+            </if>
+            <if test="businessType != null and businessType != ''">
+                and t.business_type = #{businessType}
+            </if>
+            <if test="companyBrandSid != null ">
+                and t.company_brand_sid =#{companyBrandSid}
+            </if>
+            <if test="businessChannel != null and businessChannel != ''">
+                and t.business_channel = #{businessChannel}
+            </if>
+            <if test="productSeasonSid != null ">
+                and t.product_season_sid =#{productSeasonSid}
+            </if>
+            <if test="saleOrg != null and saleOrg != ''">
+                and t.sale_org = #{saleOrg}
+            </if>
+            <if test="salePerson != null and salePerson != ''">
+                and t.sale_person = #{salePerson}
+            </if>
+            <if test="materialType != null and materialType != ''">
+                and t.material_type = #{materialType}
+            </if>
+            <if test="unfreezeStatus != null and unfreezeStatus != ''">
+                and t.unfreeze_status = #{unfreezeStatus}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">t2.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>order by t.funds_freeze_bill_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_customer_funds_freeze_bill
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            funds_freeze_bill_sid,
+            funds_freeze_bill_code,
+            customer_sid,
+            customer_code,
+            company_sid,
+            company_code,
+            document_date,
+            document_type,
+            business_type,
+            company_brand_sid,
+            business_channel,
+            product_season_sid,
+            sale_org,
+            sale_person,
+            material_type,
+            currency,
+            currency_unit,
+            unfreeze_status,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.fundsFreezeBillSid},
+                #{item.fundsFreezeBillCode},
+                #{item.customerSid},
+                #{item.customerCode},
+                #{item.companySid},
+                #{item.companyCode},
+                #{item.documentDate},
+                #{item.documentType},
+                #{item.businessType},
+                #{item.companyBrandSid},
+                #{item.businessChannel},
+                #{item.productSeasonSid},
+                #{item.saleOrg},
+                #{item.salePerson},
+                #{item.materialType},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.unfreezeStatus},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_customer_funds_freeze_bill
+        <trim prefix="SET" suffixOverrides=",">
+            customer_sid = #{customerSid},
+            customer_code = #{customerCode},
+            company_sid = #{companySid},
+            company_code = #{companyCode},
+            document_date = #{documentDate},
+            document_type = #{documentType},
+            business_type = #{businessType},
+            company_brand_sid = #{companyBrandSid},
+            business_channel = #{businessChannel},
+            product_season_sid = #{productSeasonSid},
+            sale_org = #{saleOrg},
+            sale_person = #{salePerson},
+            material_type = #{materialType},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            unfreeze_status = #{unfreezeStatus},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where funds_freeze_bill_sid = #{fundsFreezeBillSid}
+    </update>
+
+</mapper>

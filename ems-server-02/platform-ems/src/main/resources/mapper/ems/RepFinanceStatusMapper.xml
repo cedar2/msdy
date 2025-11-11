@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.RepFinanceStatusMapper">
+
+    <resultMap type="com.platform.ems.domain.RepFinanceStatus" id="RepFinanceStatusResult">
+        <result property="clientId" column="client_id"/>
+        <result property="dataRecordSid" column="data_record_sid"/>
+        <result property="statisticType" column="statistic_type"/>
+        <result property="fieldName" column="field_name"/>
+        <result property="fieldValue" column="field_value"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="createDate" column="create_date"/>
+    </resultMap>
+
+    <sql id="selectRepFinanceStatusVo">
+        select t.client_id,
+               t.data_record_sid,
+               t.statistic_type,
+               t.field_name,
+               t.field_value,
+               t.currency,
+               t.currency_unit,
+               t.create_date
+        from s_rep_finance_status t
+    </sql>
+
+    <select id="selectRepFinanceStatusById" parameterType="Long" resultMap="RepFinanceStatusResult">
+        <include refid="selectRepFinanceStatusVo"/>
+        where t.data_record_sid = #{dataRecordSid}
+    </select>
+
+
+    <select id="selectRepFinanceStatusList" parameterType="com.platform.ems.domain.RepFinanceStatus"
+            resultMap="RepFinanceStatusResult">
+        <include refid="selectRepFinanceStatusVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id = #{item}</foreach>)
+            </if>
+            <if test="statisticType != null  and statisticType != ''">
+                and (<foreach collection="statisticType.split(';')" item="item" separator="or">t.statistic_type
+                = #{item}</foreach>)
+            </if>
+            <if test="fieldName != null  and fieldName != ''">and
+                t.field_name like concat('%', #{fieldName}, '%')
+            </if>
+            <if test="fieldValue != null ">
+                and t.field_value = #{fieldValue}
+            </if>
+            <if test="currency != null  and currency != ''">
+                and (<foreach collection="currency.split(';')" item="item" separator="or">t.currency
+                = #{item}</foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">
+                and (<foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit
+                = #{item}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_rep_finance_status
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            data_record_sid,
+            statistic_type,
+            field_name,
+            field_value,
+            currency,
+            currency_unit,
+            create_date,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.dataRecordSid},
+                #{item.statisticType},
+                #{item.fieldName},
+                #{item.fieldValue},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.createDate},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_rep_finance_status
+        <trim prefix="SET" suffixOverrides=",">
+            statistic_type = #{statisticType},
+            field_name = #{fieldName},
+            field_value = #{fieldValue},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+        </trim>
+        where data_record_sid = #{dataRecordSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_rep_finance_status
+            <trim prefix="SET" suffixOverrides=",">
+                statistic_type = #{statisticType},
+                field_name = #{fieldName},
+                field_value = #{fieldValue},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+            </trim>
+            where data_record_sid = #{dataRecordSid}
+        </foreach>
+    </update>
+
+</mapper>

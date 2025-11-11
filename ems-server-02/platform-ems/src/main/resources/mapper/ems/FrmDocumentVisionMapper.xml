@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FrmDocumentVisionMapper">
+
+    <resultMap type="com.platform.ems.domain.FrmDocumentVision" id="FrmDocumentVisionResult">
+        <result property="clientId" column="client_id"/>
+        <result property="documentVisionSid" column="document_vision_sid"/>
+        <result property="documentVisionCode" column="document_vision_code"/>
+        <result property="developPlanSid" column="develop_plan_sid"/>
+        <result property="developPlanCode" column="develop_plan_code"/>
+        <result property="sampleSid" column="sample_sid"/>
+        <result property="sampleCode" column="sample_code"/>
+        <result property="projectSid" column="project_sid"/>
+        <result property="projectCode" column="project_code"/>
+        <result property="projectTaskSid" column="project_task_sid"/>
+        <result property="saleStation" column="sale_station"/>
+        <result property="score" column="score"/>
+        <result property="operator" column="operator"/>
+        <result property="operatorName" column="operator_name"/>
+        <result property="productLeader" column="product_leader"/>
+        <result property="productLeaderName" column="product_leader_name"/>
+        <result property="documentDeliverDate" column="document_deliver_date"/>
+        <result property="photoDeliverDate" column="photo_deliver_date"/>
+        <result property="visionDeliverDate" column="vision_deliver_date"/>
+        <result property="optimizeNum" column="optimize_num"/>
+        <result property="optimizeDate" column="optimize_date"/>
+        <result property="optimizeComment" column="optimize_comment"/>
+        <result property="comment" column="comment"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectFrmDocumentVisionVo">
+        select t.client_id,
+        t.document_vision_sid,
+        t.document_vision_code,
+        t.project_sid,
+        t.project_code,
+        t.project_task_sid,
+        t.sale_station,
+        t.score,
+        t.document_deliver_date,
+        t.photo_deliver_date,
+        t.vision_deliver_date,
+        t.optimize_num,
+        t.optimize_date,
+        t.optimize_comment,
+        t.comment,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t2.nick_name AS creator_account_name,
+        t3.nick_name AS updater_account_name,
+        t4.nick_name AS confirmer_account_name,
+        t5.project_name,
+        t5.develop_plan_sid,
+        t5.develop_plan_code,
+        t5.product_code,
+        t5.material_barcode_code,
+        t5.sample_sid,
+        t5.sample_code,
+        t5.yearmonth_project,
+        t6.develop_plan_name,
+        t6.develop_type,
+        <!--查询【运营人员】和【产品负责人】 -->
+        t9.staff_code as operator,
+        t9.staff_name as operator_name,
+        t10.staff_code as product_leader,
+        t10.staff_name as product_leader_name,
+        t11.group_type,
+        <!-- 查询大类 -->
+        t12.node_name as big_class_name,
+        t12.material_class_sid as big_class_sid,
+        t13.approval_node, t13.approval_user_id, t13.approval_user_name,
+        t13.create_date AS submit_date, t14.nick_name AS submit_user_name,
+        if(t16.erp_material_sku_enter_mode_project = 'XZ', t15.erp_material_sku_barcode, t5.erp_material_sku_barcode) AS erp_material_sku_barcode
+        from s_frm_document_vision t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+        LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t4.client_id
+        LEFT JOIN s_prj_project t5 ON t.project_sid = t5.project_sid
+        LEFT JOIN s_dev_develop_plan t6 ON t5.develop_plan_sid = t6.develop_plan_sid
+        left join s_bas_staff t9 on t9.staff_code = t.operator
+        left join s_bas_staff t10 on t10.staff_code = t.product_leader
+        left join s_dev_category_plan_item t11 ON t6.category_plan_item_sid = t11.category_plan_item_sid
+        left join s_con_material_class t12 ON t11.big_class_sid = t12.material_class_sid
+        LEFT JOIN s_sys_form_process t13 ON t.document_vision_sid = t13.form_id
+        LEFT JOIN sys_user t14 ON t13.creator_account = t14.user_name
+        LEFT JOIN s_bas_material_barcode t15 ON t5.material_barcode_sid = t15.barcode_sid
+        LEFT JOIN s_sys_default_setting_client t16 ON t.client_id = t16.client_id
+    </sql>
+
+    <select id="selectFrmDocumentVisionById" parameterType="Long" resultMap="FrmDocumentVisionResult">
+        <include refid="selectFrmDocumentVisionVo"/>
+        where t.document_vision_sid = #{documentVisionSid}
+    </select>
+
+    <select id="selectFrmDocumentVisionList" parameterType="com.platform.ems.domain.FrmDocumentVision"
+            resultMap="FrmDocumentVisionResult">
+        <include refid="selectFrmDocumentVisionVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="documentVisionSid != null ">
+                and t.document_vision_sid = #{documentVisionSid}
+            </if>
+            <if test="documentVisionSidList != null and documentVisionSidList.length >0 ">
+                and t.document_vision_sid in
+                (<foreach collection="documentVisionSidList" item="documentVisionSid" separator=",">
+                #{documentVisionSid}</foreach>)
+            </if>
+            <if test="documentVisionCode != null and documentVisionCode != ''">
+                and t.document_vision_code like concat('%', #{documentVisionCode},'%')
+            </if>
+            <if test="yearmonthProjectBegin != null and yearmonthProjectBegin != ''">
+                and t5.yearmonth_project &gt;= #{yearmonthProjectBegin}
+            </if>
+            <if test="yearmonthProjectEnd != null and yearmonthProjectEnd != ''">
+                and t5.yearmonth_project &lt;= #{yearmonthProjectEnd}
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and t5.product_code like concat('%', #{productCode}, '%')
+            </if>
+            <if test="materialBarcodeCode != null and materialBarcodeCode != ''">
+                and t5.material_barcode_code like concat('%', #{materialBarcodeCode}, '%')
+            </if>
+            <if test="erpMaterialSkuBarcode != null and erpMaterialSkuBarcode != ''">
+                and if(t16.erp_material_sku_enter_mode_project = 'XZ', t15.erp_material_sku_barcode like concat('%', #{erpMaterialSkuBarcode}, '%'),
+                    t5.erp_material_sku_barcode like concat('%', #{erpMaterialSkuBarcode}, '%'))
+            </if>
+            <if test="developPlanSid != null ">
+                and t5.develop_plan_sid = #{developPlanSid}
+            </if>
+            <if test="developPlanCode != null and developPlanCode != ''">
+                and t5.develop_plan_code like concat('%', #{developPlanCode},'%')
+            </if>
+            <if test="sampleSid != null ">
+                and t5.sample_sid = #{sampleSid}
+            </if>
+            <if test="sampleCode != null and sampleCode != ''">
+                and t5.sample_code like concat('%', #{sampleCode},'%')
+            </if>
+            <if test="projectSid != null ">
+                and t.project_sid = #{projectSid}
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                and t.project_code like concat('%', #{projectCode},'%')
+            </if>
+            <if test="projectTaskSid != null ">
+                and t.project_task_sid = #{projectTaskSid}
+            </if>
+            <if test="saleStation != null and saleStation != ''">
+                and t.sale_station like concat('%', #{saleStation},'%')
+            </if>
+            <if test="saleStationList != null and saleStationList.length >0 ">
+                and (<foreach collection="saleStationList" item="item" separator=" or ">
+                    t.sale_station = #{item} or t.sale_station like concat(#{item}, ';%')
+                    or t.sale_station like concat('%;', #{item}, ';%') or t.sale_station like concat('%;', #{item})
+                </foreach>)
+            </if>
+            <if test="score != null ">
+                and t.score = #{score}
+            </if>
+            <if test="operator != null and operator != ''">
+                and t.operator = #{operator}
+            </if>
+            <if test="operatorList != null and operatorList.length >0 ">
+                and t.operator in
+                (<foreach collection="operatorList" item="operator" separator=",">#{operator}</foreach>)
+            </if>
+            <if test="productLeader != null and productLeader != ''">
+                and t.product_leader = #{productLeader}
+            </if>
+            <if test="productLeaderList != null and productLeaderList.length >0 ">
+                and t.product_leader in
+                (<foreach collection="productLeaderList" item="productLeader" separator=",">#{productLeader}</foreach>)
+            </if>
+            <if test="documentDeliverDate != null ">
+                and t.document_deliver_date = #{documentDeliverDate}
+            </if>
+            <if test="documentDeliverDateBegin != null and documentDeliverDateBegin!=''">
+                and date_format(t.document_deliver_date,'%y%m%d') &gt;=
+                date_format(#{documentDeliverDateBegin},'%y%m%d')
+            </if>
+            <if test="documentDeliverDateEnd != null and documentDeliverDateEnd!=''">
+                and date_format(t.document_deliver_date,'%y%m%d') &lt;= date_format(#{documentDeliverDateEnd},'%y%m%d')
+            </if>
+            <if test="photoDeliverDate != null ">
+                and t.photo_deliver_date = #{photoDeliverDate}
+            </if>
+            <if test="photoDeliverDateBegin != null and photoDeliverDateBegin!=''">
+                and date_format(t.photo_deliver_date,'%y%m%d') &gt;= date_format(#{photoDeliverDateBegin},'%y%m%d')
+            </if>
+            <if test="photoDeliverDateEnd != null and photoDeliverDateEnd!=''">
+                and date_format(t.photo_deliver_date,'%y%m%d') &lt;= date_format(#{photoDeliverDateEnd},'%y%m%d')
+            </if>
+            <if test="visionDeliverDate != null ">
+                and t.vision_deliver_date = #{visionDeliverDate}
+            </if>
+            <if test="visionDeliverDateBegin != null and visionDeliverDateBegin!=''">
+                and date_format(t.vision_deliver_date,'%y%m%d') &gt;= date_format(#{visionDeliverDateBegin},'%y%m%d')
+            </if>
+            <if test="visionDeliverDateEnd != null and visionDeliverDateEnd!=''">
+                and date_format(t.vision_deliver_date,'%y%m%d') &lt;= date_format(#{visionDeliverDateEnd},'%y%m%d')
+            </if>
+            <if test="optimizeNum != null ">
+                and t.optimize_num = #{optimizeNum}
+            </if>
+            <if test="optimizeDate != null ">
+                and t.optimize_date = #{optimizeDate}
+            </if>
+            <if test="optimizeComment != null and optimizeComment != ''">
+                and t.optimize_comment = #{optimizeComment}
+            </if>
+            <if test="comment != null and comment != ''">
+                and t.comment = #{comment}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="groupType != null and groupType != ''">
+                and t11.group_type = #{groupType}
+            </if>
+            <if test="groupTypeList != null and groupTypeList.length >0 ">
+                and t11.group_type in
+                (<foreach collection="groupTypeList" item="groupType" separator=",">
+                #{groupType}</foreach>)
+            </if>
+            <if test="approvalUserId != null and approvalUserId != '' ">
+                and (t13.approval_user_id = #{approvalUserId}  or t13.approval_user_id like concat('%, ', #{approvalUserId}, ',%')
+                or t13.approval_user_id like concat('%, ', #{approvalUserId}) or t13.approval_user_id like concat(#{approvalUserId}, ',%')
+                or t13.approval_user_id like concat('%,', #{approvalUserId}, ',%') or t13.approval_user_id like concat('%,', #{approvalUserId}))
+            </if>
+            <if test="approvalUserIdList != null and approvalUserIdList.length >0 ">
+                and (<foreach collection="approvalUserIdList" item="approvalUserId" separator=" or ">
+                (t13.approval_user_id = #{approvalUserId}  or t13.approval_user_id like concat('%, ', #{approvalUserId}, ',%')
+                or t13.approval_user_id like concat('%, ', #{approvalUserId}) or t13.approval_user_id like concat(#{approvalUserId}, ',%')
+                or t13.approval_user_id like concat('%,', #{approvalUserId}, ',%') or t13.approval_user_id like concat('%,', #{approvalUserId}))</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName},'%')
+            </if>
+            <if test="createDate != null ">
+                and date_format(t.create_date,'%y%m%d') = date_format(#{createDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="developTypeList != null and developTypeList.length >0 ">
+                and t6.develop_type in
+                (<foreach collection="developTypeList" item="developType" separator=",">#{developType}</foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+            <!--
+             1）开发计划名称，查询无效
+             2）大类，查询无效
+             3）开发类型，查询无效
+             -->
+
+            <!--
+                1）开发计划名称，查询无效
+            -->
+            <if test="developPlanName != null and developPlanName != ''">
+                and t6.develop_plan_name like concat('%', #{developPlanName},'%')
+            </if>
+
+            <!--
+                2）大类，查询无效
+            -->
+            <if test="bigClassSid != null and bigClassSid != ''">
+                and t12.material_class_sid = #{bigClassSid}
+            </if>
+            <if test="bigClassSidList != null and bigClassSidList.length >0 ">
+                and t12.material_class_sid in
+                (<foreach collection="bigClassSidList" item="bigClassSid" separator=",">#{bigClassSid}</foreach>)
+            </if>
+
+            <!--
+                3）开发类型，查询无效
+            -->
+            <if test="developType != null and developType != ''">
+                and t6.develop_type like concat('%', #{developType},'%')
+            </if>
+
+        </where>
+
+        order by document_vision_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_frm_document_vision
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            document_vision_sid,
+            document_vision_code,
+            project_sid,
+            project_code,
+            project_task_sid,
+            sale_station,
+            score,
+            operator,
+            product_leader,
+            document_deliver_date,
+            photo_deliver_date,
+            vision_deliver_date,
+            optimize_num,
+            optimize_date,
+            optimize_comment,
+            comment,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.documentVisionSid},
+                #{item.documentVisionCode},
+                #{item.projectSid},
+                #{item.projectCode},
+                #{item.projectTaskSid},
+                #{item.saleStation},
+                #{item.score},
+                #{item.operator},
+                #{item.productLeader},
+                #{item.documentDeliverDate},
+                #{item.photoDeliverDate},
+                #{item.visionDeliverDate},
+                #{item.optimizeNum},
+                #{item.optimizeDate},
+                #{item.optimizeComment},
+                #{item.comment},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_frm_document_vision
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            document_vision_code = #{documentVisionCode},
+            project_sid = #{projectSid},
+            project_code = #{projectCode},
+            project_task_sid = #{projectTaskSid},
+            sale_station = #{saleStation},
+            score = #{score},
+            operator = #{operator},
+            product_leader = #{productLeader},
+            document_deliver_date = #{documentDeliverDate},
+            photo_deliver_date = #{photoDeliverDate},
+            vision_deliver_date = #{visionDeliverDate},
+            optimize_num = #{optimizeNum},
+            optimize_date = #{optimizeDate},
+            optimize_comment = #{optimizeComment},
+            comment = #{comment},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where document_vision_sid = #{documentVisionSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_frm_document_vision
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{o.clientId},
+                document_vision_code = #{o.documentVisionCode},
+                project_sid = #{o.projectSid},
+                project_code = #{o.projectCode},
+                project_task_sid = #{o.projectTaskSid},
+                sale_station = #{o.saleStation},
+                score = #{o.score},
+                operator = #{o.operator},
+                product_leader = #{o.productLeader},
+                document_deliver_date = #{o.documentDeliverDate},
+                photo_deliver_date = #{o.photoDeliverDate},
+                vision_deliver_date = #{o.visionDeliverDate},
+                optimize_num = #{o.optimizeNum},
+                optimize_date = #{o.optimizeDate},
+                optimize_comment = #{o.optimizeComment},
+                comment = #{o.comment},
+                remark = #{o.remark},
+                handle_status = #{o.handleStatus},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+            </trim>
+            where document_vision_sid = #{o.documentVisionSid}
+        </foreach>
+    </update>
+
+</mapper>

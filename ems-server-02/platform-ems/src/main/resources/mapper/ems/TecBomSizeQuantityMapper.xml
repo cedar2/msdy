@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecBomSizeQuantityMapper">
+
+    <resultMap type="com.platform.ems.domain.TecBomSizeQuantity" id="TecBomSizeQuantityResult">
+        <result property="clientId" column="client_id"/>
+        <result property="bomSizeQuantitySid" column="bom_size_quantity_sid"/>
+        <result property="bomItemSid" column="bom_item_sid"/>
+        <result property="skuSid" column="sku_sid"/>
+        <result property="skuType" column="sku_type"/>
+        <result property="quantity" column="quantity"/>
+        <result property="unitQuantity" column="unit_quantity"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="bomSid" column="bom_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectTecBomSizeQuantityVo">
+        select t.client_id,
+        t.bom_size_quantity_sid,
+        t.bom_item_sid,
+        t.sku_sid,
+        t.sku_type,
+        t.quantity,
+        t.unit_quantity,
+        t.material_sid,
+        t.bom_sid,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.sku_name
+        from s_tec_bom_size_quantity t
+        left join s_bas_sku t1 on t1.sku_sid=t.sku_sid
+
+    </sql>
+
+    <select id="selectTecBomSizeQuantityById" parameterType="Long" resultMap="TecBomSizeQuantityResult">
+        <include refid="selectTecBomSizeQuantityVo"/>
+        where t.material_sid =#{bomItemSid}
+    </select>
+
+
+    <select id="selectTecBomSizeQuantityList" parameterType="com.platform.ems.domain.TecBomSizeQuantity"
+            resultMap="TecBomSizeQuantityResult">
+        <include refid="selectTecBomSizeQuantityVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or"> t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="bomItemSid != null ">
+                and t.bom_item_sid =#{bomItemSid}
+            </if>
+            <if test="skuSid != null ">
+                and t.sku_sid =#{skuSid}
+            </if>
+            <if test="skuType != null  and skuType != ''">
+                and (<foreach collection="skuType.split(';')" item="item" separator="or"> t.sku_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="unitQuantity != null  and unitQuantity != ''">
+                and (<foreach collection="unitQuantity.split(';')" item="item" separator="or"> t.unit_quantity like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid =#{materialSid}
+            </if>
+            <if test="bomSid != null ">
+                and t.bom_sid =#{bomSid}
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or"> t.handle_status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t.creator_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or"> t.confirmer_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or"> t.data_source_sys like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_tec_bom_size_quantity
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            bom_size_quantity_sid,
+            bom_item_sid,
+            sku_sid,
+            sku_type,
+            quantity,
+            unit_quantity,
+            material_sid,
+            bom_sid,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.bomItemSid},
+                #{item.skuSid},
+                #{item.skuType},
+                #{item.quantity},
+                #{item.unitQuantity},
+                #{item.materialSid},
+                #{item.bomSid},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_tec_bom_size_quantity
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            bom_size_quantity_sid = #{bomSizeQuantitySid},
+            bom_item_sid = #{bomItemSid},
+            sku_sid = #{skuSid},
+            sku_type = #{skuType},
+            quantity = #{quantity},
+            unit_quantity = #{unitQuantity},
+            material_sid = #{materialSid},
+            bom_sid = #{bomSid},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where bom_size_quantity_sid = #{bomSizeQuantitySid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_tec_bom_size_quantity
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                bom_size_quantity_sid = #{bomSizeQuantitySid},
+                bom_item_sid = #{bomItemSid},
+                sku_sid = #{skuSid},
+                sku_type = #{skuType},
+                quantity = #{quantity},
+                unit_quantity = #{unitQuantity},
+                material_sid = #{materialSid},
+                bom_sid = #{bomSid},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where bom_size_quantity_sid = #{bomSizeQuantitySid}
+        </foreach>
+    </update>
+</mapper>

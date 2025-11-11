@@ -1,0 +1,54 @@
+package ${packageName}.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+import ${packageName}.domain.${ClassName};
+
+/**
+ * ${functionName}Mapper接口
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+public interface ${ClassName}Mapper  extends BaseMapper<${ClassName}> {
+
+    /**
+     * 查询详情
+     * @param ${pkColumn.javaField} 单据sid
+     * @return ${ClassName}
+     */
+        ${ClassName} select${ClassName}ById(${pkColumn.javaType} ${pkColumn.javaField});
+
+    /**
+     * 查询列表
+     * @param ${className} ${ClassName}
+     * @return List
+     */
+    List<${ClassName}> select${ClassName}List(${ClassName} ${className});
+
+    /**
+     * 添加多个
+     * @param list List ${ClassName}
+     * @return int
+     */
+    int inserts(@Param("list") List<${ClassName}> list);
+
+    /**
+     * 全量更新
+     * null字段也会进行更新，慎用
+     * @param entity ${ClassName}
+     * @return int
+     */
+    int updateAllById(${ClassName} entity);
+
+    /**
+     * 更新多个
+     * @param list List ${ClassName}
+     * @return int
+     */
+    int updatesAllById(@Param("list") List<${ClassName}> list);
+
+}

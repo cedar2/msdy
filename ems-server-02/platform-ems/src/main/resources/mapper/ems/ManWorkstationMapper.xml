@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManWorkstationMapper">
+
+    <resultMap type="com.platform.ems.domain.ManWorkstation" id="ManWorkstationResult">
+        <result property="clientId" column="client_id"/>
+        <result property="workstationSid" column="workstation_sid"/>
+        <result property="workstationCode" column="workstation_code"/>
+        <result property="workstationName" column="workstation_name"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="workCenterSid" column="work_center_sid"/>
+        <result property="workCenterCode" column="work_center_code"/>
+        <result property="departmentSid" column="department_sid"/>
+        <result property="departmentCode" column="department_code"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectManWorkstationVo">
+        SELECT
+
+        t5.plant_name,
+        t5.short_name,
+        t6.work_center_name,
+        t7.department_name,
+        t8.company_code,
+        t8.company_sid,
+
+        t.client_id,
+        t.workstation_sid,
+        t.workstation_code,
+        t.workstation_name,
+        t.plant_sid,
+        t.plant_code,
+        t.work_center_sid,
+        t.work_center_code,
+        t.department_sid,
+        t.department_code,
+        t.remark,
+        t.STATUS,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t2.nick_name AS creator_account_name,
+        t3.nick_name AS updater_account_name,
+        t4.nick_name AS confirmer_account_name
+        FROM
+        s_man_workstation t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+        LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t3.client_id
+        LEFT JOIN s_bas_plant t5 on t5.plant_sid = t.plant_sid
+        LEFT JOIN s_man_work_center t6 on t6.work_center_sid = t.work_center_sid
+        LEFT JOIN s_bas_department t7 on t7.department_sid = t.department_sid
+        LEFT JOIN s_bas_company t8 on t8.company_sid = t5.company_sid
+
+    </sql>
+
+    <select id="selectManWorkstationById" parameterType="Long" resultMap="ManWorkstationResult">
+        <include refid="selectManWorkstationVo"/>
+        where t.workstation_sid = #{workstationSid}
+    </select>
+
+    <select id="selectManWorkstationList" parameterType="com.platform.ems.domain.ManWorkstation"
+            resultMap="ManWorkstationResult">
+        <include refid="selectManWorkstationVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="workstationCode != null and workstationCode != ''">
+                and t.workstation_code = #{workstationCode}
+            </if>
+            <if test="workstationName != null and workstationName != ''">and
+                t.workstation_name like concat('%', #{workstationName}, '%')
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid = #{plantSid}
+            </if>
+            <if test="plantCode != null and plantCode != ''">
+                and t.plant_code = #{plantCode}
+            </if>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid = #{workCenterSid}
+            </if>
+            <if test="workCenterCode != null and workCenterCode != ''">
+                and t.work_center_code = #{workCenterCode}
+            </if>
+            <if test="departmentSid != null ">
+                and t.department_sid = #{departmentSid}
+            </if>
+            <if test="departmentCode != null and departmentCode != ''">
+                and t.department_code = #{departmentCode}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+
+            <!--班组sid-多选-->
+            <if test="workCenterSidList != null and workCenterSidList.length >0">
+                and t.work_center_sid in
+                (<foreach collection="workCenterSidList" item="e" separator=",">#{e}</foreach>)
+            </if>
+
+            <!--操作部门sid-多选-->
+            <if test="departmentSidList != null and departmentSidList.length >0">
+                and t.department_sid in
+                (<foreach collection="departmentSidList" item="e" separator=",">#{e}</foreach>)
+            </if>
+
+            <!--工厂sid-多选-->
+            <if test="plantSidList != null and plantSidList.length >0">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="e" separator=",">#{e}</foreach>)
+            </if>
+
+            <!--推送sid-多选-->
+            <if test="workstationSidList != null and workstationSidList.length >0">
+                and t.workstation_sid in
+                (<foreach collection="workstationSidList" item="e" separator=",">#{e}</foreach>)
+            </if>
+        </where>
+        order by t.create_date
+
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_workstation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            workstation_code,
+            workstation_name,
+            plant_sid,
+            plant_code,
+            work_center_sid,
+            work_center_code,
+            department_sid,
+            department_code,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{clientId},
+                #{workstationCode},
+                #{workstationName},
+                #{plantSid},
+                #{plantCode},
+                #{workCenterSid},
+                #{workCenterCode},
+                #{departmentSid},
+                #{departmentCode},
+                #{remark},
+                #{status},
+                #{handleStatus},
+                #{creatorAccount},
+                #{createDate},
+                #{updaterAccount},
+                #{updateDate},
+                #{confirmerAccount},
+                #{confirmDate},
+                #{dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_workstation
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            workstation_code = #{workstationCode},
+            workstation_name = #{workstationName},
+            plant_sid = #{plantSid},
+            plant_code = #{plantCode},
+            work_center_sid = #{workCenterSid},
+            work_center_code = #{workCenterCode},
+            department_sid = #{departmentSid},
+            department_code = #{departmentCode},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys}
+        </trim>
+        where workstation_sid = #{workstationSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_workstation
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                workstation_code = #{workstationCode},
+                workstation_name = #{workstationName},
+                plant_sid = #{plantSid},
+                plant_code = #{plantCode},
+                work_center_sid = #{workCenterSid},
+                work_center_code = #{workCenterCode},
+                department_sid = #{departmentSid},
+                department_code = #{departmentCode},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where workstation_sid = #{workstationSid}
+        </foreach>
+    </update>
+
+</mapper>

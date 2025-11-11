@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasVendorRegisterMachineMapper">
+
+    <resultMap type="com.platform.ems.domain.BasVendorRegisterMachine" id="BasVendorRegisterMachineResult">
+        <result property="clientId" column="client_id"/>
+        <result property="vendorRegisterMachineSid" column="vendor_register_machine_sid"/>
+        <result property="vendorRegisterSid" column="vendor_register_sid"/>
+        <result property="machineName" column="machine_name"/>
+        <result property="quantity" column="quantity"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="repairCycle" column="repair_cycle"/>
+        <result property="timeUnit" column="time_unit"/>
+        <result property="brand" column="brand"/>
+        <result property="location" column="location"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="unitBaseName" column="unit_base_name"/>
+    </resultMap>
+
+    <sql id="selectBasVendorRegisterMachineVo">
+        select t.client_id,
+               t.vendor_register_machine_sid,
+               t.vendor_register_sid,
+               t.machine_name,
+               t.quantity,
+               t.unit_base,
+               t.repair_cycle,
+               t.time_unit,
+               t.brand,
+               t.location,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.name AS unit_base_name
+        from s_bas_vendor_register_machine t
+                 LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+                 LEFT JOIN sys_user t3 ON t3.user_name = t.updater_account
+                 LEFT JOIN s_con_measure_unit t4 ON t.unit_base = t4.code
+    </sql>
+
+    <select id="selectBasVendorRegisterMachineById" parameterType="Long" resultMap="BasVendorRegisterMachineResult">
+        <include refid="selectBasVendorRegisterMachineVo"/>
+        where t.vendor_register_machine_sid = #{vendorRegisterMachineSid}
+    </select>
+
+
+    <select id="selectBasVendorRegisterMachineList" parameterType="com.platform.ems.domain.BasVendorRegisterMachine"
+            resultMap="BasVendorRegisterMachineResult">
+        <include refid="selectBasVendorRegisterMachineVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="vendorRegisterSid != null ">
+                and t.vendor_register_sid =#{vendorRegisterSid}
+            </if>
+            <if test="machineName != null  and machineName != ''">and
+                t.machine_name like concat('%', #{machineName}, '%')
+            </if>
+            <if test="quantity != null ">
+                and t.quantity =#{quantity}
+            </if>
+            <if test="unitBase != null  and unitBase != ''">
+                and (<foreach collection="unitBase.split(';')" item="item" separator="or">t.unit_base
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="repairCycle != null ">
+                and t.repair_cycle =#{repairCycle}
+            </if>
+            <if test="timeUnit != null  and timeUnit != ''">
+                and (<foreach collection="timeUnit.split(';')" item="item" separator="or">t.time_unit
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="brand != null  and brand != ''">
+                and (<foreach collection="brand.split(';')" item="item" separator="or">t.brand
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="location != null  and location != ''">
+                and (<foreach collection="location.split(';')" item="item" separator="or">t.location
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_vendor_register_machine
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            vendor_register_machine_sid,
+            vendor_register_sid,
+            machine_name,
+            quantity,
+            unit_base,
+            repair_cycle,
+            time_unit,
+            brand,
+            location,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.vendorRegisterMachineSid},
+                #{item.vendorRegisterSid},
+                #{item.machineName},
+                #{item.quantity},
+                #{item.unitBase},
+                #{item.repairCycle},
+                #{item.timeUnit},
+                #{item.brand},
+                #{item.location},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_vendor_register_machine
+        <trim prefix="SET" suffixOverrides=",">
+            vendor_register_sid = #{vendorRegisterSid},
+            machine_name = #{machineName},
+            quantity = #{quantity},
+            unit_base = #{unitBase},
+            repair_cycle = #{repairCycle},
+            time_unit = #{timeUnit},
+            brand = #{brand},
+            location = #{location},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where vendor_register_machine_sid = #{vendorRegisterMachineSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_vendor_register_machine
+            <trim prefix="SET" suffixOverrides=",">
+                vendor_register_sid = #{vendorRegisterSid},
+                machine_name = #{machineName},
+                quantity = #{quantity},
+                unit_base = #{unitBase},
+                repair_cycle = #{repairCycle},
+                time_unit = #{timeUnit},
+                brand = #{brand},
+                location = #{location},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where vendor_register_machine_sid = #{vendorRegisterMachineSid}
+        </foreach>
+    </update>
+
+</mapper>

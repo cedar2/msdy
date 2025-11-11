@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinHuipiaoRecordMapper">
+
+    <resultMap type="com.platform.ems.domain.FinHuipiaoRecord" id="FinHuipiaoRecordResult">
+        <result property="clientId" column="client_id"/>
+        <result property="huipiaoRecordSid" column="huipiao_record_sid"/>
+        <result property="huipiaoRecordCode" column="huipiao_record_code"/>
+        <result property="shoufukuanType" column="shoufukuan_type"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="companySidInitial" column="company_sid_initial"/>
+        <result property="companyCodeInitial" column="company_code_initial"/>
+        <result property="companySidNew" column="company_sid_new"/>
+        <result property="companyCodeNew" column="company_code_new"/>
+        <result property="huipiaoDate" column="huipiao_date"/>
+        <result property="terminateDate" column="terminate_date"/>
+        <result property="huipiaoNum" column="huipiao_num"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="drawerName" column="drawer_name"/>
+        <result property="drawerBankAccount" column="drawer_bank_account"/>
+        <result property="year" column="year"/>
+        <result property="season" column="season"/>
+        <result property="huipiaoPurpose" column="huipiao_purpose"/>
+        <result property="huipiaoUseStatus" column="huipiao_use_status"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="shoufukuanRemark" column="shoufukuan_remark"/>
+        <result property="useRemark" column="use_remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+
+        <result property="drawer" column="drawer"/>
+        <result property="shoukuanrenName" column="shoukuanren_name"/>
+        <result property="shoukuanrenBankcode" column="shoukuanren_bankcode"/>
+        <result property="shoukuanrenBankname" column="shoukuanren_bankname"/>
+        <result property="chengduirenName" column="chengduiren_name"/>
+        <result property="chengduirenBankname" column="chengduiren_bankname"/>
+        <result property="isZhuanrang" column="is_zhuanrang"/>
+        <result property="isFenbao" column="is_fenbao"/>
+        <result property="chengduiDate" column="chengdui_date"/>
+        <result property="fundAccount" column="fund_account"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="zipiaoQujian" column="zipiao_qujian"/>
+        <result property="liutongFlag" column="liutong_flag"/>
+        <result property="huipiaoStatus" column="huipiao_status"/>
+    </resultMap>
+
+    <sql id="selectFinHuipiaoRecordVo">
+        select t.client_id,
+               t.huipiao_record_sid,
+               t.huipiao_record_code,
+               t.shoufukuan_type,
+               t.customer_sid,
+               t.customer_code,
+               t.company_sid_initial,
+               t.company_code_initial,
+               t.company_sid_new,
+               t.company_code_new,
+               t.huipiao_date,
+               t.terminate_date,
+               t.huipiao_num,
+               t.currency_amount_tax,
+               t.drawer_name,
+               t.drawer_bank_account,
+               t.year,
+               t.season,
+               t.drawer,
+               t.shoukuanren_name,
+               t.shoukuanren_bankcode,
+               t.shoukuanren_bankname,
+               t.chengduiren_name,
+               t.chengduiren_bankname,
+               t.is_zhuanrang,
+               t.is_fenbao,
+               t.chengdui_date,
+               t.fund_account,
+               t.picture_path,
+               t.zipiao_qujian,
+               t.liutong_flag,
+               t.huipiao_status,
+               t.huipiao_purpose,
+               t.huipiao_use_status,
+               t.currency,
+               t.currency_unit,
+               t.shoufukuan_remark,
+               t.use_remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               u1.nick_name AS creator_account_name,
+               u2.nick_name AS updater_account_name,
+               u3.nick_name AS confirmer_account_name,
+               t1.customer_name,
+               t1.short_name as customer_short_name,
+               t2.company_name as company_name_initial,
+               t2.short_name as company_short_name_initial,
+               t3.company_name as company_name_new,
+               t3.short_name as company_short_name_new,
+               (t.currency_amount_tax - ifnull(t4.use_amount, 0)) as balance_amount
+        from s_fin_huipiao_record t
+                 LEFT JOIN sys_user u1 ON t.creator_account = u1.user_name
+                 LEFT JOIN sys_user u2 ON t.updater_account = u2.user_name
+                 LEFT JOIN sys_user u3 ON t.confirmer_account = u3.user_name
+                 LEFT JOIN s_bas_customer t1 ON t.customer_sid = t1.customer_sid
+                 LEFT JOIN s_bas_company t2 ON t.company_sid_initial = t2.company_sid
+                 LEFT JOIN s_bas_company t3 ON t.company_sid_new = t3.company_sid
+                 left join (
+            select a.huipiao_record_sid, sum(a.use_amount) as use_amount
+            from s_fin_huipiao_record_use_record a
+            group by a.huipiao_record_sid
+        ) t4 on t.huipiao_record_sid = t4.huipiao_record_sid
+    </sql>
+
+    <select id="selectFinHuipiaoRecordById" parameterType="Long" resultMap="FinHuipiaoRecordResult">
+        <include refid="selectFinHuipiaoRecordVo"/>
+        where t.huipiao_record_sid = #{huipiaoRecordSid}
+    </select>
+
+    <select id="selectFinHuipiaoRecordList" parameterType="com.platform.ems.domain.FinHuipiaoRecord"
+            resultMap="FinHuipiaoRecordResult">
+        <include refid="selectFinHuipiaoRecordVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="huipiaoRecordSid != null ">
+                and t.huipiao_record_sid = #{customerInvoiceRecordSid}
+            </if>
+            <if test="huipiaoRecordSidList != null and huipiaoRecordSidList.length >0">
+                and t.huipiao_record_sid in
+                (<foreach collection="huipiaoRecordSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="huipiaoRecordCode != null ">
+                and t.huipiao_record_code like concat('%', #{huipiaoRecordCode}, '%')
+            </if>
+            <if test="shoufukuanType != null and shoufukuanType != ''">
+                and t.shoufukuan_type = #{shoufukuanType}
+            </if>
+            <if test="customerSid != null ">
+                and t.customer_sid = #{customerSid}
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and t.customer_sid in
+                (<foreach collection="customerSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="customerCode != null ">
+                and t.customer_code = #{customerCode}
+            </if>
+            <if test="companySidInitial != null ">
+                and t.company_sid_initial = #{companySidInitial}
+            </if>
+            <if test="companySidInitialList != null and companySidInitialList.length >0">
+                and t.company_sid_initial in
+                (<foreach collection="companySidInitialList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companyCodeInitial != null ">
+                and t.company_code_initial = #{companyCodeInitial}
+            </if>
+            <if test="companySidNew != null ">
+                and t.company_sid_new = #{companySidNew}
+            </if>
+            <if test="companySidNewList != null and companySidNewList.length >0">
+                and t.company_sid_new in
+                (<foreach collection="companySidNewList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companyCodeNew != null ">
+                and t.company_code_new = #{companyCodeNew}
+            </if>
+            <if test="huipiaoDate != null ">
+                and t.huipiao_date = #{huipiaoDate}
+            </if>
+            <if test="huipiaoDateBegin != null and huipiaoDateBegin!=''">
+                and date_format(t.huipiao_date,'%y%m%d') &gt;= date_format(#{huipiaoDateBegin},'%y%m%d')
+            </if>
+            <if test="huipiaoDateEnd != null and huipiaoDateEnd!=''">
+                and date_format(t.huipiao_date,'%y%m%d') &lt;= date_format(#{huipiaoDateEnd},'%y%m%d')
+            </if>
+            <if test="terminateDate != null ">
+                and t.terminate_date = #{terminateDate}
+            </if>
+            <if test="terminateDateBegin != null and terminateDateBegin!=''">
+                and date_format(t.terminate_date,'%y%m%d') &gt;= date_format(#{terminateDateBegin},'%y%m%d')
+            </if>
+            <if test="terminateDateEnd != null and terminateDateEnd!=''">
+                and date_format(t.terminate_date,'%y%m%d') &lt;= date_format(#{terminateDateEnd},'%y%m%d')
+            </if>
+            <if test="huipiaoNum != null and huipiaoNum != ''">
+                and t.huipiao_num like concat('%', #{huipiaoNum}, '%')
+            </if>
+            <if test="currencyAmountTax != null ">
+                and t.currency_amount_tax = #{currencyAmountTax}
+            </if>
+            <if test="drawerName != null and drawerName != ''">and
+                t.drawer_name like concat('%', #{drawerName}, '%')
+            </if>
+            <if test="drawerBankAccount != null and drawerBankAccount != ''">
+                and t.drawer_bank_account like concat('%', #{drawerBankAccount}, '%')
+            </if>
+            <if test="year != null and year != ''">
+                and t.year = #{year}
+            </if>
+            <if test="yearList != null and yearList.length >0">
+                and t.year in
+                (<foreach collection="yearList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="season != null and season != ''">
+                and t.season = #{season}
+            </if>
+            <if test="seasonList != null and seasonList.length >0">
+                and t.season in
+                (<foreach collection="seasonList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="huipiaoPurpose != null and huipiaoPurpose != ''">
+                and t.huipiao_purpose = #{huipiaoPurpose}
+            </if>
+            <if test="huipiaoPurposeList != null and huipiaoPurposeList.length >0">
+                and t.huipiao_purpose in
+                (<foreach collection="huipiaoPurposeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="huipiaoUseStatus != null and huipiaoUseStatus != ''">
+                and t.huipiao_use_status = #{huipiaoUseStatus}
+            </if>
+            <if test="huipiaoUseStatusList != null and huipiaoUseStatusList.length >0">
+                and t.huipiao_use_status in
+                (<foreach collection="huipiaoUseStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="currency != null and currency != ''">
+                and t.currency = #{currency}
+            </if>
+            <if test="currencyUnit != null and currencyUnit != ''">
+                and t.currency_unit = #{currencyUnit}
+            </if>
+            <if test="shoufukuanRemark != null and shoufukuanRemark != ''">
+                and t.shoufukuan_remark like concat('%', #{shoufukuanRemark}, '%')
+            </if>
+            <if test="useRemark != null and useRemark != ''">
+                and t.use_remark like concat('%', #{useRemark}, '%')
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and u1.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by huipiao_record_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_huipiao_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            huipiao_record_sid,
+            huipiao_record_code,
+            shoufukuan_type,
+            customer_sid,
+            customer_code,
+            company_sid_initial,
+            company_code_initial,
+            company_sid_new,
+            company_code_new,
+            huipiao_date,
+            terminate_date,
+            huipiao_num,
+            currency_amount_tax,
+            drawer_name,
+            drawer_bank_account,
+            year,
+            season,
+            drawer,
+            shoukuanren_name,
+            shoukuanren_bankcode,
+            shoukuanren_bankname,
+            chengduiren_name,
+            chengduiren_bankname,
+            is_zhuanrang,
+            is_fenbao,
+            chengdui_date,
+            fund_account,
+            picture_path,
+            zipiao_qujian,
+            liutong_flag,
+            huipiao_status,
+            huipiao_purpose,
+            huipiao_use_status,
+            currency,
+            currency_unit,
+            shoufukuan_remark,
+            use_remark,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.huipiaoRecordSid},
+                #{item.huipiaoRecordCode},
+                #{item.shoufukuanType},
+                #{item.customerSid},
+                #{item.customerCode},
+                #{item.companySidInitial},
+                #{item.companyCodeInitial},
+                #{item.companySidNew},
+                #{item.companyCodeNew},
+                #{item.huipiaoDate},
+                #{item.terminateDate},
+                #{item.huipiaoNum},
+                #{item.currencyAmountTax},
+                #{item.drawerName},
+                #{item.drawerBankAccount},
+                #{item.year},
+                #{item.season},
+                #{item.drawer},
+                #{item.shoukuanrenName},
+                #{item.shoukuanrenBankcode},
+                #{item.shoukuanrenBankname},
+                #{item.chengduirenName},
+                #{item.chengduirenBankname},
+                #{item.isZhuanrang},
+                #{item.isFenbao},
+                #{item.chengduiDate},
+                #{item.fundAccount},
+                #{item.picturePath},
+                #{item.zipiaoQujian},
+                #{item.liutongFlag},
+                #{item.huipiaoStatus},
+                #{item.huipiaoPurpose},
+                #{item.huipiaoUseStatus},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.shoufukuanRemark},
+                #{item.useRemark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_huipiao_record
+        <trim prefix="SET" suffixOverrides=",">
+            shoufukuan_type = #{shoufukuanType},
+            customer_sid = #{customerSid},
+            customer_code = #{customerCode},
+            company_sid_initial = #{companySidInitial},
+            company_code_initial = #{companyCodeInitial},
+            company_sid_new = #{companySidNew},
+            company_code_new = #{companyCodeNew},
+            huipiao_date = #{huipiaoDate},
+            terminate_date = #{terminateDate},
+            huipiao_num = #{huipiaoNum},
+            currency_amount_tax = #{currencyAmountTax},
+            drawer_name = #{drawerName},
+            drawer_bank_account = #{drawerBankAccount},
+            year = #{year},
+            season = #{season},
+            drawer = #{drawer},
+            shoukuanren_name = #{shoukuanrenName},
+            shoukuanren_bankcode = #{shoukuanrenBankcode},
+            shoukuanren_bankname = #{shoukuanrenBankname},
+            chengduiren_name = #{chengduirenName},
+            chengduiren_bankname = #{chengduirenBankname},
+            is_zhuanrang = #{isZhuanrang},
+            is_fenbao = #{isFenbao},
+            chengdui_date = #{chengduiDate},
+            fund_account = #{fundAccount},
+            picture_path = #{picturePath},
+            zipiao_qujian = #{zipiaoQujian},
+            liutong_flag = #{liutongFlag},
+            huipiao_status = #{huipiaoStatus},
+            huipiao_purpose = #{huipiaoPurpose},
+            huipiao_use_status = #{huipiaoUseStatus},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            shoufukuan_remark = #{shoufukuanRemark},
+            use_remark = #{useRemark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where huipiao_record_sid = #{huipiaoRecordSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_huipiao_record
+            <trim prefix="SET" suffixOverrides=",">
+                shoufukuan_type = #{o.shoufukuanType},
+                customer_sid = #{o.customerSid},
+                customer_code = #{o.customerCode},
+                company_sid_initial = #{o.companySidInitial},
+                company_code_initial = #{o.companyCodeInitial},
+                company_sid_new = #{o.companySidNew},
+                company_code_new = #{o.companyCodeNew},
+                huipiao_date = #{o.huipiaoDate},
+                terminate_date = #{o.terminateDate},
+                huipiao_num = #{o.huipiaoNum},
+                currency_amount_tax = #{o.currencyAmountTax},
+                drawer_name = #{o.drawerName},
+                drawer_bank_account = #{o.drawerBankAccount},
+                year = #{o.year},
+                season = #{o.season},
+                drawer = #{o.drawer},
+                shoukuanren_name = #{o.shoukuanrenName},
+                shoukuanren_bankcode = #{o.shoukuanrenBankcode},
+                shoukuanren_bankname = #{o.shoukuanrenBankname},
+                chengduiren_name = #{o.chengduirenName},
+                chengduiren_bankname = #{o.chengduirenBankname},
+                is_zhuanrang = #{o.isZhuanrang},
+                is_fenbao = #{o.isFenbao},
+                chengdui_date = #{o.chengduiDate},
+                fund_account = #{o.fundAccount},
+                picture_path = #{o.picturePath},
+                zipiao_qujian = #{o.zipiaoQujian},
+                liutong_flag = #{o.liutongFlag},
+                huipiao_status = #{o.huipiaoStatus},
+                huipiao_purpose = #{o.huipiaoPurpose},
+                huipiao_use_status = #{o.huipiaoUseStatus},
+                currency = #{o.currency},
+                currency_unit = #{o.currencyUnit},
+                shoufukuan_remark = #{o.shoufukuanRemark},
+                use_remark = #{o.useRemark},
+                handle_status = #{o.handleStatus},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+            </trim>
+            where huipiao_record_sid = #{o.huipiaoRecordSid}
+        </foreach>
+    </update>
+
+</mapper>

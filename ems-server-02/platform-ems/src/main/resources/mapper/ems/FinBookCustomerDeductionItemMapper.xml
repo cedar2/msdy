@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinBookCustomerDeductionItemMapper">
+
+    <resultMap type="com.platform.ems.domain.FinBookCustomerDeductionItem" id="FinBookCustomerDeductionItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="bookDeductionItemSid" column="book_deduction_item_sid"/>
+        <result property="bookDeductionSid" column="book_deduction_sid"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="deductionType" column="deduction_type"/>
+        <result property="currencyAmountTaxKk" column="currency_amount_tax_kk"/>
+        <result property="currencyAmountTaxYhx" column="currency_amount_tax_yhx"/>
+        <result property="currencyAmountTaxHxz" column="currency_amount_tax_hxz"/>
+        <result property="referDocCategory" column="refer_doc_category"/>
+        <result property="referDocSid" column="refer_doc_sid"/>
+        <result property="referDocCode" column="refer_doc_code"/>
+        <result property="referDocItemSid" column="refer_doc_item_sid"/>
+        <result property="referDocItemCode" column="refer_doc_item_code"/>
+        <result property="taxRate" column="tax_rate"/>
+        <result property="clearStatus" column="clear_status"/>
+        <result property="accountValidDate" column="account_valid_date"/>
+        <result property="newReceivableUseDate" column="new_receivable_use_date"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="currencyAmountTaxDhx" column="currency_amount_tax_dhx"/>
+    </resultMap>
+
+    <sql id="selectFinBookCustomerDeductionItemVo">
+        select t.client_id,
+               t.book_deduction_item_sid,
+               t.book_deduction_sid,
+               t.item_num,
+               t.deduction_type,
+               t.currency_amount_tax_kk,
+               t.currency_amount_tax_hxz,
+               t2.currency_amount_tax_yhx,
+               t2.currency_amount_tax_dhx,
+               t.refer_doc_category,
+               t.refer_doc_sid,
+               t.refer_doc_code,
+               t.refer_doc_item_sid,
+               t.refer_doc_item_code,
+               t.tax_rate,
+               t.clear_status,
+               t.account_valid_date,
+               t.new_receivable_use_date,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t3.document_date,
+               t3.sale_person,
+               u1.nick_name as sale_person_name,
+               t4.product_season_name
+        from s_fin_book_customer_deduction_item t
+        left join s_fin_book_customer_deduction t1 on t.book_deduction_sid = t1.book_deduction_sid
+        LEFT JOIN (<include refid="com.platform.ems.mapper.FinBookCustomerDeductionItemMapper.selectDaiHeXiao"/>) t2
+            ON t.book_deduction_item_sid = t2.book_deduction_item_sid
+        LEFT JOIN s_fin_customer_deduction_bill t3 on t.refer_doc_sid = t3.deduction_bill_sid
+        LEFT JOIN s_bas_product_season t4 on t3.product_season_sid = t4.product_season_sid
+        LEFT JOIN sys_user u1 on t3.sale_person = u1.user_name
+    </sql>
+
+    <sql id="selectDaiHeXiao">
+        SELECT
+            t.book_deduction_item_sid, t.book_deduction_sid,
+            t.currency_amount_tax_kk, t1.book_source_category,
+            IFNULL(t2.currency_amount_tax_kouk, 0) as currency_amount_tax_yhx,
+            (t.currency_amount_tax_kk - IFNULL(t3.currency_amount_tax_kouk, 0)) as currency_amount_tax_dhx
+        FROM s_fin_book_customer_deduction_item t
+        LEFT JOIN s_fin_book_customer_deduction t1 ON t.book_deduction_sid = t1.book_deduction_sid
+        LEFT JOIN (
+            SELECT i1.book_deduction_sid, SUM(i1.currency_amount_tax) as currency_amount_tax_kouk
+            FROM s_fin_receivable_bill_item_koukuan i1
+            LEFT JOIN s_fin_receivable_bill i2 ON i1.receivable_bill_sid = i2.receivable_bill_sid
+            WHERE i2.handle_status = '5'
+            GROUP BY i1.book_deduction_sid
+        ) t2 ON t.book_deduction_sid = t2.book_deduction_sid
+        LEFT JOIN (
+            SELECT i1.book_deduction_sid, SUM(i1.currency_amount_tax) as currency_amount_tax_kouk
+            FROM s_fin_receivable_bill_item_koukuan i1
+            LEFT JOIN s_fin_receivable_bill i2 ON i1.receivable_bill_sid = i2.receivable_bill_sid
+            WHERE i2.handle_status = '5' OR i2.handle_status = '3'
+            GROUP BY i1.book_deduction_sid
+        ) t3 ON t.book_deduction_sid = t3.book_deduction_sid
+    </sql>
+
+    <select id="selectFinBookCustomerDeductionItemById" parameterType="Long"
+            resultMap="FinBookCustomerDeductionItemResult">
+        <include refid="selectFinBookCustomerDeductionItemVo"/>
+        where t.book_deduction_item_sid = #{bookDeductionItemSid}
+    </select>
+
+    <select id="selectFinBookCustomerDeductionItemList"
+            parameterType="com.platform.ems.domain.FinBookCustomerDeductionItem"
+            resultMap="FinBookCustomerDeductionItemResult">
+        <include refid="selectFinBookCustomerDeductionItemVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="bookDeductionSid != null ">
+                and t.book_deduction_sid =#{bookDeductionSid}
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num =#{itemNum}
+            </if>
+            <if test="deductionType != null  and deductionType != ''">
+                and t.deduction_type = #{deductionType}
+            </if>
+            <if test="currencyAmountTaxKk != null ">
+                and t.currency_amount_tax_kk = #{currencyAmountTaxKk}
+            </if>
+            <if test="currencyAmountTaxYhx != null ">
+                and t.currency_amount_tax_yhx = #{currencyAmountTaxYhx}
+            </if>
+            <if test="currencyAmountTaxHxz != null ">
+                and t.currency_amount_tax_hxz = #{currencyAmountTaxHxz}
+            </if>
+            <if test="referDocCategory != null ">and t.refer_doc_category =#{referDocCategory}</if>
+            <if test="referDocSid != null ">and t.refer_doc_sid =#{referDocSid}</if>
+            <if test="referDocCode != null ">and t.refer_doc_code =#{referDocCode}</if>
+            <if test="referDocItemSid != null ">
+                and t.refer_doc_item_sid =#{referDocItemSid}
+            </if>
+            <if test="referDocItemCode != null ">
+                and t.refer_doc_item_code =#{referDocItemCode}
+            </if>
+            <if test="taxRate != null ">
+                and t.tax_rate = #{taxRate}
+            </if>
+            <if test="clearStatus != null  and clearStatus != ''">
+                and t.clear_status = #{clearStatus}
+            </if>
+            <if test="clearStatusList != null  and clearStatusList.length >0">
+                and t.clear_status in (<foreach collection="clearStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="customerSid != null ">
+                and t1.customer_sid =#{customerSid}
+            </if>
+            <if test="companySid != null ">
+                and t1.company_sid =#{companySid}
+            </if>
+            <if test="bookSourceCategory != null and bookSourceCategory != ''">
+                and t1.book_source_category = #{bookSourceCategory}
+            </if>
+            <if test="accountValidDate != null ">
+                and t.account_valid_date = #{accountValidDate}
+            </if>
+            <if test="newReceivableUseDate != null ">
+                and t.new_receivable_use_date = DATE_FORMAT(#{newReceivableUseDate}, '%Y-%m-%d')
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_book_customer_deduction_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            book_deduction_item_sid,
+            book_deduction_sid,
+            item_num,
+            deduction_type,
+            currency_amount_tax_kk,
+            currency_amount_tax_yhx,
+            currency_amount_tax_hxz,
+            refer_doc_category,
+            refer_doc_sid,
+            refer_doc_code,
+            refer_doc_item_sid,
+            refer_doc_item_code,
+            tax_rate,
+            clear_status,
+            account_valid_date,
+            new_receivable_use_date,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.bookDeductionItemSid},
+                #{item.bookDeductionSid},
+                #{item.itemNum},
+                #{item.deductionType},
+                #{item.currencyAmountTaxKk},
+                #{item.currencyAmountTaxYhx},
+                #{item.currencyAmountTaxHxz},
+                #{item.referDocCategory},
+                #{item.referDocSid},
+                #{item.referDocCode},
+                #{item.referDocItemSid},
+                #{item.referDocItemCode},
+                #{item.taxRate},
+                #{item.clearStatus},
+                #{item.accountValidDate},
+                #{item.newReceivableUseDate},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_book_customer_deduction_item
+        <trim prefix="SET" suffixOverrides=",">
+            item_num = #{itemNum},
+            deduction_type = #{deductionType},
+            currency_amount_tax_kk = #{currencyAmountTaxKk},
+            currency_amount_tax_yhx = #{currencyAmountTaxYhx},
+            currency_amount_tax_hxz = #{currencyAmountTaxHxz},
+            refer_doc_category = #{referDocCategory},
+            refer_doc_sid = #{referDocSid},
+            refer_doc_code = #{referDocCode},
+            refer_doc_item_sid = #{referDocItemSid},
+            refer_doc_item_code = #{referDocItemCode},
+            tax_rate = #{taxRate},
+            clear_status = #{clearStatus},
+            account_valid_date = #{accountValidDate},
+            new_receivable_use_date = #{newReceivableUseDate},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where book_deduction_item_sid = #{bookDeductionItemSid}
+    </update>
+
+
+</mapper>

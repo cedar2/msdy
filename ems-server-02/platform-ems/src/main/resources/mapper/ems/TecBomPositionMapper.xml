@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecBomPositionMapper">
+
+    <resultMap type="com.platform.ems.domain.TecBomPosition" id="TecBomPositionResult">
+        <result property="clientId" column="client_id"/>
+        <result property="bomPositionSid" column="bom_position_sid"/>
+        <result property="bomPositionCode" column="bom_position_code"/>
+        <result property="bomPositionName" column="bom_position_name"/>
+        <result property="bomPositionType" column="bom_position_type"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="positionDescription" column="position_description"/>
+        <result property="upDownSuit" column="up_down_suit"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectTecBomPositionVo">
+         select t.client_id, t.bom_position_sid, t.bom_position_code, t.bom_position_name,
+                t.position_description ,t.bom_position_type, t.company_sid,
+                t.picture_path, t.remark, t.status, t.handle_status, t.creator_account, t.create_date, t.updater_account,
+                t.update_date, t.confirmer_account,t.confirm_date, t.data_source_sys ,t2.nick_name AS creator_account_name,
+                t3.nick_name AS updater_account_name, t4.nick_name AS confirmer_account_name,
+                t.up_down_suit from s_tec_bom_position t
+         LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+         LEFT JOIN sys_user t3 ON t3.user_name = t.updater_account
+         LEFT JOIN sys_user t4 ON t4.user_name = t.confirmer_account
+    </sql>
+
+    <select id="selectTecBomPositionById" parameterType="Long" resultMap="TecBomPositionResult">
+        <include refid="selectTecBomPositionVo"/>
+        where t.bom_position_sid = #{bomPositionSid}
+    </select>
+
+
+    <select id="selectTecBomPositionList" parameterType="com.platform.ems.domain.TecBomPosition"
+            resultMap="TecBomPositionResult">
+        <include refid="selectTecBomPositionVo"/>
+        <where>
+            <if test="handleStatus != null and handleStatus != ''">
+               and t.handle_status = #{handleStatus}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="bomPositionSid != null">
+                and t.bom_position_sid like concat("%" , #{bomPositionSid} , "%")
+            </if>
+            <if test="bomPositionCode != null">
+                and t.bom_position_code like concat("%" , #{bomPositionCode} , "%")
+            </if>
+            <if test="upDownSuitList != null and upDownSuitList.length != 0">
+                and (<foreach collection="upDownSuitList" item="item" separator="or">
+                         t.up_down_suit = #{item}
+                     </foreach>)
+            </if>
+            <if test="bomPositionName != null  and bomPositionName != ''">
+                and t.bom_position_name like concat('%', #{bomPositionName}, '%')
+            </if>
+            <if test="bomPositionType != null  and bomPositionType != ''">
+                and (<foreach collection="bomPositionType.split(';')" item="item" separator="or">
+                t.bom_posit
+                ion_type like concat('%' , #{item} , '%')
+                     </foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="picturePath != null  and picturePath != ''">
+                and (<foreach collection="picturePath.split(';')" item="item" separator="or">
+                      t.picture_path = #{item}
+            </foreach>)
+            </if>
+            <if test="status != null  and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and t.handle_status in
+                (<foreach collection="handleStatus.split(';')" item="item" separator=",">
+                     #{item}
+                </foreach>)
+            </if>
+            <if test="creatorAccountName != null  and creatorAccountName != ''">
+                and t2.nick_name like concat("%" , #{creatorAccountName} , "%")
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and t.creator_account like concat("%" , #{creatorAccount} , "%")
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">
+                              t.updater_account like concat('%' , #{item} , '%')
+                     </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">
+                              t.confirmer_account like concat('%' , #{item} , '%')
+                     </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">
+                              t.data_source_sys like concat('%' , #{item} , '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.bom_position_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_tec_bom_position
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            bom_position_sid,
+            bom_position_code,
+            bom_position_name,
+            bom_position_type,
+            company_sid,
+            picture_path,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+            position_description,
+            up_down_suit,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.bomPositionSid},
+                #{item.bomPositionCode},
+                #{item.bomPositionName},
+                #{item.bomPositionType},
+                #{item.companySid},
+                #{item.picturePath},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+                #{item.positionDescription},
+                #{item.upDownSuit},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_tec_bom_position
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            bom_position_sid = #{bomPositionSid},
+            bom_position_code = #{bomPositionCode},
+            bom_position_name = #{bomPositionName},
+            bom_position_type = #{bomPositionType},
+            company_sid = #{companySid},
+            picture_path = #{picturePath},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            up_down_suit = #{upDownSuit},
+            position_description = #{positionDescription}
+        </trim>
+        where bom_position_sid = #{bomPositionSid}
+    </update>
+
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_tec_bom_position
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                bom_position_sid = #{bomPositionSid},
+                bom_position_code = #{bomPositionCode},
+                bom_position_name = #{bomPositionName},
+                bom_position_type = #{bomPositionType},
+                company_sid = #{companySid},
+                picture_path = #{picturePath},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+                up_down_suit = #{upDownSuit},
+                position_description = #{positionDescription}
+            </trim>
+            where bom_position_sid = #{bomPositionSid}
+        </foreach>
+    </update>
+
+</mapper>

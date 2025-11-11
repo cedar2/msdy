@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.SysRoleDataMapper">
+
+    <resultMap type="com.platform.ems.domain.SysRoleData" id="SysRoleDataResult">
+        <result property="clientId" column="client_id"/>
+        <result property="roleDataSid" column="role_data_sid"/>
+        <result property="roleDataCode" column="role_data_code"/>
+        <result property="roleDataName" column="role_data_name"/>
+        <result property="roleLevel" column="role_level"/>
+        <result property="roleCategory" column="role_category"/>
+        <result property="roleSource" column="role_source"/>
+        <result property="parentRole" column="parent_role"/>
+        <result property="accessText" column="access_text"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectSysRoleDataVo">
+        select t.client_id,
+               t.role_data_sid,
+               t.role_data_code,
+               t.role_data_name,
+               t.role_level,
+               t.role_category,
+               t.role_source,
+               t.parent_role,
+               t.access_text,
+               t.handle_status,
+               t.status,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name
+        from sys_role_data t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t4.client_id
+    </sql>
+
+    <select id="selectSysRoleDataById" parameterType="Long" resultMap="SysRoleDataResult">
+        <include refid="selectSysRoleDataVo"/>
+        where t.role_data_sid = #{roleDataSid}
+    </select>
+
+    <select id="selectSysRoleDataList" parameterType="com.platform.ems.domain.SysRoleData"
+            resultMap="SysRoleDataResult">
+        <include refid="selectSysRoleDataVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="roleDataSid != null">
+                and t.role_data_sid = #{roleDataSid}
+            </if>
+            <if test="roleDataSidList != null and roleDataSidList.length >0 ">
+                and t.role_data_sid in
+                (<foreach collection="roleDataSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="roleDataCode != null and roleDataCode != ''">
+                and t.role_data_code like concat('%', #{roleDataCode}, '%')
+            </if>
+            <if test="roleDataName != null and roleDataName != ''">
+                and t.role_data_name like concat('%', #{roleDataName}, '%')
+            </if>
+            <if test="roleLevel != null and roleLevel != ''">
+                and t.role_level = #{roleLevel}
+            </if>
+            <if test="roleLevelList != null and roleLevelList.length >0 ">
+                and t.role_level in
+                (<foreach collection="roleLevelList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="roleCategory != null and roleCategory != ''">
+                and t.role_category = #{roleCategory}
+            </if>
+            <if test="roleCategoryList != null and roleCategoryList.length >0 ">
+                and t.role_category in
+                (<foreach collection="roleCategoryList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="roleSource != null and roleSource != ''">
+                and t.role_source = #{roleSource}
+            </if>
+            <if test="roleSourceList != null and roleSourceList.length >0 ">
+                and t.role_source in
+                (<foreach collection="roleSourceList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="parentRole != null and parentRole != ''">
+                and t.parent_role = #{parentRole}
+            </if>
+            <if test="accessText != null and accessText != ''">
+                and t.access_text = #{accessText}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into sys_role_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            role_data_sid,
+            role_data_code,
+            role_data_name,
+            role_level,
+            role_category,
+            role_source,
+            parent_role,
+            access_text,
+            handle_status,
+            status,
+            remark,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.roleDataSid},
+                #{item.roleDataCode},
+                #{item.roleDataName},
+                #{item.roleLevel},
+                #{item.roleCategory},
+                #{item.roleSource},
+                #{item.parentRole},
+                #{item.accessText},
+                #{item.handleStatus},
+                #{item.status},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update sys_role_data
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            role_data_code = #{roleDataCode},
+            role_data_name = #{roleDataName},
+            role_level = #{roleLevel},
+            role_category = #{roleCategory},
+            role_source = #{roleSource},
+            parent_role = #{parentRole},
+            access_text = #{accessText},
+            handle_status = #{handleStatus},
+            status = #{status},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where role_data_sid = #{roleDataSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update sys_role_data
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{o.clientId},
+                role_data_code = #{o.roleDataCode},
+                role_data_name = #{o.roleDataName},
+                role_level = #{o.roleLevel},
+                role_category = #{o.roleCategory},
+                role_source = #{o.roleSource},
+                parent_role = #{o.parentRole},
+                access_text = #{o.accessText},
+                handle_status = #{o.handleStatus},
+                status = #{o.status},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+            </trim>
+            where role_data_sid = #{o.roleDataSid}
+        </foreach>
+    </update>
+
+</mapper>

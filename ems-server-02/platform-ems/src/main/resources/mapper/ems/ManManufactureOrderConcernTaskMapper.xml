@@ -1,0 +1,786 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManManufactureOrderConcernTaskMapper">
+
+    <resultMap type="com.platform.ems.domain.ManManufactureOrderConcernTask" id="ManManufactureOrderConcernTaskResult">
+        <result property="clientId" column="client_id"/>
+        <result property="manufactureOrderConcernTaskSid" column="manufacture_order_concern_task_sid"/>
+        <result property="manufactureOrderSid" column="manufacture_order_sid"/>
+        <result property="manufactureOrderCode" column="manufacture_order_code"/>
+        <result property="concernTaskSid" column="concern_task_sid"/>
+        <result property="concernTaskCode" column="concern_task_code"/>
+        <result property="handlerSid" column="handler_sid"/>
+        <result property="handlerCode" column="handler_code"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="videoPath" column="video_path"/>
+        <result property="endStatus" column="end_status"/>
+        <result property="planStartDate" column="plan_start_date"/>
+        <result property="planEndDate" column="plan_end_date"/>
+        <result property="initialPlanEndDate" column="initial_plan_end_date"/>
+        <result property="actualStartDate" column="actual_start_date"/>
+        <result property="actualEndDate" column="actual_end_date"/>
+        <result property="handleComment" column="handle_comment"/>
+        <result property="planQuantity" column="plan_quantity"/>
+        <result property="actualQuantity" column="actual_quantity"/>
+        <result property="milestone" column="milestone"/>
+        <result property="isPictureUpload" column="is_picture_upload"/>
+        <result property="isAttachUpload" column="is_attach_upload"/>
+        <result property="serialNum" column="serial_num"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="concernTaskName" column="concern_task_name"/>
+        <result property="concernTaskType" column="concern_task_type"/>
+        <result property="handlerName" column="handler_name"/>
+        <result property="produceStage" column="produce_stage"/>
+        <result property="produceStageName" column="produce_stage_name"/>
+    </resultMap>
+
+    <sql id="selectManManufactureOrderConcernTaskVo">
+        select t.client_id,
+               t.manufacture_order_concern_task_sid,
+               t.manufacture_order_sid,
+               t.concern_task_sid,
+               t.concern_task_code,
+               t.handler_sid,
+               t.handler_code,
+               t.picture_path,
+               t.video_path,
+               t.end_status,
+               t.plan_start_date,
+               t.plan_end_date,
+               t.initial_plan_end_date,
+               t.actual_end_date,
+               t.actual_start_date,
+               t.handle_comment,
+               t.plan_quantity,
+               t.actual_quantity,
+               t.milestone,
+               t.is_picture_upload,
+               t.is_attach_upload,
+               t.serial_num,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t1.concern_task_name,
+               t1.concern_task_type,
+               t1.produce_stage,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.name AS produce_stage_name,
+               t5.staff_name as handler_name,
+               t6.manufacture_order_code,
+               t6.plant_sid as order_plant_sid,
+               t6.material_sid,
+               t6.material_code,
+               t6.handle_status,
+               t6.complete_status,
+               t6.plan_end_date as order_plan_end_date,
+               t6.paichan_batch,
+               t6a.sku_name as sku1_name,
+               IFNULL(t.toexpire_days_scdd_sx,IFNULL(t9.toexpire_days_scdd_sx,IFNULL(t10.toexpire_days_scdd_sx,7))) as toexpire_days_scdd_sx,
+               t7.plant_name as order_plant_name,
+               t7.short_name as order_plant_short_name,
+               t8.material_name,
+               t6.plan_start_date as  plan_start_date_head,
+               t6.plan_end_date as  plan_end_date_head
+        from s_man_manufacture_order_concern_task t
+                 LEFT JOIN s_man_produce_concern_task t1 ON t.concern_task_sid = t1.concern_task_sid
+                 LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+                 LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+                 LEFT JOIN s_con_produce_stage t4 ON t1.produce_stage = t4.code
+                 LEFT JOIN s_bas_staff t5 ON t.handler_sid = t5.staff_sid
+                 LEFT JOIN s_man_manufacture_order t6 ON t.manufacture_order_sid = t6.manufacture_order_sid
+                 LEFT JOIN s_bas_sku t6a ON t6.sku_sid = t6a.sku_sid
+                 LEFT JOIN s_bas_plant t7 ON t6.plant_sid = t7.plant_sid
+                 LEFT JOIN s_bas_material t8 ON t6.material_sid = t8.material_sid
+                 LEFT JOIN s_sys_default_setting_client t9 ON t.client_id = t9.client_id AND t9.handle_status = '5'
+                 LEFT JOIN s_sys_default_setting_system t10 ON t10.client_id = '10000'
+    </sql>
+
+    <select id="selectManManufactureOrderConcernTaskById" parameterType="Long"
+            resultMap="ManManufactureOrderConcernTaskResult">
+        <include refid="selectManManufactureOrderConcernTaskVo"/>
+        where t.manufacture_order_concern_task_sid = #{manufactureOrderConcernTaskSid}
+    </select>
+
+    <select id="selectManManufactureOrderConcernTaskList"
+            parameterType="com.platform.ems.domain.ManManufactureOrderConcernTask"
+            resultMap="ManManufactureOrderConcernTaskResult">
+        <include refid="selectManManufactureOrderConcernTaskVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="manufactureOrderConcernTaskSidList != null and manufactureOrderConcernTaskSidList.length > 0">
+                and t.manufacture_order_concern_task_sid in (
+                <foreach collection="manufactureOrderConcernTaskSidList" item="manufactureOrderConcernTaskSid" separator=",">#{manufactureOrderConcernTaskSid}</foreach>)
+            </if>
+            <if test="manufactureOrderCodeSet != null and manufactureOrderCodeSet.size > 0">
+                and t.manufacture_order_code in (
+                <foreach collection="manufactureOrderCodeSet" item="item" separator=",">#{item}</foreach>
+                )
+            </if>
+            <if test="manufactureOrderSid != null ">
+                and t.manufacture_order_sid = #{manufactureOrderSid}
+            </if>
+            <if test="concernTaskSid != null ">
+                and t.concern_task_sid = #{concernTaskSid}
+            </if>
+            <if test="concernTaskSidList != null and concernTaskSidList.length > 0">
+                and t.concern_task_sid in (
+                <foreach collection="concernTaskSidList" item="concernTaskSid" separator=",">#{concernTaskSid}</foreach>)
+            </if>
+            <if test="concernTaskCode != null and concernTaskCode != ''">and
+                t.concern_task_code like concat('%', #{concernTaskCode}, '%')
+            </if>
+            <if test="handlerSid != null ">
+                and t.handler_sid = #{handlerSid}
+            </if>
+            <if test="handlerSidList != null and handlerSidList.length > 0">
+                and t.handler_sid in (
+                <foreach collection="handlerSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="handlerCode != null and handlerCode != ''">
+                and t.handler_code = #{handlerCode}
+            </if>
+            <if test="endStatus != null and endStatus != ''">
+                and t.end_status = #{endStatus}
+            </if>
+            <if test="endStatusList != null and endStatusList.length > 0">
+                and t.end_status in (
+                <foreach collection="endStatusList" item="endStatus" separator=",">#{endStatus}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t6.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length > 0">
+                and t6.handle_status in (
+                <foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="completeStatus != null and completeStatus != ''">
+                and t6.complete_status = #{completeStatus}
+            </if>
+            <if test="completeStatusList != null and completeStatusList.length > 0">
+                and t6.complete_status in (
+                <foreach collection="completeStatusList" item="completeStatus" separator=",">#{completeStatus}</foreach>)
+            </if>
+            <if test="concernTaskTypeList != null and concernTaskTypeList.length > 0">
+                and t1.concern_task_type in (
+                <foreach collection="concernTaskTypeList" item="concernTaskType" separator=",">#{concernTaskType}</foreach>)
+            </if>
+            <if test="planStartDate != null ">
+                and t.plan_start_date = #{planStartDate}
+            </if>
+            <if test="planEndDate != null ">
+                and t.plan_end_date = #{planEndDate}
+            </if>
+            <if test="planEndDateBegin != null and planEndDateBegin!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(#{planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="planEndDateEnd != null and planEndDateEnd!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &lt;= date_format(#{planEndDateEnd},'%y%m%d')
+            </if>
+            <if test="actualEndDate != null ">
+                and t.actual_end_date = #{actualEndDate}
+            </if>
+            <if test="handleComment != null and handleComment != ''">
+                and t.handle_comment = #{handleComment}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="concernTaskSidList != null and concernTaskSidList.length > 0">
+                and t.concern_task_sid in (
+                <foreach collection="concernTaskSidList" item="concernTaskSid" separator=",">#{concernTaskSid}</foreach>)
+            </if>
+            <if test="concernTaskName != null and concernTaskName != ''">and
+                t1.concern_task_name like concat('%', #{concernTaskName}, '%')
+            </if>
+            <if test="produceStage != null and produceStage != ''">and
+                t1.produce_stage = #{produceStage}
+            </if>
+            <if test="produceStageList != null and produceStageList.length > 0">
+                and t1.produce_stage in (
+                <foreach collection="produceStageList" item="produceStage" separator=",">#{produceStage}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="handlerName != null and handlerName != ''">and
+                t5.staff_name like concat('%', #{handlerName}, '%')
+            </if>
+            <if test="orderPlantSidList != null and orderPlantSidList.length > 0">
+                and t6.plant_sid in (
+                <foreach collection="orderPlantSidList" item="orderPlantSid" separator=",">#{orderPlantSid}</foreach>)
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and t6.material_code like concat('%', #{materialCode}, '%')
+            </if>
+            <if test="manufactureOrderCode != null and manufactureOrderCode != ''">
+                and t6.manufacture_order_code like concat('%', #{manufactureOrderCode}, '%')
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t6.plan_end_date desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_manufacture_order_concern_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            manufacture_order_concern_task_sid,
+            manufacture_order_sid,
+            manufacture_order_code,
+            concern_task_sid,
+            concern_task_code,
+            handler_sid,
+            handler_code,
+            end_status,
+            plan_start_date,
+            plan_end_date,
+            initial_plan_end_date,
+            actual_start_date,
+            actual_end_date,
+            handle_comment,
+            plan_quantity,
+            actual_quantity,
+            milestone,
+            is_picture_upload,
+            is_attach_upload,
+            serial_num,
+            toexpire_days_scdd_sx,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.manufactureOrderConcernTaskSid},
+                #{item.manufactureOrderSid},
+                #{item.manufactureOrderCode},
+                #{item.concernTaskSid},
+                #{item.concernTaskCode},
+                #{item.handlerSid},
+                #{item.handlerCode},
+                #{item.endStatus},
+                #{item.planStartDate},
+                #{item.planEndDate},
+                #{item.initialPlanEndDate},
+                #{item.actualStartDate},
+                #{item.actualEndDate},
+                #{item.handleComment},
+                #{item.planQuantity},
+                #{item.actualQuantity},
+                #{item.milestone},
+                #{item.isPictureUpload},
+                #{item.isAttachUpload},
+                #{item.serialNum},
+                #{item.toexpireDaysScddSx},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_manufacture_order_concern_task
+        <trim prefix="SET" suffixOverrides=",">
+            manufacture_order_sid = #{manufactureOrderSid},
+            manufacture_order_code = #{manufactureOrderCode},
+            concern_task_sid = #{concernTaskSid},
+            concern_task_code = #{concernTaskCode},
+            handler_sid = #{handlerSid},
+            handler_code = #{handlerCode},
+            end_status = #{endStatus},
+            plan_start_date = #{planStartDate},
+            plan_end_date = #{planEndDate},
+            initial_plan_end_date = #{initialPlanEndDate},
+            actual_start_date = #{actualStartDate},
+            actual_end_date = #{actualEndDate},
+            handle_comment = #{handleComment},
+            plan_quantity = #{planQuantity},
+            actual_quantity = #{actualQuantity},
+            milestone = #{milestone},
+            is_picture_upload = #{isPictureUpload},
+            is_attach_upload = #{isAttachUpload},
+            serial_num = #{serialNum},
+            toexpire_days_scdd_sx = #{toexpireDaysScddSx},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where manufacture_order_concern_task_sid = #{manufactureOrderConcernTaskSid}
+    </update>
+
+    <sql id="selectToexpireListSelectVo">
+        SELECT t.manufacture_order_concern_task_sid,t.client_id,
+               t.manufacture_order_sid,
+               t.manufacture_order_code,
+               t.concern_task_sid,
+               t.concern_task_code,
+               t.handler_sid,
+               t.handler_code,
+               t.end_status,
+               t.plan_start_date,
+               t.plan_end_date,
+               t.initial_plan_end_date,
+               t.actual_start_date,
+               t.actual_end_date,
+               t.handle_comment,
+               t.plan_quantity,
+               t.actual_quantity,
+               t.picture_path,
+               t.video_path,
+               t.milestone,
+               t.is_picture_upload,
+               t.is_attach_upload,
+               t.serial_num,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t.manufacture_order_code,
+               t0.concern_task_name,
+               t0.concern_task_type,
+               t0.produce_stage,
+               t7.name as produce_stage_name,
+               t1.material_sid, t1.material_code, t1.material_name, t1.paichan_batch,
+               t1.complete_status,
+               t1.plan_end_date as order_plan_end_date,
+               t1.quantity,
+               t1.contract_date,
+               t1.sku_sid, t10.sku_name,
+               IFNULL(t11.is_caichuang_quantity, 0) AS is_caichuang_quantity,
+               t2.user_id AS creator_account_id,
+               IFNULL(t.toexpire_days_scdd_sx,IFNULL(t3.toexpire_days_scdd_sx,IFNULL(t4.toexpire_days_scdd_sx,7))) as toexpire_days_scdd_sx,
+               t5.plant_code as order_plant_code, t5.plant_name as order_plant_name,
+               t5.short_name as order_plant_short_name,t6.staff_name as handler_name
+    </sql>
+
+    <sql id="selectToexpireListFrom">
+        FROM s_man_manufacture_order_concern_task t
+        LEFT JOIN s_man_produce_concern_task t0 ON t.concern_task_sid = t0.concern_task_sid
+        LEFT JOIN s_man_manufacture_order t1 ON t.manufacture_order_sid = t1.manufacture_order_sid
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN s_sys_default_setting_client t3 ON t.client_id = t3.client_id AND t3.handle_status = '5'
+        LEFT JOIN s_sys_default_setting_system t4 ON t4.client_id = '10000'
+        LEFT JOIN s_bas_plant t5 ON t1.plant_sid = t5.plant_sid
+        LEFT JOIN s_bas_staff t6 ON t.handler_sid = t6.staff_sid
+        LEFT JOIN s_con_produce_stage t7 ON t0.produce_stage = t7.code
+        LEFT JOIN s_bas_material t9 ON t1.material_sid = t9.material_sid
+        LEFT JOIN s_bas_sku t10 ON t1.sku_sid = t10.sku_sid
+        LEFT JOIN  (
+        SELECT t2.manufacture_order_sid, SUM(t.quantity) as is_caichuang_quantity
+        FROM s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t1.day_manufacture_progress_sid = t.day_manufacture_progress_sid
+        LEFT JOIN s_man_manufacture_order t2 ON t2.manufacture_order_sid = t.manufacture_order_sid
+        LEFT JOIN s_man_manufacture_order_process t3 ON t3.manufacture_order_process_sid = t.manufacture_order_process_sid
+        LEFT JOIN s_man_day_manufacture_progress t4 ON t4.day_manufacture_progress_sid = t.day_manufacture_progress_sid
+        WHERE t3.is_first_process = 'Y' AND t4.handle_status = '5'
+        GROUP BY t.manufacture_order_sid
+        ) t11 on t.manufacture_order_sid = t11.manufacture_order_sid
+    </sql>
+
+    <sql id="selectToexpireListWhere">
+        <where>
+            AND date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(now(),'%y%m%d')
+            AND date_format(t.plan_end_date,'%y%m%d') &lt;= date_format(date_add(now(), interval
+            +IFNULL(t.toexpire_days_scdd_sx,IFNULL(t3.toexpire_days_scdd_sx,IFNULL(t4.toexpire_days_scdd_sx,7))) day),'%y%m%d')
+            AND t1.handle_status = '5' AND t1.complete_status in ('WKS','JXZ') AND t.end_status in ('WKS','JXZ')
+            <if test="clientId != null and clientId != ''">
+                AND t.client_id = #{clientId}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                AND t1.handle_status = #{handleStatus}
+            </if>
+            <if test="endStatus != null and endStatus != ''">
+                AND (t.end_status != #{endStatus} or t.end_status is null)
+            </if>
+            <if test="handlerSidList != null and handlerSidList.length >0 ">
+                AND t.handler_sid in
+                (<foreach collection="handlerSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="concernTaskSid != null">
+                AND t.concern_task_sid = #{concernTaskSid}
+            </if>
+            <if test="concernTaskSidList != null and concernTaskSidList.length >0 ">
+                and t.concern_task_sid in (
+                <foreach collection="concernTaskSidList" item="concernTaskSid" separator=",">#{concernTaskSid}</foreach>)
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and t9.material_code like concat('%', #{materialCode}, '%')
+            </if>
+            <if test="plantSid != null">
+                AND t1.plant_sid = #{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t1.plant_sid in (
+                <foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="planEndDateBegin != null and planEndDateBegin!=''">and date_format(t.plan_end_date,'%y%m%d') &gt;=
+                date_format(#{planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="planEndDateEnd != null and planEndDateEnd!=''">and date_format(t.plan_end_date,'%y%m%d') &lt;=
+                date_format(#{planEndDateEnd},'%y%m%d')
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectToexpireList" parameterType="com.platform.ems.domain.ManManufactureOrderConcernTask"
+            resultType="com.platform.ems.domain.ManManufactureOrderConcernTask">
+        <if test="pageNum == null and pageSize != null">
+            select count(0) as page_size
+        </if>
+        <if test="pageNum == null and pageSize == null">
+            <include refid="selectToexpireListSelectVo"/>
+        </if>
+        <if test="pageNum != null and pageSize != null">
+            <include refid="selectToexpireListSelectVo"/>
+        </if>
+        <include refid="selectToexpireListFrom"/>
+        <include refid="selectToexpireListWhere"/>
+        order by t.plan_end_date asc, CONVERT (t1.material_code USING gbk) asc, CONVERT (t0.concern_task_name USING gbk) asc
+        <if test="pageNum != null and pageSize != null">LIMIT ${pageBegin},${pageSize}</if>
+    </select>
+
+    <sql id="selectOverdueListSelectVo">
+        select t.manufacture_order_concern_task_sid,
+               t.client_id,
+               t.manufacture_order_sid,
+               t.manufacture_order_code,
+               t.concern_task_sid,
+               t.concern_task_code,
+               t.handler_sid,
+               t.handler_code,
+               t.picture_path,
+               t.video_path,
+               t.end_status,
+               t.plan_start_date,
+               t.plan_end_date,
+               t.actual_start_date,
+               t.actual_end_date,
+               t.handle_comment,
+               t.plan_quantity,
+               t.actual_quantity,
+               t.milestone,
+               t.is_picture_upload,
+               t.is_attach_upload,
+               t.serial_num,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t.manufacture_order_code,
+               t0.concern_task_name,
+               t0.concern_task_type,
+               t0.produce_stage,
+               t3.name as produce_stage_name,
+               t1.material_sid, t1.material_code, t1.material_name,
+               t1.complete_status,
+               t1.plan_end_date as order_plan_end_date,
+               t1.quantity,
+               t1.contract_date,
+               t1.sku_sid, t10.sku_name,
+               IFNULL(t11.is_caichuang_quantity, 0) AS is_caichuang_quantity,
+               t2.user_id AS creator_account_id,
+               t5.plant_code as order_plant_code, t5.plant_name as order_plant_name,
+               t5.short_name as order_plant_short_name,t6.staff_name as handler_name,
+               IFNULL(t.toexpire_days_scdd_sx,IFNULL(t12.toexpire_days_scdd_sx,IFNULL(t13.toexpire_days_scdd_sx,7))) as toexpire_days_scdd_sx,
+               t1.paichan_batch
+    </sql>
+
+    <sql id="selectOverdueListFrom">
+        FROM s_man_manufacture_order_concern_task t
+        LEFT JOIN s_man_produce_concern_task t0 ON t.concern_task_sid = t0.concern_task_sid
+        LEFT JOIN s_man_manufacture_order t1 ON t.manufacture_order_sid = t1.manufacture_order_sid
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN s_con_produce_stage t3 ON t0.produce_stage = t3.code
+        LEFT JOIN s_bas_plant t5 ON t1.plant_sid = t5.plant_sid
+        LEFT JOIN s_bas_staff t6 ON t.handler_sid = t6.staff_sid
+        LEFT JOIN s_bas_material t9 ON t1.material_sid = t9.material_sid
+        LEFT JOIN s_bas_sku t10 ON t1.sku_sid = t10.sku_sid
+        LEFT JOIN  (
+        SELECT t2.manufacture_order_sid, SUM(t.quantity) as is_caichuang_quantity
+        FROM s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t1.day_manufacture_progress_sid = t.day_manufacture_progress_sid
+        LEFT JOIN s_man_manufacture_order t2 ON t2.manufacture_order_sid = t.manufacture_order_sid
+        LEFT JOIN s_man_manufacture_order_process t3 ON t3.manufacture_order_process_sid = t.manufacture_order_process_sid
+        LEFT JOIN s_man_day_manufacture_progress t4 ON t4.day_manufacture_progress_sid = t.day_manufacture_progress_sid
+        WHERE t3.is_first_process = 'Y' AND t4.handle_status = '5'
+        GROUP BY t.manufacture_order_sid
+        ) t11 on t.manufacture_order_sid = t11.manufacture_order_sid
+        LEFT JOIN s_sys_default_setting_client t12 ON t.client_id = t12.client_id AND t12.handle_status = '5'
+        LEFT JOIN s_sys_default_setting_system t13 ON t13.client_id = '10000'
+    </sql>
+
+    <sql id="selectOverdueListWhere">
+        <where>
+            AND date_format(t.plan_end_date,'%y%m%d') &lt; date_format(NOW(),'%y%m%d')
+            AND t1.handle_status = '5' AND t1.complete_status in ('WKS', 'JXZ') AND t.end_status in ('WKS','JXZ')
+            <if test="clientId != null and clientId != ''">
+                AND t.client_id = #{clientId}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                AND t1.handle_status = #{handleStatus}
+            </if>
+            <if test="endStatus != null and endStatus != ''">
+                AND (t.end_status != #{endStatus} or t.end_status is null)
+            </if>
+            <if test="concernTaskSid != null">
+                AND t.concern_task_sid = #{concernTaskSid}
+            </if>
+            <if test="concernTaskSidList != null and concernTaskSidList.length >0 ">
+                and t.concern_task_sid in (
+                <foreach collection="concernTaskSidList" item="concernTaskSid" separator=",">#{concernTaskSid}</foreach>)
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and t9.material_code like concat('%', #{materialCode}, '%')
+            </if>
+            <if test="handlerSidList != null and handlerSidList.length >0 ">
+                AND t.handler_sid in
+                (<foreach collection="handlerSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="plantSid != null">
+                AND t1.plant_sid = #{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t1.plant_sid in (
+                <foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="planEndDateBegin != null and planEndDateBegin!=''">and date_format(t.plan_end_date,'%y%m%d') &gt;=
+                date_format(#{planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="planEndDateEnd != null and planEndDateEnd!=''">and date_format(t.plan_end_date,'%y%m%d') &lt;=
+                date_format(#{planEndDateEnd},'%y%m%d')
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectOverdueList" parameterType="com.platform.ems.domain.ManManufactureOrderConcernTask"
+            resultType="com.platform.ems.domain.ManManufactureOrderConcernTask">
+        <if test="pageNum == null and pageSize != null">
+            select count(0) as page_size
+        </if>
+        <if test="pageNum == null and pageSize == null">
+            <include refid="selectOverdueListSelectVo"/>
+        </if>
+        <if test="pageNum != null and pageSize != null">
+            <include refid="selectOverdueListSelectVo"/>
+        </if>
+        <include refid="selectOverdueListFrom"/>
+        <include refid="selectOverdueListWhere"/>
+        order by t.plan_end_date asc, CONVERT (t1.material_code USING gbk) asc, CONVERT (t0.concern_task_name USING gbk) asc
+        <if test="pageNum != null and pageSize != null">LIMIT ${pageBegin},${pageSize}</if>
+    </select>
+
+    <select id="selectManManufactureOrderConcernByTaskGroupList" parameterType="com.platform.ems.domain.ManManufactureOrderConcernTask"
+            resultType="com.platform.ems.domain.ManManufactureOrderConcernTask">
+        SELECT t.manufacture_order_concern_task_sid,t.manufacture_order_sid,t.concern_task_sid, t.concern_task_code, t.end_status, t.plan_end_date, t.actual_end_date,
+            t2.concern_task_name, t3.sort
+        FROM s_man_manufacture_order_concern_task t
+        LEFT JOIN s_man_produce_concern_task t2 ON t.concern_task_sid = t2.concern_task_sid
+        LEFT JOIN s_man_produce_concern_task_group_item t3 ON t3.concern_task_group_sid = #{concernTaskGroupSid} and t.concern_task_sid = t3.concern_task_sid
+        <where>
+            <if test="manufactureOrderSidList != null and manufactureOrderSidList.length >0 ">
+                and t.manufacture_order_sid in
+                (<foreach collection="manufactureOrderSidList" item="manufactureOrderSid" separator=",">
+                #{manufactureOrderSid}</foreach>)
+            </if>
+            <if test="concernTaskSidList != null and concernTaskSidList.length >0 ">
+                and t.concern_task_sid in
+                (<foreach collection="concernTaskSidList" item="concernTaskSid" separator=",">
+                #{concernTaskSid}</foreach>)
+            </if>
+        </where>
+    </select>
+
+    <select id="selectManufactureOrderConcernTrackingList" parameterType="com.platform.ems.domain.dto.response.form.ManManuOrderConcernTracking"
+            resultType="com.platform.ems.domain.dto.response.form.ManManuOrderConcernTracking">
+        SELECT
+        <if test="pageNum == null or pageSize == null">
+            count(1) as page_size
+        </if>
+        <if test="pageNum != null and pageSize != null">
+            t.manufacture_order_concern_task_sid,
+            t.manufacture_order_sid,
+            t.concern_task_sid,
+            t.plan_quantity,
+            t.actual_quantity,
+            t.milestone,
+            t.serial_num,
+            t.end_status,
+            t.picture_path,
+            t.video_path,
+            t.plan_start_date,
+            t.plan_end_date,
+            t.initial_plan_end_date,
+            t.actual_start_date,
+            t.actual_end_date,
+            t.handle_comment,
+            t.handler_sid,
+            IF(t.end_status IN ('WKS','JXZ') AND t.plan_end_date &lt; DATE_FORMAT(NOW(), '%Y-%m-%d'),0,-1) as light,
+            t1.quantity,
+            t1.manufacture_order_code,
+            t1.material_sid,
+            t1.material_code,
+            t1.material_name,
+            t1.sku_sid,
+            t1.sku_code,
+            t7.sku_name,
+            t1.plant_sid,
+            t1.paichan_batch,
+            t1.complete_status,
+            t1.contract_date,
+            t1.plan_end_date as order_plan_end_date,
+            t2.concern_task_code,
+            t2.concern_task_name,
+            t2.concern_task_type,
+            t2.produce_stage,
+            t8.name as produce_stage_name,
+            t3.staff_code as handler_code,
+            t3.staff_name as handler_name,
+            t4.plant_code,
+            t4.plant_name,
+            IFNULL(t.toexpire_days_scdd_sx,IFNULL(t9.toexpire_days_scdd_sx,IFNULL(t10.toexpire_days_scdd_sx,7))) as toexpire_days_scdd_sx,
+            IFNULL(t4.short_name,t4.plant_name) as plant_short_name,
+            IFNULL(t6.is_caichuang_quantity, 0) AS is_caichuang_quantity
+        </if>
+        FROM s_man_manufacture_order_concern_task t
+        LEFT JOIN s_man_manufacture_order t1 ON t.manufacture_order_sid = t1.manufacture_order_sid
+        LEFT JOIN s_man_produce_concern_task t2 ON t.concern_task_sid = t2.concern_task_sid
+        LEFT JOIN s_bas_staff t3 ON t.handler_sid = t3.staff_sid
+        LEFT JOIN s_bas_plant t4 ON t1.plant_sid = t4.plant_sid
+        LEFT JOIN s_bas_material t5 ON t1.material_sid = t5.material_sid
+        LEFT JOIN  (
+        SELECT t2.manufacture_order_sid, SUM(t.quantity) as is_caichuang_quantity
+        FROM s_man_day_manufacture_progress_item t
+        LEFT JOIN s_man_day_manufacture_progress t1 ON t1.day_manufacture_progress_sid = t.day_manufacture_progress_sid
+        LEFT JOIN s_man_manufacture_order t2 ON t2.manufacture_order_sid = t.manufacture_order_sid
+        LEFT JOIN s_man_manufacture_order_process t3 ON t3.manufacture_order_process_sid = t.manufacture_order_process_sid
+        LEFT JOIN s_man_day_manufacture_progress t4 ON t4.day_manufacture_progress_sid = t.day_manufacture_progress_sid
+        WHERE t3.is_first_process = 'Y' AND t4.handle_status = '5'
+        GROUP BY t.manufacture_order_sid
+        ) t6 on t.manufacture_order_sid = t6.manufacture_order_sid
+        LEFT JOIN s_bas_sku t7 ON t1.sku_sid = t7.sku_sid
+        LEFT JOIN s_con_produce_stage t8 ON t2.produce_stage = t8.code
+        LEFT JOIN s_sys_default_setting_client t9 ON t.client_id = t9.client_id AND t9.handle_status = '5'
+        LEFT JOIN s_sys_default_setting_system t10 ON t10.client_id = '10000'
+        <where>
+                AND t1.handle_status = '5' AND t.plan_end_date IS NOT NULL
+            <if test="clientId != null and clientId != ''">
+                AND t.client_id = #{clientId}
+            </if>
+            <if test="manufactureOrderConcernTaskSid != null">
+                AND t.manufacture_order_concern_task_sid = #{manufactureOrderConcernTaskSid}
+            </if>
+            <if test="manufactureOrderConcernTaskSidList != null and manufactureOrderConcernTaskSidList.length >0 ">
+                AND t.manufacture_order_concern_task_sid in
+                (<foreach collection="manufactureOrderConcernTaskSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="manufactureOrderSid != null">
+                AND t.manufacture_order_sid = #{manufactureOrderSid}
+            </if>
+            <if test="manufactureOrderSidList != null and manufactureOrderSidList.length >0 ">
+                AND t.manufacture_order_sid in
+                (<foreach collection="manufactureOrderSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="concernTaskSid != null">
+                AND t.concern_task_sid = #{concernTaskSid}
+            </if>
+            <if test="concernTaskSidList != null and concernTaskSidList.length >0 ">
+                AND t.concern_task_sid in
+                (<foreach collection="concernTaskSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="handlerSid != null">
+                AND t.handler_sid = #{handlerSid}
+            </if>
+            <if test="handlerSidList != null and handlerSidList.length >0 ">
+                AND t.handler_sid in
+                (<foreach collection="handlerSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="planEndDateBegin != null and planEndDateBegin!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(#{planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="planEndDateEnd != null and planEndDateEnd!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &lt;= date_format(#{planEndDateEnd},'%y%m%d')
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                AND t1.material_code like concat('%', #{materialCode}, '%')
+            </if>
+            <if test="plantSid != null">
+                AND t1.plant_sid = #{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                AND t1.plant_sid in
+                (<foreach collection="plantSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="completeStatus != null and completeStatus != ''">
+                AND t1.complete_status = #{completeStatus}
+            </if>
+            <if test="completeStatusList != null and completeStatusList.length >0 ">
+                AND t1.complete_status in
+                (<foreach collection="completeStatusList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="endStatus != null and endStatus != ''">
+                AND t.end_status = #{endStatus}
+            </if>
+            <if test="endStatusList != null and endStatusList.length >0 ">
+                AND t.end_status in
+                (<foreach collection="endStatusList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+        </where>
+        <if test="pageNum != null and pageSize != null">
+            ORDER BY light DESC, t.plan_end_date ASC, CONVERT (t3.staff_name USING gbk) ASC, CONVERT (t2.concern_task_name USING gbk) ASC
+            LIMIT ${pageBegin},${pageSize}
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ConMaterialClassMapper">
+
+    <resultMap type="com.platform.common.core.domain.entity.ConMaterialClass" id="ConMaterialClassResult">
+        <result property="clientId" column="client_id"/>
+        <result property="materialClassSid" column="material_class_sid"/>
+        <result property="nodeCode" column="node_code"/>
+        <result property="nodeName" column="node_name"/>
+        <result property="nodeType" column="node_type"/>
+        <result property="level" column="level"/>
+        <result property="nodeShortName" column="node_short_name"/>
+        <result property="parentCodeSid" column="parent_code_sid"/>
+        <result property="materialCategory" column="material_category"/>
+        <result property="nodeSort" column="node_sort"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="zipperFlag" column="zipper_flag"/>
+        <result property="parentCodeName" column="parent_code_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="nodeTypeName" column="node_type_name"/>
+    </resultMap>
+
+    <sql id="selectConMaterialClassVo">
+        select
+        t.client_id,
+        t.material_class_sid,
+        t.node_code,
+        t.node_name,
+        t.node_type,
+        t.level,
+        t.node_short_name,
+        t.parent_code_sid,
+        t.material_category,
+        t.node_sort,
+        t.remark,
+        t.status,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t.zipper_flag,
+        t1.node_name as parent_code_name,
+        t1.node_code as parent_code_code,
+        t2.nick_name AS creator_account_name,
+        t3.name AS node_type_name
+  from s_con_material_class t
+        LEFT JOIN s_con_material_class t1 ON t1.material_class_sid = t.parent_code_sid
+        LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+        LEFT JOIN s_con_material_type t3 ON t3.code = t.node_type
+    </sql>
+
+    <select id="selectConMaterialClassById" parameterType="Long" resultMap="ConMaterialClassResult">
+        <include refid="selectConMaterialClassVo"/>
+        where t.material_class_sid = #{materialClassSid}
+    </select>
+
+
+    <select id="selectConMaterialClassList" parameterType="com.platform.common.core.domain.entity.ConMaterialClass"
+            resultMap="ConMaterialClassResult">
+        <include refid="selectConMaterialClassVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialClassSidList != null and materialClassSidList.length >0 ">
+                and t.material_class_sid in
+                (<foreach collection="materialClassSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="materialClassSid != null ">
+                and t.material_class_sid =#{materialClassSid}
+            </if>
+            <if test="nodeCode != null  and nodeCode != ''">
+                and (<foreach collection="nodeCode.split(';')" item="item" separator="or">t.node_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="nodeName != null  and nodeName != ''">and
+                t.node_name like concat('%', #{nodeName}, '%')
+            </if>
+            <if test="nodeType != null  and nodeType != ''">
+                and (<foreach collection="nodeType.split(';')" item="item" separator="or">t.node_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialType != null  and materialType != ''">
+                and t.node_type = #{materialType}
+            </if>
+            <if test="level != null ">
+                and t.level =#{level}
+            </if>
+            <if test="nodeShortName != null  and nodeShortName != ''">and
+                t.node_short_name like concat('%', #{nodeShortName}, '%')
+            </if>
+            <if test="parentCodeSid != null ">
+                and t.parent_code_sid =#{parentCodeSid}
+            </if>
+            <if test="materialCategory != null  and materialCategory != ''">
+                and (<foreach collection="materialCategory.split(';')" item="item" separator="or">t.material_category
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="nodeSort != null ">
+                and t.node_sort =#{nodeSort}
+            </if>
+            <if test="status != null  and status != ''">
+                and (<foreach collection="status.split(';')" item="item" separator="or">t.status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="zipperFlag != null  and zipperFlag != ''">
+                and (<foreach collection="zipperFlag.split(';')" item="item" separator="or">t.zipper_flag like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.level asc, t.node_code asc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_material_class
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            material_class_sid,
+            node_code,
+            node_name,
+            node_type,
+            level,
+            node_short_name,
+            parent_code_sid,
+            material_category,
+            node_sort,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+            zipper_flag,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.nodeCode},
+                #{item.nodeName},
+                #{item.nodeType},
+                #{item.level},
+                #{item.nodeShortName},
+                #{item.parentCodeSid},
+                #{item.materialCategory},
+                #{item.nodeSort},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+                #{item.zipperFlag},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_material_class
+        <trim prefix="SET" suffixOverrides=",">
+            material_class_sid = #{materialClassSid},
+            node_code = #{nodeCode},
+            node_name = #{nodeName},
+            node_type = #{nodeType},
+            level = #{level},
+            node_short_name = #{nodeShortName},
+            parent_code_sid = #{parentCodeSid},
+            material_category = #{materialCategory},
+            node_sort = #{nodeSort},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            zipper_flag = #{zipperFlag},
+        </trim>
+        where material_class_sid = #{materialClassSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_material_class
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                material_class_sid = #{materialClassSid},
+                node_code = #{nodeCode},
+                node_name = #{nodeName},
+                node_type = #{nodeType},
+                level = #{level},
+                node_short_name = #{nodeShortName},
+                parent_code_sid = #{parentCodeSid},
+                material_category = #{materialCategory},
+                node_sort = #{nodeSort},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+                zipper_flag = #{zipperFlag},
+            </trim>
+            where material_class_sid = #{materialClassSid}
+        </foreach>
+    </update>
+
+    <select id="selectConMaterialClassListByParentId" resultMap="ConMaterialClassResult">
+        SELECT d2.*
+        FROM (
+                 SELECT t1.material_class_sid,
+                        IF(find_in_set(t1.parent_code_sid, @pids) > 0, @pids := concat(@pids, ',', t1.material_class_sid), 0) AS leafNodeId
+                 FROM (SELECT d1.material_class_sid, d1.parent_code_sid FROM s_con_material_class d1) t1,
+                      (SELECT @pids := ${materialClassSid} ) t2
+             ) t3
+                 INNER JOIN s_con_material_class d2 ON d2.material_class_sid = t3.material_class_sid
+        WHERE t3.leafNodeId != 0
+    </select>
+
+    <select id="selectConMaterialClassParentsListySon" resultMap="ConMaterialClassResult">
+        SELECT T1.material_class_sid,T1.node_code,T1.node_name,T1.parent_code_sid,T1.level,T2.sort
+        FROM s_con_material_class T1
+        INNER JOIN (
+            SELECT
+                @id AS _id,
+                (SELECT @id := parent_code_sid FROM s_con_material_class WHERE material_class_sid = _id) AS parent_code_sid,
+                @sort := @sort + 1 AS sort
+            FROM
+                (SELECT @id := ${materialClassSid}, @sort := 0) T2_1, s_con_material_class T2_2
+        ) T2 ON T1.material_class_sid = T2._id
+        ORDER BY T2.sort DESC;
+    </select>
+
+    <select id="getConMaterialClassList" parameterType="com.platform.common.core.domain.entity.ConMaterialClass"
+            resultMap="ConMaterialClassResult">
+        select
+        t.client_id,
+        t.material_class_sid,
+        t.node_code,
+        t.node_code AS material_class_code,
+        t.node_name,
+        t.node_name AS material_class_name,
+        t.node_type,
+        t.node_type AS material_type,
+        t.zipper_flag,
+        t.level,
+        t.node_short_name,
+        t.parent_code_sid,
+        t.material_category,
+        t.node_sort,
+        t.data_source_sys,
+        t1.name AS node_type_name
+        FROM s_con_material_class t
+        LEFT JOIN s_con_material_type t1 ON t.node_type = t1.code
+        <where>
+            <if test="parentCodeSid != null ">
+                AND t.parent_code_sid = #{parentCodeSid}
+            </if>
+            <if test="level != null ">
+                AND t.level = #{level}
+            </if>
+            <if test="status != null and status != ''">
+                AND t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                AND t.handle_status = #{handleStatus}
+            </if>
+        </where>
+    </select>
+
+</mapper>

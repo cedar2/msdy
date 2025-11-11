@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecModelPosSizeMapper">
+
+    <resultMap type="com.platform.ems.domain.TecModelPosSize" id="TecModelPosSizeResult">
+        <result property="clientId"    column="client_id"    />
+        <result property="modelPositionSizeSid"    column="model_position_size_sid"    />
+        <result property="modelPositionInforSid"    column="model_position_infor_sid"    />
+        <result property="skuSid"    column="sku_sid"    />
+        <result property="skuCode"    column="sku_code"    />
+        <result property="skuName"    column="sku_name"    />
+
+        <result property="sizeValue"    column="size_value"    />
+        <result property="remark"    column="remark"    />
+        <result property="creatorAccount"    column="creator_account"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updaterAccount"    column="updater_account"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="dataSourceSys"    column="data_source_sys"    />
+    </resultMap>
+
+    <sql id="selectTecModelPosSizeVo">
+        SELECT
+	t.client_id,
+	t.model_position_size_sid,
+	t.model_position_infor_sid,
+	t.sku_sid,
+	t1.sku_code,
+	t1.sku_name,
+	t.size_value,
+	t.remark,
+	t.creator_account,
+	t.create_date,
+	t.updater_account,
+	t.update_date,
+	t.data_source_sys
+FROM
+	s_tec_model_pos_size t
+	LEFT JOIN s_bas_sku t1 on t1.sku_sid=t.sku_sid
+    </sql>
+
+    <select id="selectTecModelPosSizeList" parameterType="com.platform.ems.domain.TecModelPosSize" resultMap="TecModelPosSizeResult">
+        <include refid="selectTecModelPosSizeVo"/>
+        <where>
+            <if test="modelPositionInforSid != null  and modelPositionInforSid != ''"> and t.model_position_infor_sid = #{modelPositionInforSid}</if>
+            <if test="modelPositionSizeSid != null  and modelPositionSizeSid != ''"> and t.model_position_size_sid = #{modelPositionSizeSid}</if>
+            <if test="skuSid != null  and skuSid != ''"> and t.sku_sid = #{skuSid}</if>
+            <if test="sizeValue != null "> and t.size_value = #{sizeValue}</if>
+            <if test="creatorAccount != null  and creatorAccount != ''"> and t.creator_account = #{creatorAccount}</if>
+            <if test="createDate != null "> and t.create_date = #{createDate}</if>
+            <if test="updaterAccount != null  and updaterAccount != ''"> and t.updater_account = #{updaterAccount}</if>
+            <if test="updateDate != null "> and t.update_date = #{updateDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''"> and t.data_source_sys = #{dataSourceSys}</if>
+        </where>
+        order by t1.sku_name asc
+    </select>
+
+    <select id="selectTecModelPosSizeById" parameterType="Long" resultMap="TecModelPosSizeResult">
+        <include refid="selectTecModelPosSizeVo"/>
+        where client_id = #{clientId}
+    </select>
+
+    <insert id="insertTecModelPosSize" parameterType="com.platform.ems.domain.TecModelPosSize">
+        insert into s_tec_model_pos_size
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">client_id,</if>
+            <if test="modelPositionSizeSid != null and modelPositionSizeSid != ''">model_position_size_sid,</if>
+            <if test="modelPositionInforSid != null">model_position_infor_sid,</if>
+            <if test="skuSid != null and skuSid != ''">sku_sid,</if>
+            <if test="sizeValue != null">size_value,</if>
+            <if test="remark != null">remark,</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updaterAccount != null">updater_account,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="dataSourceSys != null">data_source_sys,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">#{clientId},</if>
+            <if test="modelPositionSizeSid != null and modelPositionSizeSid != ''">#{modelPositionSizeSid},</if>
+            <if test="modelPositionInforSid != null">#{modelPositionInforSid},</if>
+            <if test="skuSid != null and skuSid != ''">#{skuSid},</if>
+            <if test="sizeValue != null">#{sizeValue},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">#{creatorAccount},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updaterAccount != null">#{updaterAccount},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="dataSourceSys != null">#{dataSourceSys},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTecModelPosSize" parameterType="com.platform.ems.domain.TecModelPosSize">
+        update s_tec_model_pos_size
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="modelPositionSizeSid != null and modelPositionSizeSid != ''">model_position_size_sid = #{modelPositionSizeSid},</if>
+            <if test="modelPositionInforSid != null">model_position_infor_sid = #{modelPositionInforSid},</if>
+            <if test="skuSid != null and skuSid != ''">sku_sid = #{skuSid},</if>
+            <if test="sizeValue != null">size_value = #{sizeValue},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account = #{creatorAccount},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updaterAccount != null">updater_account = #{updaterAccount},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="dataSourceSys != null">data_source_sys = #{dataSourceSys},</if>
+        </trim>
+        where client_id = #{clientId}
+    </update>
+
+    <delete id="deleteTecModelPosSizeById" parameterType="Long">
+        delete from s_tec_model_pos_size where client_id = #{clientId}
+    </delete>
+
+    <delete id="deleteTecModelPosSizeByIds" parameterType="Long">
+        delete from s_tec_model_pos_size where client_id in
+        <foreach item="clientId" collection="array" open="(" separator="," close=")">
+            #{clientId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.InvRecordCustomerRepairMapper">
+
+    <resultMap type="com.platform.ems.domain.InvRecordCustomerRepair" id="InvRecordCustomerRepairResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="customerRepairSid" column="customer_repair_sid"/>
+                    <result property="customerRepairCode" column="customer_repair_code"/>
+                    <result property="customerSid" column="customer_sid"/>
+                    <result property="companySid" column="company_sid"/>
+                    <result property="documentDate" column="document_date"/>
+                    <result property="documentType" column="document_type"/>
+                    <result property="businessType" column="business_type"/>
+                    <result property="carrierNoteCode" column="carrier_note_code"/>
+                    <result property="productSeasonSid" column="product_season_sid"/>
+                    <result property="remark" column="remark"/>
+                    <result property="handleStatus" column="handle_status"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="confirmerAccount" column="confirmer_account"/>
+                    <result property="confirmDate" column="confirm_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+            </resultMap>
+
+    <sql id="selectInvRecordCustomerRepairVo">
+        select t.client_id,
+        t.customer_repair_sid,
+        t.customer_repair_code,
+        t.customer_sid,
+        t.company_sid,
+        t.document_date,
+        t.document_type,
+        t.business_type,
+        t.carrier_note_code,
+        t.product_season_sid,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.company_name,
+        t2.customer_name,
+        t3.product_season_name,
+        t4.nick_name AS creator_account_name,
+        t5.nick_name AS updater_account_name,
+        t6.nick_name AS confirmer_account_name
+        from s_inv_record_customer_repair t
+        LEFT JOIN s_bas_company t1 ON t1.company_sid = t.company_sid
+        LEFT JOIN s_bas_customer t2 ON t2.customer_sid = t.customer_sid
+        LEFT JOIN s_bas_product_season t3 ON t3.product_season_sid = t.product_season_sid
+        LEFT JOIN sys_user t4 ON t.creator_account = t4.user_name
+        LEFT JOIN sys_user t5 ON t.updater_account = t5.user_name
+        LEFT JOIN sys_user t6 ON t.confirmer_account = t6.user_name
+    </sql>
+
+    <select id="selectInvRecordCustomerRepairById" parameterType="Long" resultMap="InvRecordCustomerRepairResult">
+        <include refid="selectInvRecordCustomerRepairVo"/>
+        where t.customer_repair_sid = #{customerRepairSid}
+    </select>
+
+    <select id="getItemList" parameterType="com.platform.ems.domain.InvRecordCustomerRepair" resultType="com.platform.ems.domain.InvRecordCustomerRepair">
+        select  t.customer_repair_sid,t.customer_repair_code from s_inv_record_customer_repair t
+        left join s_inv_record_customer_repair_item t2 on t2.customer_repair_sid =t.customer_repair_sid
+        <where>
+            t.company_sid = #{companySid} and t.customer_sid =#{customerSid} and t2.barcode_sid=#{barcodeSid}
+            <if test="customerRepairSid != null and customerRepairSid != ''">
+                and t.customer_repair_sid  != #{customerRepairSid}
+            </if>
+        </where>
+
+    </select>
+
+
+    <select id="selectInvRecordCustomerRepairList" parameterType="com.platform.ems.domain.InvRecordCustomerRepair"
+            resultMap="InvRecordCustomerRepairResult">
+        <include refid="selectInvRecordCustomerRepairVo"/>
+        <where>
+            <if test="customerRepairCode != null and customerRepairCode != '' ">
+                and t.customer_repair_code  like concat('%',#{customerRepairCode}, '%')
+            </if>
+            <if test="customerSidList != null and  customerSidList.length >0 ">
+                and t.customer_sid in
+                (<foreach collection="customerSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="companySidList != null and  companySidList.length >0 ">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and  productSeasonSidList.length >0 ">
+                and t.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="handleStatusList != null and  handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="creatorAccountName != null  and creatorAccountName != ''">
+                and (<foreach collection="creatorAccountName.split(';')" item="item" separator="or"> t4.nick_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by  t.customer_repair_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_inv_record_customer_repair
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                customer_repair_sid,
+                                                                customer_repair_code,
+                                                                customer_sid,
+                                                                company_sid,
+                                                                document_date,
+                                                                document_type,
+                                                                business_type,
+                                                                carrier_note_code,
+                                                                product_season_sid,
+                                                                remark,
+                                                                handle_status,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                confirmer_account,
+                                                                confirm_date,
+                                                                data_source_sys,
+                                    </trim>
+        values
+            <foreach collection="list" item="item" separator=",">
+                <trim prefix=" (" suffix=")" suffixOverrides=",">
+                                                            #{item.clientId},
+                                                                                                                    #{item.customerRepairCode},
+                                                                                #{item.customerSid},
+                                                                                #{item.companySid},
+                                                                                #{item.documentDate},
+                                                                                #{item.documentType},
+                                                                                #{item.businessType},
+                                                                                #{item.carrierNoteCode},
+                                                                                #{item.productSeasonSid},
+                                                                                #{item.remark},
+                                                                                #{item.handleStatus},
+                                                                                #{item.creatorAccount},
+                                                                                #{item.createDate},
+                                                                                #{item.updaterAccount},
+                                                                                #{item.updateDate},
+                                                                                #{item.confirmerAccount},
+                                                                                #{item.confirmDate},
+                                                                                #{item.dataSourceSys},
+                                                    </trim>
+            </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_inv_record_customer_repair
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                customer_repair_sid = #{customerRepairSid},
+                                                                customer_repair_code = #{customerRepairCode},
+                                                                customer_sid = #{customerSid},
+                                                                company_sid = #{companySid},
+                                                                document_date = #{documentDate},
+                                                                document_type = #{documentType},
+                                                                business_type = #{businessType},
+                                                                carrier_note_code = #{carrierNoteCode},
+                                                                product_season_sid = #{productSeasonSid},
+                                                                remark = #{remark},
+                                                                handle_status = #{handleStatus},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                confirmer_account = #{confirmerAccount},
+                                                                confirm_date = #{confirmDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where customer_repair_sid = #{customerRepairSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_inv_record_customer_repair
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                customer_repair_sid = #{customerRepairSid},
+                                                                                customer_repair_code = #{customerRepairCode},
+                                                                                customer_sid = #{customerSid},
+                                                                                company_sid = #{companySid},
+                                                                                document_date = #{documentDate},
+                                                                                document_type = #{documentType},
+                                                                                business_type = #{businessType},
+                                                                                carrier_note_code = #{carrierNoteCode},
+                                                                                product_season_sid = #{productSeasonSid},
+                                                                                remark = #{remark},
+                                                                                handle_status = #{handleStatus},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                confirmer_account = #{confirmerAccount},
+                                                                                confirm_date = #{confirmDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where customer_repair_sid = #{customerRepairSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManProcessMapper">
+
+    <resultMap type="com.platform.ems.domain.ManProcess" id="ManProcessResult">
+        <result property="clientId" column="client_id"/>
+        <result property="processSid" column="process_sid"/>
+        <result property="processCode" column="process_code"/>
+        <result property="processName" column="process_name"/>
+        <result property="productionMode" column="production_mode"/>
+        <result property="produceStage" column="produce_stage"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="hangSysProcess" column="hang_sys_process"/>
+        <result property="processCategory" column="process_category"/>
+        <result property="remark" column="remark"/>
+        <result property="isProcessStepUsed" column="is_process_step_used"/>
+        <result property="isStageComplete" column="is_stage_complete"/>
+        <result property="isProduceComplete" column="is_produce_complete"/>
+        <result property="isDetailQuantityEntry" column="is_detail_quantity_entry"/>
+        <result property="isFirstProcess" column="is_first_process"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="companyName" column="company_name"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="produceStageName" column="produce_stage_name"/>
+    </resultMap>
+
+    <sql id="selectManProcessVo">
+        select
+        t.client_id,
+        t.process_sid,
+        t.process_code,
+        t.process_name,
+        t.production_mode,
+        t.produce_stage,
+        t.special_flag,
+        t.company_sid,
+        t.hang_sys_process,
+        t.process_category,
+        t.remark,
+        t.is_process_step_used,
+        t.is_stage_complete,
+        t.is_produce_complete,
+        t.is_detail_quantity_entry,
+        t.is_first_process,
+        t.status,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t.special_flag,
+        t1.nick_name as creator_account_name,
+        t2.nick_name as updater_account_name,
+        t3.nick_name as confirmer_account_name,
+        t4.name as produce_stage_name,
+        t.department,
+        t.quantity_refer_process_sid,
+        t.quantity_refer_process_code,
+        t.quantity_type_refer_process,
+        t5.process_name as quantity_refer_process_name,
+        t6.name as department_name,
+        t6.code as department_code,
+        t6.sid as department_sid
+  from s_man_process t
+        LEFT JOIN sys_user t1 ON t1.user_name = t.creator_account
+        LEFT JOIN sys_user t2 ON t2.user_name = t.updater_account
+        LEFT JOIN sys_user t3 ON t3.user_name = t.confirmer_account
+        LEFT JOIN s_con_produce_stage t4 ON t4.code = t.produce_stage
+        left join s_man_process t5 on t5.process_sid=t.quantity_refer_process_sid
+        left join s_con_manufacture_department t6 on t6.code=t.department
+    </sql>
+
+    <select id="selectManProcessById" parameterType="Long" resultMap="ManProcessResult">
+        <include refid="selectManProcessVo"/>
+        where t.process_sid = #{processSid}
+    </select>
+
+
+    <select id="selectManProcessList" parameterType="com.platform.ems.domain.ManProcess"
+            resultMap="ManProcessResult">
+        <include refid="selectManProcessVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="departmentList != null and departmentList.length > 0">
+                and t.department in
+                (<foreach collection="departmentList" item="department" separator=",">#{department}</foreach>)
+            </if>
+            <if test="specialFlagList != null and specialFlagList.length > 0">
+                and t.special_flag in
+                (<foreach collection="specialFlagList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="processSid != null ">
+                and t.process_sid =#{processSid}
+            </if>
+            <if test="processSidList != null and processSidList.length > 0">
+                and t.process_sid in
+                (<foreach collection="processSidList" item="processSid" separator=",">#{processSid}</foreach>)
+            </if>
+            <if test="processCode != null and processCode != ''">
+                and (<foreach collection="processCode.split(';')" item="item" separator="or">t.process_code like
+                concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="processName != null and processName != ''">
+                and (<foreach collection="processName.split(';')" item="item" separator="or">t.process_name like
+                concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="productionMode != null and productionMode != ''">
+                and t.production_mode = #{productionMode}
+            </if>
+            <if test="productionModeList != null and productionModeList.length > 0">
+                and t.production_mode in
+                (<foreach collection="productionModeList" item="productionMode" separator=",">#{productionMode}</foreach>)
+            </if>
+            <if test="produceStage != null and produceStage != ''">
+                and t.produce_stage = #{produceStage}
+            </if>
+            <if test="produceStageList != null and produceStageList.length > 0">
+                and t.produce_stage in
+                (<foreach collection="produceStageList" item="produceStage" separator=",">#{produceStage}</foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="processCategory != null and processCategory != ''">
+                and t.process_category = #{processCategory}
+            </if>
+            <if test="processCategoryList != null and processCategoryList.length > 0">
+                and t.process_category in
+                (<foreach collection="processCategoryList" item="processCategory" separator=",">#{processCategory}</foreach>)
+            </if>
+            <if test="hangSysProcess != null and hangSysProcess != ''">
+                and t.hang_sys_process = #{hangSysProcess}
+            </if>
+            <if test="isProcessStepUsed != null and isProcessStepUsed != ''">
+                and t.is_process_step_used = #{isProcessStepUsed}
+            </if>
+            <if test="isStageComplete != null and isStageComplete != ''">
+                and t.is_stage_complete = #{isStageComplete}
+            </if>
+            <if test="isProduceComplete != null and isProduceComplete != ''">
+                and t.is_produce_complete = #{isProduceComplete}
+            </if>
+            <if test="isDetailQuantityEntry != null and isDetailQuantityEntry != ''">
+                and t.is_detail_quantity_entry = #{isDetailQuantityEntry}
+            </if>
+            <if test="isFirstProcess != null and isFirstProcess != ''">
+                and t.is_first_process = #{isFirstProcess}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length > 0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t1.nick_name like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.process_code desc, t.create_date desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_process
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            process_sid,
+            process_code,
+            process_name,
+            production_mode,
+            produce_stage,
+            company_sid,
+            hang_sys_process,
+            process_category,
+            department,
+            quantity_refer_process_sid,
+            quantity_refer_process_code,
+            quantity_type_refer_process,
+            special_flag,
+            is_process_step_used,
+            is_stage_complete,
+            is_produce_complete,
+            is_detail_quantity_entry,
+            is_first_process,
+            status,
+            handle_status,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.processSid},
+                #{item.processCode},
+                #{item.processName},
+                #{item.productionMode},
+                #{item.produceStage},
+                #{item.companySid},
+                #{item.hangSysProcess},
+                #{item.processCategory},
+                #{item.department},
+                #{item.quantityReferProcessSid},
+                #{item.quantityReferProcessCode},
+                #{item.quantityTypeReferProcess},
+                #{item.specialFlag},
+                #{item.isProcessStepUsed},
+                #{item.isStageComplete},
+                #{item.isProduceComplete},
+                #{item.isDetailQuantityEntry},
+                #{item.isFirstProcess},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_process
+        <trim prefix="SET" suffixOverrides=",">
+            process_code = #{processCode},
+            process_name = #{processName},
+            production_mode = #{productionMode},
+            produce_stage = #{produceStage},
+            company_sid = #{companySid},
+            hang_sys_process = #{hangSysProcess},
+            process_category = #{processCategory},
+            department = #{department},
+            quantity_refer_process_sid = #{quantityReferProcessSid},
+            quantity_refer_process_code = #{quantityReferProcessCode},
+            quantity_type_refer_process = #{quantityTypeReferProcess},
+            special_flag=#{specialFlag},
+            is_process_step_used = #{isProcessStepUsed},
+            is_stage_complete = #{isStageComplete},
+            is_produce_complete = #{isProduceComplete},
+            is_detail_quantity_entry = #{isDetailQuantityEntry},
+            is_first_process = #{isFirstProcess},
+            status = #{status},
+            handle_status = #{handleStatus},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where process_sid = #{processSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_process
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{o.clientId},
+                process_code = #{o.processCode},
+                process_name = #{o.processName},
+                production_mode = #{o.productionMode},
+                produce_stage = #{o.produceStage},
+                company_sid = #{o.companySid},
+                hang_sys_process = #{o.hangSysProcess},
+                process_category = #{o.processCategory},
+                department = #{o.department},
+                quantity_refer_process_sid = #{o.quantityReferProcessSid},
+                quantity_refer_process_code = #{o.quantityReferProcessCode},
+                quantity_type_refer_process = #{o.quantityTypeReferProcess},
+                special_flag=#{specialFlag},
+                is_process_step_used = #{o.isProcessStepUsed},
+                is_stage_complete = #{o.isStageComplete},
+                is_produce_complete = #{o.isProduceComplete},
+                is_detail_quantity_entry = #{o.isDetailQuantityEntry},
+                is_first_process = #{o.isFirstProcess},
+                status = #{o.status},
+                handle_status = #{o.handleStatus},
+                remark = #{o.remark},
+                creator_account = #{o.creatorAccount},
+                create_date = #{o.createDate},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+                data_source_sys = #{o.dataSourceSys},
+            </trim>
+            where process_sid = #{o.processSid}
+        </foreach>
+    </update>
+
+
+    <select id="getList" resultType="com.platform.ems.domain.ManProcess">
+      select
+      process_sid,
+      process_code,
+      process_name,
+      process_category,
+      is_process_step_used,
+      is_stage_complete,
+      creator_account,
+      create_date,
+      handle_status,
+      status
+    from s_man_process
+      <where>
+          <if test="processCodeName != null and processCodeName != ''">
+              and ( process_code like concat('%', #{processCodeName}, '%') or process_name like concat('%', #{processCodeName}, '%') )
+          </if>
+          <if test="processCategory != null and processCategory != ''">
+              and process_category = #{processCategory}
+          </if>
+          <if test="processCategoryList != null and processCategoryList.length > 0">
+              and process_category in
+              (<foreach collection="processCategoryList" item="processCategory" separator=",">#{processCategory}</foreach>)
+          </if>
+          <if test="isStageComplete != null and isStageComplete != ''">
+              and is_stage_complete = #{isStageComplete}
+          </if>
+          <if test="isProcessStepUsed != null and isProcessStepUsed != ''">
+              and is_process_step_used = #{isProcessStepUsed}
+          </if>
+          <if test="handleStatus != null and handleStatus != ''">
+              and handle_status = #{handleStatus}
+          </if>
+          <if test="status != null and status != ''">
+              and status = #{status}
+          </if>
+      </where>
+      order by process_name asc
+  </select>
+
+</mapper>

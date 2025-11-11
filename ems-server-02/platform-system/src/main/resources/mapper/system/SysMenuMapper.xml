@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.system.mapper.SysMenuMapper">
+
+	<resultMap type="com.platform.common.core.domain.entity.SysMenu" id="SysMenuResult">
+		<id     property="menuId"         column="menu_id"        />
+		<result property="menuName"       column="menu_name"      />
+		<result property="parentName"     column="parent_name"    />
+		<result property="parentId"       column="parent_id"      />
+		<result property="orderNum"       column="order_num"      />
+		<result property="path"           column="path"           />
+		<result property="component"      column="component"      />
+		<result property="isFrame"        column="is_frame"       />
+		<result property="isCache"        column="is_cache"       />
+		<result property="menuType"       column="menu_type"      />
+		<result property="visible"        column="visible"        />
+		<result property="status"         column="status"         />
+		<result property="perms"          column="perms"          />
+		<result property="icon"           column="icon"           />
+		<result property="createBy"       column="create_by"      />
+		<result property="createTime"     column="create_time"    />
+		<result property="updateTime"     column="update_time"    />
+		<result property="updateBy"       column="update_by"      />
+		<result property="remark"         column="remark"         />
+		<result property="clientId"         column="client_id"         />
+		<result property="specialClientId"         column="special_client_id"         />
+	</resultMap>
+
+	<sql id="selectMenuVo">
+		select menu_id, menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, ifnull(perms,'') as perms, icon, remark, special_client_id, create_time,client_id
+		from sys_menu
+	</sql>
+
+	<select id="selectMenuList" parameterType="com.platform.common.core.domain.entity.SysMenu" resultMap="SysMenuResult">
+		<include refid="selectMenuVo"/>
+		<where>
+			<if test="menuName != null and menuName != ''">
+				AND menu_name like concat('%', #{menuName}, '%')
+			</if>
+			<if test="visible != null and visible != ''">
+				AND visible = #{visible}
+			</if>
+			<if test="status != null and status != ''">
+				AND status = #{status}
+			</if>
+		</where>
+		order by parent_id, order_num
+	</select>
+
+	<select id="selectMenuTreeAll" resultMap="SysMenuResult">
+		select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.visible, m.status, ifnull(m.perms,'') as perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time
+		from sys_menu m where m.menu_type in ('M', 'C') and m.status = 0
+		order by m.parent_id, m.order_num
+	</select>
+
+	<select id="selectDbTableList" parameterType="com.platform.common.core.domain.entity.SysTable" resultType = "com.platform.common.core.domain.entity.SysTable">
+		select table_name, table_comment, create_time, update_time
+		from information_schema.tables
+		<where>
+			and table_name NOT LIKE 'gen_%' and table_name NOT LIKE 'ACT_%' and table_name NOT LIKE 'QRTZ_%'
+			and table_name NOT LIKE 'FLW_%' and table_name NOT LIKE 'sys_%' and table_comment != ''
+			and table_schema = (select database())
+			<if test="tableName != null and tableName != ''">
+				and table_name like concat('%', #{tableName} ,'%')
+			</if>
+			<if test="tableComment != null and tableComment != ''">
+				and table_comment like concat('%', #{tableComment} ,'%')
+			</if>
+		</where>
+	</select>
+
+	<sql id="getMenuReportVo">
+		select
+			t.menu_id,
+			t.menu_name as button,
+			t.menu_type,
+			t.status as button_status,
+			t3.client_id,
+			t3.role_name,
+			t3.role_key,
+			t3.status as role_status,
+			t3.role_type,
+			t3.role_id,
+			t4.menu_name as menu_name,
+			t4.status as menu_status,
+			CONCAT_WS('-',t5.menu_name,t6.menu_name) as catalogue
+		from sys_menu t
+				 left join sys_role_menu t2 on t2.menu_id=t.menu_id
+				 left join sys_role t3 on t3.role_id=t2.role_id
+				 left join sys_menu t4 on t4.menu_id=t.parent_id
+				 left join sys_menu t5 on t5.menu_id=t4.parent_id
+				 left join sys_menu t6 on t6.menu_id=t5.parent_id
+	</sql>
+	<select id="getMenuReport" resultType="com.platform.system.domain.dto.response.MenuResponse" parameterType="com.platform.system.domain.dto.request.MenuRequest">
+		<include refid="getMenuReportVo"/>
+		<where>
+			t3.role_name is not null
+			and  t.menu_type='F'
+			<if test="roleNameList != null and roleNameList.length >0">
+				AND t3.role_name in
+				(<foreach collection="roleNameList" item="item" separator=",">#{item}</foreach>)
+			</if>
+			<if test="roleTypeList != null and roleTypeList.length >0">
+				AND t3.role_type in
+				(<foreach collection="roleTypeList" item="item" separator=",">#{item}</foreach>)
+			</if>
+			<if test="menuTypeList != null and menuTypeList.length >0">
+				AND t.menu_name in
+				(<foreach collection="menuTypeList" item="item" separator=",">#{item}</foreach>)
+			</if>
+			<if test="menuStatusList != null and menuStatusList.length >0">
+				AND t4.status in
+				(<foreach collection="menuStatusList" item="item" separator=",">#{item}</foreach>)
+			</if>
+			<if test="roleStatus != null and roleStatus != ''">
+				AND t3.status like concat('%', #{roleStatus}, '%')
+			</if>
+			<if test="clientId != null and clientId != ''">
+				AND t3.client_id like concat('%', #{clientId}, '%')
+			</if>
+			<if test="roleName != null and roleName != ''">
+				AND t3.role_name like concat('%', #{roleName}, '%')
+			</if>
+			<if test="roleKey != null and roleKey != ''">
+				AND t3.role_key like concat('%', #{roleKey}, '%')
+			</if>
+			<if test="menuName != null and menuName != ''">
+				AND t4.menu_name like concat('%', #{menuName}, '%')
+			</if>
+			<if test="button != null and button != ''">
+				AND t.menu_name like concat('%', #{button}, '%')
+			</if>
+			<if test="buttonStatus != null and buttonStatus != ''">
+				AND t.status like concat('%', #{buttonStatus}, '%')
+			</if>
+			<if test="catalogue != null and catalogue != ''">
+				AND (t5.menu_name like concat('%', #{catalogue}, '%') or  t6.menu_name like concat('%', #{catalogue}, '%'))
+			</if>
+		</where>
+	</select>
+
+	<select id="selectMenuListByUserId" parameterType="com.platform.common.core.domain.entity.SysMenu" resultMap="SysMenuResult">
+		select distinct m.menu_id, m.parent_id, m.menu_name, m.path,m.client_id,m.remark,m.special_client_id, m.component, m.visible, m.status, ifnull(m.perms,'') as perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time
+		from sys_menu m
+		left join sys_role_menu rm on m.menu_id = rm.menu_id
+		left join sys_user_role ur on rm.role_id = ur.role_id
+		left join sys_role ro on ur.role_id = ro.role_id
+		where ur.user_id = #{params.userId}
+		<if test="menuName != null and menuName != ''">
+			AND menu_name like concat('%', #{menuName}, '%')
+		</if>
+		<if test="visible != null and visible != ''">
+			AND visible = #{visible}
+		</if>
+		<if test="status != null and status != ''">
+			AND status = #{status}
+		</if>
+		order by m.parent_id, m.order_num
+	</select>
+
+	<select id="selectMenuTreeByUserId" parameterType="Long" resultMap="SysMenuResult">
+		select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.visible, m.status, ifnull(m.perms,'') as perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time
+		from sys_menu m
+				 left join sys_role_menu rm on m.menu_id = rm.menu_id
+				 left join sys_user_role ur on rm.role_id = ur.role_id
+				 left join sys_role ro on ur.role_id = ro.role_id
+				 left join sys_user u on ur.user_id = u.user_id
+		where u.user_id = #{userId} and m.menu_type in ('M', 'C') and m.status = 0  AND ro.status = 0
+		order by m.parent_id, m.order_num
+	</select>
+
+	<select id="selectMenuListByRoleId" resultType="Integer">
+		select m.menu_id
+		from sys_menu m
+		left join sys_role_menu rm on m.menu_id = rm.menu_id
+		where rm.role_id = #{roleId}
+		<if test="menuCheckStrictly">
+			and m.menu_id not in (select m.parent_id from sys_menu m inner join sys_role_menu rm on m.menu_id = rm.menu_id and rm.role_id = #{roleId})
+		</if>
+		order by m.parent_id, m.order_num
+	</select>
+
+	<select id="selectMenuPerms" resultType="String">
+		select distinct m.perms
+		from sys_menu m
+				 left join sys_role_menu rm on m.menu_id = rm.menu_id
+				 left join sys_user_role ur on rm.role_id = ur.role_id
+	</select>
+
+	<select id="selectMenuPermsByUserId" parameterType="Long" resultType="String">
+		select distinct m.perms
+		from sys_menu m
+				 left join sys_role_menu rm on m.menu_id = rm.menu_id
+				 left join sys_user_role ur on rm.role_id = ur.role_id
+				 left join sys_role r on r.role_id = ur.role_id
+		where m.status = '0' and r.status = '0' and ur.user_id = #{userId}
+	</select>
+
+	<select id="selectMenuPermsByRoleId" parameterType="Long" resultType="String">
+		select distinct m.perms
+		from sys_menu m
+				 left join sys_role_menu rm on m.menu_id = rm.menu_id
+		where m.status = '0' and rm.role_id = #{roleId}
+	</select>
+
+	<select id="selectMenuPermsByRoleIdPType" resultType="String">
+		select distinct m.perms
+		from sys_menu m
+		left join sys_role_menu rm on m.menu_id = rm.menu_id
+		where m.status = '0'
+		and rm.role_id = #{roleId}
+		<!-- and m.p_type = #{pType} -->
+	</select>
+
+	<select id="selectMenuPermsByUserIdPType" resultType="String">
+		select distinct m.perms
+		from sys_menu m
+		left join sys_role_menu rm on m.menu_id = rm.menu_id
+		left join sys_user_role ur on rm.role_id = ur.role_id
+		left join sys_role r on r.role_id = ur.role_id
+		where m.status = '0'
+		and r.status = '0'
+		and ur.user_id = #{userId}
+		<!-- and m.p_type = #{pType} -->
+	</select>
+
+	<delete id="deleteMenuId">
+		delete from sys_role_menu where menu_id in
+		<foreach item="menuId" collection="roleList" open="(" separator="," close=")">
+			#{menuId}
+		</foreach>
+		and  role_id in
+		<foreach item="roleId" collection="roleIds" open="(" separator="," close=")">
+			#{roleId}
+		</foreach>
+	</delete>
+
+
+	<select id="selectMenuById" parameterType="Long" resultMap="SysMenuResult">
+		<include refid="selectMenuVo"/>
+		where menu_id = #{menuId}
+	</select>
+
+	<select id="hasChildByMenuId" resultType="Integer">
+		select count(1) from sys_menu where parent_id = #{menuId}
+	</select>
+
+	<select id="checkMenuNameUnique" parameterType="com.platform.common.core.domain.entity.SysMenu" resultMap="SysMenuResult">
+		<include refid="selectMenuVo"/>
+		where menu_name=#{menuName} and parent_id = #{parentId} limit 1
+	</select>
+
+	<select id="checkMenuPermsUnique" parameterType="com.platform.common.core.domain.entity.SysMenu" resultMap="SysMenuResult">
+		<include refid="selectMenuVo"/>
+		<where>
+			<if test="perms != null and perms != ''">
+				and perms = #{perms}
+			</if>
+		</where>
+		limit 1
+	</select>
+
+	<update id="updateMenu" parameterType="com.platform.common.core.domain.entity.SysMenu">
+		update sys_menu
+		<set>
+			<if test="menuName != null and menuName != ''">menu_name = #{menuName},</if>
+			<if test="parentId != null">parent_id = #{parentId},</if>
+			<if test="orderNum != null and orderNum != ''">order_num = #{orderNum},</if>
+			<if test="path != null and path != ''">path = #{path},</if>
+			<if test="component != null and component != ''">component = #{component},</if>
+			<if test="isFrame != null and isFrame != ''">is_frame = #{isFrame},</if>
+			<if test="isCache != null and isCache != ''">is_cache = #{isCache},</if>
+			<if test="menuType != null and menuType != ''">menu_type = #{menuType},</if>
+			<if test="visible != null">visible = #{visible},</if>
+			<if test="status != null">status = #{status},</if>
+			<if test="perms !=null">perms = #{perms},</if>
+			icon = #{icon},
+			remark = #{remark},
+			special_client_id = #{specialClientId},
+			<if test="clientId != null and clientId != ''">client_id = #{clientId},</if>
+			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+			update_time = sysdate()
+		</set>
+		where menu_id = #{menuId}
+	</update>
+
+	<insert id="insertMenu" parameterType="com.platform.common.core.domain.entity.SysMenu">
+		insert into sys_menu(
+		<if test="menuId != null and menuId != 0">menu_id,</if>
+		<if test="parentId != null and parentId != 0">parent_id,</if>
+		<if test="menuName != null and menuName != ''">menu_name,</if>
+		<if test="orderNum != null and orderNum != ''">order_num,</if>
+		<if test="path != null and path != ''">path,</if>
+		<if test="component != null and component != ''">component,</if>
+		<if test="isFrame != null and isFrame != ''">is_frame,</if>
+		<if test="isCache != null and isCache != ''">is_cache,</if>
+		<if test="menuType != null and menuType != ''">menu_type,</if>
+		<if test="visible != null">visible,</if>
+		<if test="status != null">status,</if>
+		<if test="perms !=null and perms != ''">perms,</if>
+		<if test="icon != null and icon != ''">icon,</if>
+		<if test="remark != null and remark != ''">remark,</if>
+		<if test="specialClientId != null and specialClientId != ''">special_client_id,</if>
+		<if test="clientId != null and clientId != ''">client_id,</if>
+		<if test="createBy != null and createBy != ''">create_by,</if>
+		create_time
+		)values(
+		<if test="menuId != null and menuId != 0">#{menuId},</if>
+		<if test="parentId != null and parentId != 0">#{parentId},</if>
+		<if test="menuName != null and menuName != ''">#{menuName},</if>
+		<if test="orderNum != null and orderNum != ''">#{orderNum},</if>
+		<if test="path != null and path != ''">#{path},</if>
+		<if test="component != null and component != ''">#{component},</if>
+		<if test="isFrame != null and isFrame != ''">#{isFrame},</if>
+		<if test="isCache != null and isCache != ''">#{isCache},</if>
+		<if test="menuType != null and menuType != ''">#{menuType},</if>
+		<if test="visible != null">#{visible},</if>
+		<if test="status != null">#{status},</if>
+		<if test="perms !=null and perms != ''">#{perms},</if>
+		<if test="icon != null and icon != ''">#{icon},</if>
+		<if test="remark != null and remark != ''">#{remark},</if>
+		<if test="specialClientId != null and specialClientId != ''">#{specialClientId},</if>
+		<if test="clientId != null and clientId != ''">#{clientId},</if>
+		<if test="createBy != null and createBy != ''">#{createBy},</if>
+		sysdate()
+		)
+	</insert>
+
+	<delete id="deleteMenuById" parameterType="Long">
+		delete from sys_menu where menu_id = #{menuId}
+	</delete>
+
+	<select id="getShowRouters" parameterType="com.platform.common.core.domain.entity.SysMenu" resultMap="SysMenuResult">
+		<include refid="selectMenuVo"/>
+		<where>
+			<if test="visible != null and visible != ''">
+				AND visible = #{visible}
+			</if>
+			<if test="status != null and status != ''">
+				AND status = #{status}
+			</if>
+			<if test="permissionList != null and permissionList.size() > 0">
+				and perms in
+				(<foreach collection="permissionList" item="perms" separator=",">#{perms}</foreach>)
+			</if>
+			and menu_type = 'C'
+		</where>
+		order by parent_id, order_num
+	</select>
+
+
+	<select id="selectMobileMenuByUserId" parameterType="com.platform.common.core.domain.entity.SysMenu" resultMap="SysMenuResult">
+		SELECT
+			m.menu_id,
+			m.parent_id,
+			m.menu_name,
+			m.path,
+			m.component,
+			m.visible,
+			m.STATUS,
+			ifnull( m.perms, '' ) AS perms,
+			m.is_frame,
+			m.is_cache,
+			m.menu_type,
+			m.icon,
+			m.order_num,
+			m.create_time,
+			t4.menu_name AS menu_name_1,
+			t5.menu_name AS menu_name_2,
+			t6.menu_name AS menu_name_3,
+			CONCAT_WS( '-', t5.menu_name, t6.menu_name ) AS catalogue
+		FROM
+			sys_user t
+				LEFT JOIN sys_user_role ur ON t.user_id = ur.user_id
+				LEFT JOIN sys_role t2 ON t2.role_id = ur.role_id
+				LEFT JOIN sys_role_menu t3 ON t2.role_id = t3.role_id
+				LEFT JOIN sys_menu m ON t3.menu_id = m.menu_id
+				LEFT JOIN sys_menu t4 ON t4.menu_id = m.parent_id
+				LEFT JOIN sys_menu t5 ON t5.menu_id = t4.parent_id
+				LEFT JOIN sys_menu t6 ON t6.menu_id = t5.parent_id
+		WHERE
+			t.user_id = #{user_id}
+		  AND (
+					t6.menu_name = '移动端'
+				OR t5.menu_name = '移动端'
+				OR t4.menu_name = '移动端'
+				OR m.menu_name = '移动端'
+			)
+	</select>
+</mapper>

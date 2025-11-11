@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.DevProductPlanMapper">
+    <resultMap type="com.platform.ems.domain.DevProductPlan" id="DevProductPlanResult">
+        <result property="clientId" column="client_id"/>
+        <result property="productPlanSid" column="product_plan_sid"/>
+        <result property="productPlanCode" column="product_plan_code"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="year" column="year"/>
+        <result property="seasonCode" column="season_code"/>
+        <result property="materialClassSid" column="material_class_sid"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyName" column="company_name"/>
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="brandName" column="brand_name"/>
+        <result property="companyBrandMarkSid" column="company_brand_mark_sid"/>
+        <result property="planQuantity" column="plan_quantity"/>
+        <result property="kuanType" column="kuan_type"/>
+        <result property="style" column="style"/>
+        <result property="series" column="series"/>
+        <result property="inOutUnder" column="in_out_under"/>
+        <result property="onsaleMonth" column="onsale_month"/>
+        <result property="batchWeek" column="batch_week"/>
+        <result property="productPackageSid" column="product_package_sid"/>
+        <result property="costTarget" column="cost_target"/>
+        <result property="costRetailPrice" column="cost_retail_price"/>
+        <result property="markupRate" column="markup_rate"/>
+        <result property="modelType" column="model_type"/>
+        <result property="zhutuixiang" column="zhutuixiang"/>
+        <result property="tuiguangbociYx" column="tuiguangboci_yx"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="productSeasonName" column="product_season_name" />
+        <result property="materialClassName" column="material_class_name" />
+        <collection property="athList" ofType="com.platform.ems.domain.DevProductPlanAttach">
+            <result property="attachmentSid" column="attachment_sid"/>
+            <result property="fileType" column="file_type"/>
+            <result property="fileName" column="file_name"/>
+            <result property="filePath" column="file_path"/>
+        </collection>
+    </resultMap>
+    <sql id="selectDevProductPlanVo">
+        SELECT
+            t.client_id,
+            t.product_plan_sid,
+            t.product_plan_code,
+            t.product_season_sid,
+            t.YEAR,
+            t.season_code,
+            t.material_class_sid,
+            t.company_sid,
+            t.company_brand_sid,
+            t.company_brand_mark_sid,
+            t.plan_quantity,
+            t.kuan_type,
+            t.style,
+            t.series,
+            t.in_out_under,
+            t.onsale_month,
+            t.batch_week,
+            t.product_package_sid,
+            t.cost_target,
+            t.cost_retail_price,
+            t.markup_rate,
+            t.model_type,
+            t.zhutuixiang,
+            t.tuiguangboci_yx,
+            t.remark,
+            t.STATUS,
+            t.handle_status,
+            t.creator_account,
+            t.create_date,
+            t.updater_account,
+            t.update_date,
+            t.confirmer_account,
+            t.confirm_date,
+            t.data_source_sys,
+            t2.company_name,
+            t3.brand_name,
+            t4.brand_mark_name,
+            t5.nick_name AS creator_account_name,
+            t6.nick_name AS updater_account_name,
+            t7.nick_name AS confirmer_account_name,
+            t8.product_season_name,
+            t9.node_name AS material_class_name
+        FROM
+            s_dev_product_plan t
+        LEFT JOIN s_bas_company t2 ON t2.company_sid = t.company_sid
+        LEFT JOIN s_bas_company_brand t3 ON t3.company_brand_sid = t.company_brand_sid
+        LEFT JOIN s_bas_company_brand_mark t4 ON t4.brand_mark_sid = t.company_brand_mark_sid
+        LEFT JOIN sys_user t5 ON t5.user_name = t.creator_account
+        LEFT JOIN sys_user t6 ON t6.user_name = t.updater_account
+        LEFT JOIN sys_user t7 ON t7.user_name = t.confirmer_account
+        LEFT JOIN s_bas_product_season t8 ON t8.product_season_sid = t.product_season_sid
+        LEFT JOIN s_con_material_class t9 ON t9.material_class_sid = t.material_class_sid
+    </sql>
+    <sql id="selectDevProductPlanInfoVo">
+        SELECT
+            t.client_id,
+            t.product_plan_sid,
+            t.product_plan_code,
+            t.product_season_sid,
+            t.YEAR,
+            t.season_code,
+            t.material_class_sid,
+            t.company_sid,
+            t.company_brand_sid,
+            t.company_brand_mark_sid,
+            t.plan_quantity,
+            t.kuan_type,
+            t.style,
+            t.series,
+            t.in_out_under,
+            t.onsale_month,
+            t.batch_week,
+            t.product_package_sid,
+            t.cost_target,
+            t.cost_retail_price,
+            t.markup_rate,
+            t.model_type,
+            t.zhutuixiang,
+            t.tuiguangboci_yx,
+            t.remark,
+            t.STATUS,
+            t.handle_status,
+            t.creator_account,
+            t.create_date,
+            t.updater_account,
+            t.update_date,
+            t.confirmer_account,
+            t.confirm_date,
+            t.data_source_sys,
+            t2.company_name,
+            t3.brand_name,
+            t4.brand_mark_name,
+            t5.attachment_sid,
+            t5.file_type,
+            t5.file_name,
+            t5.file_path,
+            t6.nick_name AS creator_account_name,
+            t7.nick_name AS updater_account_name,
+            t8.nick_name AS confirmer_account_name,
+            t9.product_season_name,
+            t10.node_name AS material_class_name
+        FROM
+            s_dev_product_plan t
+        LEFT JOIN s_bas_company t2 ON t2.company_sid = t.company_sid
+        LEFT JOIN s_bas_company_brand t3 ON t3.company_brand_sid = t.company_brand_sid
+        LEFT JOIN s_bas_company_brand_mark t4 ON t4.brand_mark_sid = t.company_brand_mark_sid
+        LEFT JOIN s_dev_product_plan_attach t5 ON t5.product_plan_sid = t.product_plan_sid
+        LEFT JOIN sys_user t6 ON t6.user_name = t.creator_account
+        LEFT JOIN sys_user t7 ON t7.user_name = t.updater_account
+        LEFT JOIN sys_user t8 ON t8.user_name = t.confirmer_account
+        LEFT JOIN s_bas_product_season t9 ON t9.product_season_sid = t.product_season_sid
+        LEFT JOIN s_con_material_class t10 ON t10.material_class_sid = t.material_class_sid
+	</sql>
+    <select id="selectDevProductPlanById" parameterType="Long" resultMap="DevProductPlanResult">
+        <include refid="selectDevProductPlanInfoVo"/> where t.product_plan_sid = #{productPlanSid}
+    </select>
+    <select id="selectDevProductPlanList" parameterType="com.platform.ems.domain.DevProductPlan" resultMap="DevProductPlanResult">
+        <include refid="selectDevProductPlanVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">and (
+                <foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="productSeasonSidList != null  and productSeasonSidList.length >0">and t.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">#{productSeasonSid}</foreach>)
+            </if>
+            <if test="productPlanCode != null"> and t.product_plan_code like concat('%',#{productPlanCode},'%')</if>
+            <if test="year != null  and year != ''">and (
+                <foreach collection="year.split(';')" item="item" separator="or">t.year like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="seasonCodeList != null and seasonCodeList.length >0 ">
+                and t.season_code in
+                (<foreach collection="seasonCodeList" item="seasonCode" separator=",">#{seasonCode}</foreach>)
+            </if>
+            <if test="materialClassSid != null ">and t.material_class_sid =#{materialClassSid}</if>
+            <if test="companySid != null ">and t.company_sid =#{companySid}</if>
+            <if test="companyBrandSid != null ">and t.company_brand_sid =#{companyBrandSid}</if>
+            <if test="companyBrandMarkSid != null ">and t.company_brand_mark_sid =#{companyBrandMarkSid}</if>
+            <if test="planQuantity != null ">and t.plan_quantity =#{planQuantity}</if>
+            <if test="kuanType != null  and kuanType != ''">and (
+                <foreach collection="kuanType.split(';')" item="item" separator="or">t.kuan_type like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="style != null  and style != ''">and (
+                <foreach collection="style.split(';')" item="item" separator="or">t.style like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="series != null  and series != ''">and (
+                <foreach collection="series.split(';')" item="item" separator="or">t.series like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="inOutUnder != null  and inOutUnder != ''">and (
+                <foreach collection="inOutUnder.split(';')" item="item" separator="or">t.in_out_under like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="onsaleMonth != null  and onsaleMonth != ''">and (
+                <foreach collection="onsaleMonth.split(';')" item="item" separator="or">t.onsale_month like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="batchWeek != null  and batchWeek != ''">and (
+                <foreach collection="batchWeek.split(';')" item="item" separator="or">t.batch_week like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="productPackageSid != null ">and t.product_package_sid =#{productPackageSid}</if>
+            <if test="costTarget != null ">and t.cost_target = #{costTarget}</if>
+            <if test="costRetailPrice != null ">and t.cost_retail_price = #{costRetailPrice}</if>
+            <if test="markupRate != null ">and t.markup_rate = #{markupRate}</if>
+            <if test="modelTypeList != null  and modelTypeList.length >0 ">and t.model_type in (
+                <foreach collection="modelTypeList" item="item" separator=",">
+                    #{item}
+                </foreach>)
+            </if>
+            <if test="zhutuixiang != null  and zhutuixiang != ''">and (
+                <foreach collection="zhutuixiang.split(';')" item="item" separator="or">t.zhutuixiang like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="tuiguangbociYx != null  and tuiguangbociYx != ''">and (
+                <foreach collection="tuiguangbociYx.split(';')" item="item" separator="or">t.tuiguangboci_yx like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="status != null  and status != ''">and (
+                <foreach collection="status.split(';')" item="item" separator="or">t.status like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0">and t.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">
+                    #{creatorAccount}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')</if>
+            <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')</if>
+            <if test="updaterAccount != null  and updaterAccount != ''">and (
+                <foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">and (
+                <foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="confirmDate != null ">and t.confirm_date = #{confirmDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and (
+                <foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">${params.dataScope}</if>
+        </where>
+        order by t.product_plan_code desc
+    </select>
+    <!--添加多个-->
+    <insert id="inserts">insert into s_dev_product_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">client_id, product_plan_sid, product_plan_code, product_season_sid, year, season_code, material_class_sid, company_sid, company_brand_sid, company_brand_mark_sid, plan_quantity, kuan_type, style, series, in_out_under, onsale_month, batch_week, product_package_sid, cost_target, cost_retail_price, markup_rate, model_type, zhutuixiang, tuiguangboci_yx, remark, status, handle_status, creator_account, create_date, updater_account, update_date, confirmer_account, confirm_date, data_source_sys,</trim> values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">#{item.clientId}, #{item.productPlanCode}, #{item.productSeasonSid}, #{item.year}, #{item.seasonCode}, #{item.materialClassSid}, #{item.companySid}, #{item.companyBrandSid}, #{item.companyBrandMarkSid}, #{item.planQuantity}, #{item.kuanType}, #{item.style}, #{item.series}, #{item.inOutUnder}, #{item.onsaleMonth}, #{item.batchWeek}, #{item.productPackageSid}, #{item.costTarget}, #{item.costRetailPrice}, #{item.markupRate}, #{item.modelType}, #{item.zhutuixiang}, #{item.tuiguangbociYx}, #{item.remark}, #{item.status}, #{item.handleStatus}, #{item.creatorAccount}, #{item.createDate}, #{item.updaterAccount}, #{item.updateDate}, #{item.confirmerAccount}, #{item.confirmDate}, #{item.dataSourceSys},</trim>
+        </foreach>
+    </insert>
+    <!--更新-->
+    <update id="updateAllById">update s_dev_product_plan
+        <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, product_plan_sid = #{productPlanSid}, product_plan_code = #{productPlanCode}, product_season_sid = #{productSeasonSid}, year = #{year}, season_code = #{seasonCode}, material_class_sid = #{materialClassSid}, company_sid = #{companySid}, company_brand_sid = #{companyBrandSid}, company_brand_mark_sid = #{companyBrandMarkSid}, plan_quantity = #{planQuantity}, kuan_type = #{kuanType}, style = #{style}, series = #{series}, in_out_under = #{inOutUnder}, onsale_month = #{onsaleMonth}, batch_week = #{batchWeek}, product_package_sid = #{productPackageSid}, cost_target = #{costTarget}, cost_retail_price = #{costRetailPrice}, markup_rate = #{markupRate}, model_type = #{modelType}, zhutuixiang = #{zhutuixiang}, tuiguangboci_yx = #{tuiguangbociYx}, remark = #{remark}, status = #{status}, handle_status = #{handleStatus}, creator_account = #{creatorAccount}, create_date = #{createDate}, updater_account = #{updaterAccount}, update_date = #{updateDate}, confirmer_account = #{confirmerAccount}, confirm_date = #{confirmDate}, data_source_sys = #{dataSourceSys},</trim> where product_plan_sid = #{productPlanSid}
+    </update>
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">update s_dev_product_plan
+            <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, product_plan_sid = #{productPlanSid}, product_plan_code = #{productPlanCode}, product_season_sid = #{productSeasonSid}, year = #{year}, season_code = #{seasonCode}, material_class_sid = #{materialClassSid}, company_sid = #{companySid}, company_brand_sid = #{companyBrandSid}, company_brand_mark_sid = #{companyBrandMarkSid}, plan_quantity = #{planQuantity}, kuan_type = #{kuanType}, style = #{style}, series = #{series}, in_out_under = #{inOutUnder}, onsale_month = #{onsaleMonth}, batch_week = #{batchWeek}, product_package_sid = #{productPackageSid}, cost_target = #{costTarget}, cost_retail_price = #{costRetailPrice}, markup_rate = #{markupRate}, model_type = #{modelType}, zhutuixiang = #{zhutuixiang}, tuiguangboci_yx = #{tuiguangbociYx}, remark = #{remark}, status = #{status}, handle_status = #{handleStatus}, creator_account = #{creatorAccount}, create_date = #{createDate}, updater_account = #{updaterAccount}, update_date = #{updateDate}, confirmer_account = #{confirmerAccount}, confirm_date = #{confirmDate}, data_source_sys = #{dataSourceSys},</trim> where product_plan_sid = #{productPlanSid}
+        </foreach>
+    </update>
+</mapper>

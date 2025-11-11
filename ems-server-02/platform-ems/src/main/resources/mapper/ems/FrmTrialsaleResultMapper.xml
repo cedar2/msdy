@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FrmTrialsaleResultMapper">
+
+    <resultMap type="com.platform.ems.domain.FrmTrialsaleResult" id="FrmTrialsaleResultResult">
+        <result property="clientId" column="client_id"/>
+        <result property="trialsaleResultSid" column="trialsale_result_sid"/>
+        <result property="trialsaleResultCode" column="trialsale_result_code"/>
+        <result property="developPlanSid" column="develop_plan_sid"/>
+        <result property="developPlanCode" column="develop_plan_code"/>
+        <result property="sampleSid" column="sample_sid"/>
+        <result property="sampleCode" column="sample_code"/>
+        <result property="projectSid" column="project_sid"/>
+        <result property="projectCode" column="project_code"/>
+        <result property="projectTaskSid" column="project_task_sid"/>
+        <result property="sku1Code" column="sku1_code"/>
+        <result property="trialsaleQuantity" column="trialsale_quantity"/>
+        <result property="trialsalePersonSid" column="trialsale_person_sid"/>
+        <result property="trialsalePersonCode" column="trialsale_person_code"/>
+        <result property="trialsaleDate" column="trialsale_date"/>
+        <result property="trialsaleMarket" column="trialsale_market"/>
+        <result property="feedbackNum" column="feedback_num"/>
+        <result property="starLevel" column="star_level"/>
+        <result property="customerUnsatisfyRate" column="customer_unsatisfy_rate"/>
+        <result property="customerFeedback" column="customer_feedback"/>
+        <result property="feedbackAnalysis" column="feedback_analysis"/>
+        <result property="productAnalysis" column="product_analysis"/>
+        <result property="isRepeatOrder" column="is_repeat_order"/>
+        <result property="isUpdate" column="is_update"/>
+        <result property="operationScore" column="operation_score"/>
+        <result property="leaderScore" column="leader_score"/>
+        <result property="clickRate" column="click_rate"/>
+        <result property="conversionRate" column="conversion_rate"/>
+        <result property="performSummary" column="perform_summary"/>
+        <result property="adviceComment" column="advice_comment"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectFrmTrialsaleResultVo">
+        select t.client_id,
+               t.trialsale_result_sid,
+               t.trialsale_result_code,
+               t.project_sid,
+               t.project_code,
+               t.project_task_sid,
+               t.sku1_code,
+               t.trialsale_quantity,
+               t.trialsale_person_sid,
+               t.trialsale_person_code,
+               t.trialsale_date,
+               t.trialsale_market,
+               t.feedback_num,
+               t.star_level,
+               t.customer_unsatisfy_rate,
+               if(t.customer_unsatisfy_rate is null, null, concat(round(t.customer_unsatisfy_rate*100,2), '')) as customer_unsatisfy_rate_string,
+               t.customer_feedback,
+               t.feedback_analysis,
+               t.product_analysis,
+               t.is_repeat_order,
+               t.is_update,
+               t.operation_score,
+               t.leader_score,
+               t.click_rate,
+               if(t.click_rate is null, null, concat(round(t.click_rate*100,2), '')) as click_rate_string,
+               t.conversion_rate,
+               if(t.conversion_rate is null, null, concat(round(t.conversion_rate*100,2), '')) as conversion_rate_string,
+               t.perform_summary,
+               t.advice_comment,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t5.project_name,
+               t5.product_code,
+               t5.material_barcode_code,
+               t5.develop_plan_sid,
+               t5.develop_plan_code,
+               t5.sample_sid,
+               t5.sample_code,
+               t5.trialsale_type,
+               t5.yearmonth_project,
+               t6.develop_plan_name,
+               t7.material_code,
+               t7.material_name,
+               t8.staff_name as trialsale_person_name,
+               t9.approval_node, t9.approval_user_id, t9.approval_user_name,
+               t9.create_date AS submit_date, t10.nick_name AS submit_user_name,
+               if(t12.erp_material_sku_enter_mode_project = 'XZ', t11.erp_material_sku_barcode, t5.erp_material_sku_barcode) AS erp_material_sku_barcode,
+               t13.group_type,
+               t14.node_name as big_class_name,
+               t15.node_name as middle_class_name,
+               t16.node_name as small_class_name,
+               t17.sale_station_name
+        from s_frm_trialsale_result t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t4.client_id
+         LEFT JOIN s_prj_project t5 ON t.project_sid = t5.project_sid
+         LEFT JOIN s_dev_develop_plan t6 ON t5.develop_plan_sid = t6.develop_plan_sid
+         LEFT JOIN s_bas_material t7 ON t5.sample_sid = t7.material_sid
+         LEFT JOIN s_bas_staff t8 ON t.trialsale_person_sid = t8.staff_sid
+         LEFT JOIN s_sys_form_process t9 ON t.trialsale_result_sid = t9.form_id
+         LEFT JOIN sys_user t10 ON t9.creator_account = t10.user_name
+         LEFT JOIN s_bas_material_barcode t11 ON t5.material_barcode_sid = t11.barcode_sid
+         LEFT JOIN s_sys_default_setting_client t12 ON t.client_id = t12.client_id
+         LEFT JOIN s_dev_category_plan_item t13 ON t6.category_plan_item_sid = t13.category_plan_item_sid
+         LEFT JOIN s_con_material_class t14 ON t13.big_class_sid = t14.material_class_sid
+         LEFT JOIN s_con_material_class t15 ON t13.middle_class_sid = t15.material_class_sid
+         LEFT JOIN s_con_material_class t16 ON t13.small_class_sid = t16.material_class_sid
+         LEFT JOIN (
+            SELECT ta.project_sid, GROUP_CONCAT(tb.name ORDER BY tb.name ASC SEPARATOR ';') as sale_station_name
+            FROM s_prj_project ta
+            LEFT JOIN s_con_sale_station tb ON ta.client_id = tb.client_id and
+                  (ta.sale_station_code = tb.code or ta.sale_station_code like concat(tb.code, ';%')
+                  or ta.sale_station_code like concat('%;', tb.code, ';%') or ta.sale_station_code like concat('%;', tb.code))
+            GROUP BY ta.project_sid
+        ) t17 ON t.project_sid = t17.project_sid
+    </sql>
+
+    <select id="selectFrmTrialsaleResultById" parameterType="Long" resultMap="FrmTrialsaleResultResult">
+        <include refid="selectFrmTrialsaleResultVo"/>
+        where t.trialsale_result_sid = #{trialsaleResultSid}
+    </select>
+
+    <select id="selectFrmTrialsaleResultList" parameterType="com.platform.ems.domain.FrmTrialsaleResult"
+            resultMap="FrmTrialsaleResultResult">
+        <include refid="selectFrmTrialsaleResultVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="trialsaleResultSid != null ">
+                and t.trialsale_result_sid = #{trialsaleResultSid}
+            </if>
+            <if test="trialsaleResultSidList != null and trialsaleResultSidList.length >0 ">
+                and t.trialsale_result_sid in
+                (<foreach collection="trialsaleResultSidList" item="trialsaleResultSid" separator=",">
+                #{trialsaleResultSid}</foreach>)
+            </if>
+            <if test="trialsaleResultCode != null ">
+                and t.trialsale_result_code like concat('%', #{trialsaleResultCode}, '%')
+            </if>
+            <if test="yearmonthProjectBegin != null and yearmonthProjectBegin != ''">
+                and t5.yearmonth_project &gt;= #{yearmonthProjectBegin}
+            </if>
+            <if test="yearmonthProjectEnd != null and yearmonthProjectEnd != ''">
+                and t5.yearmonth_project &lt;= #{yearmonthProjectEnd}
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and t5.product_code like concat('%', #{productCode}, '%')
+            </if>
+            <if test="materialBarcodeCode != null and materialBarcodeCode != ''">
+                and t5.material_barcode_code like concat('%', #{materialBarcodeCode}, '%')
+            </if>
+            <if test="erpMaterialSkuBarcode != null and erpMaterialSkuBarcode != ''">
+                and if(t12.erp_material_sku_enter_mode_project = 'XZ', t11.erp_material_sku_barcode like concat('%', #{erpMaterialSkuBarcode}, '%'),
+                    t5.erp_material_sku_barcode like concat('%', #{erpMaterialSkuBarcode}, '%'))
+            </if>
+            <if test="developPlanSid != null ">
+                and t5.develop_plan_sid = #{developPlanSid}
+            </if>
+            <if test="developPlanCode != null and developPlanCode != ''">
+                and t5.develop_plan_code like concat('%', #{developPlanCode}, '%')
+            </if>
+            <if test="developPlanName != null and developPlanName != ''">
+                and t6.develop_plan_name like concat('%', #{developPlanName}, '%')
+            </if>
+            <if test="sampleSid != null ">
+                and t5.sample_sid = #{sampleSid}
+            </if>
+            <if test="sampleCode != null and sampleCode != ''">
+                and t5.sample_code like concat('%', #{sampleCode}, '%')
+            </if>
+            <if test="projectSid != null ">
+                and t.project_sid = #{projectSid}
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                and t.project_code like concat('%',  #{projectCode}, '%')
+            </if>
+            <if test="projectTaskSid != null ">
+                and t.project_task_sid = #{projectTaskSid}
+            </if>
+            <if test="sku1Code != null and sku1Code != ''">
+                and t.sku1_code = #{sku1Code}
+            </if>
+            <if test="trialsaleQuantity != null ">
+                and t.trialsale_quantity = #{trialsaleQuantity}
+            </if>
+            <if test="trialsalePersonSid != null ">
+                and t.trialsale_person_sid = #{trialsalePersonSid}
+            </if>
+            <if test="trialsalePersonSidList != null and trialsalePersonSidList.length >0 ">
+                and t.trialsale_person_sid in
+                (<foreach collection="trialsalePersonSidList" item="trialsalePersonSid" separator=",">#{trialsalePersonSid}</foreach>)
+            </if>
+            <if test="trialsalePersonCode != null and trialsalePersonCode != ''">
+                and t.trialsale_person_code = #{trialsalePersonCode}
+            </if>
+            <if test="trialsaleDate != null ">
+                and t.trialsale_date = #{trialsaleDate}
+            </if>
+            <if test="trialsaleDateBegin != null and trialsaleDateBegin!=''">
+                and date_format(t.trialsale_date,'%y%m%d') &gt;= date_format(#{trialsaleDateBegin},'%y%m%d')
+            </if>
+            <if test="trialsaleDateEnd != null and trialsaleDateEnd!=''">
+                and date_format(t.trialsale_date,'%y%m%d') &lt;= date_format(#{trialsaleDateEnd},'%y%m%d')
+            </if>
+            <if test="trialsaleMarket != null and trialsaleMarket != ''">
+                and t.trialsale_market = #{trialsaleMarket}
+            </if>
+            <if test="trialsaleMarketList != null and trialsaleMarketList.length >0 ">
+                and t.trialsale_market in
+                (<foreach collection="trialsaleMarketList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="feedbackNum != null ">
+                and t.feedback_num = #{feedbackNum}
+            </if>
+            <if test="starLevel != null and starLevel != ''">
+                and t.star_level = #{starLevel}
+            </if>
+            <if test="starLevelList != null and starLevelList.length >0 ">
+                and t.star_level in
+                (<foreach collection="starLevelList" item="starLevel" separator=",">#{starLevel}</foreach>)
+            </if>
+            <if test="customerUnsatisfyRate != null ">
+                and t.customer_unsatisfy_rate like concat('%', #{customerUnsatisfyRate}, '%')
+            </if>
+            <if test="customerUnsatisfyRateBegin != null and customerUnsatisfyRateEnd!=''">
+                and t.customer_unsatisfy_rate between(${customerUnsatisfyRateBegin}, ${customerUnsatisfyRateEnd})
+            </if>
+            <if test="customerFeedback != null and customerFeedback != ''">
+                and t.customer_feedback = #{customerFeedback}
+            </if>
+            <if test="feedbackAnalysis != null and feedbackAnalysis != ''">
+                and t.feedback_analysis = #{feedbackAnalysis}
+            </if>
+            <if test="productAnalysis != null and productAnalysis != ''">
+                and t.product_analysis = #{productAnalysis}
+            </if>
+            <if test="isRepeatOrder != null and isRepeatOrder != ''">
+                and t.is_repeat_order = #{isRepeatOrder}
+            </if>
+            <if test="isUpdate != null and isUpdate != ''">
+                and t.is_update = #{isUpdate}
+            </if>
+            <if test="operationScore != null ">
+                and t.operation_score like concat('%', #{operationScore}, '%')
+            </if>
+            <if test="operationScoreBegin != null and operationScoreEnd!=''">
+                and t.operation_score between(${operationScoreBegin}, ${operationScoreEnd})
+            </if>
+            <if test="leaderScore != null ">
+                and t.leader_score like concat('%', #{leaderScore}, '%')
+            </if>
+            <if test="leaderScoreBegin != null and leaderScoreEnd!=''">
+                and t.leader_score between(${leaderScoreBegin}, ${leaderScoreEnd})
+            </if>
+            <if test="performSummary != null and performSummary != ''">
+                and t.perform_summary = #{performSummary}
+            </if>
+            <if test="adviceComment != null and adviceComment != ''">
+                and t.advice_comment = #{adviceComment}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="approvalUserId != null and approvalUserId != '' ">
+                and (t9.approval_user_id = #{approvalUserId}  or t9.approval_user_id like concat('%, ', #{approvalUserId}, ',%')
+                or t9.approval_user_id like concat('%, ', #{approvalUserId}) or t9.approval_user_id like concat(#{approvalUserId}, ',%')
+                or t9.approval_user_id like concat('%,', #{approvalUserId}, ',%') or t9.approval_user_id like concat('%,', #{approvalUserId}))
+            </if>
+            <if test="approvalUserIdList != null and approvalUserIdList.length >0 ">
+                and (<foreach collection="approvalUserIdList" item="approvalUserId" separator=" or ">
+                (t9.approval_user_id = #{approvalUserId}  or t9.approval_user_id like concat('%, ', #{approvalUserId}, ',%')
+                or t9.approval_user_id like concat('%, ', #{approvalUserId}) or t9.approval_user_id like concat(#{approvalUserId}, ',%')
+                or t9.approval_user_id like concat('%,', #{approvalUserId}, ',%') or t9.approval_user_id like concat('%,', #{approvalUserId}))</foreach>)
+            </if>
+            <if test="groupType != null and groupType != ''">
+                and t13.group_type = #{groupType}
+            </if>
+            <if test="groupTypeList != null and groupTypeList.length >0 ">
+                and t13.group_type in
+                (<foreach collection="groupTypeList" item="groupType" separator=",">
+                #{groupType}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="createDate != null ">
+                and date_format(t.create_date,'%y%m%d') = date_format(#{createDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.trialsale_result_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_frm_trialsale_result
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            trialsale_result_sid,
+            trialsale_result_code,
+            project_sid,
+            project_code,
+            project_task_sid,
+            sku1_code,
+            trialsale_quantity,
+            trialsale_person_sid,
+            trialsale_person_code,
+            trialsale_date,
+            trialsale_market,
+            feedback_num,
+            star_level,
+            customer_unsatisfy_rate,
+            customer_feedback,
+            feedback_analysis,
+            product_analysis,
+            is_repeat_order,
+            is_update,
+            operation_score,
+            leader_score,
+            click_rate,
+            conversion_rate,
+            perform_summary,
+            advice_comment,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.trialsaleResultSid},
+                #{item.trialsaleResultCode},
+                #{item.projectSid},
+                #{item.projectCode},
+                #{item.projectTaskSid},
+                #{item.sku1Code},
+                #{item.trialsaleQuantity},
+                #{item.trialsalePersonSid},
+                #{item.trialsalePersonCode},
+                #{item.trialsaleDate},
+                #{item.trialsaleMarket},
+                #{item.feedbackNum},
+                #{item.starLevel},
+                #{item.customerUnsatisfyRate},
+                #{item.customerFeedback},
+                #{item.feedbackAnalysis},
+                #{item.productAnalysis},
+                #{item.isRepeatOrder},
+                #{item.isUpdate},
+                #{item.operationScore},
+                #{item.leaderScore},
+                #{item.clickRate},
+                #{item.conversionRate},
+                #{item.performSummary},
+                #{item.adviceComment},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_frm_trialsale_result
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            trialsale_result_code = #{trialsaleResultCode},
+            project_sid = #{projectSid},
+            project_code = #{projectCode},
+            project_task_sid = #{projectTaskSid},
+            sku1_code = #{sku1Code},
+            trialsale_quantity = #{trialsaleQuantity},
+            trialsale_person_sid = #{trialsalePersonSid},
+            trialsale_person_code = #{trialsalePersonCode},
+            trialsale_date = #{trialsaleDate},
+            trialsale_market = #{trialsaleMarket},
+            feedback_num = #{feedbackNum},
+            star_level = #{starLevel},
+            customer_unsatisfy_rate = #{customerUnsatisfyRate},
+            customer_feedback = #{customerFeedback},
+            feedback_analysis = #{feedbackAnalysis},
+            product_analysis = #{productAnalysis},
+            is_repeat_order = #{isRepeatOrder},
+            is_update = #{isUpdate},
+            operation_score = #{operationScore},
+            leader_score = #{leaderScore},
+            click_rate = #{clickRate},
+            conversion_rate = #{conversionRate},
+            perform_summary = #{performSummary},
+            advice_comment = #{adviceComment},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where trialsale_result_sid = #{trialsaleResultSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_frm_trialsale_result
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{o.clientId},
+                trialsale_result_code = #{o.trialsaleResultCode},
+                project_sid = #{o.projectSid},
+                project_code = #{o.projectCode},
+                project_task_sid = #{o.projectTaskSid},
+                sku1_code = #{o.sku1Code},
+                trialsale_quantity = #{o.trialsaleQuantity},
+                trialsale_person_sid = #{o.trialsalePersonSid},
+                trialsale_person_code = #{o.trialsalePersonCode},
+                trialsale_date = #{o.trialsaleDate},
+                trialsale_market = #{o.trialsaleMarket},
+                feedback_num = #{o.feedbackNum},
+                star_level = #{o.starLevel},
+                customer_unsatisfy_rate = #{o.customerUnsatisfyRate},
+                customer_feedback = #{o.customerFeedback},
+                feedback_analysis = #{o.feedbackAnalysis},
+                product_analysis = #{o.productAnalysis},
+                is_repeat_order = #{o.isRepeatOrder},
+                is_update = #{o.isUpdate},
+                operation_score = #{o.operationScore},
+                leader_score = #{o.leaderScore},
+                click_rate = #{o.clickRate},
+                conversion_rate = #{o.conversionRate},
+                perform_summary = #{o.performSummary},
+                advice_comment = #{o.adviceComment},
+                remark = #{o.remark},
+                handle_status = #{o.handleStatus},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+            </trim>
+            where trialsale_result_sid = #{o.trialsaleResultSid}
+        </foreach>
+    </update>
+
+</mapper>

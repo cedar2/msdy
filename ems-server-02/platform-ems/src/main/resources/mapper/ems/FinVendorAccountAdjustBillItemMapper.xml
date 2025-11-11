@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.FinVendorAccountAdjustBillItemMapper">
+
+    <resultMap type="com.platform.ems.domain.FinVendorAccountAdjustBillItem" id="FinVendorAccountAdjustBillItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="adjustBillItemSid" column="adjust_bill_item_sid"/>
+        <result property="adjustBillSid" column="adjust_bill_sid"/>
+        <result property="adjustType" column="adjust_type"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="purchaseContractSid" column="purchase_contract_sid"/>
+        <result property="purchaseContractCode" column="purchase_contract_code"/>
+        <result property="purchaseOrderSid" column="purchase_order_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="purchaseOrderCode" column="purchase_order_code"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="deliveryNoteSid" column="delivery_note_sid"/>
+        <result property="createDate" column="create_date"/>
+        <result property="deliveryNoteCode" column="delivery_note_code"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="purchaseInvoiceSid" column="purchase_invoice_sid"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="purchaseInvoiceCode" column="purchase_invoice_code"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="adjustBillCode" column="adjust_bill_code"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="materialType" column="material_type"/>
+        <result property="buyer" column="buyer"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyName" column="company_name"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="purchaseInvoiceCode" column="purchase_invoice_code"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="materialTypeName" column="material_type_name"/>
+        <result property="buyerName" column="buyer_name"/>
+        <result property="adjustTypeName" column="adjust_type_name"/>
+        <result property="clearStatus" column="clear_status"/>
+    </resultMap>
+
+    <sql id="selectFinVendorAccountAdjustBillItemVo">
+       SELECT
+	t.client_id,
+	t.adjust_bill_item_sid,
+	t.adjust_bill_sid,
+	t.adjust_type,
+	t.currency_amount_tax,
+	t.item_num,
+	t.purchase_contract_sid,
+	t6.purchase_contract_code,
+	t.purchase_order_sid,
+	t.remark,
+	t5.purchase_order_code,
+	t.creator_account,
+	t.delivery_note_sid,
+	t.create_date,
+	t.updater_account,
+	t.purchase_invoice_sid,
+	t.update_date,
+	t.data_source_sys,
+	t1.adjust_bill_code,
+	t1.vendor_sid,
+	t2.vendor_name,
+	t2.vendor_code,
+	t1.product_season_sid,
+	t3.product_season_name,
+	t3.product_season_code,
+	t1.material_type,
+	t1.buyer,
+	t1.company_sid,
+	t4.company_name,
+	t4.company_code,
+	t1.document_date,
+	t1.handle_status,
+	t1.currency,
+	t1.currency_unit,
+	t7.delivery_note_code AS delivery_note_code,
+	t13.purchase_invoice_code AS purchase_invoice_code,
+	t11.nick_name AS creator_account_name,
+	t8.name AS material_type_name,
+	t9.nick_name AS buyer_name,
+	t10.name AS adjust_type_name,
+	t12.clear_status AS clear_status
+FROM
+	s_fin_vendor_account_adjust_bill_item t
+	LEFT JOIN s_fin_vendor_account_adjust_bill t1 ON t1.adjust_bill_sid = t.adjust_bill_sid
+	LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t1.vendor_sid
+	LEFT JOIN s_bas_product_season t3 ON t3.product_season_sid = t1.product_season_sid
+	LEFT JOIN s_bas_company t4 ON t4.company_sid = t1.company_sid
+	LEFT JOIN s_pur_purchase_order t5 ON t5.purchase_order_sid = t.purchase_order_sid
+	LEFT JOIN s_pur_purchase_contract t6 ON t6.purchase_contract_sid = t.purchase_contract_sid
+	LEFT JOIN s_del_delivery_note t7 ON t7.delivery_note_sid = t.delivery_note_sid
+	LEFT JOIN s_fin_purchase_invoice t13 ON t13.purchase_invoice_sid = t.purchase_invoice_sid
+	LEFT JOIN s_con_material_type t8 ON t1.material_type = t8.code
+	LEFT JOIN sys_user t9 ON t1.buyer = t9.user_name
+	LEFT JOIN s_con_adjust_type_customer t10 ON t.adjust_type = t10.code
+	LEFT JOIN sys_user t11 ON t.creator_account = t11.user_name
+    LEFT JOIN (SELECT DISTINCT t14.refer_doc_sid, t14.clear_status FROM s_fin_book_vendor_account_adjust_item t14 ) t12 ON t.adjust_bill_sid = t12.refer_doc_sid
+    </sql>
+
+    <select id="selectFinVendorAccountAdjustBillItemById" parameterType="Long"
+            resultMap="FinVendorAccountAdjustBillItemResult">
+        <include refid="selectFinVendorAccountAdjustBillItemVo"/>
+        where t.adjust_bill_item_sid = #{adjustBillItemSid}
+    </select>
+
+
+    <select id="selectFinVendorAccountAdjustBillItemList"
+            parameterType="com.platform.ems.domain.FinVendorAccountAdjustBillItem"
+            resultMap="FinVendorAccountAdjustBillItemResult">
+        <include refid="selectFinVendorAccountAdjustBillItemVo"/>
+        <where>
+            <if test="clearStatusList != null and clearStatusList.length >0">
+                and t12.clear_status in
+                (<foreach collection="clearStatusList" item="clearStatus" separator=","> #{clearStatus}</foreach>)
+            </if>
+            <if test="buyerList != null and buyerList.length >0">
+                and t1.buyer in
+                (<foreach collection="buyerList" item="buyer" separator=","> #{buyer}</foreach>)
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length >0">
+                and t1.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=","> #{materialType}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t1.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=","> #{companySid}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">
+                and t1.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=","> #{productSeasonSid}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t1.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=","> #{vendorSid}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=","> #{handleStatus}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus!=''">
+                and t1.handle_status =#{handleStatus}
+            </if>
+            <if test="materialType != null and materialType!=''">
+                and t1.material_type =#{materialType}
+            </if>
+            <if test="buyer != null and buyer!=''">
+                and t1.buyer =#{buyer}
+            </if>
+            <if test="companySid != null ">
+                and t1.company_sid =#{companySid}
+            </if>
+            <if test="productSeasonSid != null ">
+                and t1.product_season_sid =#{productSeasonSid}
+            </if>
+            <if test="vendorSid != null ">
+                and t1.vendor_sid =#{vendorSid}
+            </if>
+            <if test="adjustBillCode != null  and adjustBillCode != ''">
+                and t1.adjust_bill_code like concat('%', #{adjustBillCode}, '%')
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="adjustBillSid != null ">
+                and t.adjust_bill_sid =#{adjustBillSid}
+            </if>
+            <if test="adjustType != null  and adjustType != ''">
+                and (<foreach collection="adjustType.split(';')" item="item" separator="or">t.adjust_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="currencyAmountTax != null ">
+                and t.currency_amount_tax = #{currencyAmountTax}
+            </if>
+            <if test="purchaseContractSid != null ">
+                and t.purchase_contract_sid =#{purchaseContractSid}
+            </if>
+            <if test="purchaseContractCode != null ">
+                and t.purchase_contract_code =#{purchaseContractCode}
+            </if>
+            <if test="purchaseOrderSid != null ">
+                and t.purchase_order_sid =#{purchaseOrderSid}
+            </if>
+            <if test="purchaseOrderCode != null ">
+                and t.purchase_order_code =#{purchaseOrderCode}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t11.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="deliveryNoteSid != null ">
+                and t.delivery_note_sid =#{deliveryNoteSid}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="deliveryNoteCode != null ">
+                and t.delivery_note_code =#{deliveryNoteCode}
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseInvoiceSid != null ">
+                and t.purchase_invoice_sid =#{purchaseInvoiceSid}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="purchaseInvoiceCode != null ">
+                and t.purchase_invoice_code =#{purchaseInvoiceCode}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where> order by t.create_date desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_vendor_account_adjust_bill_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            adjust_bill_item_sid,
+            adjust_bill_sid,
+            adjust_type,
+            currency_amount_tax,
+            item_num,
+            purchase_contract_sid,
+            purchase_contract_code,
+            purchase_order_sid,
+            remark,
+            purchase_order_code,
+            creator_account,
+            delivery_note_sid,
+            create_date,
+            delivery_note_code,
+            updater_account,
+            purchase_invoice_sid,
+            update_date,
+            purchase_invoice_code,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.adjustBillItemSid},
+                #{item.adjustBillSid},
+                #{item.adjustType},
+                #{item.currencyAmountTax},
+                #{item.itemNum},
+                #{item.purchaseContractSid},
+                #{item.purchaseContractCode},
+                #{item.purchaseOrderSid},
+                #{item.remark},
+                #{item.purchaseOrderCode},
+                #{item.creatorAccount},
+                #{item.deliveryNoteSid},
+                #{item.createDate},
+                #{item.deliveryNoteCode},
+                #{item.updaterAccount},
+                #{item.purchaseInvoiceSid},
+                #{item.updateDate},
+                #{item.purchaseInvoiceCode},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_vendor_account_adjust_bill_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            adjust_bill_sid = #{adjustBillSid},
+            adjust_type = #{adjustType},
+            currency_amount_tax = #{currencyAmountTax},
+            item_num = #{itemNum},
+            purchase_contract_sid = #{purchaseContractSid},
+            purchase_contract_code = #{purchaseContractCode},
+            purchase_order_sid = #{purchaseOrderSid},
+            remark = #{remark},
+            purchase_order_code = #{purchaseOrderCode},
+            delivery_note_sid = #{deliveryNoteSid},
+            delivery_note_code = #{deliveryNoteCode},
+            updater_account = #{updaterAccount},
+            purchase_invoice_sid = #{purchaseInvoiceSid},
+            update_date = #{updateDate},
+            purchase_invoice_code = #{purchaseInvoiceCode},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where adjust_bill_item_sid = #{adjustBillItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_vendor_account_adjust_bill_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                adjust_bill_sid = #{adjustBillSid},
+                adjust_type = #{adjustType},
+                currency_amount_tax = #{currencyAmountTax},
+                item_num = #{itemNum},
+                purchase_contract_sid = #{purchaseContractSid},
+                purchase_contract_code = #{purchaseContractCode},
+                purchase_order_sid = #{purchaseOrderSid},
+                remark = #{remark},
+                purchase_order_code = #{purchaseOrderCode},
+                delivery_note_sid = #{deliveryNoteSid},
+                delivery_note_code = #{deliveryNoteCode},
+                updater_account = #{updaterAccount},
+                purchase_invoice_sid = #{purchaseInvoiceSid},
+                update_date = #{updateDate},
+                purchase_invoice_code = #{purchaseInvoiceCode},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where adjust_bill_item_sid = #{adjustBillItemSid}
+        </foreach>
+    </update>
+
+
+</mapper>

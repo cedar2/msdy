@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.HrLaborContractMapper">
+
+    <resultMap type="com.platform.ems.domain.HrLaborContract" id="HrLaborContractResult">
+        <result property="clientId" column="client_id"/>
+        <result property="laborContractSid" column="labor_contract_sid"/>
+        <result property="laborContractNum" column="labor_contract_num"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="contractSignDate" column="contract_sign_date"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="ownerName" column="owner_name"/>
+        <result property="creditCode" column="credit_code"/>
+        <result property="emailCompany" column="email_company"/>
+        <result property="officeAddr" column="office_addr"/>
+        <result property="staffCode" column="staff_code"/>
+        <result property="staffName" column="staff_name"/>
+        <result property="identityCard" column="identity_card"/>
+        <result property="mobphone" column="mobphone"/>
+        <result property="emailStaff" column="email_staff"/>
+        <result property="homeAddr" column="home_addr"/>
+        <result property="dimissionDate" column="dimission_date"/>
+        <result property="signInStatus" column="sign_in_status"/>
+        <result property="lvyueStatus" column="lvyue_status"/>
+        <result property="esignPlatform" column="esign_platform"/>
+        <result property="esignId" column="esign_id"/>
+        <result property="esignStatus" column="esign_status"/>
+        <result property="esignDesc" column="esign_desc"/>
+        <result property="esignEndTime" column="esign_end_time"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="companyShortName" column="company_short_name"/>
+    </resultMap>
+
+    <sql id="selectHrLaborContractVo">
+        SELECT
+            t.client_id,
+            t.labor_contract_sid,
+            t.labor_contract_num,
+            t.start_date,
+            t.end_date,
+            t.contract_sign_date,
+            t.company_sid,
+            t.company_code,
+            t.owner_name,
+            t.credit_code,
+            t.email_company,
+            t.office_addr,
+            t.staff_code,
+            t.staff_name,
+            t.identity_card,
+            t.mobphone,
+            t.email_staff,
+            t.home_addr,
+            t.dimission_date,
+            t.sign_in_status,
+            t.lvyue_status,
+            t.esign_platform,
+            t.esign_id,
+            t.esign_status,
+            t.esign_desc,
+            t.esign_end_time,
+            t.remark,
+            t.handle_status,
+            t.creator_account,
+            t.create_date,
+            t.updater_account,
+            t.update_date,
+            t.confirmer_account,
+            t.confirm_date,
+            t2.nick_name AS   creator_account_name,
+            t3.nick_name AS   updater_account_name,
+            t4.nick_name AS   confirmer_account_name,
+            t5.short_name AS company_short_name
+        from s_hr_labor_contract t
+                 LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name
+                 LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name
+                 LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name
+                 LEFT JOIN s_bas_company t5 ON t.company_sid = t5.company_sid
+    </sql>
+
+    <select id="selectHrLaborContractById" parameterType="Long" resultMap="HrLaborContractResult">
+        <include refid="selectHrLaborContractVo"/>
+        where t.labor_contract_sid = #{laborContractSid}
+    </select>
+
+
+    <select id="selectHrLaborContractList" parameterType="com.platform.ems.domain.HrLaborContract"
+            resultMap="HrLaborContractResult">
+        <include refid="selectHrLaborContractVo"/>
+        <where>
+            <if test="companySidList != null and companySidList.length > 0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="staffName != null  and staffName != ''">
+                and t.staff_name like concat('%',#{staffName}, '%')
+            </if>
+            <if test="staffCode != null  and staffCode != ''">
+                and t.staff_code like concat('%',#{staffCode}, '%')
+            </if>
+            <if test="contractSignBeginTime != null and contractSignBeginTime!=''">
+                and date_format(t.contract_sign_date,'%y%m%d') &gt;= date_format(#{contractSignBeginTime},'%y%m%d')
+            </if>
+            <if test="contractSignEndTime != null and contractSignEndTime!=''">
+                and date_format(t.contract_sign_date,'%y%m%d') &lt;= date_format(#{contractSignEndTime},'%y%m%d')
+            </if>
+            <if test="signInStatus  != null  and signInStatus  != ''">
+                and t.sign_in_status like concat('%',#{signInStatus }, '%')
+            </if>
+            <if test="lvyueStatus  != null  and lvyueStatus  != ''">
+                and t.lvyue_status like concat('%',#{lvyueStatus}, '%')
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and t.start_date = #{startDate}
+            </if>
+            <if test="contractStartBeginTime != null and contractStartBeginTime!=''">
+                and date_format(t.start_date,'%y%m%d') &gt;= date_format(#{contractStartBeginTime},'%y%m%d')
+            </if>
+            <if test="contractStartEndTime != null and contractStartEndTime!=''">
+                and date_format(t.start_date,'%y%m%d') &lt;= date_format(#{contractStartEndTime},'%y%m%d')
+            </if>
+            <if test="endDate != null and endDate != ''">
+                and t.end_date = #{endDate}
+            </if>
+            <if test="contractEndBeginTime != null and contractEndBeginTime!=''">
+                and date_format(t.end_date,'%y%m%d') &gt;= date_format(#{contractEndBeginTime},'%y%m%d')
+            </if>
+            <if test="contractEndEndTime != null and contractEndEndTime!=''">
+                and date_format(t.end_date,'%y%m%d') &lt;= date_format(#{contractEndEndTime},'%y%m%d')
+            </if>
+            <if test="creatorAccountName != null  and creatorAccountName != ''">
+                and t2.nick_name like concat('%',#{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+        </where> order by t.labor_contract_num desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_hr_labor_contract
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            labor_contract_sid,
+            labor_contract_num,
+            start_date,
+            end_date,
+            contract_sign_date,
+            company_sid,
+            company_code,
+            owner_name,
+            credit_code,
+            email_company,
+            office_addr,
+            staff_code,
+            staff_name,
+            identity_card,
+            mobphone,
+            email_staff,
+            home_addr,
+            dimission_date,
+            sign_in_status,
+            lvyue_status,
+            esign_platform,
+            esign_id,
+            esign_status,
+            esign_desc,
+            esign_end_time,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.laborContractSid},
+                #{item.laborContractNum},
+                #{item.startDate},
+                #{item.endDate},
+                #{item.contractSignDate},
+                #{item.companySid},
+                #{item.companyCode},
+                #{item.ownerName},
+                #{item.creditCode},
+                #{item.emailCompany},
+                #{item.officeAddr},
+                #{item.staffCode},
+                #{item.staffName},
+                #{item.identityCard},
+                #{item.mobphone},
+                #{item.emailStaff},
+                #{item.homeAddr},
+                #{item.dimissionDate},
+                #{item.signInStatus},
+                #{item.lvyueStatus},
+                #{item.esignPlatform},
+                #{item.esignId},
+                #{item.esignStatus},
+                #{item.esignDesc},
+                #{item.esignEndTime},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_hr_labor_contract
+        <trim prefix="SET" suffixOverrides=",">
+            labor_contract_num = #{laborContractNum},
+            start_date = #{startDate},
+            end_date = #{endDate},
+            contract_sign_date = #{contractSignDate},
+            company_sid = #{companySid},
+            company_code = #{companyCode},
+            owner_name = #{ownerName},
+            credit_code = #{creditCode},
+            email_company = #{emailCompany},
+            office_addr = #{officeAddr},
+            staff_code = #{staffCode},
+            staff_name = #{staffName},
+            identity_card = #{identityCard},
+            mobphone = #{mobphone},
+            email_staff = #{emailStaff},
+            home_addr = #{homeAddr},
+            dimission_date = #{dimissionDate},
+            sign_in_status = #{signInStatus},
+            lvyue_status = #{lvyueStatus},
+            esign_platform = #{esignPlatform},
+            esign_id = #{esignId},
+            esign_status = #{esignStatus},
+            esign_desc = #{esignDesc},
+            esign_end_time = #{esignEndTime},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            labor_contract_num = #{laborContractNum},
+            start_date = #{startDate},
+            end_date = #{endDate},
+            contract_sign_date = #{contractSignDate},
+            company_sid = #{companySid},
+            company_code = #{companyCode},
+        </trim>
+        where labor_contract_sid = #{laborContractSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_hr_labor_contract
+            <trim prefix="SET" suffixOverrides=",">
+                labor_contract_num = #{o.laborContractNum},
+                start_date = #{o.startDate},
+                end_date = #{o.endDate},
+                contract_sign_date = #{o.contractSignDate},
+                company_sid = #{o.companySid},
+                company_code = #{o.companyCode},
+                owner_name = #{o.ownerName},
+                credit_code = #{o.creditCode},
+                email_company = #{o.emailCompany},
+                office_addr = #{o.officeAddr},
+                staff_code = #{o.staffCode},
+                staff_name = #{o.staffName},
+                identity_card = #{o.identityCard},
+                mobphone = #{o.mobphone},
+                email_staff = #{o.emailStaff},
+                home_addr = #{o.homeAddr},
+                dimission_date = #{o.dimissionDate},
+                sign_in_status = #{o.signInStatus},
+                lvyue_status = #{o.lvyueStatus},
+                esign_platform = #{o.esignPlatform},
+                esign_id = #{o.esignId},
+                esign_status = #{o.esignStatus},
+                esign_desc = #{o.esignDesc},
+                esign_end_time = #{o.esignEndTime},
+                remark = #{o.remark},
+                handle_status = #{o.handleStatus},
+                creator_account = #{o.creatorAccount},
+                create_date = #{o.createDate},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+                data_source_sys = #{dataSourceSys},
+                labor_contract_num = #{o.laborContractNum},
+                start_date = #{o.startDate},
+                end_date = #{o.endDate},
+                contract_sign_date = #{o.contractSignDate},
+                company_sid = #{o.companySid},
+                company_code = #{o.companyCode},
+            </trim>
+            where labor_contract_sid = #{laborContractSid}
+        </foreach>
+    </update>
+
+</mapper>

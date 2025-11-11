@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecModelPositionGroupItemMapper">
+
+    <resultMap type="com.platform.ems.domain.TecModelPositionGroupItem" id="TecModelPositionGroupItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="groupItemSid" column="group_item_sid"/>
+        <result property="groupSid" column="group_sid"/>
+        <result property="modelPositionSid" column="model_position_sid"/>
+        <result property="modelPositionCode" column="model_position_code"/>
+        <result property="modelPositionName" column="model_position_name"/>
+        <result property="measureDescription" column="measure_description"/>
+        <result property="sort" column="sort"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="upDownSuit" column="up_down_suit"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerPositionCode" column="customer_position_code"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+    </resultMap>
+
+    <sql id="selectTecModelPositionGroupItemVo">
+        select t.client_id,
+               t.group_item_sid,
+               t.group_sid,
+               t.model_position_sid,
+               t2.model_position_code,
+               t2.model_position_name,
+               t2.measure_description,
+               t2.up_down_suit,
+               t2.customer_sid,
+               t3.customer_name,
+               t2.customer_position_code,
+               t.sort,
+               t.remark,
+               t.creator_account,
+               t4.nick_name AS creator_account_name,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t1.handle_status,
+               t1.group_code,
+               t1.group_name,
+               t1.status,
+                t5.nick_name AS updater_account_name,
+               t6.nick_name AS confirmer_account_name
+        from s_tec_model_position_group_item t
+         LEFT JOIN s_tec_model_position_group t1 ON t.group_sid = t1.group_sid
+         LEFT JOIN s_tec_model_position t2 ON t.model_position_sid = t2.model_position_sid
+         LEFT JOIN s_bas_customer t3 ON t2.customer_sid = t3.customer_sid
+         LEFT JOIN sys_user t4 ON t.creator_account = t4.user_name
+         LEFT JOIN sys_user t5 ON t2.updater_account = t5.user_name
+         LEFT JOIN sys_user t6 ON t1.confirmer_account = t6.user_name
+    </sql>
+
+    <select id="selectTecModelPositionGroupItemById" parameterType="Long" resultMap="TecModelPositionGroupItemResult">
+        <include refid="selectTecModelPositionGroupItemVo"/>
+        where t.group_item_sid = #{groupItemSid}
+    </select>
+
+
+    <select id="selectTecModelPositionGroupItemList" parameterType="com.platform.ems.domain.TecModelPositionGroupItem"
+            resultMap="TecModelPositionGroupItemResult">
+        <include refid="selectTecModelPositionGroupItemVo"/>
+        <where>
+            <if test="groupCode != null and groupCode != ''">
+                and (<foreach collection="groupCode.split(';')" item="item" separator="or">t1.group_code like concat('%', #{item}, '%') </foreach>)
+            </if>
+            <if test="groupName != null and groupName != ''">
+                and (<foreach collection="groupName.split(';')" item="item" separator="or">t1.group_name like concat('%', #{item}, '%') </foreach>)
+            </if>
+            <if test="modelPositionCode != null and modelPositionCode != ''">
+                and (<foreach collection="modelPositionCode.split(';')" item="item" separator="or">t2.model_position_code like concat('%', #{item}, '%') </foreach>)
+            </if>
+            <if test="modelPositionName != null and modelPositionName != ''">
+                and (<foreach collection="modelPositionName.split(';')" item="item" separator="or">t2.model_position_name like concat('%', #{item}, '%') </foreach>)
+            </if>
+            <if test="status != null and status != ''">
+                 and (<foreach collection="status.split(';')" item="item" separator="or">t1.status = #{status} </foreach>)
+            </if>
+            <if test="statusList != null and statusList.length > 0">
+                and t1.status in
+                (<foreach collection="statusList" item="status" separator=",">#{status}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t1.handle_status = #{handleStatus}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length > 0">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="upDownSuit != null and upDownSuit != ''">
+                and (<foreach collection="upDownSuit.split(';')" item="item" separator="or">t2.up_down_suit = #{upDownSuit} </foreach>)
+            </if>
+            <if test="upDownSuitList != null and upDownSuitList.length > 0">
+                and t2.up_down_suit in
+                (<foreach collection="upDownSuitList" item="upDownSuit" separator=",">#{upDownSuit}</foreach>)
+            </if>
+            <if test="customerSid != null and customerSid != ''">
+                and (<foreach collection="customerSid.split(';')" item="item" separator="or">t2.customer_sid = #{customerSid} </foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length > 0">
+                and t2.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="groupSid != null ">
+                and t.group_sid =#{groupSid}
+            </if>
+            <if test="modelPositionSid != null ">
+                and t.model_position_sid =#{modelPositionSid}
+            </if>
+            <if test="sort != null ">
+                and t.sort =#{sort}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t4.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where> order by t.create_date desc
+        <!--报表用降序-->
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_tec_model_position_group_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            group_item_sid,
+            group_sid,
+            model_position_sid,
+            sort,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{clientId},
+                #{groupItemSid},
+                #{groupSid},
+                #{modelPositionSid},
+                #{sort},
+                #{remark},
+                #{creatorAccount},
+                #{createDate},
+                #{updaterAccount},
+                #{updateDate},
+                #{dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_tec_model_position_group_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            group_sid = #{groupSid},
+            model_position_sid = #{modelPositionSid},
+            sort = #{sort},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where group_item_sid = #{groupItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_tec_model_position_group_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                group_sid = #{groupSid},
+                model_position_sid = #{modelPositionSid},
+                sort = #{sort},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where group_item_sid = #{groupItemSid}
+        </foreach>
+    </update>
+
+</mapper>

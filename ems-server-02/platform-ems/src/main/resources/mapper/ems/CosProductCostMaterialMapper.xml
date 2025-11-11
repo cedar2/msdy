@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.CosProductCostMaterialMapper"> 
+  <resultMap type="com.platform.ems.domain.CosProductCostMaterial" id="CosProductCostMaterialResult"> 
+    <result property="clientId" column="client_id"/>  
+    <result property="productCostMaterialSid" column="product_cost_material_sid"/>  
+    <result property="productCostBomSid" column="product_cost_bom_sid"/>  
+    <result property="bomItemSid" column="bom_item_sid"/>  
+    <result property="bomMaterialSid" column="bom_material_sid"/>  
+    <result property="isMainFabric" column="is_main_fabric"/>  
+    <result property="bomMaterialSku1Sid" column="bom_material_sku1_sid"/>  
+    <result property="bomMaterialSku2Sid" column="bom_material_sku2_sid"/>  
+    <result property="positionSid" column="position_sid"/>
+    <result property="positionName" column="position_name"/>
+    <result property="innerQuantity" column="inner_quantity"/>
+    <result property="innerLossRate" column="inner_loss_rate"/>
+    <result property="quoteQuantity" column="quote_quantity"/>
+    <result property="quoteLossRate" column="quote_loss_rate"/>
+    <result property="checkQuantity" column="check_quantity"/>
+    <result property="checkLossRate" column="check_loss_rate"/>
+    <result property="confirmQuantity" column="confirm_quantity"/>
+    <result property="confirmLossRate" column="confirm_loss_rate"/>
+    <result property="unitBase" column="unit_base"/>
+    <result property="roundingType" column="rounding_type"/>
+    <result property="priceQuantity" column="price_quantity"/>
+    <result property="unitPrice" column="unit_price"/>
+    <result property="remarkInnerQuantity" column="remark_inner_quantity"/>
+    <result property="unitQuantity" column="unit_quantity"/>
+    <result property="remarkQuoteQuantity" column="remark_quote_quantity"/>
+    <result property="remarkCheckQuantity" column="remark_check_quantity"/>
+    <result property="remarkConfirmQuantity" column="remark_confirm_quantity"/>
+    <result property="bomMaterialName" column="bom_material_name"/>
+    <result property="purchaseType" column="purchase_type"/>
+    <result property="innerPriceTax" column="inner_price_tax"/>
+    <result property="innerPrice" column="inner_price"/>
+    <result property="quotePriceTax" column="quote_price_tax"/>
+    <result property="quotePrice" column="quote_price"/>
+    <result property="checkPriceTax" column="check_price_tax"/>
+    <result property="checkPrice" column="check_price"/>
+    <result property="confirmPriceTax" column="confirm_price_tax"/>
+    <result property="confirmPrice" column="confirm_price"/>
+    <result property="remarkInner" column="remark_inner"/>
+    <result property="remarkQuote" column="remark_quote"/>
+    <result property="remarkCheck" column="remark_check"/>
+    <result property="remarkConfirm" column="remark_confirm"/>
+    <result property="remark" column="remark"/>
+    <result property="creatorAccount" column="creator_account"/>
+    <result property="createDate" column="create_date"/>
+    <result property="updaterAccount" column="updater_account"/>
+    <result property="updateDate" column="update_date"/>
+    <result property="dataSourceSys" column="data_source_sys"/>
+  </resultMap>
+  <sql id="selectCosProductCostMaterialVo">
+  select t.client_id,
+  t.product_cost_material_sid,
+  t.product_cost_bom_sid,
+  t.bom_item_sid,
+  t.bom_material_sid,
+  t.is_main_fabric,
+  t.bom_material_sku1_sid,
+  t.bom_material_sku2_sid,
+  t.position_sid,
+  t.position_name,
+  t.inner_quantity,
+  t.inner_loss_rate,
+  t.quote_quantity,
+  t.quote_loss_rate,
+  t.check_quantity,
+  t.check_loss_rate,
+  t.confirm_quantity,
+  t.confirm_loss_rate,
+  t.unit_base,
+  t.rounding_type,
+  t.price_quantity,
+  t.quantity,
+  t.loss_rate,
+  t.unit_price,
+  t.remark_inner_quantity,
+  t.unit_quantity,
+  t.remark_quote_quantity,
+  t.remark_check_quantity,
+  t.remark_confirm_quantity,
+  t.bom_material_name,
+  t.purchase_type,
+  t.price_tax,
+  t.inner_price_tax,
+  t.inner_price,
+  t.quote_price_tax,
+  t.quote_price,
+  t.check_price_tax,
+  t.check_price,
+  t.confirm_price_tax,
+  t.confirm_price,
+  t.remark_inner,
+  t.remark_quote,
+  t.unit_conversion_rate,
+  t.unit_conversion_rate_price,
+  t.remark_check,
+  t.remark_confirm,
+  t.remark,
+  t.creator_account,
+  t.create_date,
+  t.updater_account,
+  t.update_date,
+  t.data_source_sys,
+  t1.material_code,
+	    t1.material_name,
+	    t1.material_type,
+	    t3.sku_code as sku1_code,
+	    t3.sku_name as sku1_name,
+	    t1.supplier_product_code,
+	    t1.zipper_flag,
+        t1.width,
+        t1.vendor_sid,
+        t1.picture_path,
+        t1.status,
+	    t1.gram_weight,
+	    t1.composition,
+	    t1.specification_size,
+	    t1.density,
+	    t1.zipper_flag,
+	    t1.material_composition,
+	    t1.yarn_count,
+	    t1.touse_produce_stage,
+	    t5.short_name as vendor_name,
+	    t4.name as unit_base_name,
+	    t6.name as purchase_type_name,
+	    t7.name as unit_quantity_name,
+	    t8.name as unit_price_name,
+	    t9.node_name,
+	    t10.nick_name as creator_account_name,
+	    t11.name as material_type_name,
+	    t12.name as unit_recursion_name
+   from s_cos_product_cost_material t
+   left join  s_bas_material t1 on t1.material_sid=t.bom_material_sid
+   left join  s_cos_product_cost_bom t2 on t2.product_cost_bom_sid =t.product_cost_bom_sid
+   LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t.bom_material_sku1_sid
+        left join s_con_measure_unit t4 on t4.code=t1.unit_base
+        LEFT JOIN s_bas_vendor t5 ON t5.vendor_sid = t1.vendor_sid
+        left join s_con_purchase_type t6 on t6.code =t.purchase_type
+        left join s_con_measure_unit t7 on t7.code=t1.unit_quantity
+        left join s_con_measure_unit t8 on t8.code=t1.unit_price
+        LEFT JOIN s_con_material_class t9 ON t9.material_class_sid = t1.material_class_sid
+        LEFT JOIN sys_user t10 on t10.user_name = t.creator_account
+        LEFT JOIN s_con_material_type t11 ON t11.code = t1.material_type
+        left join s_con_measure_unit t12 on t12.code=t.unit_recursion
+  </sql>
+  <select id="selectCosProductCostMaterialById" parameterType="Long" resultMap="CosProductCostMaterialResult">
+    <include refid="selectCosProductCostMaterialVo"/> where t2.product_cost_sid = #{productCostSid}
+  </select>
+  <select id="selectCosProductCostMaterialList" parameterType="com.platform.ems.domain.CosProductCostMaterial" resultMap="CosProductCostMaterialResult">
+    <include refid="selectCosProductCostMaterialVo"/>
+    <where>
+      <if test="clientId != null  and clientId != ''">and (
+        <foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="productCostBomSid != null and  productCostBomSid != '' ">and t.product_cost_bom_sid = #{productCostBomSid}
+      </if>
+      <if test="bomItemSid != null ">and t.bom_item_sid = #{bomItemSid}
+      </if>
+      <if test="bomMaterialSid != null ">and t.bom_material_sid = #{bomMaterialSid}
+      </if>
+      <if test="isMainFabric != null  and isMainFabric != ''">and (
+        <foreach collection="isMainFabric.split(';')" item="item" separator="or">t.is_main_fabric like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="bomMaterialSku1Sid != null ">and t.bom_material_sku1_sid = #{bomMaterialSku1Sid}
+      </if>
+      <if test="bomMaterialSku2Sid != null ">and t.bom_material_sku2_sid = #{bomMaterialSku2Sid}
+      </if>
+      <if test="positionSid != null ">and t.position_sid = #{positionSid}
+      </if>
+      <if test="positionName != null  and positionName != ''">and t.position_name like concat('%', #{positionName}, '%')</if>
+      <if test="innerQuantity != null ">and t.inner_quantity = #{innerQuantity}</if>
+      <if test="innerLossRate != null ">and t.inner_loss_rate = #{innerLossRate}</if>
+      <if test="quoteQuantity != null ">and t.quote_quantity = #{quoteQuantity}</if>
+      <if test="quoteLossRate != null ">and t.quote_loss_rate = #{quoteLossRate}</if>
+      <if test="checkQuantity != null ">and t.check_quantity = #{checkQuantity}</if>
+      <if test="checkLossRate != null ">and t.check_loss_rate = #{checkLossRate}</if>
+      <if test="confirmQuantity != null ">and t.confirm_quantity = #{confirmQuantity}</if>
+      <if test="confirmLossRate != null ">and t.confirm_loss_rate = #{confirmLossRate}</if>
+      <if test="unitBase != null  and unitBase != ''">and (
+        <foreach collection="unitBase.split(';')" item="item" separator="or">t.unit_base like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="roundingType != null  and roundingType != ''">and (
+        <foreach collection="roundingType.split(';')" item="item" separator="or">t.rounding_type like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="priceQuantity != null ">and t.price_quantity = #{priceQuantity}</if>
+      <if test="unitPrice != null  and unitPrice != ''">and (
+        <foreach collection="unitPrice.split(';')" item="item" separator="or">t.unit_price like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="remarkInnerQuantity != null  and remarkInnerQuantity != ''">and (
+        <foreach collection="remarkInnerQuantity.split(';')" item="item" separator="or">t.remark_inner_quantity like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="unitQuantity != null  and unitQuantity != ''">and (
+        <foreach collection="unitQuantity.split(';')" item="item" separator="or">t.unit_quantity like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="remarkQuoteQuantity != null  and remarkQuoteQuantity != ''">and (
+        <foreach collection="remarkQuoteQuantity.split(';')" item="item" separator="or">t.remark_quote_quantity like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="remarkCheckQuantity != null  and remarkCheckQuantity != ''">and (
+        <foreach collection="remarkCheckQuantity.split(';')" item="item" separator="or">t.remark_check_quantity like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="remarkConfirmQuantity != null  and remarkConfirmQuantity != ''">and (
+        <foreach collection="remarkConfirmQuantity.split(';')" item="item" separator="or">t.remark_confirm_quantity like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="bomMaterialName != null  and bomMaterialName != ''">and t.bom_material_name like concat('%', #{bomMaterialName}, '%')</if>
+      <if test="purchaseType != null  and purchaseType != ''">and (
+        <foreach collection="purchaseType.split(';')" item="item" separator="or">t.purchase_type like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="innerPriceTax != null ">and t.inner_price_tax = #{innerPriceTax}</if>
+      <if test="innerPrice != null ">and t.inner_price = #{innerPrice}</if>
+      <if test="quotePriceTax != null ">and t.quote_price_tax = #{quotePriceTax}</if>
+      <if test="quotePrice != null ">and t.quote_price = #{quotePrice}</if>
+      <if test="checkPriceTax != null ">and t.check_price_tax = #{checkPriceTax}</if>
+      <if test="checkPrice != null ">and t.check_price = #{checkPrice}</if>
+      <if test="confirmPriceTax != null ">and t.confirm_price_tax = #{confirmPriceTax}</if>
+      <if test="confirmPrice != null ">and t.confirm_price = #{confirmPrice}</if>
+      <if test="remarkInner != null  and remarkInner != ''">and (
+        <foreach collection="remarkInner.split(';')" item="item" separator="or">t.remark_inner like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="remarkQuote != null  and remarkQuote != ''">and (
+        <foreach collection="remarkQuote.split(';')" item="item" separator="or">t.remark_quote like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="remarkCheck != null  and remarkCheck != ''">and (
+        <foreach collection="remarkCheck.split(';')" item="item" separator="or">t.remark_check like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="remarkConfirm != null  and remarkConfirm != ''">and (
+        <foreach collection="remarkConfirm.split(';')" item="item" separator="or">t.remark_confirm like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="creatorAccount != null  and creatorAccount != ''">and (
+        <foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')</if>
+      <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')</if>
+      <if test="updaterAccount != null  and updaterAccount != ''">and (
+        <foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+      <if test="dataSourceSys != null  and dataSourceSys != ''">and (
+        <foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like concat('%', #{item}, '%')</foreach>)
+      </if>
+    </where>
+  </select>
+
+  <sql id="getReport">
+  select t.client_id,
+  t.product_cost_material_sid,
+  t.product_cost_bom_sid,
+  t.bom_item_sid,
+  t.bom_material_sid,
+  t.is_main_fabric,
+  t.bom_material_sku1_sid,
+  t.bom_material_sku2_sid,
+  t.position_sid,
+  t.position_name,
+  t.inner_quantity,
+  t.inner_loss_rate,
+  t.quote_quantity,
+  t.quote_loss_rate,
+  t.check_quantity,
+  t.check_loss_rate,
+  t.confirm_quantity,
+  t.confirm_loss_rate,
+  t.unit_base,
+  t.rounding_type,
+  t.price_quantity,
+  t.quantity,
+  t.loss_rate,
+  t.unit_price,
+  t.remark_inner_quantity,
+  t.unit_quantity,
+  t.remark_quote_quantity,
+  t.remark_check_quantity,
+  t.remark_confirm_quantity,
+  t.bom_material_name,
+  t.purchase_type,
+  t.price_tax,
+  t.inner_price_tax,
+  t.inner_price,
+  t.quote_price_tax,
+  Round(IFNULL(t.quote_price_tax,0)*IFNULL(t.quote_quantity,0),2)  as quote_amount,
+  Round(IFNULL(t.check_price_tax,0)*IFNULL(t.confirm_quantity,0),2) as confirm_amount,
+  Round(IFNULL(t.inner_price_tax,0)*IFNULL(t.inner_quantity,0),2) as inner_amount,
+  t.quote_price,
+  t.check_price_tax,
+  t.check_price,
+  t.confirm_price_tax,
+  t.confirm_price,
+  t.remark_inner,
+  t.remark_quote,
+  t.unit_conversion_rate,
+  t.unit_conversion_rate_price,
+  t.remark_check,
+  t.remark_confirm,
+  t.remark,
+  t.creator_account,
+  t.create_date,
+  t.updater_account,
+  t.update_date,
+  t.data_source_sys,
+  t1.material_code,
+	    t1.material_name,
+	    t1.material_type,
+	    t3.sku_code as sku1_code,
+	    t3.sku_name as sku1_name,
+	    t1.supplier_product_code,
+	    t1.zipper_flag,
+        t1.width,
+        t1.vendor_sid,
+        t1.picture_path,
+        t1.status,
+	    t1.gram_weight,
+	    t1.composition,
+	    t1.model_size,
+	    t1.specification_size,
+	    t1.density,
+	    t1.zipper_flag,
+	    t1.material_composition,
+	    t1.yarn_count,
+	    t1.touse_produce_stage,
+	    t5.short_name as vendor_name,
+	    t4.name as unit_base_name,
+	    t6.name as purchase_type_name,
+	    t7.name as unit_quantity_name,
+	    t8.name as unit_price_name,
+	    t9.node_name,
+	    t10.nick_name as creator_account_name,
+	    t11.name as material_type_name,
+	    t12.name as unit_recursion_name
+   from s_cos_product_cost_material t
+   left join  s_bas_material t1 on t1.material_sid=t.bom_material_sid
+   left join  s_cos_product_cost_bom t2 on t2.product_cost_bom_sid =t.product_cost_bom_sid
+   LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t.bom_material_sku1_sid
+        left join s_con_measure_unit t4 on t4.code=t1.unit_base
+        LEFT JOIN s_bas_vendor t5 ON t5.vendor_sid = t1.vendor_sid
+        left join s_con_purchase_type t6 on t6.code =t.purchase_type
+        left join s_con_measure_unit t7 on t7.code=t1.unit_quantity
+        left join s_con_measure_unit t8 on t8.code=t1.unit_price
+        LEFT JOIN s_con_material_class t9 ON t9.material_class_sid = t1.material_class_sid
+        LEFT JOIN sys_user t10 on t10.user_name = t.creator_account
+        LEFT JOIN s_con_material_type t11 ON t11.code = t1.material_type
+        left join s_con_measure_unit t12 on t12.code=t.unit_recursion
+        left join s_cos_product_cost_bom t13 on t13.product_cost_bom_sid=t.product_cost_bom_sid
+        left join s_bas_material t14 on t14.material_sid=t13.material_sid
+        left join s_cos_product_cost t15 on t15.product_cost_sid=t13.product_cost_sid
+  </sql>
+
+  <select id="reportMaterialList" parameterType="com.platform.ems.domain.dto.request.CosProductCostMaterialRequest" resultType="com.platform.ems.domain.dto.response.CosProductCostMaterialResponse">
+    <include refid="getReport"/>
+    <where>
+      <if test="materialCode != null and materialCode !=''">
+        and t14.material_code like concat('%',#{materialCode}, '%')
+      </if>
+      <if test="materialName != null and materialName !=''">
+        and t14.material_code like concat('%',#{materialName}, '%')
+      </if>
+      <if test="sampleCodeSelf != null and sampleCodeSelf !=''">
+        and t14.sample_code_self like concat('%',#{sampleCodeSelf}, '%')
+      </if>
+      <if test="materialTypeList != null and materialTypeList.length >0">
+        and t14.material_type in
+        (<foreach collection="materialTypeList" item="item" separator=",">
+        #{item}</foreach>)
+      </if>
+      <if test="materialClassSidList != null and materialClassSidList.length >0">
+        and t14.material_class_sid in
+        (<foreach collection="materialClassSidList" item="item" separator=",">
+        #{item}</foreach>)
+      </if>
+      <if test="upDownSuitList != null and upDownSuitList.length >0">
+        and t14.up_down_suit in
+        (<foreach collection="upDownSuitList" item="item" separator=",">
+        #{item}</foreach>)
+      </if>
+      <if test="productSeasonSidList != null and productSeasonSidList.length >0">
+        and t15.product_season_sid in
+        (<foreach collection="productSeasonSidList" item="item" separator=",">
+        #{item}</foreach>)
+      </if>
+      <if test="customerSidList != null and customerSidList.length >0">
+        and t15.customer_sid in
+        (<foreach collection="customerSidList" item="item" separator=",">
+        #{item}</foreach>)
+      </if>
+      <if test="vendorSidList != null and vendorSidList.length >0">
+        and t15.vendor_sid in
+        (<foreach collection="vendorSidList" item="item" separator=",">
+        #{item}</foreach>)
+      </if>
+      <if test="handleStatusList != null and handleStatusList.length >0">
+        and t15.handle_status in
+        (<foreach collection="handleStatusList" item="item" separator=",">
+        #{item}</foreach>)
+      </if>
+      <if test="creatorAccountList != null  and creatorAccountList.length>0">
+        and t15.creator_account in
+        (<foreach collection="creatorAccountList" item="item" separator=",">
+        #{item}</foreach>)
+      </if>
+      <if test="businessTypeList != null  and businessTypeList.length>0">
+        and t15.business_type in
+        (<foreach collection="businessTypeList" item="item" separator=",">
+        #{item}</foreach>)
+      </if>
+    </where>
+  </select>
+  <!--添加多个-->
+
+  <insert id="inserts">
+
+    insert into s_cos_product_cost_material
+
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+
+      client_id,
+
+      product_cost_material_sid,
+
+      product_cost_bom_sid,
+
+      bom_item_sid,
+
+      bom_material_sid,
+
+      bom_material_name,
+
+      is_main_fabric,
+
+      bom_material_sku1_sid,
+
+      bom_material_sku2_sid,
+
+      position_sid,
+
+      position_name,
+
+      inner_quantity,
+
+      inner_loss_rate,
+
+      quote_quantity,
+
+      quote_loss_rate,
+
+      check_quantity,
+
+      check_loss_rate,
+
+      confirm_quantity,
+
+      confirm_loss_rate,
+
+      unit_base,
+
+      rounding_type,
+
+      price_quantity,
+
+      unit_price,
+
+      unit_quantity,
+
+      remark_inner_quantity,
+
+      remark_quote_quantity,
+
+      remark_check_quantity,
+
+      remark_confirm_quantity,
+
+      inner_price_tax,
+
+      inner_price,
+
+      quote_price_tax,
+
+      quote_price,
+
+      check_price_tax,
+
+      check_price,
+
+      confirm_price_tax,
+
+      confirm_price,
+
+      purchase_type,
+
+      remark_inner,
+
+      remark_quote,
+
+      remark_check,
+
+      remark_confirm,
+
+      remark,
+
+      creator_account,
+
+      create_date,
+
+      updater_account,
+
+      update_date,
+
+      data_source_sys,
+
+      quantity,
+
+      loss_rate,
+
+      price_tax,
+
+      price,
+
+      unit_conversion_rate_price,
+
+      unit_conversion_rate,
+
+    </trim>
+
+    values
+
+    <foreach collection="list" item="item" separator=",">
+
+      <trim prefix=" (" suffix=")" suffixOverrides=",">
+
+        #{item.clientId},
+
+        #{item.productCostMaterialSid},
+
+        #{item.productCostBomSid},
+
+        #{item.bomItemSid},
+
+        #{item.bomMaterialSid},
+
+        #{item.bomMaterialName},
+
+        #{item.isMainFabric},
+
+        #{item.bomMaterialSku1Sid},
+
+        #{item.bomMaterialSku2Sid},
+
+        #{item.positionSid},
+
+        #{item.positionName},
+
+        #{item.innerQuantity},
+
+        #{item.innerLossRate},
+
+        #{item.quoteQuantity},
+
+        #{item.quoteLossRate},
+
+        #{item.checkQuantity},
+
+        #{item.checkLossRate},
+
+        #{item.confirmQuantity},
+
+        #{item.confirmLossRate},
+
+        #{item.unitBase},
+
+        #{item.roundingType},
+
+        #{item.priceQuantity},
+
+        #{item.unitPrice},
+
+        #{item.unitQuantity},
+
+        #{item.remarkInnerQuantity},
+
+        #{item.remarkQuoteQuantity},
+
+        #{item.remarkCheckQuantity},
+
+        #{item.remarkConfirmQuantity},
+
+        #{item.innerPriceTax},
+
+        #{item.innerPrice},
+
+        #{item.quotePriceTax},
+
+        #{item.quotePrice},
+
+        #{item.checkPriceTax},
+
+        #{item.checkPrice},
+
+        #{item.confirmPriceTax},
+
+        #{item.confirmPrice},
+
+        #{item.purchaseType},
+
+        #{item.remarkInner},
+
+        #{item.remarkQuote},
+
+        #{item.remarkCheck},
+
+        #{item.remarkConfirm},
+
+        #{item.remark},
+
+        #{item.creatorAccount},
+
+        #{item.createDate},
+
+        #{item.updaterAccount},
+
+        #{item.updateDate},
+
+        #{item.dataSourceSys},
+
+        #{item.quantity},
+
+        #{item.lossRate},
+
+        #{item.priceTax},
+
+        #{item.price},
+
+        #{item.unitConversionRatePrice},
+
+        #{item.unitConversionRate},
+      </trim>
+
+    </foreach>
+
+  </insert>
+
+  <!--更新-->
+  <update id="updateAllById">update s_cos_product_cost_material
+    <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, product_cost_bom_sid = #{productCostBomSid}, bom_item_sid = #{bomItemSid}, bom_material_sid = #{bomMaterialSid}, is_main_fabric = #{isMainFabric}, bom_material_sku1_sid = #{bomMaterialSku1Sid}, bom_material_sku2_sid = #{bomMaterialSku2Sid}, position_sid = #{positionSid}, position_name = #{positionName}, inner_quantity = #{innerQuantity}, inner_loss_rate = #{innerLossRate}, quote_quantity = #{quoteQuantity}, quote_loss_rate = #{quoteLossRate}, check_quantity = #{checkQuantity}, check_loss_rate = #{checkLossRate}, confirm_quantity = #{confirmQuantity}, confirm_loss_rate = #{confirmLossRate}, unit_base = #{unitBase}, rounding_type = #{roundingType}, price_quantity = #{priceQuantity}, unit_price = #{unitPrice}, remark_inner_quantity = #{remarkInnerQuantity}, unit_quantity = #{unitQuantity}, remark_quote_quantity = #{remarkQuoteQuantity}, remark_check_quantity = #{remarkCheckQuantity}, remark_confirm_quantity = #{remarkConfirmQuantity}, bom_material_name = #{bomMaterialName}, purchase_type = #{purchaseType}, inner_price_tax = #{innerPriceTax}, inner_price = #{innerPrice}, quote_price_tax = #{quotePriceTax}, quote_price = #{quotePrice}, check_price_tax = #{checkPriceTax}, check_price = #{checkPrice}, confirm_price_tax = #{confirmPriceTax}, confirm_price = #{confirmPrice}, remark_inner = #{remarkInner}, remark_quote = #{remarkQuote}, remark_check = #{remarkCheck}, remark_confirm = #{remarkConfirm}, remark = #{remark}, creator_account = #{creatorAccount}, create_date = #{createDate}, updater_account = #{updaterAccount}, update_date = #{updateDate}, data_source_sys = #{dataSourceSys},</trim> where product_cost_material_sid = #{productCostMaterialSid}
+  </update>
+  <!--更新多个-->
+  <update id="updatesAllById">
+    <foreach collection="list" item="o" separator=";">update s_cos_product_cost_material
+      <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, product_cost_bom_sid = #{productCostBomSid}, bom_item_sid = #{bomItemSid}, bom_material_sid = #{bomMaterialSid}, is_main_fabric = #{isMainFabric}, bom_material_sku1_sid = #{bomMaterialSku1Sid}, bom_material_sku2_sid = #{bomMaterialSku2Sid}, position_sid = #{positionSid}, position_name = #{positionName}, inner_quantity = #{innerQuantity}, inner_loss_rate = #{innerLossRate}, quote_quantity = #{quoteQuantity}, quote_loss_rate = #{quoteLossRate}, check_quantity = #{checkQuantity}, check_loss_rate = #{checkLossRate}, confirm_quantity = #{confirmQuantity}, confirm_loss_rate = #{confirmLossRate}, unit_base = #{unitBase}, rounding_type = #{roundingType}, price_quantity = #{priceQuantity}, unit_price = #{unitPrice}, remark_inner_quantity = #{remarkInnerQuantity}, unit_quantity = #{unitQuantity}, remark_quote_quantity = #{remarkQuoteQuantity}, remark_check_quantity = #{remarkCheckQuantity}, remark_confirm_quantity = #{remarkConfirmQuantity}, bom_material_name = #{bomMaterialName}, purchase_type = #{purchaseType}, inner_price_tax = #{innerPriceTax}, inner_price = #{innerPrice}, quote_price_tax = #{quotePriceTax}, quote_price = #{quotePrice}, check_price_tax = #{checkPriceTax}, check_price = #{checkPrice}, confirm_price_tax = #{confirmPriceTax}, confirm_price = #{confirmPrice}, remark_inner = #{remarkInner}, remark_quote = #{remarkQuote}, remark_check = #{remarkCheck}, remark_confirm = #{remarkConfirm}, remark = #{remark}, creator_account = #{creatorAccount}, create_date = #{createDate}, updater_account = #{updaterAccount}, update_date = #{updateDate}, data_source_sys = #{dataSourceSys},</trim> where product_cost_material_sid = #{productCostMaterialSid}
+    </foreach> 
+  </update>  
+  <delete id="deleteByProductCostSid" parameterType="Long">DELETE FROM s_cos_product_cost_material WHERE (product_cost_sid = #{productCostSid})</delete> 
+</mapper>

@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurPriceInforMapper">
+
+    <resultMap type="com.platform.ems.domain.PurPriceInfor" id="PurPriceInforResult">
+        <result property="clientId" column="client_id"/>
+        <result property="priceInforSid" column="price_infor_sid"/>
+        <result property="priceInforCode" column="price_infor_code"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="rawMaterialMode" column="raw_material_mode"/>
+        <result property="purchaseMode" column="purchase_mode"/>
+        <result property="priceDimension" column="price_dimension"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="purchaseOrg" column="purchase_org"/>
+        <result property="costOrg" column="cost_org"/>
+        <result property="skuTypeRecursion" column="sku_type_recursion"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="materialCategory" column="material_category"/>
+    </resultMap>
+
+    <sql id="selectPurPriceInforVo">
+        select t.client_id,
+        t.price_infor_sid,
+        t.price_infor_code,
+        t.vendor_sid,
+        t.material_sid,
+        t.sku1_sid,
+        t.sku2_sid,
+        t.raw_material_mode,
+        t.purchase_mode,
+        t.price_dimension,
+        t.company_sid,
+        t.purchase_org,
+        t.cost_org,
+        t.sku_type_recursion,
+        t.remark,
+        t.status,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t.barcode_sid,
+        t.material_category
+        from s_pur_price_infor t
+    </sql>
+
+    <select id="selectPurPriceInforById" parameterType="Long" resultMap="PurPriceInforResult">
+        <include refid="selectPurPriceInforVo"/>
+        where t.price_infor_sid = #{priceInforSid}
+    </select>
+
+
+    <select id="selectPurPriceInforList" parameterType="com.platform.ems.domain.PurPriceInfor"
+            resultMap="PurPriceInforResult">
+        <include refid="selectPurPriceInforVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="priceInforCode != null ">
+                and t.price_infor_code in
+                (<foreach collection="priceInforCode" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="vendorSidList != null ">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="vendorSid != null ">
+                and t.vendor_sid in
+                (<foreach collection="vendorSid" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="materialSidList != null ">
+                and t.material_sid in
+                (<foreach collection="materialSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid in
+                (<foreach collection="materialSid" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="sku1SidList != null ">
+                and t.sku1_sid in
+                (<foreach collection="sku1SidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid in
+                (<foreach collection="sku1Sid" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="sku2SidList != null ">
+                and t.sku2_sid in
+                (<foreach collection="sku2SidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid in
+                (<foreach collection="sku2Sid" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="materialCategory != null ">
+                and t.material_category = #{materialCategory}
+            </if>
+            <if test="rawMaterialMode != null and rawMaterialMode != ''">
+                and t.raw_material_mode = #{rawMaterialMode}
+            </if>
+            <if test="purchaseMode != null and purchaseMode != ''">
+                and t.purchase_mode = #{purchaseMode}
+            </if>
+            <if test="priceDimension != null and priceDimension != ''">
+                and t.price_dimension = #{priceDimension}
+            </if>
+            <if test="companySidList != null ">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid in
+                (<foreach collection="companySid" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="purchaseOrg != null and purchaseOrg != ''">
+                and t.purchase_org = #{purchaseOrg}
+            </if>
+            <if test="costOrg != null and costOrg != ''">
+                and t.cost_org = #{costOrg}
+            </if>
+            <if test="skuTypeRecursion != null and skuTypeRecursion != ''">
+                and t.sku_type_recursion = #{skuTypeRecursion}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_price_infor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            price_infor_sid,
+            price_infor_code,
+            vendor_sid,
+            material_sid,
+            sku1_sid,
+            sku2_sid,
+            raw_material_mode,
+            purchase_mode,
+            price_dimension,
+            company_sid,
+            purchase_org,
+            cost_org,
+            sku_type_recursion,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.priceInforSid},
+                #{item.priceInforCode},
+                #{item.vendorSid},
+                #{item.materialSid},
+                #{item.sku1Sid},
+                #{item.sku2Sid},
+                #{item.rawMaterialMode},
+                #{item.purchaseMode},
+                #{item.priceDimension},
+                #{item.companySid},
+                #{item.purchaseOrg},
+                #{item.costOrg},
+                #{item.skuTypeRecursion},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_price_infor
+        <trim prefix="SET" suffixOverrides=",">
+            vendor_sid = #{vendorSid},
+            material_sid = #{materialSid},
+            sku1_sid = #{sku1Sid},
+            sku2_sid = #{sku2Sid},
+            material_category = #{materialCategory},
+            raw_material_mode = #{rawMaterialMode},
+            purchase_mode = #{purchaseMode},
+            price_dimension = #{priceDimension},
+            company_sid = #{companySid},
+            purchase_org = #{purchaseOrg},
+            cost_org = #{costOrg},
+            sku_type_recursion = #{skuTypeRecursion},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where barcode_sid=#{barcodeSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_price_infor
+            <trim prefix="SET" suffixOverrides=",">
+                vendor_sid = #{vendorSid},
+                material_sid = #{materialSid},
+                sku1_sid = #{sku1Sid},
+                sku2_sid = #{sku2Sid},
+                raw_material_mode = #{rawMaterialMode},
+                purchase_mode = #{purchaseMode},
+                price_dimension = #{priceDimension},
+                company_sid = #{companySid},
+                purchase_org = #{purchaseOrg},
+                cost_org = #{costOrg},
+                sku_type_recursion = #{skuTypeRecursion},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where price_infor_sid = #{priceInforSid}
+        </foreach>
+    </update>
+
+    <select id="selectPriceByMaterialIds" parameterType="java.lang.Long" resultType="java.lang.Long">
+        select price_infor_sid from s_pur_price_infor where material_sid in
+        <foreach item="materialSid" collection="array" open="(" separator="," close=")">
+            #{materialSid}
+        </foreach>
+    </select>
+
+</mapper>

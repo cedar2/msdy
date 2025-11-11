@@ -1,0 +1,882 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.BasStaffMapper">
+    <resultMap type="com.platform.ems.domain.BasStaff" id="BasStaffResult">
+        <result property="companyCode" column="company_code"/>
+        <result property="clientId" column="client_id"/>
+        <result property="staffSid" column="staff_sid"/>
+        <result property="staffCode" column="staff_code"/>
+        <result property="staffName" column="staff_name"/>
+        <result property="gender" column="gender"/>
+        <result property="brithday" column="brithday"/>
+        <result property="defaultPosition" column="default_position"/>
+        <result property="defaultDepartmentSid" column="default_department_sid"/>
+        <result property="defaultCompanySid" column="default_company_sid"/>
+        <result property="levelCode" column="level_code"/>
+        <result property="isOnJob" column="is_on_job"/>
+        <result property="staffType" column="staff_type"/>
+        <result property="staffStatus" column="staff_status"/>
+        <result property="employerLiabilityInsuranceDate" column="employer_liability_insurance_date"/>
+        <result property="isReappointment" column="is_Reappointment"/>
+        <result property="identityCard" column="identity_card"/>
+        <result property="mobphone" column="mobphone"/>
+        <result property="telephone" column="telephone"/>
+        <result property="wechatId" column="wechat_id"/>
+        <result property="workWechatId" column="work_wechat_id"/>
+        <result property="dingtalkId" column="dingtalk_id"/>
+        <result property="scmId" column="scm_id"/>
+        <result property="fax" column="fax"/>
+        <result property="emergencyContactName1" column="emergency_contact_name1"/>
+        <result property="emergencyContactTel1" column="emergency_contact_tel1"/>
+        <result property="emergencyContactName2" column="emergency_contact_name2"/>
+        <result property="emergencyContactTel2" column="emergency_contact_tel2"/>
+        <result property="addressHome" column="address_home"/>
+        <result property="addressOffice" column="address_office"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="countryRegionNative" column="country_region_native"/>
+        <result property="countryRegionReside" column="country_region_reside"/>
+        <result property="country" column="country"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="permonthWageProbation" column="permonth_wage_probation"/>
+        <result property="currencyProbation" column="currency_probation"/>
+        <result property="permonthWageFormal" column="permonth_wage_formal"/>
+        <result property="currencyFormal" column="currency_formal"/>
+        <result property="permonthWagePresent" column="permonth_wage_present"/>
+        <result property="positionName" column="position_name"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="companyName" column="company_name"/>
+        <result property="invoiceTel" column="invoice_tel"/>
+        <result property="checkInDate" column="check_in_date"/>
+        <result property="emailEnterprise" column="email_enterprise"/>
+        <result property="emailPersonal" column="email_personal"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="disableRemark" column="disable_remark"/>
+        <result property="probationPeriodToDate" column="probation_period_to_date"/>
+        <result property="defaultPlantSid" column="default_plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="plantName" column="plant_name"/>
+        <result property="plantShortName" column="plant_short_name"/>
+    </resultMap>
+
+    <select id="selectBasStaffById" parameterType="Long" resultMap="BasStaffResult">
+        <include refid="selectBasStaffVo"/>
+        where t.staff_sid = #{staffSid}
+    </select>
+    <select id="selectBasStaffList" parameterType="com.platform.ems.domain.BasStaff" resultMap="BasStaffResult">
+        <include refid="selectBasStaffVo"/>
+        <where>
+            <if test="staffSidList != null and staffSidList.length >0">
+                and t.staff_sid in (
+                <foreach collection="staffSidList" item="staffSid" separator=",">#{staffSid}</foreach>)
+            </if>
+            <if test="probationPeriodToDate != null">
+                and t.probation_period_to_date = #{probationPeriodToDate}
+            </if>
+            <if test="employerLiabilityInsuranceDate != null">
+                and t.employer_liability_insurance_date = #{employerLiabilityInsuranceDate}
+            </if>
+            <if test="plantSid != null ">
+                and t.default_plant_sid =#{plantSid}
+            </if>
+            <if test="defaultPlantSid != null ">
+                and t.default_plant_sid =#{defaultPlantSid}
+            </if>
+            <if test="defaultPlantSidList != null and defaultPlantSidList.length >0 ">
+                and t.default_plant_sid in(<foreach collection="defaultPlantSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid =#{workCenterSid}
+            </if>
+            <if test="workCenterSidList != null and workCenterSidList.length >0 ">
+                and t.work_center_sid in(<foreach collection="workCenterSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="workCenterCode != null and workCenterCode != ''">
+                and t.work_center_code like concat('%',#{workCenterCode}, '%')
+            </if>
+            <if test="clientId != null  and clientId != ''">and (
+                <foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="staffCode != null  and staffCode != ''">
+              and   t.staff_code like concat('%',
+                #{staffCode}, '%')
+            </if>
+            <if test="staffCodeList != null and staffCodeList.size() >0 ">
+                and t.staff_code in
+                (<foreach collection="staffCodeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="staffName != null  and staffName != ''">
+                and (
+                <foreach collection="staffName.split(';')" item="item" separator="or">t.staff_name like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="gender != null  and gender != ''">and (
+                <foreach collection="gender.split(';')" item="item" separator="or">t.gender like concat('%', #{item},
+                    '%')</foreach>)
+            </if>
+            <if test="genderList != null and genderList.length >0 ">
+                and t.gender in
+                (<foreach collection="genderList" item="gender" separator=",">#{gender}</foreach>)
+            </if>
+            <if test="brithday != null ">and t.brithday = #{brithday}</if>
+            <if test="defaultPositions != null and defaultPositions.length >0 ">and t.default_position in (
+                <foreach collection="defaultPositions" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="defaultPosition != null">
+                and t.default_position = #{defaultPosition}
+            </if>
+            <if test="defaultDepartmentSids != null and defaultDepartmentSids.length >0">
+                and t.default_department_sid in (
+                <foreach collection="defaultDepartmentSids" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="defaultDepartmentSid != null ">
+                and t.default_department_sid = #{defaultDepartmentSid}
+            </if>
+            <if test="defaultCompanySid != null ">
+                and t.default_company_sid = #{defaultCompanySid}
+            </if>
+            <if test="defaultCompanySidList != null and defaultCompanySidList.length >0 ">
+                and t.default_company_sid in
+                (<foreach collection="defaultCompanySidList" item="defaultCompanySid" separator=",">
+                #{defaultCompanySid}</foreach>)
+            </if>
+            <if test="levelCode != null  and levelCode != ''">and (
+                <foreach collection="levelCode.split(';')" item="item" separator="or">t.level_code like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="isOnJob != null  and isOnJob != ''">and (
+                <foreach collection="isOnJob.split(';')" item="item" separator="or">t.is_on_job like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="isOnJobList != null and isOnJobList.length >0 ">
+                and t.is_on_job in
+                (<foreach collection="isOnJobList" item="isOnJob" separator=",">#{isOnJob}</foreach>)
+            </if>
+            <if test="staffType != null  and staffType != ''">and (
+                <foreach collection="staffType.split(';')" item="item" separator="or">t.staff_type like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="staffTypeList != null and staffTypeList.length >0 ">
+                and t.staff_type in
+                (<foreach collection="staffTypeList" item="staffType" separator=",">#{staffType}</foreach>)
+            </if>
+            <if test="staffStatus != null  and staffStatus != ''">and (
+                <foreach collection="staffStatus.split(';')" item="item" separator="or">t.staff_status like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="isReappointment != null  and isReappointment != ''">and (
+                <foreach collection="isReappointment.split(';')" item="item" separator="or">t.is_Reappointment like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="identityCard != null  and identityCard != ''">and (
+                <foreach collection="identityCard.split(';')" item="item" separator="or">t.identity_card like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="identityCardList != null and identityCardList.size() >0 ">
+                and t.identity_card in
+                (<foreach collection="identityCardList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="mobphone != null  and mobphone != ''">and (
+                <foreach collection="mobphone.split(';')" item="item" separator="or">t.mobphone like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="telephone != null  and telephone != ''">and (
+                <foreach collection="telephone.split(';')" item="item" separator="or">t.telephone like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="wechatId != null  and wechatId != ''">and (
+                <foreach collection="wechatId.split(';')" item="item" separator="or">t.wechat_id like concat('%',
+                    #{item},
+                    '%')</foreach>)
+            </if>
+            <if test="workWechatId != null  and workWechatId != ''">and (
+                <foreach collection="workWechatId.split(';')" item="item" separator="or">t.work_wechat_id like
+                    concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="dingtalkId != null  and dingtalkId != ''">and (
+                <foreach collection="dingtalkId.split(';')" item="item" separator="or">t.dingtalk_id like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="scmId != null  and scmId != ''">and (
+                <foreach collection="scmId.split(';')" item="item" separator="or">t.scm_id like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="fax != null  and fax != ''">and (
+                <foreach collection="fax.split(';')" item="item" separator="or">t.fax like concat('%', #{item},
+                    '%')</foreach>)
+            </if>
+            <if test="emergencyContactName1 != null  and emergencyContactName1 != ''">and (
+                <foreach collection="emergencyContactName1.split(';')" item="item" separator="or">
+                    t.emergency_contact_name1 like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="emergencyContactTel1 != null  and emergencyContactTel1 != ''">and (
+                <foreach collection="emergencyContactTel1.split(';')" item="item" separator="or">
+                    t.emergency_contact_tel1 like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="emergencyContactName2 != null  and emergencyContactName2 != ''">and (
+                <foreach collection="emergencyContactName2.split(';')" item="item" separator="or">
+                    t.emergency_contact_name2 like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="emergencyContactTel2 != null  and emergencyContactTel2 != ''">and (
+                <foreach collection="emergencyContactTel2.split(';')" item="item" separator="or">
+                    t.emergency_contact_tel2 like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="addressOffice != null  and addressOffice != ''">and (
+                <foreach collection="addressOffice.split(';')" item="item" separator="or">t.address_office like
+                    concat('%', #{item},
+                    '%')</foreach>)
+            </if>
+
+            <if test="addressHome!= null  and addressHome != ''">and (
+                <foreach collection="addressHome.split(';')" item="item" separator="or">t.address_home like concat('%',
+                    #{item},
+                    '%')</foreach>)
+            </if>
+            <if test="picturePath != null  and picturePath != ''">and (
+                <foreach collection="picturePath.split(';')" item="item" separator="or">t.picture_path like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="status != null  and status != ''">and (
+                <foreach collection="status.split(';')" item="item" separator="or">t.status like concat('%', #{item},
+                    '%')</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="emailEnterprise != null  and emailEnterprise != ''">and (
+                <foreach collection="emailEnterprise.split(';')" item="item" separator="or">t.email_enterprise like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="emailPersonal != null  and emailPersonal != ''">and (
+                <foreach collection="emailPersonal.split(';')" item="item" separator="or">t.email_personal like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and (
+                <foreach collection="creatorAccount.split(';')" item="item" separator="or">t5.nick_name like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="brithdayStartTime != null and brithdayStartTime!=''">and date_format(t.brithday,'%y%m%d') &gt;=
+                date_format(#{brithdayStartTime},'%y%m%d')
+            </if>
+            <if test="brithdayEndTime != null and brithdayEndTime!=''">and date_format(t.brithday,'%y%m%d') &lt;=
+                date_format(#{brithdayEndTime},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;=
+                date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;=
+                date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">and (
+                <foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">and (
+                <foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="positionTypes != null  and positionTypes.length >0 ">and (
+                <foreach collection="positionTypes" item="item" separator="or">t.position_type like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="confirmDate != null ">and t.confirm_date = #{confirmDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and (
+                <foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="countryRegionReside != null  and countryRegionReside != ''">and (
+                <foreach collection="countryRegionReside.split(';')" item="item" separator="or">t.country_region_reside
+                    like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="countryRegionNative != null  and countryRegionNative != ''">and (
+                <foreach collection="countryRegionNative.split(';')" item="item" separator="or">t.country_region_native
+                    like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="country != null ">and t.country in (
+                <foreach collection="country" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="province != null ">and t.province in (
+                <foreach collection="province" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="city != null ">and t.city in (
+                <foreach collection="city" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="permonthWageProbation != null ">and t.permonth_wage_probation = #{permonthWageProbation}</if>
+            <if test="currencyProbation != null  and currencyProbation != ''">and (
+                <foreach collection="currencyProbation.split(';')" item="item" separator="or">t.currency_probation like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="permonthWageFormal != null ">and t.permonth_wage_formal = #{permonthWageFormal}</if>
+            <if test="permonthWagePresent != null ">and t.permonth_wage_present = #{permonthWagePresent}</if>
+            <if test="currencyFormal != null  and currencyFormal != ''">and (
+                <foreach collection="currencyFormal.split(';')" item="item" separator="or">t.currency_formal like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+        </where>
+        order by t.create_date desc
+    </select>
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_staff
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            staff_sid,
+            staff_code,
+            staff_name,
+            gender,
+            brithday,
+            check_in_date,
+            default_position,
+            default_department_sid,
+            default_company_sid,
+            level_code,
+            is_on_job,
+            staff_type,
+            staff_status,
+            identity_card,
+            is_reappointment,
+            mobphone,
+            telephone,
+            email_enterprise,
+            email_personal,
+            wechat_id,
+            fax,
+            work_wechat_id,
+            dingtalk_id,
+            emergency_contact_name1,
+            emergency_contact_tel1,
+            scm_id,
+            emergency_contact_name2,
+            emergency_contact_tel2,
+            picture_path,
+            remark,
+            disable_remark,
+            status,
+            address_office,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            currency_present,
+            confirm_date,
+            permonth_wage_present,
+            data_source_sys,
+            permonth_wage_probation,
+            currency_probation,
+            permonth_wage_formal,
+            currency_formal,
+            country_region_native,
+            country_region_reside,
+            address_home,
+            position_type,
+            probation_period_to_date,
+            employer_liability_insurance_date,
+            work_center_sid,
+            work_center_code,
+            default_plant_sid,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.staffSid},
+                #{item.staffCode},
+                #{item.staffName},
+                #{item.gender},
+                #{item.brithday},
+                #{item.checkInDate},
+                #{item.defaultPosition},
+                #{item.defaultDepartmentSid},
+                #{item.defaultCompanySid},
+                #{item.levelCode},
+                #{item.isOnJob},
+                #{item.staffType},
+                #{item.staffStatus},
+                #{item.identityCard},
+                #{item.isReappointment},
+                #{item.mobphone},
+                #{item.telephone},
+                #{item.emailEnterprise},
+                #{item.emailPersonal},
+                #{item.wechatId},
+                #{item.fax},
+                #{item.workWechatId},
+                #{item.dingtalkId},
+                #{item.emergencyContactName1},
+                #{item.emergencyContactTel1},
+                #{item.scmId},
+                #{item.emergencyContactName2},
+                #{item.emergencyContactTel2},
+                #{item.picturePath},
+                #{item.remark},
+                #{item.disableRemark},
+                #{item.status},
+                #{item.addressOffice},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.currencyPresent},
+                #{item.confirmDate},
+                #{item.permonthWagePresent},
+                #{item.dataSourceSys},
+                #{item.permonthWageProbation},
+                #{item.currencyProbation},
+                #{item.permonthWageFormal},
+                #{item.currencyFormal},
+                #{item.countryRegionNative},
+                #{item.countryRegionReside},
+                #{item.addressHome},
+                #{item.positionType},
+                #{item.probationPeriodToDate},
+                #{item.employerLiabilityInsuranceDate},
+                #{item.workCenterSid},
+                #{item.workCenterCode},
+                #{item.defaultPlantSid},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">update s_bas_staff
+        <trim prefix="SET" suffixOverrides=",">client_id = #{clientId},currency_present=#{currencyPresent}, staff_code =
+            #{staffCode}, staff_name =
+            #{staffName}, gender = #{gender}, brithday = #{brithday}, default_position = #{defaultPosition},
+            default_department_sid = #{defaultDepartmentSid}, default_company_sid = #{defaultCompanySid}, level_code =
+            #{levelCode}, is_on_job = #{isOnJob}, staff_type = #{staffType}, staff_status = #{staffStatus},
+            is_Reappointment = #{isReappointment},
+            identity_card = #{identityCard}, mobphone = #{mobphone}, telephone = #{telephone}, wechat_id
+            = #{wechatId}, work_wechat_id = #{workWechatId}, dingtalk_id = #{dingtalkId}, scm_id = #{scmId}, fax =
+            #{fax}, emergency_contact_name1 =
+            #{emergencyContactName1}, emergency_contact_tel1 = #{emergencyContactTel1}, emergency_contact_name2 =
+            #{emergencyContactName2}, emergency_contact_tel2 = #{emergencyContactTel2},address_office =
+            #{addressOffice},address_home = #{addressHome}, default_plant_sid = #{defaultPlantSid},
+            picture_path = #{picturePath}, remark = #{remark}, disable_remark = #{disableRemark}, status = #{status}, handle_status = #{handleStatus},
+            creator_account = #{creatorAccount}, create_date = #{createDate}, updater_account =
+            #{updaterAccount},position_type=#{positionType},
+            update_date = #{updateDate}, confirmer_account = #{confirmerAccount}, confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys}, country_region_native = #{countryRegionNative}, country_region_reside =
+            #{countryRegionReside}, country = #{country}, province =
+            #{province}, city = #{city}, permonth_wage_probation = #{permonthWageProbation}, currency_probation =
+            #{currencyProbation}, permonth_wage_formal = #{permonthWageFormal}, currency_formal = #{currencyFormal},
+            permonth_wage_present =#{permonthWagePresent},check_in_date =#{checkInDate},email_enterprise
+            =#{emailEnterprise},work_center_sid = #{workCenterSid},work_center_code = #{workCenterCode},
+            email_personal =#{emailPersonal},probation_period_to_date = #{probationPeriodToDate},
+            employer_liability_insurance_date = #{employerLiabilityInsuranceDate},
+        </trim>
+        where staff_sid = #{staffSid}
+    </update>
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">update s_bas_staff
+            <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, staff_code = #{staffCode}, staff_name =
+                #{staffName}, gender = #{gender}, brithday = #{brithday}, default_position = #{defaultPosition},
+                default_department_sid = #{defaultDepartmentSid}, default_company_sid = #{defaultCompanySid}, level_code
+                = #{levelCode}, is_on_job = #{isOnJob}, staff_type = #{staffType},staff_status = #{staffStatus},
+                is_Reappointment = #{isReappointment}, identity_card = #{identityCard}, mobphone = #{mobphone}, telephone = #{telephone},
+                wechat_id = #{wechatId}, work_wechat_id = #{workWechatId}, dingtalk_id = #{dingtalkId}, scm_id =
+                #{scmId}, fax = #{fax}, default_plant_sid = #{defaultPlantSid},
+                emergency_contact_name1 = #{emergencyContactName1}, emergency_contact_tel1 = #{emergencyContactTel1},
+                emergency_contact_name2 = #{emergencyContactName2}, emergency_contact_tel2 = #{emergencyContactTel2},
+                address_office = #{addressOffice},address_home = #{addressHome}, picture_path = #{picturePath}, remark =
+                #{remark}, disable_remark = #{disableRemark}, status = #{status},
+                handle_status = #{handleStatus}, creator_account = #{creatorAccount}, create_date = #{createDate},
+                updater_account = #{updaterAccount}, update_date = #{updateDate}, confirmer_account =
+                #{confirmerAccount}, confirm_date = #{confirmDate}, data_source_sys = #{dataSourceSys}, country_region =
+                #{countryRegion}, country = #{country}, province = #{province}, city = #{city}, permonth_wage_probation
+                = #{permonthWageProbation}, currency_probation = #{currencyProbation}, permonth_wage_formal =
+                #{permonthWageFormal}, currency_formal = #{currencyFormal}, permonth_wage_present
+                =#{permonthWagePresent},probation_period_to_date = #{probationPeriodToDate},
+                employer_liability_insurance_date = #{employerLiabilityInsuranceDate},work_center_sid = #{workCenterSid},
+                work_center_code = #{workCenterCode},
+            </trim>
+            where staff_sid = #{staffSid}
+        </foreach>
+    </update>
+
+    <select id="getStaffList" parameterType="com.platform.ems.domain.BasStaff" resultType="com.platform.ems.domain.BasStaff">
+        select staff_sid,staff_code,staff_name,default_company_sid,default_plant_sid,work_center_sid,work_center_code,status,handle_status,is_on_job
+        from s_bas_staff
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and client_id = #{clientId}
+            </if>
+            <if test="staffSidList != null and staffSidList.length >0">
+                and staff_sid in (
+                <foreach collection="staffSidList" item="staffSid" separator=",">#{staffSid}</foreach>)
+            </if>
+            <if test="staffCodeName != null and staffCodeName != ''">
+                and (staff_code like concat('%', #{staffCodeName}, '%')
+                or staff_name like concat('%', #{staffCodeName}, '%'))
+            </if>
+            <if test="defaultCompanySid != null">
+                and default_company_sid = #{defaultCompanySid}
+            </if>
+            <if test="defaultCompanySidList != null and defaultCompanySidList.length >0">
+                and default_company_sid in (
+                <foreach collection="defaultCompanySidList" item="defaultCompanySid" separator=",">#{defaultCompanySid}</foreach>)
+            </if>
+            <if test="defaultPlantSid != null">
+                and default_plant_sid = #{defaultPlantSid}
+            </if>
+            <if test="defaultPlantSidList != null and defaultPlantSidList.length >0">
+                and default_plant_sid in (
+                <foreach collection="defaultPlantSidList" item="defaultPlantSid" separator=",">#{defaultPlantSid}</foreach>)
+            </if>
+            <if test="workCenterSid != null">
+                and work_center_sid = #{workCenterSid}
+            </if>
+            <if test="workCenterSidList != null and workCenterSidList.length >0">
+                and work_center_sid in (
+                <foreach collection="workCenterSidList" item="workCenterSid" separator=",">#{workCenterSid}</foreach>)
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and handle_status = #{handleStatus}
+            </if>
+            <if test="isOnJob != null and isOnJob != ''">
+                and is_on_job = #{isOnJob}
+            </if>
+        </where>
+        order by staff_name asc
+  </select>
+
+    <sql id="selectBasStaffVo">
+	SELECT
+		t.client_id,
+		t.staff_sid,
+		t.staff_code,
+		t.staff_name,
+		t.gender,
+		t.brithday,
+		t.currency_present,
+		t.default_position,
+		t.default_department_sid,
+		t.default_company_sid,
+		t.level_code,
+		t.is_on_job,
+		t.staff_type,
+	    t.staff_status,
+		t.is_Reappointment,
+		t.identity_card,
+		t.mobphone,
+		t.telephone,
+		t.wechat_id,
+		t.work_wechat_id,
+		t.position_type,
+		t.dingtalk_id,
+		t.scm_id,
+		t.fax,
+		t.emergency_contact_name1,
+		t.emergency_contact_tel1,
+		t.emergency_contact_name2,
+		t.emergency_contact_tel2,
+		t.address_office,
+		t.address_home,
+		t.picture_path,
+		t.remark,
+		t.disable_remark,
+		t.STATUS,
+		t.handle_status,
+		t.creator_account,
+		t.create_date,
+		t.updater_account,
+		t.update_date,
+		t.confirmer_account,
+		t.confirm_date,
+		t.data_source_sys,
+		t.check_in_date,
+		t.email_enterprise,
+		t.email_personal,
+		t.country_region_native,
+		t.country_region_reside,
+		t.country,
+		t.province,
+		t.city,
+		t.permonth_wage_probation,
+		t.currency_probation,
+		t.permonth_wage_formal,
+		t.currency_formal,
+		t.permonth_wage_present,
+		t.probation_period_to_date,
+	    t.employer_liability_insurance_date,
+		t.company_sid,
+	    t.default_plant_sid,
+		t.work_center_sid,
+        t.work_center_code,
+        t1.work_center_name,
+		t2.company_name,
+	    t2.short_name as company_short_name,
+	    t2.invoice_tel as invoice_tel,
+        t2.company_code,
+        t3.department_name,
+	    t3.salary_cost_allocate_type,
+		t4.position_name,
+		t5.nick_name AS creator_account_name,
+		t6.nick_name AS updater_account_name,
+		t7.nick_name AS confirmer_account_name,
+	    t8.plant_code,
+	    t8.plant_name,
+	    t8.short_name AS plant_short_name
+	FROM
+		s_bas_staff t
+	LEFT JOIN s_man_work_center t1 ON t1.work_center_sid = t.work_center_sid
+	LEFT JOIN s_bas_company t2 ON t.default_company_sid = t2.company_sid
+	LEFT JOIN s_bas_department t3 ON t.default_department_sid = t3.department_sid
+	LEFT JOIN s_bas_position t4 ON t.default_position = t4.position_sid
+	LEFT JOIN sys_user t5 ON t.creator_account = t5.user_name
+	LEFT JOIN sys_user t6 on t.updater_account = t6.user_name
+	LEFT JOIN sys_user t7 on t.confirmer_account = t7.user_name
+    LEFT JOIN s_bas_plant t8 on t.default_plant_sid = t8.plant_sid
+  </sql>
+
+    <sql id="getMemberListVo">
+	SELECT
+		t.client_id,
+		t.staff_sid,
+		t.staff_code,
+		t.staff_name,
+		t.gender,
+		t.brithday,
+		t.currency_present,
+		t.default_position,
+		t.default_department_sid,
+		t.default_company_sid,
+		t.level_code,
+		t.is_on_job,
+		t.staff_type,
+        t.staff_status,
+		t.is_Reappointment,
+		t.identity_card,
+		t.mobphone,
+		t.telephone,
+		t.wechat_id,
+		t.work_wechat_id,
+		t.position_type,
+		t.dingtalk_id,
+		t.scm_id,
+		t.fax,
+		t.emergency_contact_name1,
+		t.emergency_contact_tel1,
+		t.emergency_contact_name2,
+		t.emergency_contact_tel2,
+		t.address_office,
+		t.address_home,
+		t.picture_path,
+		t.remark,
+		t.disable_remark,
+		t.STATUS,
+		t.handle_status,
+		t.creator_account,
+		t.create_date,
+		t.updater_account,
+		t.update_date,
+		t.confirmer_account,
+		t.confirm_date,
+		t.data_source_sys,
+		t.check_in_date,
+		t.email_enterprise,
+		t.email_personal,
+		t.country_region_native,
+		t.country_region_reside,
+		t.country,
+		t.province,
+		t.city,
+		t.permonth_wage_probation,
+		t.currency_probation,
+		t.permonth_wage_formal,
+		t.currency_formal,
+		t.permonth_wage_present,
+		t.probation_period_to_date,
+        t.employer_liability_insurance_date,
+		t.company_sid,
+	    t.default_plant_sid,
+		t2.company_name,
+		t3.department_name,
+		t4.position_name,
+		t5.nick_name AS creator_account_name,
+		t6.nick_name AS updater_account_name,
+		t7.nick_name AS confirmer_account_name,
+		t8.work_center_sid,
+		t9.work_center_name,
+		t10.user_name AS system_account,
+        t11.plant_code,
+        t11.plant_name,
+        t11.short_name AS plant_short_name
+	FROM
+		s_bas_staff t
+	LEFT JOIN s_bas_company t2 ON t.default_company_sid = t2.company_sid
+	LEFT JOIN s_bas_department t3 ON t.default_department_sid = t3.department_sid
+	LEFT JOIN s_bas_position t4 ON t.default_position = t4.position_sid
+	LEFT JOIN sys_user t5 ON t.creator_account = t5.user_name
+	LEFT JOIN sys_user t6 on t.updater_account = t6.user_name
+	LEFT JOIN sys_user t7 on t.confirmer_account = t7.user_name
+	LEFT JOIN s_man_work_center_member t8 on t8.member_sid = t.staff_sid
+	LEFT JOIN s_man_work_center t9 on t9.work_center_sid = t8.work_center_sid
+	LEFT JOIN sys_user t10 ON t10.staff_sid = t.staff_sid and t10.account_type = 'YG'
+    LEFT JOIN s_bas_plant t11 on t.default_plant_sid = t11.plant_sid
+  </sql>
+
+    <select id="getMemberList" resultType="com.platform.ems.domain.BasStaff">
+        <include refid="getMemberListVo"/>
+        <where>
+            <if test="staffCode != null and staffCode != ''">
+                t.staff_code like concat('%',#{staffCode}, '%')
+            </if>
+            <if test="staffName != null and staffName != ''">
+                and (<foreach collection="staffName.split(';')" item="item" separator="or">t.staff_name like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="defaultCompanySidList != null and defaultCompanySidList.length >0 ">
+                and t.default_company_sid in (<foreach collection="defaultCompanySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            group by t.staff_sid
+            order by t.staff_name asc
+        </where>
+    </select>
+
+    <select id="conditionBasStaffList" parameterType="com.platform.ems.domain.dto.response.form.BasStaffConditionForm"
+            resultType="com.platform.ems.domain.dto.response.form.BasStaffConditionForm">
+        SELECT t.user_id, t.user_name, t.nick_name as user_nick_name, t.staff_sid, t1.staff_code, t1.staff_name,
+               t2.overdue_num, t3.toexpire_num, t4.db_num, t5.dp_num
+        FROM sys_user t
+        LEFT JOIN s_bas_staff t1 ON t.staff_sid = t1.staff_sid
+        LEFT JOIN (
+            SELECT t.user_id, count(1) as overdue_num
+            FROM s_sys_overdue_business t
+            <where>
+                <if test="userId != null">
+                    and t.user_id = #{userId}
+                </if>
+                <if test="userIdList != null and userIdList.length >0 ">
+                    and t.user_id in (<foreach collection="userIdList" item="item" separator=",">#{item}</foreach>)
+                </if>
+            </where>
+            GROUP BY t.user_id
+        ) t2 ON t.user_id = t2.user_id
+                 LEFT JOIN (
+            SELECT t.user_id, count(1) as toexpire_num
+            FROM s_sys_toexpire_business t
+            <where>
+                <if test="userId != null">
+                    and t.user_id = #{userId}
+                </if>
+                <if test="userIdList != null and userIdList.length >0 ">
+                    and t.user_id in (<foreach collection="userIdList" item="item" separator=",">#{item}</foreach>)
+                </if>
+            </where>
+            GROUP BY t.user_id
+        ) t3 ON t.user_id = t3.user_id
+                 LEFT JOIN (
+            SELECT t.user_id, count(1) as db_num
+            FROM s_sys_todo_task t
+            <where>
+                    and task_category = 'DB'
+                <if test="userId != null">
+                    and t.user_id = #{userId}
+                </if>
+                <if test="userIdList != null and userIdList.length >0 ">
+                    and t.user_id in (<foreach collection="userIdList" item="item" separator=",">#{item}</foreach>)
+                </if>
+            </where>
+            GROUP BY t.user_id
+        ) t4 ON t.user_id = t4.user_id
+                 LEFT JOIN (
+            SELECT t.user_id, count(1) as dp_num
+            FROM s_sys_todo_task t
+            <where>
+                and task_category = 'DP'
+                <if test="userId != null">
+                    and t.user_id = #{userId}
+                </if>
+                <if test="userIdList != null and userIdList.length >0 ">
+                    and t.user_id in (<foreach collection="userIdList" item="item" separator=",">#{item}</foreach>)
+                </if>
+            </where>
+            GROUP BY t.user_id
+        ) t5 ON t.user_id = t5.user_id
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="userId != null">
+                and t.user_id = #{userId}
+            </if>
+            <if test="userIdList != null and userIdList.length >0 ">
+                and t.user_id in (<foreach collection="userIdList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companySid != null">
+                and t1.default_company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t1.default_company_sid in (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="departmentSid != null">
+                and t1.default_department_sid = #{departmentSid}
+            </if>
+            <if test="departmentSidList != null and departmentSidList.length >0 ">
+                and t1.default_department_sid in (<foreach collection="departmentSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="positionSid != null">
+                and t1.default_position = #{positionSid}
+            </if>
+            <if test="positionSidList != null and positionSidList.length >0 ">
+                and t1.default_position in (<foreach collection="positionSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+        </where>
+        order by t2.overdue_num desc, t3.toexpire_num desc, t4.db_num desc, t5.dp_num desc
+    </select>
+
+    <select id="getStaffListBySidOrPosition" parameterType="com.platform.ems.domain.BasStaff" resultType="com.platform.ems.domain.BasStaff">
+        select t.*, t1.position_code as default_position_code, t2.user_id from s_bas_staff t
+        left join s_bas_position t1 on t.default_position = t1.position_sid
+        left join sys_user t2 on t.staff_sid = t2.staff_sid and t.client_id = t2.client_id
+        <trim prefix="where" prefixOverrides="or">
+            <if test="staffSid != null and staffSid != ''">
+                or t.staff_sid = #{staffSid}
+            </if>
+            <if test="staffSidList != null and staffSidList.length >0 ">
+                or t.staff_sid in (<foreach collection="staffSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="defaultPosition != null and defaultPosition != ''">
+                or t.default_position = #{defaultPosition}
+            </if>
+            <if test="defaultPositionCodeList != null and defaultPositionCodeList.length >0 ">
+                or t1.position_code in (<foreach collection="defaultPositionCodeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+        </trim>
+    </select>
+</mapper>

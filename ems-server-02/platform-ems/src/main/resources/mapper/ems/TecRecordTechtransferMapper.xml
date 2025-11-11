@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecRecordTechtransferMapper">
+
+    <resultMap type="com.platform.ems.domain.TecRecordTechtransfer" id="TecRecordTechtransferResult">
+        <result property="clientId" column="client_id"/>
+        <result property="recordTechtransferSid" column="record_techtransfer_sid"/>
+        <result property="recordTechtransferCode" column="record_techtransfer_code"/>
+        <result property="sampleSid" column="sample_sid"/>
+        <result property="skuSid" column="sku_sid"/>
+        <result property="techtransferResult" column="techtransfer_result"/>
+        <result property="isSampleCq" column="is_sample_cq"/>
+        <result property="isSampleTest" column="is_sample_test"/>
+        <result property="principal" column="principal"/>
+        <result property="completeDate" column="complete_date"/>
+        <result property="checkResultKfy" column="check_result_kfy"/>
+        <result property="checkSolutionKfy" column="check_solution_kfy"/>
+        <result property="modelProcessDesc" column="model_process_desc"/>
+        <result property="conclusion" column="conclusion"/>
+        <result property="exposureRatingComment" column="exposure_rating_comment"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="sampleCodeSelf" column="sample_code_self"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="skuName" column="sku_name"/>
+        <result property="materialType" column="material_type"/>
+        <result property="materialTypeName" column="material_type_name"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="materialClassSid" column="material_class_sid"/>
+        <result property="nodeName" column="node_name"/>
+        <result property="designerAccount" column="designer_account"/>
+        <result property="designerAccountName" column="designer_account_name"/>
+        <result property="modelSid" column="model_sid"/>
+        <result property="modelName" column="model_name"/>
+        <result property="upDownSuit" column="up_down_suit"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerProductCode" column="customer_product_code"/>
+        <result property="sampleCodeCustomer" column="sample_code_customer"/>
+        <result property="simpleCode" column="simple_code"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyName" column="company_name"/>
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="companyBrandName" column="company_brand_name"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="unitBaseName" column="unit_base_name"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="customerBrandSid" column="customer_brand_sid"/>
+        <result property="customerBrandName" column="customer_brand_name"/>
+        <result property="principalName" column="principal_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="approvalNode" column="approval_node"/>
+        <result property="approvalUserId" column="approval_user_id"/>
+        <result property="approvalUserName" column="approval_user_name"/>
+        <result property="submitDate" column="submit_date"/>
+        <result property="submitUserName" column="submit_user_name"/>
+    </resultMap>
+
+    <sql id="selectTecRecordTechtransferVo">
+        select
+        t.client_id,
+        t.record_techtransfer_sid,
+        t.record_techtransfer_code,
+        t.sample_sid,
+        t.sku_sid,
+        t.techtransfer_result,
+        t.is_sample_cq,
+        t.is_sample_test,
+        t.principal,
+        t.complete_date,
+        t.check_result_kfy,
+        t.check_solution_kfy,
+        t.model_process_desc,
+        t.conclusion,
+        t.exposure_rating_comment,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.sample_code_self,
+        t1.material_code,
+        t1.material_name,
+        t1.picture_path,
+        t1.material_type,
+        t1.product_season_sid,
+        t1.material_class_sid,
+        t1.designer_account,
+        t1.model_sid,
+        t1.up_down_suit,
+        t1.sample_code_vendor,
+        t1.customer_sid,
+        t1.customer_product_code,
+        t1.sample_code_customer,
+        t1.simple_code,
+        t1.company_sid,
+        t1.company_brand_sid,
+        t1.unit_base,
+        t1.vendor_sid,
+        t1.customer_brand_sid,
+        t2.sku_name,
+        t3.name as material_type_name,
+        t4.product_season_name,
+        t5.node_name,
+        t6.nick_name as designer_account_name,
+        t7.model_name,
+        t8.customer_name,
+        t9.company_name,
+        t10.brand_name as company_brand_name,
+        t11.name as unit_base_name,
+        t12.nick_name as creator_account_name,
+        t13.nick_name as updater_account_name,
+        t14.nick_name as confirmer_account_name,
+        t15.vendor_name,
+        t16.brand_name as customer_brand_name,
+        t17.nick_name as principal_name,
+        t18.approval_node,
+        t18.approval_user_id,
+        t18.approval_user_name,
+        t18.create_date as submit_date,
+        t19.nick_name as submit_user_name
+  from s_tec_record_techtransfer t
+        LEFT JOIN s_bas_material t1 ON t1.material_sid = t.sample_sid
+        LEFT JOIN s_bas_sku t2 ON t2.sku_sid = t.sku_sid
+        LEFT JOIN s_con_material_type t3 ON t3.code = t1.material_type
+        LEFT JOIN s_bas_product_season t4 ON t4.product_season_sid = t1.product_season_sid
+        LEFT JOIN s_con_material_class t5 ON t5.material_class_sid = t1.material_class_sid
+        LEFT JOIN sys_user t6 ON t6.user_name = t1.designer_account
+        LEFT JOIN s_tec_model t7 ON t7.model_sid = t1.model_sid
+        LEFT JOIN s_bas_customer t8 ON t8.customer_sid = t1.customer_sid
+        LEFT JOIN s_bas_company t9 ON t9.company_sid = t1.company_sid
+        LEFT JOIN s_bas_company_brand t10 ON t10.company_brand_sid = t1.company_brand_sid
+        LEFT JOIN s_con_measure_unit t11 ON t11.code = t1.unit_base
+        LEFT JOIN sys_user t12 ON t12.user_name = t.creator_account
+        LEFT JOIN sys_user t13 ON t13.user_name = t.updater_account
+        LEFT JOIN sys_user t14 ON t14.user_name = t.confirmer_account
+        LEFT JOIN s_bas_vendor t15 ON t15.vendor_sid = t1.vendor_sid
+        LEFT JOIN s_bas_customer_brand t16 ON t16.customer_brand_sid = t1.customer_brand_sid
+        LEFT JOIN sys_user t17 ON t17.user_name = t.principal
+        LEFT JOIN s_sys_form_process t18 ON t18.form_id = t.record_techtransfer_sid
+        LEFT JOIN sys_user t19 ON t19.user_id = t18.create_by_id
+    </sql>
+
+    <select id="selectTecRecordTechtransferById" parameterType="Long" resultMap="TecRecordTechtransferResult">
+        <include refid="selectTecRecordTechtransferVo"/>
+        where t.record_techtransfer_sid = #{recordTechtransferSid}
+    </select>
+
+
+    <select id="selectTecRecordTechtransferList" parameterType="com.platform.ems.domain.TecRecordTechtransfer"
+            resultMap="TecRecordTechtransferResult">
+        <include refid="selectTecRecordTechtransferVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="recordTechtransferCode != null">
+                and t.record_techtransfer_code like concat('%',#{recordTechtransferCode}, '%')
+            </if>
+            <if test="recordTechtransferSidList != null and recordTechtransferSidList.length >0 ">
+                and t.record_techtransfer_sid in
+                (<foreach collection="recordTechtransferSidList" item="recordTechtransferSid" separator=",">#{recordTechtransferSid}</foreach>)
+            </if>
+            <if test="recordTechtransferSid != null ">
+                and t.record_techtransfer_sid =#{recordTechtransferSid}
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="materialCode" separator="or">t1.material_code
+                like concat('%', #{materialCode}, '%')</foreach>)
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="materialName" separator="or">t1.material_name
+                like concat('%', #{materialName}, '%')</foreach>)
+            </if>
+            <if test="simpleCode != null and simpleCode != ''">
+                and (<foreach collection="simpleCode.split(';')" item="simpleCode" separator="or">t1.simple_code like
+                concat('%', #{simpleCode}, '%')</foreach>)
+            </if>
+            <if test="skuSid != null">
+                and t.sku_sid = #{skuSid}
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0 ">
+                and t1.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">
+                #{productSeasonSid}</foreach>)
+            </if>
+            <if test="sampleCodeCustomer != null and sampleCodeCustomer != ''">
+                and (<foreach collection="sampleCodeCustomer.split(';')" item="sampleCodeCustomer" separator="or">
+                t1.sample_code_customer like concat('%', #{sampleCodeCustomer}, '%')</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0 ">
+                and t1.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="materialTypeList != null  and materialTypeList.length >0 ">
+                and t1.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=",">#{materialType}</foreach>)
+            </if>
+            <if test="sampleCodeSelf != null and sampleCodeSelf != ''">
+                and (<foreach collection="sampleCodeSelf.split(';')" item="sampleCodeSelf" separator="or">
+                t1.sample_code_self like concat('%', #{sampleCodeSelf}, '%')</foreach>)
+            </if>
+            <if test="sampleSid != null ">
+                and t.sample_sid =#{sampleSid}
+            </if>
+            <if test="techtransferResult != null  and techtransferResult != ''">
+                and t.techtransfer_result = #{techtransferResult}
+            </if>
+            <if test="isSampleCq != null  and isSampleCq != ''">
+                and (<foreach collection="isSampleCq.split(';')" item="item" separator="or">t.is_sample_cq like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isSampleTest != null  and isSampleTest != ''">
+                and (<foreach collection="isSampleTest.split(';')" item="item" separator="or">t.is_sample_test like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="principal != null  and principal != ''">
+                and (<foreach collection="principal.split(';')" item="item" separator="or">t.principal like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="completeDate != null ">
+                and t.complete_date = #{completeDate}
+            </if>
+            <if test="checkResultKfy != null  and checkResultKfy != ''">
+                and (<foreach collection="checkResultKfy.split(';')" item="item" separator="or">t.check_result_kfy like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="checkSolutionKfy != null  and checkSolutionKfy != ''">
+                and (<foreach collection="checkSolutionKfy.split(';')" item="item" separator="or">t.check_solution_kfy
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="modelProcessDesc != null  and modelProcessDesc != ''">
+                and (<foreach collection="modelProcessDesc.split(';')" item="item" separator="or">t.model_process_desc
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="conclusion != null  and conclusion != ''">
+                and (<foreach collection="conclusion.split(';')" item="item" separator="or">t.conclusion like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="exposureRatingComment != null  and exposureRatingComment != ''">
+                and (<foreach collection="exposureRatingComment.split(';')" item="item" separator="or">
+                t.exposure_rating_comment like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">
+                #{creatorAccount}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.record_techtransfer_code desc, t.create_date desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_tec_record_techtransfer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            record_techtransfer_sid,
+            record_techtransfer_code,
+            sample_sid,
+            sku_sid,
+            techtransfer_result,
+            is_sample_cq,
+            is_sample_test,
+            principal,
+            complete_date,
+            check_result_kfy,
+            check_solution_kfy,
+            model_process_desc,
+            conclusion,
+            exposure_rating_comment,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.recordTechtransferCode},
+                #{item.sampleSid},
+                #{item.skuSid},
+                #{item.techtransferResult},
+                #{item.isSampleCq},
+                #{item.isSampleTest},
+                #{item.principal},
+                #{item.completeDate},
+                #{item.checkResultKfy},
+                #{item.checkSolutionKfy},
+                #{item.modelProcessDesc},
+                #{item.conclusion},
+                #{item.exposureRatingComment},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_tec_record_techtransfer
+        <trim prefix="SET" suffixOverrides=",">
+            record_techtransfer_sid = #{recordTechtransferSid},
+            record_techtransfer_code = #{recordTechtransferCode},
+            sample_sid = #{sampleSid},
+            sku_sid = #{skuSid},
+            techtransfer_result = #{techtransferResult},
+            is_sample_cq = #{isSampleCq},
+            is_sample_test = #{isSampleTest},
+            principal = #{principal},
+            complete_date = #{completeDate},
+            check_result_kfy = #{checkResultKfy},
+            check_solution_kfy = #{checkSolutionKfy},
+            model_process_desc = #{modelProcessDesc},
+            conclusion = #{conclusion},
+            exposure_rating_comment = #{exposureRatingComment},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where record_techtransfer_sid = #{recordTechtransferSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_tec_record_techtransfer
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                record_techtransfer_sid = #{recordTechtransferSid},
+                record_techtransfer_code = #{recordTechtransferCode},
+                sample_sid = #{sampleSid},
+                sku_sid = #{skuSid},
+                techtransfer_result = #{techtransferResult},
+                is_sample_cq = #{isSampleCq},
+                is_sample_test = #{isSampleTest},
+                principal = #{principal},
+                complete_date = #{completeDate},
+                check_result_kfy = #{checkResultKfy},
+                check_solution_kfy = #{checkSolutionKfy},
+                model_process_desc = #{modelProcessDesc},
+                conclusion = #{conclusion},
+                exposure_rating_comment = #{exposureRatingComment},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where record_techtransfer_sid = #{recordTechtransferSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,1177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurVendorMonthAccountBillMapper">
+
+    <resultMap type="com.platform.ems.domain.PurVendorMonthAccountBill" id="PurVendorMonthAccountBillResult">
+        <result property="clientId" column="client_id"/>
+        <result property="vendorMonthAccountBillSid" column="vendor_month_account_bill_sid"/>
+        <result property="vendorMonthAccountBillCode" column="vendor_month_account_bill_code"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="yearMonths" column="year_months"/>
+        <result property="materialType" column="material_type"/>
+        <result property="materialTypeName" column="material_type_name"/>
+        <result property="initialBalance" column="initial_balance"/>
+        <result property="daohuo" column="daohuo"/>
+        <result property="daopiao" column="daopiao"/>
+        <result property="fukuan" column="fukuan"/>
+        <result property="shoukuan" column="shoukuan"/>
+        <result property="xiaoshoudikou" column="xiaoshoudikou"/>
+        <result property="koukuan" column="koukuan"/>
+        <result property="tiaozhang" column="tiaozhang"/>
+        <result property="endingBalance" column="ending_balance"/>
+        <result property="yajin" column="yajin"/>
+        <result property="zanyakuan" column="zanyakuan"/>
+        <result property="yueShijijieqian" column="yue_shijijieqian"/>
+        <result property="yingfuzangu" column="yingfuzangu"/>
+        <result property="yingshouzangu" column="yingshouzangu"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="companyName" column="company_name"/>
+        <result property="yufukuan" column="yufukuan"/>
+        <result property="yingfukuan" column="yingfukuan"/>
+        <result property="vendorShortName" column="vendor_short_name"/>
+        <result property="companyShortName" column="company_short_name"/>
+    </resultMap>
+
+    <sql id="selectPurVendorMonthAccountBillVo">
+        select t.client_id,
+               t.vendor_month_account_bill_sid,
+               t.vendor_month_account_bill_code,
+               t.vendor_sid,
+               t.vendor_code,
+               t.company_sid,
+               t.company_code,
+               t.year_months,
+               t.material_type,
+               t.initial_balance,
+               t.daohuo,
+               t.daopiao,
+               t.fukuan,
+               t.shoukuan,
+               t.xiaoshoudikou,
+               t.koukuan,
+               t.tiaozhang,
+               t.ending_balance,
+               t.yajin,
+               t.zanyakuan,
+               t.yue_shijijieqian,
+               t.yingfuzangu,
+               t.yingshouzangu,
+               t.currency,
+               t.currency_unit,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t5.company_name,
+               t5.short_name as company_short_name,
+               t6.vendor_name,
+               t6.short_name as vendor_short_name,
+               t7.name as material_type_name
+        from s_pur_vendor_month_account_bill t
+        left join sys_user t2 on t.creator_account = t2.user_name
+        left join sys_user t3 on t.updater_account = t3.user_name
+        left join sys_user t4 on t.confirmer_account = t4.user_name
+        left join s_bas_company t5 on t.company_sid = t5.company_sid
+        left join s_bas_vendor t6 on t.vendor_sid = t6.vendor_sid
+        left join s_con_material_type t7 ON t.material_type = t7.code
+    </sql>
+
+    <select id="selectPurVendorMonthAccountBillById" parameterType="Long" resultMap="PurVendorMonthAccountBillResult">
+        <include refid="selectPurVendorMonthAccountBillVo"/>
+        where t.vendor_month_account_bill_sid = #{vendorMonthAccountBillSid}
+    </select>
+
+    <select id="selectPurVendorMonthAccountBillList" parameterType="com.platform.ems.domain.PurVendorMonthAccountBill"
+            resultMap="PurVendorMonthAccountBillResult">
+        <include refid="selectPurVendorMonthAccountBillVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="creatorAccountName != null  and creatorAccountName != ''">
+                and t2.nick_name like concat('%',  #{creatorAccountName}, '%')
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">#{creatorAccount}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="materialType != null and materialType != ''">
+                and t.material_type = #{materialType}
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length >0">
+                <if test="materialTypeList[0] == null or materialTypeList[0] == ''">
+                    and t.material_type is NULL
+                </if>
+                <if test="materialTypeList[0] != null and materialTypeList[0] != ''">
+                    and t.material_type in
+                    (<foreach collection="materialTypeList" item="item" separator=",">#{item}</foreach>)
+                </if>
+            </if>
+            <if test="yearMonths != null and yearMonths != ''">
+                and t.year_months = #{yearMonths}
+            </if>
+            <if test="initialBalance != null ">
+                and t.initial_balance = #{initialBalance}
+            </if>
+            <if test="daohuo != null ">
+                and t.daohuo = #{daohuo}
+            </if>
+            <if test="daopiao != null ">
+                and t.daopiao = #{daopiao}
+            </if>
+            <if test="fukuan != null ">
+                and t.fukuan = #{fukuan}
+            </if>
+            <if test="shoukuan != null ">
+                and t.shoukuan = #{shoukuan}
+            </if>
+            <if test="xiaoshoudikou != null ">
+                and t.xiaoshoudikou = #{xiaoshoudikou}
+            </if>
+            <if test="koukuan != null ">
+                and t.koukuan = #{koukuan}
+            </if>
+            <if test="tiaozhang != null ">
+                and t.tiaozhang = #{tiaozhang}
+            </if>
+            <if test="endingBalance != null ">
+                and t.ending_balance = #{endingBalance}
+            </if>
+            <if test="yajin != null ">
+                and t.yajin = #{yajin}
+            </if>
+            <if test="zanyakuan != null ">
+                and t.zanyakuan = #{zanyakuan}
+            </if>
+            <if test="yueShijijieqian != null ">
+                and t.yue_shijijieqian = #{yueShijijieqian}
+            </if>
+            <if test="yingfuzangu != null ">
+                and t.yingfuzangu = #{yingfuzangu}
+            </if>
+            <if test="yingshouzangu != null ">
+                and t.yingshouzangu = #{yingshouzangu}
+            </if>
+            <if test="currency != null and currency != ''">
+                and t.currency = #{currency}
+            </if>
+            <if test="currencyUnit != null and currencyUnit != ''">
+                and t.currency_unit = #{currencyUnit}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and t.year_months >= #{beginTime}
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and t.year_months &lt;= #{endTime}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.vendor_month_account_bill_sid DESC
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_vendor_month_account_bill
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            vendor_month_account_bill_sid,
+            vendor_month_account_bill_code,
+            vendor_sid,
+            vendor_code,
+            company_sid,
+            company_code,
+            year_months,
+            material_type,
+            initial_balance,
+            daohuo,
+            daopiao,
+            fukuan,
+            shoukuan,
+            xiaoshoudikou,
+            koukuan,
+            tiaozhang,
+            ending_balance,
+            yajin,
+            zanyakuan,
+            yue_shijijieqian,
+            yingfuzangu,
+            yingshouzangu,
+            currency,
+            currency_unit,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.vendorMonthAccountBillSid},
+                #{item.vendorMonthAccountBillCode},
+                #{item.vendorSid},
+                #{item.vendorCode},
+                #{item.companySid},
+                #{item.companyCode},
+                #{item.yearMonths},
+                #{item.materialType},
+                #{item.initialBalance},
+                #{item.daohuo},
+                #{item.daopiao},
+                #{item.fukuan},
+                #{item.shoukuan},
+                #{item.xiaoshoudikou},
+                #{item.koukuan},
+                #{item.tiaozhang},
+                #{item.endingBalance},
+                #{item.yajin},
+                #{item.zanyakuan},
+                #{item.yueShijijieqian},
+                #{item.yingfuzangu},
+                #{item.yingshouzangu},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_vendor_month_account_bill
+        <trim prefix="SET" suffixOverrides=",">
+            vendor_sid = #{vendorSid},
+            vendor_code =  #{vendorCode},
+            company_sid = #{companySid},
+            company_code = #{companyCode},
+            year_months = #{yearMonths},
+            material_type = #{materialType},
+            initial_balance = #{initialBalance},
+            daohuo = #{daohuo},
+            daopiao = #{daopiao},
+            fukuan = #{fukuan},
+            shoukuan = #{shoukuan},
+            xiaoshoudikou = #{xiaoshoudikou},
+            koukuan = #{koukuan},
+            tiaozhang = #{tiaozhang},
+            ending_balance = #{endingBalance},
+            yajin = #{yajin},
+            zanyakuan = #{zanyakuan},
+            yue_shijijieqian = #{yueShijijieqian},
+            yingfuzangu = #{yingfuzangu},
+            yingshouzangu = #{yingshouzangu},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where vendor_month_account_bill_sid = #{vendorMonthAccountBillSid}
+    </update>
+
+    <select id="selectDeductionItemListFk" parameterType="com.platform.ems.domain.PurVendorMonthAccountBill"
+            resultType="com.platform.ems.domain.PurVendorMonthAccountBillKkInfo">
+        SELECT
+        t.client_id,
+        t.pay_bill_item_sid,
+        t.pay_bill_sid,
+        t.account_document_sid,
+        t.account_document_code,
+        t.book_type,
+        t.book_source_category,
+        t.account_item_sid,
+        t11.deduction_bill_code AS bill_code,
+        t.remark,
+        t.account_item_code,
+        t10.creator_account,
+        t.currency_amount_tax,
+        t10.create_date,
+        t10.updater_account,
+        t10.update_date,
+        t10.data_source_sys,
+        t1.pay_bill_code,
+        t1.pay_bill_code as refer_bill_code,
+        t1.vendor_sid,
+        t2.vendor_name,
+        t1.document_date,
+        t1.month_account_period,
+        t11.currency,
+        t11.currency_unit,
+        t11.product_season_sid,
+        t4.product_season_name,
+        t1.company_sid,
+        t5.company_name,
+        t1.document_type,
+        t1.handle_status,
+        t6.name AS book_type_name,
+        t7.name as book_source_category_name,
+        t9.nick_name AS creator_account_name
+        FROM
+        s_fin_pay_bill_item t
+        LEFT JOIN s_fin_pay_bill t1 ON t1.pay_bill_sid = t.pay_bill_sid
+        LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t1.vendor_sid
+        LEFT JOIN s_bas_company t5 on t5.company_sid=t1.company_sid
+        LEFT JOIN s_con_book_type t6 on t.book_type = t6.code
+        LEFT JOIN s_con_book_source_category t7 on t.book_source_category = t7.code
+        LEFT JOIN s_fin_book_vendor_deduction_item t10 ON t.account_item_sid = t10.book_deduction_item_sid
+        LEFT JOIN s_fin_vendor_deduction_bill t11 ON t10.refer_doc_sid = t11.deduction_bill_sid
+        LEFT JOIN sys_user t9 on t10.creator_account = t9.user_name
+        LEFT JOIN s_bas_product_season t4 on t11.product_season_sid=t4.product_season_sid
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="isFinanceVerify != null and isFinanceVerify != ''">and t1.is_finance_verify = #{isFinanceVerify}</if>
+            <if test="paymentStatus != null and paymentStatus != ''">and t1.payment_status = #{paymentStatus}</if>
+            <if test="handleStatusNot != null and handleStatusNot != ''">
+                and t1.handle_status != #{handleStatusNot}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t1.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t1.company_sid = #{companySid}
+            </if>
+            <if test="yearMonths != null and yearMonths != ''">
+                and t1.month_account_period = #{yearMonths} and t.book_type = "VKK"
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t10.creator_account = #{creatorAccount}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectDeductionItemListFp" parameterType="com.platform.ems.domain.PurVendorMonthAccountBill"
+            resultType="com.platform.ems.domain.PurVendorMonthAccountBillKkInfo">
+        SELECT
+        t.client_id,
+        t.purchase_invoice_discount_sid,
+        t.purchase_invoice_sid,
+        t.account_document_sid,
+        t.account_document_code,
+        t.book_type,
+        t.book_source_category,
+        t.account_item_sid,
+        t11.deduction_bill_code AS bill_code,
+        t.remark,
+        t.account_item_code,
+        t10.creator_account,
+        t.currency_amount_tax,
+        t10.create_date,
+        t10.updater_account,
+        t10.update_date,
+        t10.data_source_sys,
+        t1.purchase_invoice_code,
+        t1.purchase_invoice_code as refer_bill_code,
+        t1.vendor_sid,
+        t2.vendor_name,
+        t1.document_date,
+        t1.month_account_period,
+        t11.currency,
+        t11.currency_unit,
+        t11.product_season_sid,
+        t4.product_season_name,
+        t1.company_sid,
+        t1.handle_status,
+        t5.company_name,
+        t6.name AS book_type_name,
+        t7.name as book_source_category_name,
+        t9.nick_name AS creator_account_name
+        FROM
+        s_fin_purchase_invoice_discount t
+        LEFT JOIN s_fin_purchase_invoice t1 ON t1.purchase_invoice_sid = t.purchase_invoice_sid
+        LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t1.vendor_sid
+        LEFT JOIN s_bas_company t5 on t5.company_sid=t1.company_sid
+        LEFT JOIN s_con_book_type t6 on t.book_type = t6.code
+        LEFT JOIN s_con_book_source_category t7 on t.book_source_category = t7.code
+        LEFT JOIN s_fin_book_vendor_deduction_item t10 ON t.account_item_sid = t10.book_deduction_item_sid
+        LEFT JOIN s_fin_vendor_deduction_bill t11 ON t10.refer_doc_sid = t11.deduction_bill_sid
+        LEFT JOIN s_bas_product_season t4 on t11.product_season_sid = t4.product_season_sid
+        LEFT JOIN sys_user t9 on t10.creator_account = t9.user_name
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="handleStatusNot != null and handleStatusNot != ''">
+                and t1.handle_status != #{handleStatusNot}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="isFinanceVerify != null and isFinanceVerify != ''">and t1.is_finance_verify = #{isFinanceVerify}</if>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t1.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t1.company_sid = #{companySid}
+            </if>
+            <if test="yearMonths != null and yearMonths != ''">
+                and t1.month_account_period = #{yearMonths} and t.book_type = "VKK"
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t10.creator_account = #{creatorAccount}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = {dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectDeductionItemListHd" parameterType="com.platform.ems.domain.PurVendorMonthAccountBill"
+            resultType="com.platform.ems.domain.PurVendorMonthAccountBillKkInfo">
+        SELECT
+        t.client_id,
+        t.account_balance_bill_item_sid,
+        t.account_balance_bill_sid,
+        t.account_document_sid,
+        t.account_document_code,
+        t.book_type,
+        t.book_source_category,
+        t.account_item_sid,
+        t11.deduction_bill_code AS bill_code,
+        t.remark,
+        t.account_item_code,
+        t10.creator_account,
+        t.currency_amount_tax,
+        t10.create_date,
+        t10.updater_account,
+        t10.update_date,
+        t10.data_source_sys,
+        t1.account_balance_bill_code,
+        t1.account_balance_bill_code as refer_bill_code,
+        t1.vendor_sid,
+        t2.vendor_name,
+        t1.document_date,
+        t1.month_account_period,
+        t11.currency,
+        t11.currency_unit,
+        t11.product_season_sid,
+        t4.product_season_name,
+        t1.company_sid,
+        t1.handle_status,
+        t5.company_name,
+        t6.name AS book_type_name,
+        t7.name as book_source_category_name,
+        t9.nick_name AS creator_account_name
+        FROM
+        s_fin_vendor_account_balance_bill_item t
+        LEFT JOIN s_fin_vendor_account_balance_bill t1 ON t1.account_balance_bill_sid = t.account_balance_bill_sid
+        LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t1.vendor_sid
+        LEFT JOIN s_bas_company t5 on t5.company_sid=t1.company_sid
+        LEFT JOIN s_con_book_type t6 on t.book_type = t6.code
+        LEFT JOIN s_con_book_source_category t7 on t.book_source_category = t7.code
+        LEFT JOIN s_fin_book_vendor_deduction_item t10 ON t.account_item_sid = t10.book_deduction_item_sid
+        LEFT JOIN s_fin_vendor_deduction_bill t11 ON t10.refer_doc_sid = t11.deduction_bill_sid
+        LEFT JOIN s_bas_product_season t4 on t11.product_season_sid=t4.product_season_sid
+        LEFT JOIN sys_user t9 on t10.creator_account = t9.user_name
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="handleStatusNot != null and handleStatusNot != ''">
+                and t1.handle_status != #{handleStatusNot}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t1.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t1.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t1.company_sid = #{companySid}
+            </if>
+            <if test="yearMonths != null and yearMonths != ''">
+                and t1.month_account_period = #{yearMonths} and t.book_type = "VKK"
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t10.creator_account = {creatorAccount}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectAdjustItemListFp" parameterType="com.platform.ems.domain.PurVendorMonthAccountBill"
+            resultType="com.platform.ems.domain.PurVendorMonthAccountBillTzInfo">
+        SELECT
+        t.client_id,
+        t.purchase_invoice_discount_sid,
+        t.purchase_invoice_sid,
+        t.account_document_sid,
+        t.account_document_code,
+        t.book_type,
+        t.book_source_category,
+        t.account_item_sid,
+        t11.adjust_bill_code AS bill_code,
+        t.remark,
+        t.account_item_code,
+        t10.creator_account,
+        t.currency_amount_tax,
+        t10.create_date,
+        t10.updater_account,
+        t10.update_date,
+        t10.data_source_sys,
+        t1.purchase_invoice_code,
+        t1.purchase_invoice_code as refer_bill_code,
+        t1.vendor_sid,
+        t2.vendor_name,
+        t1.document_date,
+        t1.month_account_period,
+        t11.currency,
+        t11.currency_unit,
+        t11.product_season_sid,
+        t4.product_season_name,
+        t1.company_sid,
+        t1.handle_status,
+        t5.company_name,
+        t6.name AS book_type_name,
+        t7.name as book_source_category_name,
+        t9.nick_name AS creator_account_name
+        FROM
+        s_fin_purchase_invoice_discount t
+        LEFT JOIN s_fin_purchase_invoice t1 ON t1.purchase_invoice_sid = t.purchase_invoice_sid
+        LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t1.vendor_sid
+        LEFT JOIN s_bas_company t5 on t5.company_sid=t1.company_sid
+        LEFT JOIN s_con_book_type t6 on t.book_type = t6.code
+        LEFT JOIN s_con_book_source_category t7 on t.book_source_category = t7.code
+        LEFT JOIN s_fin_book_vendor_account_adjust_item t10 ON t.account_item_sid = t10.book_account_adjust_item_sid
+        LEFT JOIN s_fin_vendor_account_adjust_bill t11 ON t10.refer_doc_sid = t11.adjust_bill_sid
+        LEFT JOIN s_bas_product_season t4 on t11.product_season_sid=t4.product_season_sid
+        LEFT JOIN sys_user t9 on t10.creator_account = t9.user_name
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="isFinanceVerify != null and isFinanceVerify != ''">and t1.is_finance_verify = #{isFinanceVerify}</if>
+            <if test="handleStatusNot != null and handleStatusNot != ''">
+                and t1.handle_status != #{handleStatusNot}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t1.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t1.company_sid = #{companySid}
+            </if>
+            <if test="yearMonths != null and yearMonths != ''">
+                and t1.month_account_period = #{yearMonths} and t.book_type = "VTZ"
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t10.creator_account = #{creatorAccount}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectAdjustItemListFk" parameterType="com.platform.ems.domain.PurVendorMonthAccountBill"
+            resultType="com.platform.ems.domain.PurVendorMonthAccountBillTzInfo">
+        SELECT
+        t.client_id,
+        t.pay_bill_item_sid,
+        t.pay_bill_sid,
+        t.account_document_sid,
+        t.account_document_code,
+        t.book_type,
+        t.book_source_category,
+        t.account_item_sid,
+        t11.adjust_bill_code AS bill_code,
+        t.remark,
+        t.account_item_code,
+        t10.creator_account,
+        t.currency_amount_tax,
+        t10.create_date,
+        t10.updater_account,
+        t10.update_date,
+        t10.data_source_sys,
+        t1.pay_bill_code,
+        t1.pay_bill_code as refer_bill_code,
+        t1.vendor_sid,
+        t2.vendor_name,
+        t1.document_date,
+        t1.month_account_period,
+        t11.currency,
+        t11.currency_unit,
+        t11.product_season_sid,
+        t4.product_season_name,
+        t1.company_sid,
+        t5.company_name,
+        t1.document_type,
+        t1.handle_status,
+        t6.name AS book_type_name,
+        t7.name as book_source_category_name,
+        t9.nick_name AS creator_account_name
+        FROM
+        s_fin_pay_bill_item t
+        LEFT JOIN s_fin_pay_bill t1 ON t1.pay_bill_sid = t.pay_bill_sid
+        LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t1.vendor_sid
+        LEFT JOIN s_bas_company t5 on t5.company_sid=t1.company_sid
+        LEFT JOIN s_con_book_type t6 on t.book_type = t6.code
+        LEFT JOIN s_con_book_source_category t7 on t.book_source_category = t7.code
+        LEFT JOIN s_fin_book_vendor_account_adjust_item t10 ON t.account_item_sid = t10.book_account_adjust_item_sid
+        LEFT JOIN s_fin_vendor_account_adjust_bill t11 ON t10.refer_doc_sid = t11.adjust_bill_sid
+        LEFT JOIN s_bas_product_season t4 on t11.product_season_sid=t4.product_season_sid
+        LEFT JOIN sys_user t9 on t10.creator_account = t9.user_name
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="isFinanceVerify != null and isFinanceVerify != ''">and t1.is_finance_verify = #{isFinanceVerify}</if>
+            <if test="paymentStatus != null and paymentStatus != ''">and t1.payment_status = #{paymentStatus}</if>
+            <if test="handleStatusNot != null and handleStatusNot != ''">
+                and t1.handle_status != #{handleStatusNot}
+            </if>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t1.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t1.company_sid = #{companySid}
+            </if>
+            <if test="yearMonths != null and yearMonths != ''">
+                and t1.month_account_period = #{yearMonths} and t.book_type = "VTZ"
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t10.creator_account = #{creatorAccount}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectAdjustItemListHd" parameterType="com.platform.ems.domain.PurVendorMonthAccountBill"
+            resultType="com.platform.ems.domain.PurVendorMonthAccountBillTzInfo">
+        SELECT
+        t.client_id,
+        t.account_balance_bill_item_sid,
+        t.account_balance_bill_sid,
+        t.account_document_sid,
+        t.account_document_code,
+        t.book_type,
+        t.book_source_category,
+        t.account_item_sid,
+        t11.adjust_bill_code AS bill_code,
+        t.remark,
+        t.account_item_code,
+        t10.creator_account,
+        t.currency_amount_tax,
+        t10.create_date,
+        t10.updater_account,
+        t10.update_date,
+        t10.data_source_sys,
+        t1.account_balance_bill_code,
+        t1.account_balance_bill_code as refer_bill_code,
+        t1.vendor_sid,
+        t2.vendor_name,
+        t1.document_date,
+        t1.month_account_period,
+        t11.currency,
+        t1.currency_unit,
+        t11.product_season_sid,
+        t4.product_season_name,
+        t1.company_sid,
+        t1.handle_status,
+        t5.company_name,
+        t6.name AS book_type_name,
+        t7.name as book_source_category_name,
+        t9.nick_name AS creator_account_name
+        FROM
+        s_fin_vendor_account_balance_bill_item t
+        LEFT JOIN s_fin_vendor_account_balance_bill t1 ON t1.account_balance_bill_sid = t.account_balance_bill_sid
+        LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t1.vendor_sid
+        LEFT JOIN s_bas_company t5 on t5.company_sid=t1.company_sid
+        LEFT JOIN s_con_book_type t6 on t.book_type = t6.code
+        LEFT JOIN s_con_book_source_category t7 on t.book_source_category = t7.code
+        LEFT JOIN s_fin_book_vendor_account_adjust_item t10 ON t.account_item_sid = t10.book_account_adjust_item_sid
+        LEFT JOIN s_fin_vendor_account_adjust_bill t11 ON t10.refer_doc_sid = t11.adjust_bill_sid
+        LEFT JOIN s_bas_product_season t4 on t11.product_season_sid=t4.product_season_sid
+        LEFT JOIN sys_user t9 on t10.creator_account = t9.user_name
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="handleStatusNot != null and handleStatusNot != ''">
+                and t1.handle_status != #{handleStatusNot}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t1.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t1.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t1.company_sid = #{companySid}
+            </if>
+            <if test="yearMonths != null and yearMonths != ''">
+                and t1.month_account_period = #{yearMonths} and t.book_type = "VTZ"
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t10.creator_account = #{creatorAccount}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <select id = "getRecordAdvancePayment" parameterType="com.platform.ems.domain.PurVendorMonthAccountBill" resultType="com.platform.ems.domain.PurVendorMonthAccountBillInfo">
+        SELECT t.company_sid, t.vendor_sid, t2.vendor_name, t2.vendor_code, t2.short_name AS vendor_short_name,
+               t3.company_name, t3.company_code, ifnull(t3.short_name,t3.company_name) as company_short_name,
+               CONCAT(t.company_sid,';',t.vendor_sid) AS one_key,
+               SUM(t1.currency_amount_tax_yingf - t1.currency_amount_tax_yhx) AS yufukuan,
+               0 AS yingfuzangu, 0 AS yingfukuan, 0 AS koukuan, 0 AS tiaozhang, 0 AS teshufukuan, 0 AS yajin, 0 AS zanyakuan
+        FROM s_fin_record_advance_payment t
+        LEFT JOIN s_fin_record_advance_payment_item t1 ON t1.record_advance_payment_sid = t.record_advance_payment_sid
+        LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t.vendor_sid
+        LEFT JOIN s_bas_company t3 ON t3.company_sid = t.company_sid
+        <where>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="clearStatus != null and clearStatus != ''">
+                and t1.clear_status != #{clearStatus}
+            </if>
+        </where>
+        GROUP BY t.company_sid,t.vendor_sid
+    </select>
+
+    <select id = "getPaymentEstimation" parameterType="com.platform.ems.domain.PurVendorMonthAccountBill" resultType="com.platform.ems.domain.PurVendorMonthAccountBillInfo">
+        SELECT t.company_sid, t.vendor_sid, t2.vendor_name, t2.vendor_code, t2.short_name AS vendor_short_name,
+               t3.company_name, t3.company_code, ifnull(t3.short_name,t3.company_name) as company_short_name,
+               CONCAT(t.company_sid,';',t.vendor_sid) AS one_key,
+               SUM(t1.currency_amount_tax - t1.currency_amount_tax_yhx) AS yingfuzangu,
+               0 AS yufukuan, 0 AS yingfukuan, 0 AS koukuan, 0 AS tiaozhang, 0 AS teshufukuan, 0 AS yajin, 0 AS zanyakuan
+        FROM s_fin_book_payment_estimation t
+        LEFT JOIN s_fin_book_payment_estimation_item t1 ON t1.book_payment_estimation_sid = t.book_payment_estimation_sid
+        LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t.vendor_sid
+        LEFT JOIN s_bas_company t3 ON t3.company_sid = t.company_sid
+        <where>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="clearStatusMoney != null and clearStatusMoney != ''">
+                and t1.clear_status_money != #{clearStatusMoney}
+            </if>
+        </where>
+        GROUP BY t.company_sid,t.vendor_sid
+    </select>
+
+    <select id = "getAccountPayable" parameterType="com.platform.ems.domain.PurVendorMonthAccountBill" resultType="com.platform.ems.domain.PurVendorMonthAccountBillInfo">
+        SELECT t.company_sid, t.vendor_sid, t2.vendor_name, t2.vendor_code, t2.short_name AS vendor_short_name,
+               t3.company_name, t3.company_code, ifnull(t3.short_name,t3.company_name) as company_short_name,
+               CONCAT(t.company_sid,';',t.vendor_sid) AS one_key,
+               SUM(t1.currency_amount_tax_yingf - t1.currency_amount_tax_yhx) AS yingfukuan,
+               0 AS yufukuan, 0 AS yingfuzangu, 0 AS koukuan, 0 AS tiaozhang, 0 AS teshufukuan, 0 AS yajin, 0 AS zanyakuan
+        FROM s_fin_book_account_payable t
+        LEFT JOIN s_fin_book_account_payable_item t1 ON t1.book_account_payable_sid = t.book_account_payable_sid
+        LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t.vendor_sid
+        LEFT JOIN s_bas_company t3 ON t3.company_sid = t.company_sid
+        <where>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="clearStatus != null and clearStatus != ''">
+                and t1.clear_status != #{clearStatus}
+            </if>
+        </where>
+        GROUP BY t.company_sid,t.vendor_sid
+    </select>
+
+    <select id = "getBookDeduction" parameterType="com.platform.ems.domain.PurVendorMonthAccountBill" resultType="com.platform.ems.domain.PurVendorMonthAccountBillInfo">
+        SELECT t.company_sid, t.vendor_sid, t2.vendor_name, t.vendor_code, t2.short_name AS vendor_short_name,
+               t3.company_name, t.company_code, ifnull(t3.short_name,t3.company_name) as company_short_name,
+               CONCAT(t.company_sid,';',t.vendor_sid) AS one_key, SUM(t1.currency_amount_tax_kk - t1.currency_amount_tax_yhx) AS koukuan,
+               0 AS yufukuan, 0 AS yingfuzangu, 0 AS yingfukuan, 0 AS tiaozhang, 0 AS teshufukuan, 0 AS yajin, 0 AS zanyakuan
+        FROM s_fin_book_vendor_deduction t
+        LEFT JOIN s_fin_book_vendor_deduction_item t1 ON t1.book_deduction_sid = t.book_deduction_sid
+        LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t.vendor_sid
+        LEFT JOIN s_bas_company t3 ON t3.company_sid = t.company_sid
+        <where>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="clearStatus != null and clearStatus != ''">
+                and t1.clear_status != #{clearStatus}
+            </if>
+        </where>
+        GROUP BY t.company_sid,t.vendor_sid
+    </select>
+
+    <select id = "getBookAdjust" parameterType="com.platform.ems.domain.PurVendorMonthAccountBill" resultType="com.platform.ems.domain.PurVendorMonthAccountBillInfo">
+        SELECT t.company_sid, t.vendor_sid, t2.vendor_name, t2.vendor_code, t2.short_name AS vendor_short_name,
+               t3.company_name, t3.company_code, ifnull(t3.short_name,t3.company_name) as company_short_name,
+               CONCAT(t.company_sid,';',t.vendor_sid) AS one_key, SUM(t1.currency_amount_tax_tz - t1.currency_amount_tax_yhx) AS tiaozhang,
+               0 AS yufukuan, 0 AS yingfuzangu, 0 AS yingfukuan, 0 AS koukuan, 0 AS teshufukuan, 0 AS yajin, 0 AS zanyakuan
+        FROM s_fin_book_vendor_account_adjust t
+        LEFT JOIN s_fin_book_vendor_account_adjust_item t1 ON t1.book_account_adjust_sid = t.book_account_adjust_sid
+        LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t.vendor_sid
+        LEFT JOIN s_bas_company t3 ON t3.company_sid = t.company_sid
+        <where>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="clearStatus != null and clearStatus != ''">
+                and t1.clear_status != #{clearStatus}
+            </if>
+        </where>
+        GROUP BY t.company_sid,t.vendor_sid
+    </select>
+
+    <select id = "getBookYFk" parameterType="com.platform.ems.domain.PurVendorMonthAccountBill" resultType="com.platform.ems.domain.PurVendorMonthAccountBillInfo">
+        SELECT t.company_sid, t.vendor_sid, t2.vendor_name, t.vendor_code, t2.short_name AS vendor_short_name,
+        t3.company_name, t.company_code, ifnull(t3.short_name,t3.company_name) as company_short_name,
+        CONCAT(t.company_sid,';',t.vendor_sid) AS one_key, 0 AS teshufukuan,
+        SUM(t1.currency_amount_tax_fk - t1.currency_amount_tax_yhx) AS yufukuan, 0 AS yingfuzangu, 0 AS yingfukuan, 0 AS koukuan, 0 AS tiaozhang, 0 AS yajin, 0 AS zanyakuan
+        FROM s_fin_book_payment t
+        LEFT JOIN s_fin_book_payment_item t1 ON t1.book_payment_sid = t.book_payment_sid
+        LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t.vendor_sid
+        LEFT JOIN s_bas_company t3 ON t3.company_sid = t.company_sid
+        <where>
+            <if test="bookSourceCategory != null and bookSourceCategory != ''">
+                and t.book_source_category = #{bookSourceCategory}
+            </if>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="clearStatus != null and clearStatus != ''">
+                and t1.clear_status != #{clearStatus}
+            </if>
+        </where>
+        GROUP BY t.company_sid,t.vendor_sid
+    </select>
+
+    <select id = "getBookTsFk" parameterType="com.platform.ems.domain.PurVendorMonthAccountBill" resultType="com.platform.ems.domain.PurVendorMonthAccountBillInfo">
+        SELECT t.company_sid, t.vendor_sid, t2.vendor_name, t.vendor_code, t2.short_name AS vendor_short_name,
+               t3.company_name, t.company_code, ifnull(t3.short_name,t3.company_name) as company_short_name,
+               CONCAT(t.company_sid,';',t.vendor_sid) AS one_key, SUM(t1.currency_amount_tax_fk - t1.currency_amount_tax_yhx) AS teshufukuan,
+               0 AS yufukuan, 0 AS yingfuzangu, 0 AS yingfukuan, 0 AS koukuan, 0 AS tiaozhang, 0 AS yajin, 0 AS zanyakuan
+        FROM s_fin_book_payment t
+        LEFT JOIN s_fin_book_payment_item t1 ON t1.book_payment_sid = t.book_payment_sid
+        LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t.vendor_sid
+        LEFT JOIN s_bas_company t3 ON t3.company_sid = t.company_sid
+        <where>
+            <if test="bookSourceCategory != null and bookSourceCategory != ''">
+                and t.book_source_category = #{bookSourceCategory}
+            </if>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="clearStatus != null and clearStatus != ''">
+                and t1.clear_status != #{clearStatus}
+            </if>
+        </where>
+        GROUP BY t.company_sid,t.vendor_sid
+    </select>
+
+    <select id = "getCashPledge" parameterType="com.platform.ems.domain.PurVendorMonthAccountBill" resultType="com.platform.ems.domain.PurVendorMonthAccountBillInfo">
+        SELECT t.company_sid, t.vendor_sid, t2.vendor_name, t2.vendor_code, t2.short_name AS vendor_short_name,
+        t3.company_name, t3.company_code, ifnull(t3.short_name,t3.company_name) as company_short_name, t.document_type,
+        CONCAT(t.company_sid,';',t.vendor_sid) AS one_key, SUM(t1.currency_amount - t1.currency_amount_yth) AS yajin,
+        0 AS yufukuan, 0 AS yingfuzangu, 0 AS yingfukuan, 0 AS koukuan, 0 AS tiaozhang, 0 AS teshufukuan, 0 AS zanyakuan
+        FROM s_fin_vendor_cash_pledge_bill t
+        LEFT JOIN s_fin_vendor_cash_pledge_bill_item t1 ON t1.cash_pledge_bill_sid = t.cash_pledge_bill_sid
+        LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t.vendor_sid
+        LEFT JOIN s_bas_company t3 ON t3.company_sid = t.company_sid
+        <where>
+            <if test="returnStatusList != null and returnStatusList.length >0">
+                and t1.return_status in
+                (<foreach collection="returnStatusList" item="returnStatus" separator=",">#{returnStatus}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length >0">
+                and t.document_type in
+                (<foreach collection="documentTypeList" item="documentType" separator=",">#{documentType}</foreach>)
+            </if>
+            <if test="documentType != null and documentType != ''">
+                and t.document_type = #{documentType}
+            </if>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+        </where>
+        GROUP BY t.company_sid,t.vendor_sid,t.document_type
+    </select>
+
+    <select id = "getFundsFreeze" parameterType="com.platform.ems.domain.PurVendorMonthAccountBill" resultType="com.platform.ems.domain.PurVendorMonthAccountBillInfo">
+        SELECT t.company_sid, t.vendor_sid, t2.vendor_name, t2.vendor_code, t2.short_name AS vendor_short_name,
+        t3.company_name, t3.company_code, ifnull(t3.short_name,t3.company_name) as company_short_name, t.document_type,
+        CONCAT(t.company_sid,';',t.vendor_sid) AS one_key, SUM(t1.currency_amount - t1.currency_amount_ysf) AS zanyakuan,
+        0 AS yufukuan, 0 AS yingfuzangu, 0 AS yingfukuan, 0 AS koukuan, 0 AS tiaozhang, 0 AS teshufukuan, 0 AS yajin
+        FROM s_fin_vendor_funds_freeze_bill t
+        LEFT JOIN s_fin_vendor_funds_freeze_bill_item t1 ON t1.funds_freeze_bill_sid = t.funds_freeze_bill_sid
+        LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t.vendor_sid
+        LEFT JOIN s_bas_company t3 ON t3.company_sid = t.company_sid
+        <where>
+            <if test="unfreezeStatusList != null and unfreezeStatusList.length >0">
+                and t1.unfreeze_status in
+                (<foreach collection="unfreezeStatusList" item="unfreezeStatus" separator=",">#{unfreezeStatus}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length >0">
+                and t.document_type in
+                (<foreach collection="documentTypeList" item="documentType" separator=",">#{documentType}</foreach>)
+            </if>
+            <if test="documentType != null and documentType != ''">
+                and t.document_type = #{documentType}
+            </if>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+        </where>
+        GROUP BY t.company_sid,t.vendor_sid,t.document_type
+    </select>
+
+</mapper>

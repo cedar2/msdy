@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${packageName}.mapper.${ClassName}Mapper">
+
+    <resultMap type="${packageName}.domain.${ClassName}" id="${ClassName}Result">
+        #foreach ($column in $columns)
+            <result property="${column.javaField}" column="${column.columnName}"/>
+        #end
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="select${ClassName}Vo">
+        select
+            #foreach($column in $columns)
+            t.$column.columnName#if($velocityCount != $columns.size()),#end#end
+            u1.nick_name AS creator_account_name,u2.nick_name AS updater_account_name,u3.nick_name AS confirmer_account_name
+        from ${tableName} t
+                              LEFT JOIN sys_user u1 ON t.creator_account = u1.user_name
+                              LEFT JOIN sys_user u2 ON t.updater_account = u2.user_name
+                              LEFT JOIN sys_user u3 ON t.confirmer_account = u3.user_name
+    </sql>
+
+    <select id="select${ClassName}ById" parameterType="${pkColumn.javaType}" resultMap="${ClassName}Result">
+        <include refid="select${ClassName}Vo"/>
+        where t.${pkColumn.columnName} = #{${pkColumn.javaField}}
+    </select>
+
+    <select id="select${ClassName}List" parameterType="${packageName}.domain.${ClassName}"
+            resultMap="${ClassName}Result">
+        <include refid="select${ClassName}Vo"/>
+        <where>
+            #foreach($column in $columns)
+                #set($queryType=$column.queryType)
+                #set($javaField=$column.javaField)
+                #set($javaType=$column.javaType)
+                #set($columnName=$column.columnName)
+                #set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+                #if($column.query)
+                    #if($column.queryType == "EQ")
+                        #if($javaType == 'String')
+                            <if test="$javaField != null #if($javaType == 'String' )and $javaField != ''#end">
+                                and t.$columnName = #{$javaField}
+                            </if>
+                        #elseif($javaType == 'Long')
+                            <if test="$javaField != null #if($javaType == 'long' )and $javaField != ''#end">
+                                and t.$columnName = #{$javaField}
+                            </if>
+                        #else
+                            #if($columnName == 'create_date')
+                                <if test="beginTime != null and beginTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                                </if>
+                                <if test="endTime != null and endTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                                </if>
+                            #else
+                                <if test="$javaField != null #if($javaType ==
+                                    'String' ) and $javaField.trim() != ''#end">
+                                    and t.$columnName = #{$javaField.trim()}
+                                </if>
+                            #end
+                        #end
+                    #elseif($queryType == "NE")
+                        <if test="$javaField != null #if($javaType == 'String' )and $javaField.trim() != ''#end">and
+                            t.$columnName != #{$javaField}
+                        </if>
+                    #elseif($queryType == "GT")
+                        <if test="$javaField != null #if($javaType == 'String' )and $javaField.trim() != ''#end">and
+                            t.$columnName &gt; #{$javaField}
+                        </if>
+                    #elseif($queryType == "GTE")
+                        <if test="$javaField != null #if($javaType == 'String' )and $javaField.trim() != ''#end">and
+                            t.$columnName &gt;= #{$javaField}
+                        </if>
+                    #elseif($queryType == "LT")
+                        <if test="$javaField != null #if($javaType == 'String' )and $javaField.trim() != ''#end">and
+                            t.$columnName &lt; #{$javaField}
+                        </if>
+                    #elseif($queryType == "LTE")
+                        <if test="$javaField != null #if($javaType == 'String' )and $javaField.trim() != ''#end">and
+                            t.$columnName &lt;= #{$javaField}
+                        </if>
+                    #elseif($queryType == "LIKE")
+                        <if test="$javaField != null #if($javaType == 'String' )and $javaField.trim() != ''#end">and
+                            t.$columnName like concat('%', #{$javaField}, '%')
+                        </if>
+                    #elseif($queryType == "BETWEEN")
+                        <if test="params.begin$AttrName != null and params.begin$AttrName != '' and params.end$AttrName != null and params.end$AttrName != ''">
+                            and t.$columnName between #{params.begin$AttrName} and #{params.end$AttrName}
+                        </if>
+                    #end
+                #end
+            #end
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into ${tableName}
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            #foreach($column in $columns)
+                #if(($column.columnName != $pkColumn.columnName || !$pkColumn.increment)
+                && $column.columnName != 'update_date' && $column.columnName != 'updater_account')
+                    $column.columnName,
+                #end
+            #end
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #foreach($column in $columns)
+                    #if(($column.columnName != $pkColumn.columnName || !$pkColumn.increment)
+                    && $column.columnName != 'update_date' && $column.columnName != 'updater_account')
+                        #{item.$column.javaField},
+                    #end
+                #end
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update ${tableName}
+        <trim prefix="SET" suffixOverrides=",">
+            #foreach($column in $columns)
+                #if($column.columnName != $pkColumn.columnName && !$pkColumn.increment && $column.columnName !=
+                    'data_source_sys' && $column.columnName != 'create_date' && $column.columnName !=
+                    'creator_account' )
+                    $column.columnName = #{$column.javaField},
+                #end
+            #end
+        </trim>
+        where ${pkColumn.columnName} = #{${pkColumn.javaField}}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update ${tableName}
+            <trim prefix="SET" suffixOverrides=",">
+                #foreach($column in $columns)
+                    #if($column.columnName != $pkColumn.columnName && !$pkColumn.increment && $column.columnName !=
+                        'data_source_sys' && $column.columnName != 'create_date' && $column.columnName !=
+                        'creator_account' )
+                        $column.columnName = #{o.$column.javaField},
+                    #end
+                #end
+            </trim>
+            where ${pkColumn.columnName} = #{o.${pkColumn.javaField}}
+        </foreach>
+    </update>
+
+</mapper>

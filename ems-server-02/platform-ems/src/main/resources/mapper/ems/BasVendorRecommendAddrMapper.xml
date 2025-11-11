@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasVendorRecommendAddrMapper">
+
+    <resultMap type="com.platform.ems.domain.BasVendorRecommendAddr" id="BasVendorRecommendAddrResult">
+        <result property="clientId" column="client_id"/>
+        <result property="vendorRecommendContactSid" column="vendor_recommend_contact_sid"/>
+        <result property="vendorRecommendSid" column="vendor_recommend_sid"/>
+        <result property="contactInforCode" column="contact_infor_code"/>
+        <result property="contacterName" column="contacter_name"/>
+        <result property="contacterPosition" column="contacter_position"/>
+        <result property="contacterMobphone" column="contacter_mobphone"/>
+        <result property="contacterTelephone" column="contacter_telephone"/>
+        <result property="contacterFax" column="contacter_fax"/>
+        <result property="contacterEmail" column="contacter_email"/>
+        <result property="contacterAddress" column="contacter_address"/>
+        <result property="contacterDepartment" column="contacter_department"/>
+        <result property="businessType" column="business_type"/>
+        <result property="isDefault" column="is_default"/>
+        <result property="contactPartyRemark" column="contact_party_remark"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectBasVendorRecommendAddrVo">
+        select t.client_id,
+               t.vendor_recommend_contact_sid,
+               t.vendor_recommend_sid,
+               t.contact_infor_code,
+               t.contacter_name,
+               t.contacter_position,
+               t.contacter_mobphone,
+               t.contacter_telephone,
+               t.contacter_fax,
+               t.contacter_email,
+               t.contacter_address,
+               t.contacter_department,
+               t.business_type,
+               t.is_default,
+               t.contact_party_remark,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name
+        from s_bas_vendor_recommend_addr t
+                 LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+                 LEFT JOIN sys_user t3 ON t3.user_name = t.updater_account
+    </sql>
+
+    <select id="selectBasVendorRecommendAddrById" parameterType="Long" resultMap="BasVendorRecommendAddrResult">
+        <include refid="selectBasVendorRecommendAddrVo"/>
+        where t.vendor_recommend_contact_sid = #{vendorRecommendContactSid}
+    </select>
+
+    <select id="selectBasVendorRecommendAddrList" parameterType="com.platform.ems.domain.BasVendorRecommendAddr"
+            resultMap="BasVendorRecommendAddrResult">
+        <include refid="selectBasVendorRecommendAddrVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="vendorRecommendSid != null ">
+                and t.vendor_recommend_sid =#{vendorRecommendSid}
+            </if>
+            <if test="contactInforCode != null ">
+                and t.contact_infor_code =#{contactInforCode}
+            </if>
+            <if test="contacterName != null  and contacterName != ''">and
+                t.contacter_name like concat('%', #{contacterName}, '%')
+            </if>
+            <if test="contacterPosition != null  and contacterPosition != ''">
+                and (<foreach collection="contacterPosition.split(';')" item="item" separator="or">t.contacter_position
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="contacterMobphone != null  and contacterMobphone != ''">
+                and (<foreach collection="contacterMobphone.split(';')" item="item" separator="or">t.contacter_mobphone
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="contacterTelephone != null  and contacterTelephone != ''">
+                and (<foreach collection="contacterTelephone.split(';')" item="item" separator="or">
+                t.contacter_telephone
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="contacterFax != null  and contacterFax != ''">
+                and (<foreach collection="contacterFax.split(';')" item="item" separator="or">t.contacter_fax
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="contacterEmail != null  and contacterEmail != ''">
+                and (<foreach collection="contacterEmail.split(';')" item="item" separator="or">t.contacter_email
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="contacterAddress != null  and contacterAddress != ''">
+                and (<foreach collection="contacterAddress.split(';')" item="item" separator="or">t.contacter_address
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="contacterDepartment != null  and contacterDepartment != ''">
+                and (<foreach collection="contacterDepartment.split(';')" item="item" separator="or">
+                t.contacter_department
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="businessType != null  and businessType != ''">
+                and (<foreach collection="businessType.split(';')" item="item" separator="or">t.business_type
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isDefault != null  and isDefault != ''">
+                and (<foreach collection="isDefault.split(';')" item="item" separator="or">t.is_default
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_vendor_recommend_addr
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            vendor_recommend_contact_sid,
+            vendor_recommend_sid,
+            contact_infor_code,
+            contacter_name,
+            contacter_position,
+            contacter_mobphone,
+            contacter_telephone,
+            contacter_fax,
+            contacter_email,
+            contacter_address,
+            contacter_department,
+            business_type,
+            is_default,
+            contact_party_remark,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.vendorRecommendContactSid},
+                #{item.vendorRecommendSid},
+                #{item.contactInforCode},
+                #{item.contacterName},
+                #{item.contacterPosition},
+                #{item.contacterMobphone},
+                #{item.contacterTelephone},
+                #{item.contacterFax},
+                #{item.contacterEmail},
+                #{item.contacterAddress},
+                #{item.contacterDepartment},
+                #{item.businessType},
+                #{item.isDefault},
+                #{item.contactPartyRemark},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_vendor_recommend_addr
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            vendor_recommend_contact_sid = #{vendorRecommendContactSid},
+            vendor_recommend_sid = #{vendorRecommendSid},
+            contact_infor_code = #{contactInforCode},
+            contacter_name = #{contacterName},
+            contacter_position = #{contacterPosition},
+            contacter_mobphone = #{contacterMobphone},
+            contacter_telephone = #{contacterTelephone},
+            contacter_fax = #{contacterFax},
+            contacter_email = #{contacterEmail},
+            contacter_address = #{contacterAddress},
+            contacter_department = #{contacterDepartment},
+            business_type = #{businessType},
+            is_default = #{isDefault},
+            contact_party_remark = #{contactPartyRemark},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where vendor_recommend_contact_sid = #{vendorRecommendContactSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_vendor_recommend_addr
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                vendor_recommend_contact_sid = #{vendorRecommendContactSid},
+                vendor_recommend_sid = #{vendorRecommendSid},
+                contact_infor_code = #{contactInforCode},
+                contacter_name = #{contacterName},
+                contacter_position = #{contacterPosition},
+                contacter_mobphone = #{contacterMobphone},
+                contacter_telephone = #{contacterTelephone},
+                contacter_fax = #{contacterFax},
+                contacter_email = #{contacterEmail},
+                contacter_address = #{contacterAddress},
+                contacter_department = #{contacterDepartment},
+                business_type = #{businessType},
+                is_default = #{isDefault},
+                contact_party_remark = #{contactPartyRemark},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where vendor_recommend_contact_sid = #{vendorRecommendContactSid}
+        </foreach>
+    </update>
+
+</mapper>

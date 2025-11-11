@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ReqRequireDocItemMapper">
+
+    <resultMap type="com.platform.ems.domain.ReqRequireDocItem" id="ReqRequireDocItemResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="requireDocItemSid" column="require_doc_item_sid"/>
+                    <result property="requireDocSid" column="require_doc_sid"/>
+                    <result property="materialSid" column="material_sid"/>
+                    <result property="sku1Sid" column="sku1_sid"/>
+                    <result property="sku2Sid" column="sku2_sid"/>
+                    <result property="barcodeSid" column="barcode_sid"/>
+                    <result property="quantity" column="quantity"/>
+                    <result property="demandDate" column="demand_date"/>
+                    <result property="latestDemandDate" column="latest_demand_date"/>
+                    <result property="unitBase" column="unit_base"/>
+                    <result property="salesOrderItemSid" column="sales_order_item_sid"/>
+                    <result property="purchaseOrderItemSid" column="purchase_order_item_sid"/>
+                    <result property="itemNum" column="item_num"/>
+                    <result property="remark" column="remark"/>
+                    <result property="handleStatus" column="handle_status"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="materialCode" column="material_code"/>
+                    <result property="materialName" column="material_name"/>
+                    <result property="salesOrderCode" column="sales_order_code"/>
+                    <result property="salesOrderItemNum" column="sales_order_item_num"/>
+                    <result property="purchaseOrderCode" column="purchase_order_code"/>
+                    <result property="purchaseOrderItemNum" column="purchase_order_item_num"/>
+                    <result property="manufactureOrderCode" column="manufacture_order_code"/>
+                    <result property="sku1Code" column="sku1_code"/>
+                    <result property="sku1Name" column="sku1_name"/>
+                    <result property="sku2Code" column="sku2_code"/>
+                    <result property="sku2Name" column="sku2_name"/>
+                    <result property="barcode" column="barcode"/>
+                    <result property="salesOrderSid" column="sales_order_sid"/>
+                    <result property="purchaseOrderSid" column="purchase_order_sid"/>
+                    <result property="manufactureOrderSid" column="manufacture_order_sid"/>
+            </resultMap>
+
+    <sql id="selectReqRequireDocItemVo">
+        select
+        t.client_id,
+        t.require_doc_item_sid,
+        t.require_doc_sid,
+        t.material_sid,
+        t.sku1_sid,
+        t.sku2_sid,
+        t.barcode_sid,
+        t.quantity,
+        t.demand_date,
+        t.latest_demand_date,
+        t.unit_base,
+        t.sales_order_item_sid,
+        t.purchase_order_item_sid,
+        t.item_num,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.material_name,
+        t.sales_order_sid,
+        t.sales_order_code,
+        t.purchase_order_sid,
+        t.purchase_order_code,
+        t.manufacture_order_sid,
+        t.manufacture_order_code,
+        t1.material_code,
+        t2.item_num as sales_order_item_num,
+        t3.item_num as purchase_order_item_num,
+        t4.sku_code as sku1_code,
+        t4.sku_name as sku1_name,
+        t5.sku_code as sku2_code,
+        t5.sku_name as sku2_name,
+        t6.barcode
+    from s_req_require_doc_item t
+        LEFT JOIN s_bas_material t1 on t1.material_sid = t.material_sid
+        LEFT JOIN s_sal_sales_order_item t2 on t2.sales_order_item_sid = t.sales_order_item_sid
+        LEFT JOIN s_pur_purchase_order_item t3 on t3.purchase_order_item_sid = t.purchase_order_item_sid
+        LEFT JOIN s_bas_sku t4 on t4.sku_sid = t.sku1_sid
+        LEFT JOIN s_bas_sku t5 on t5.sku_sid = t.sku2_sid
+        LEFT JOIN s_bas_material_barcode t6 on t6.barcode_sid = t.barcode_sid
+    </sql>
+
+    <select id="selectReqRequireDocItemById" parameterType="Long" resultMap="ReqRequireDocItemResult">
+        <include refid="selectReqRequireDocItemVo"/>
+        where t.require_doc_item_sid = #{requireDocItemSid}
+    </select>
+
+
+    <select id="selectReqRequireDocItemList" parameterType="com.platform.ems.domain.ReqRequireDocItem"
+            resultMap="ReqRequireDocItemResult">
+        <include refid="selectReqRequireDocItemVo"/>
+        <where>
+                                                                                                    <if test="clientId != null  and clientId != ''">
+                               and (<foreach collection="clientId.split(';')" item="item" separator="or"> t.client_id like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                            <if test="requireDocItemSid != null ">
+                                and t.require_doc_item_sid = #{requireDocItemSid}
+                            </if>
+                            <if test="requireDocSid != null ">
+                                and t.require_doc_sid = #{requireDocSid}
+                            </if>
+                            <if test="materialSid != null ">
+                                and t.material_sid = #{materialSid}
+                            </if>
+                            <if test="sku1Sid != null ">
+                                and t.sku1_sid = #{sku1Sid}
+                            </if>
+                            <if test="sku2Sid != null ">
+                                and t.sku2_sid = #{sku2Sid}
+                            </if>
+                            <if test="barcodeSid != null ">
+                                and t.barcode_sid = #{barcodeSid}
+                            </if>
+                                                                                                                                                                                                <if test="quantity != null ">
+                                    and t.quantity = #{quantity}
+                                </if>
+                                                                                                                                                                                                                            <if test="demandDate != null ">
+                                    and t.demand_date = #{demandDate}
+                                </if>
+                                                                                                                                                                                                                            <if test="latestDemandDate != null ">
+                                    and t.latest_demand_date = #{latestDemandDate}
+                                </if>
+                                                                                                                                                                                            <if test="unitBase != null  and unitBase != ''">
+                               and (<foreach collection="unitBase.split(';')" item="item" separator="or"> t.unit_base like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="salesOrderItemSid != null  and salesOrderItemSid != ''">
+                               and (<foreach collection="salesOrderItemSid.split(';')" item="item" separator="or"> t.sales_order_item_sid like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="purchaseOrderItemSid != null  and purchaseOrderItemSid != ''">
+                               and (<foreach collection="purchaseOrderItemSid.split(';')" item="item" separator="or"> t.purchase_order_item_sid like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                                        <if test="handleStatus != null  and handleStatus != ''">
+                               and (<foreach collection="handleStatus.split(';')" item="item" separator="or"> t.handle_status like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="creatorAccount != null  and creatorAccount != ''">
+                               and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t.creator_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="beginTime != null and beginTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                                </if>
+                                <if test="endTime != null and endTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                                </if>
+                                                                                                                                                                                            <if test="updaterAccount != null  and updaterAccount != ''">
+                               and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="updateDate != null ">
+                                    and t.update_date = #{updateDate}
+                                </if>
+                                                                                                                                                                <if test="materialName != null  and materialName != ''">and
+                            t.material_name like concat('%', #{materialName}, '%')
+                        </if>
+                                                        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_req_require_doc_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                require_doc_item_sid,
+                                                                require_doc_sid,
+                                                                material_sid,
+                                                                sku1_sid,
+                                                                sku2_sid,
+                                                                barcode_sid,
+                                                                quantity,
+                                                                demand_date,
+                                                                latest_demand_date,
+                                                                unit_base,
+                                                                sales_order_item_sid,
+                                                                purchase_order_item_sid,
+                                                                item_num,
+                                                                remark,
+                                                                handle_status,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                material_name,
+                                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                                                            #{clientId},
+                                                                                #{requireDocItemSid},
+                                                                                #{requireDocSid},
+                                                                                #{materialSid},
+                                                                                #{sku1Sid},
+                                                                                #{sku2Sid},
+                                                                                #{barcodeSid},
+                                                                                #{quantity},
+                                                                                #{demandDate},
+                                                                                #{latestDemandDate},
+                                                                                #{unitBase},
+                                                                                #{salesOrderItemSid},
+                                                                                #{purchaseOrderItemSid},
+                                                                                #{itemNum},
+                                                                                #{remark},
+                                                                                #{handleStatus},
+                                                                                #{creatorAccount},
+                                                                                #{createDate},
+                                                                                #{updaterAccount},
+                                                                                #{updateDate},
+                                                                                #{materialName},
+                                                </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_req_require_doc_item
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                                            require_doc_sid = #{requireDocSid},
+                                                                material_sid = #{materialSid},
+                                                                sku1_sid = #{sku1Sid},
+                                                                sku2_sid = #{sku2Sid},
+                                                                barcode_sid = #{barcodeSid},
+                                                                quantity = #{quantity},
+                                                                demand_date = #{demandDate},
+                                                                latest_demand_date = #{latestDemandDate},
+                                                                unit_base = #{unitBase},
+                                                                sales_order_item_sid = #{salesOrderItemSid},
+                                                                purchase_order_item_sid = #{purchaseOrderItemSid},
+                                                                item_num = #{itemNum},
+                                                                remark = #{remark},
+                                                                handle_status = #{handleStatus},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                material_name = #{materialName},
+                                    </trim>
+        where require_doc_item_sid = #{requireDocItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_req_require_doc_item
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    require_doc_sid = #{requireDocSid},
+                                                                                material_sid = #{materialSid},
+                                                                                sku1_sid = #{sku1Sid},
+                                                                                sku2_sid = #{sku2Sid},
+                                                                                barcode_sid = #{barcodeSid},
+                                                                                quantity = #{quantity},
+                                                                                demand_date = #{demandDate},
+                                                                                latest_demand_date = #{latestDemandDate},
+                                                                                unit_base = #{unitBase},
+                                                                                sales_order_item_sid = #{salesOrderItemSid},
+                                                                                purchase_order_item_sid = #{purchaseOrderItemSid},
+                                                                                item_num = #{itemNum},
+                                                                                remark = #{remark},
+                                                                                handle_status = #{handleStatus},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                material_name = #{materialName},
+                                                </trim>
+            where require_doc_item_sid = #{requireDocItemSid}
+        </foreach>
+    </update>
+
+    <delete id="deleteRequireDocItemByIds" parameterType="long">
+        delete from s_req_require_doc_item where require_doc_sid in
+        <foreach item="requireDocSid" collection="array" open="(" separator="," close=")">
+            #{requireDocSid}
+        </foreach>
+    </delete>
+</mapper>

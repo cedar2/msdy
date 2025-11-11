@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurServiceAcceptanceMapper">
+
+    <resultMap type="com.platform.ems.domain.PurServiceAcceptance" id="PurServiceAcceptanceResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="serviceAcceptanceSid" column="service_acceptance_sid"/>
+                    <result property="serviceAcceptanceCode" column="service_acceptance_code"/>
+                    <result property="documentType" column="document_type"/>
+                    <result property="businessType" column="business_type"/>
+                    <result property="documentDate" column="document_date"/>
+                    <result property="acceptStatus" column="accept_status"/>
+                    <result property="expectedAcceptDate" column="expected_accept_date"/>
+                    <result property="actualAcceptDate" column="actual_accept_date"/>
+                    <result property="accepter" column="accepter"/>
+                    <result property="purchaseOrderSid" column="purchase_order_sid"/>
+                    <result property="remark" column="remark"/>
+                    <result property="handleStatus" column="handle_status"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="confirmerAccount" column="confirmer_account"/>
+                    <result property="confirmDate" column="confirm_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+                    <result property="vendorSid" column="vendor_sid"/>
+                    <result property="vendorCode" column="vendor_code"/>
+                    <result property="vendorName" column="vendor_name"/>
+                    <result property="companySid" column="company_sid"/>
+                    <result property="companyCode" column="company_code"/>
+                    <result property="companyName" column="company_name"/>
+                    <result property="customerSid" column="customer_sid"/>
+                    <result property="customerCode" column="customer_code"/>
+                    <result property="customerName" column="customer_name"/>
+                    <result property="productSeasonSid" column="product_season_sid"/>
+                    <result property="productSeasonCode" column="product_season_code"/>
+                    <result property="productSeasonName" column="product_season_name"/>
+                    <result property="purchaseOrderCode" column="purchase_order_code"/>
+                    <result property="buyer" column="buyer"/>
+                    <result property="purchaseOrg" column="purchase_org"/>
+                    <result property="purchaseGroup" column="purchase_group"/>
+                    <result property="materialCode" column="material_code"/>
+                    <result property="materialSid" column="material_sid"/>
+            </resultMap>
+    <!--LEFT JOIN s_bas_material t6 on t6.material_sid = t7.material_sid-->
+    <sql id="selectPurServiceAcceptanceVo">
+        select t.client_id, t.service_acceptance_sid, t.service_acceptance_code, t.document_type, t.business_type,t.document_date, t.actual_accept_date,
+        t.accept_status, t.expected_accept_date, t.accepter, t.purchase_order_sid, t.remark, t.handle_status, t.creator_account, t.create_date,
+        t.updater_account, t.update_date, t.confirmer_account, t.confirm_date, t.data_source_sys, t1.company_code, t1.company_name, t.company_sid,
+        t2.customer_code, t2.customer_name, t4.customer_sid, t3.product_season_name, t3.product_season_code, t4.product_season_sid,
+        t4.purchase_order_code, t4.buyer, t4.purchase_org, t4.purchase_group, t4.vendor_sid, t5.vendor_code, t5.vendor_name
+        from s_pur_service_acceptance t
+        LEFT JOIN s_pur_purchase_order t4 on t4.purchase_order_sid = t.purchase_order_sid
+        LEFT JOIN s_bas_company t1 ON t1.company_sid = t.company_sid
+        LEFT JOIN s_bas_customer t2 ON t2.customer_sid = t4.customer_sid
+        LEFT JOIN s_bas_product_season t3 on t3.product_season_sid = t4.product_season_sid
+        LEFT JOIN s_bas_vendor t5 on t5.vendor_sid = t4.vendor_sid
+    </sql>
+
+    <select id="selectPurServiceAcceptanceById" parameterType="long" resultMap="PurServiceAcceptanceResult">
+        <include refid="selectPurServiceAcceptanceVo"/>
+        where t.service_acceptance_sid = #{serviceAcceptanceSid}
+    </select>
+
+
+    <select id="selectPurServiceAcceptanceList" parameterType="com.platform.ems.domain.PurServiceAcceptance"
+            resultMap="PurServiceAcceptanceResult">
+        <include refid="selectPurServiceAcceptanceVo"/>
+        <where>
+            <if test="serviceAcceptanceSid != null ">
+                and t.service_acceptance_sid = #{serviceAcceptanceSid}
+            </if>
+            <if test="serviceAcceptanceCode != null">
+                and t.service_acceptance_code like concat('%',#{serviceAcceptanceCode}, '%')
+            </if>
+            <if test="documentType != null  and documentType != ''">
+               and (<foreach collection="documentType.split(';')" item="item" separator="or"> t.document_type like concat('%',
+                    #{item}, '%')
+                </foreach>)
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length >0 ">
+                and t.document_type in
+                (<foreach collection="documentTypeList" item="documentType" separator=",">#{documentType}</foreach>)
+            </if>
+            <if test="businessType != null  and businessType != ''">
+               and (<foreach collection="businessType.split(';')" item="item" separator="or"> t.business_type like concat('%',
+                    #{item}, '%')
+                </foreach>)
+            </if>
+            <if test="businessTypeList != null and businessTypeList.length >0 ">
+                and t.business_type in
+                (<foreach collection="businessTypeList" item="businessType" separator=",">#{businessType}</foreach>)
+            </if>
+            <if test="vendorSid != null ">
+                and t4.vendor_sid = #{vendorSid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0 ">
+                and t4.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="purchaseOrg != null  and purchaseOrg != ''">
+                and (<foreach collection="purchaseOrg.split(';')" item="item" separator="or"> t4.purchase_org like concat('%',
+                #{item}, '%')
+                </foreach>)
+            </if>
+            <if test="purchaseOrgList != null and purchaseOrgList.length >0 ">
+                and t4.purchase_org in
+                (<foreach collection="purchaseOrgList" item="purchaseOrg" separator=",">#{purchaseOrg}</foreach>)
+            </if>
+            <if test="buyer != null  and buyer != ''">
+                and (<foreach collection="buyer.split(';')" item="item" separator="or"> t4.buyer like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="productSeasonSid != null ">
+                and t4.product_season_sid = #{productSeasonSid}
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0 ">
+                and t4.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">#{productSeasonSid}</foreach>)
+            </if>
+            <if test="purchaseOrderCode != null">
+                and t4.purchase_order_code like concat('%',#{purchaseOrderCode}, '%')
+            </if>
+            <if test="materialCode != null ">
+                and t6.material_code like concat('%',#{materialCode}, '%')
+            </if>
+            <if test="acceptStatus != null  and acceptStatus != ''">
+               and (<foreach collection="acceptStatus.split(';')" item="item" separator="or"> t.accept_status like concat('%',
+                    #{item}, '%')
+                </foreach>)
+            </if>
+            <if test="acceptStatusList != null and acceptStatusList.length >0 ">
+                and t.accept_status in
+                (<foreach collection="acceptStatusList" item="acceptStatus" separator=",">#{acceptStatus}</foreach>)
+            </if>
+            <if test="accepter != null  and accepter != ''">
+                and (<foreach collection="accepter.split(';')" item="item" separator="or"> t.accepter like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="expectedAcceptBeginTime != null">
+                and date_format(t.expected_accept_date,'%y%m%d') &gt;= date_format(#{expectedAcceptBeginTime},'%y%m%d')
+            </if>
+            <if test="expectedAcceptEndTime != null">
+                and date_format(t.expected_accept_date,'%y%m%d') &lt;= date_format(#{expectedAcceptEndTime},'%y%m%d')
+            </if>
+            <if test="purchaseOrderSid != null ">
+                and t.purchase_order_sid = #{purchaseOrderSid}
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+               and (<foreach collection="handleStatus.split(';')" item="item" separator="or"> t.handle_status like concat('%',
+                    #{item}, '%')
+                </foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+               and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t.creator_account like concat('%',
+                    #{item}, '%')
+                </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                </if>
+                <if test="endTime != null and endTime!=''">
+                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+               and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                    #{item}, '%')
+                </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                    and t.update_date = #{updateDate}
+                </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+               and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or"> t.confirmer_account like concat('%',
+                    #{item}, '%')
+                </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                    and t.confirm_date = #{confirmDate}
+                </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+               and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or"> t.data_source_sys like concat('%',
+                    #{item}, '%')
+                </foreach>)
+            </if>
+        </where>
+        order by t.create_date desc, t.service_acceptance_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_service_acceptance
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                service_acceptance_sid,
+                                                                service_acceptance_code,
+                                                                company_sid,
+                                                                document_type,
+                                                                business_type,
+                                                                document_date,
+                                                                accept_status,
+                                                                expected_accept_date,
+                                                                accepter,
+                                                                actual_accept_date,
+                                                                purchase_order_sid,
+                                                                remark,
+                                                                handle_status,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                confirmer_account,
+                                                                confirm_date,
+                                                                data_source_sys,
+                                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                                                            #{clientId},
+                                                                                #{serviceAcceptanceSid},
+                                                                                #{serviceAcceptanceCode},
+                                                                                #{companySid},
+                                                                                #{documentType},
+                                                                                #{businessType},
+                                                                                #{documentDate},
+                                                                                #{acceptStatus},
+                                                                                #{expectedAcceptDate},
+                                                                                #{accepter},
+                                                                                #{actualAcceptDate},
+                                                                                #{purchaseOrderSid},
+                                                                                #{remark},
+                                                                                #{handleStatus},
+                                                                                #{creatorAccount},
+                                                                                #{createDate},
+                                                                                #{updaterAccount},
+                                                                                #{updateDate},
+                                                                                #{confirmerAccount},
+                                                                                #{confirmDate},
+                                                                                #{dataSourceSys},
+                                                </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_service_acceptance
+        <trim prefix="SET" suffixOverrides=",">
+                                                                service_acceptance_code = #{serviceAcceptanceCode},
+                                                                company_sid = #{companySid},
+                                                                document_type = #{documentType},
+                                                                business_type = #{businessType},
+                                                                document_date = #{documentDate},
+                                                                accept_status = #{acceptStatus},
+                                                                expected_accept_date = #{expectedAcceptDate},
+                                                                accepter = #{accepter},
+                                                                actual_accept_date = #{actualAcceptDate},
+                                                                purchase_order_sid = #{purchaseOrderSid},
+                                                                remark = #{remark},
+                                                                handle_status = #{handleStatus},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                confirmer_account = #{confirmerAccount},
+                                                                confirm_date = #{confirmDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where service_acceptance_sid = #{serviceAcceptanceSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_service_acceptance
+            <trim prefix="SET" suffixOverrides=",">
+                                                                                service_acceptance_sid = #{serviceAcceptanceSid},
+                                                                                service_acceptance_code = #{serviceAcceptanceCode},
+                                                                                document_type = #{documentType},
+                                                                                business_type = #{businessType},
+                                                                                document_date = #{documentDate},
+                                                                                accept_status = #{acceptStatus},
+                                                                                expected_accept_date = #{expectedAcceptDate},
+                                                                                accepter = #{accepter},
+                                                                                actual_accept_date = #{actualAcceptDate},
+                                                                                purchase_order_sid = #{purchaseOrderSid},
+                                                                                remark = #{remark},
+                                                                                handle_status = #{handleStatus},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                confirmer_account = #{confirmerAccount},
+                                                                                confirm_date = #{confirmDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where client_id = #{clientId}
+        </foreach>
+    </update>
+
+    <select id="countByDomain" resultType="java.lang.Integer">
+        select count(1) from s_pur_service_acceptance
+        <where>
+            <if test="serviceAcceptanceSids != null  and serviceAcceptanceSids.length > 0">
+                and service_acceptance_sid in (
+                <foreach collection="serviceAcceptanceSids" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and handle_status in (
+                <foreach collection="handleStatus.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+
+    <delete id="deletePurServiceAcceptanceByIds" parameterType="long">
+        delete from s_pur_service_acceptance where service_acceptance_sid in
+        <foreach item="serviceAcceptanceSid" collection="array" open="(" separator="," close=")">
+            #{serviceAcceptanceSid}
+        </foreach>
+    </delete>
+
+    <update id="confirm" parameterType="com.platform.ems.domain.PurServiceAcceptance">
+        update s_pur_service_acceptance
+        <set>
+            <if test="handleStatus != null and handleStatus != ''" >handle_status = #{handleStatus},</if>
+            <if test="confirmerAccount != null and confirmerAccount != ''" >confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmDate != null" >confirm_date = #{confirmDate},</if>
+        </set>
+        where service_acceptance_sid in
+        (<foreach collection="serviceAcceptanceSids" item="serviceAcceptanceSid" separator=",">#{serviceAcceptanceSid}</foreach>)
+    </update>
+
+</mapper>

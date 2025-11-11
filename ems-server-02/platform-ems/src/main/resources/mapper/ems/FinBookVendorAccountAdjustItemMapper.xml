@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinBookVendorAccountAdjustItemMapper">
+
+    <resultMap type="com.platform.ems.domain.FinBookVendorAccountAdjustItem" id="FinBookVendorAccountAdjustItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="bookAccountAdjustItemSid" column="book_account_adjust_item_sid"/>
+        <result property="bookAccountAdjustSid" column="book_account_adjust_sid"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="adjustType" column="adjust_type"/>
+        <result property="currencyAmountTaxTz" column="currency_amount_tax_tz"/>
+        <result property="currencyAmountTaxYhx" column="currency_amount_tax_yhx"/>
+        <result property="currencyAmountTaxHxz" column="currency_amount_tax_hxz"/>
+        <result property="referDocCategory" column="refer_doc_category"/>
+        <result property="referDocSid" column="refer_doc_sid"/>
+        <result property="referDocCode" column="refer_doc_code"/>
+        <result property="referDocItemSid" column="refer_doc_item_sid"/>
+        <result property="referDocItemCode" column="refer_doc_item_code"/>
+        <result property="taxRate" column="tax_rate"/>
+        <result property="clearStatus" column="clear_status"/>
+        <result property="accountValidDate" column="account_valid_date"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="currencyAmountTaxDhx" column="currency_amount_tax_dhx"/>
+    </resultMap>
+
+    <sql id="selectFinBookVendorAccountAdjustItemVo">
+        select t.client_id, t.book_account_adjust_item_sid, t.book_account_adjust_sid, t.item_num, t.adjust_type,
+        t.currency_amount_tax_tz, t.currency_amount_tax_yhx, t.currency_amount_tax_hxz, t.refer_doc_category,
+        t.refer_doc_sid, t.refer_doc_code, t.refer_doc_item_sid, t.refer_doc_item_code, t.tax_rate, t.clear_status,
+        t.account_valid_date, t.remark, t.creator_account, t.create_date, t.updater_account, t.update_date,
+        t.data_source_sys, (t.currency_amount_tax_tz - t.currency_amount_tax_yhx - t.currency_amount_tax_hxz) AS currency_amount_tax_dhx
+        from s_fin_book_vendor_account_adjust_item t
+    </sql>
+
+    <select id="selectFinBookVendorAccountAdjustItemById" parameterType="Long"
+            resultMap="FinBookVendorAccountAdjustItemResult">
+        <include refid="selectFinBookVendorAccountAdjustItemVo"/>
+        where t.book_account_adjust_item_sid = #{bookAccountAdjustItemSid}
+    </select>
+
+
+    <select id="selectFinBookVendorAccountAdjustItemList"
+            parameterType="com.platform.ems.domain.FinBookVendorAccountAdjustItem"
+            resultMap="FinBookVendorAccountAdjustItemResult">
+        <include refid="selectFinBookVendorAccountAdjustItemVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="bookAccountAdjustSid != null ">
+                and t.book_account_adjust_sid =#{bookAccountAdjustSid}
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num =#{itemNum}
+            </if>
+            <if test="adjustType != null  and adjustType != ''">
+                and (<foreach collection="adjustType.split(';')" item="item" separator="or">t.adjust_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="currencyAmountTaxTz != null ">
+                and t.currency_amount_tax_tz = #{currencyAmountTaxTz}
+            </if>
+            <if test="currencyAmountTaxYhx != null ">
+                and t.currency_amount_tax_yhx = #{currencyAmountTaxYhx}
+            </if>
+            <if test="currencyAmountTaxHxz != null ">
+                and t.currency_amount_tax_hxz = #{currencyAmountTaxHxz}
+            </if>
+            <if test="referDocCategory != null ">and t.refer_doc_category =#{referDocCategory}</if>
+            <if test="referDocSid != null ">and t.refer_doc_sid =#{referDocSid}</if>
+            <if test="referDocCode != null ">and t.refer_doc_code =#{referDocCode}</if>
+            <if test="referDocItemSid != null ">
+                and t.refer_doc_item_sid =#{referDocItemSid}
+            </if>
+            <if test="referDocItemCode != null ">
+                and t.refer_doc_item_code =#{referDocItemCode}
+            </if>
+            <if test="taxRate != null ">
+                and t.tax_rate = #{taxRate}
+            </if>
+            <if test="clearStatus != null  and clearStatus != ''">
+                and (<foreach collection="clearStatus.split(';')" item="item" separator="or">t.clear_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="accountValidDate != null ">
+                and t.account_valid_date = #{accountValidDate}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_book_vendor_account_adjust_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            book_account_adjust_item_sid,
+            book_account_adjust_sid,
+            item_num,
+            adjust_type,
+            currency_amount_tax_tz,
+            currency_amount_tax_yhx,
+            currency_amount_tax_hxz,
+            refer_doc_category,
+            refer_doc_sid,
+            refer_doc_code,
+            refer_doc_item_sid,
+            refer_doc_item_code,
+            tax_rate,
+            clear_status,
+            account_valid_date,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="o" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{o.clientId},
+                #{o.bookAccountAdjustItemSid},
+                #{o.bookAccountAdjustSid},
+                #{o.itemNum},
+                #{o.adjustType},
+                #{o.currencyAmountTaxTz},
+                #{o.currencyAmountTaxYhx},
+                #{o.currencyAmountTaxHxz},
+                #{o.referDocCategory},
+                #{o.referDocSid},
+                #{o.referDocCode},
+                #{o.referDocItemSid},
+                #{o.referDocItemCode},
+                #{o.taxRate},
+                #{o.clearStatus},
+                #{o.accountValidDate},
+                #{o.remark},
+                #{o.creatorAccount},
+                #{o.createDate},
+                #{o.updaterAccount},
+                #{o.updateDate},
+                #{o.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_book_vendor_account_adjust_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            book_account_adjust_sid = #{bookAccountAdjustSid},
+            item_num = #{itemNum},
+            adjust_type = #{adjustType},
+            currency_amount_tax_tz = #{currencyAmountTaxTz},
+            currency_amount_tax_yhx = #{currencyAmountTaxYhx},
+            currency_amount_tax_hxz = #{currencyAmountTaxHxz},
+            refer_doc_category = #{referDocCategory}, refer_doc_sid = #{referDocSid}, refer_doc_code = #{referDocCode},
+            refer_doc_item_sid = #{referDocItemSid},
+            refer_doc_item_code = #{referDocItemCode},
+            tax_rate = #{taxRate},
+            clear_status = #{clearStatus},
+            account_valid_date = #{accountValidDate},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where book_account_adjust_item_sid = #{bookAccountAdjustItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_book_vendor_account_adjust_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                book_account_adjust_sid = #{bookAccountAdjustSid},
+                item_num = #{itemNum},
+                adjust_type = #{adjustType},
+                currency_amount_tax_tz = #{currencyAmountTaxTz},
+                currency_amount_tax_yhx = #{currencyAmountTaxYhx},
+                currency_amount_tax_hxz = #{currencyAmountTaxHxz},
+                refer_doc_category = #{referDocCategory}, refer_doc_sid = #{referDocSid}, refer_doc_code =
+                #{referDocCode},
+                refer_doc_item_sid = #{referDocItemSid},
+                refer_doc_item_code = #{referDocItemCode},
+                tax_rate = #{taxRate},
+                clear_status = #{clearStatus},
+                account_valid_date = #{accountValidDate},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where book_account_adjust_item_sid = #{bookAccountAdjustItemSid}
+        </foreach>
+    </update>
+
+    <select id="getItemList" parameterType="com.platform.ems.domain.FinBookVendorAccountAdjustItem"
+            resultMap="FinBookVendorAccountAdjustItemResult">
+        SELECT
+        t.client_id,
+        t.book_account_adjust_item_sid,
+        t.book_account_adjust_sid,
+        t.item_num,
+        t.adjust_type,
+        t.currency_amount_tax_tz,
+        t.currency_amount_tax_yhx,
+        t.currency_amount_tax_hxz,
+        t.refer_doc_category,
+        t.refer_doc_sid,
+        t.refer_doc_code,
+        t.refer_doc_item_sid,
+        t.refer_doc_item_code,
+        t.tax_rate,
+        t.clear_status,
+        t.account_valid_date,
+        t2.book_account_adjust_sid,
+        t2.book_account_adjust_code
+        FROM
+        s_fin_book_vendor_account_adjust_item t
+        LEFT JOIN s_fin_book_vendor_account_adjust t2 ON t.book_account_adjust_sid = t2.book_account_adjust_sid
+        <where>
+            <if test="vendorSid != null and vendorSid !=''">and t2.vendor_sid = #{vendorSid}</if>
+            <if test="companySid != null and companySid !=''">and t2.company_sid = #{companySid}</if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurInquiryMapper">
+
+    <resultMap type="com.platform.ems.domain.PurInquiry" id="PurInquiryResult">
+        <result property="clientId" column="client_id"/>
+        <result property="inquirySid" column="inquiry_sid"/>
+        <result property="inquiryCode" column="inquiry_code"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="dateRequest" column="date_request"/>
+        <result property="quotepriceDeadline" column="quoteprice_deadline"/>
+        <result property="buyer" column="buyer"/>
+        <result property="buyerTelephone" column="buyer_telephone"/>
+        <result property="buyerEmail" column="buyer_email"/>
+        <result property="rawMaterialMode" column="raw_material_mode"/>
+        <result property="purchaseMode" column="purchase_mode"/>
+        <result property="purchaseOrg" column="purchase_org"/>
+        <result property="purchaseGroup" column="purchase_group"/>
+        <result property="materialType" column="material_type"/>
+        <result property="materialCategory" column="material_category"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="vendorShortName" column="vendor_short_name"/>
+        <result property="companyName" column="company_name"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="quoteBargainCode" column="quote_bargain_code"/>
+        <result property="dateQuote" column="date_quote"/>
+        <result property="purchaseGroupName" column="purchase_group_name"/>
+        <result property="purchaseOrgName" column="purchase_org_name"/>
+        <result property="isQuoteProcess" column="is_quote_process"/>
+        <result property="buyerName" column="buyer_name"/>
+    </resultMap>
+
+    <sql id="selectPurInquiryVo">
+        select t.client_id,
+               t.inquiry_sid,
+               t.inquiry_code,
+               t.company_sid,
+               t.product_season_sid,
+               t.date_request,
+               t.quoteprice_deadline,
+               t.buyer,
+               t.buyer_telephone,
+               t.buyer_email,
+               t.raw_material_mode,
+               t.purchase_mode,
+               t.purchase_org,
+               t.purchase_group,
+               t.material_type,
+               t.material_category,
+               t.currency,
+               t.currency_unit,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t6.company_name,
+               t7.product_season_name,
+               t8.vendor_name,
+               t8.vendor_short_name,
+               t9.name AS purchase_group_name,
+               t10.name AS purchase_org_name,
+               t11.nick_name AS buyer_name
+        from s_pur_inquiry t
+         left join sys_user t2 on t.creator_account = t2.user_name
+         left join sys_user t3 on t.updater_account = t3.user_name
+         left join sys_user t4 on t.confirmer_account = t4.user_name
+         left join s_bas_company t6 on t.company_sid = t6.company_sid
+         left join s_bas_product_season t7 on t.product_season_sid = t7.product_season_sid
+         left join (
+            SELECT a.inquiry_vendor_sid,a.inquiry_sid,GROUP_CONCAT(b.vendor_name SEPARATOR '；') AS vendor_name,GROUP_CONCAT(b.short_name SEPARATOR '；') AS vendor_short_name
+            FROM s_pur_inquiry_vendor a
+            LEFT JOIN s_bas_vendor b ON a.vendor_sid = b.vendor_sid
+            GROUP BY a.inquiry_sid
+         ) t8 on t.inquiry_sid = t8.inquiry_sid
+         left join s_con_purchase_group t9 on t.purchase_group = t9.code
+         left join s_con_purchase_org t10 on t.purchase_org = t10.code
+         left join sys_user t11 on t.buyer = t11.user_name
+    </sql>
+
+    <select id="selectPurInquiryById" parameterType="Long" resultMap="PurInquiryResult">
+        <include refid="selectPurInquiryVo"/>
+        where t.inquiry_sid = #{inquirySid}
+    </select>
+
+
+    <select id="selectPurInquiryList" parameterType="com.platform.ems.domain.PurInquiry"
+            resultMap="PurInquiryResult">
+        <include refid="selectPurInquiryVo"/>
+        <where>
+            <if test="materialTypeList != null and materialTypeList.length >0">and t.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=",">#{materialType}</foreach>)
+            </if>
+            <if test="purchaseModeList != null and purchaseModeList.length >0">and t.purchase_mode in
+                (<foreach collection="purchaseModeList" item="purchaseMode" separator=",">#{purchaseMode}</foreach>)
+            </if>
+            <if test="inquirySidList != null and inquirySidList.length >0">and t.inquiry_sid in
+                (<foreach collection="inquirySidList" item="inquirySid" separator=",">#{inquirySid}</foreach>)
+            </if>
+            <if test="purchaseOrgList != null and purchaseOrgList.length >0">and t.purchase_org in
+                (<foreach collection="purchaseOrgList" item="purchaseOrg" separator=",">#{purchaseOrg}</foreach>)
+            </if>
+            <if test="purchaseGroupList != null and purchaseGroupList.length >0">and t.purchase_group in
+                (<foreach collection="purchaseGroupList" item="purchaseGroup" separator=",">#{purchaseGroup}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="buyerList != null and buyerList.length >0">and t.buyer in
+                (<foreach collection="buyerList" item="buyer" separator=",">#{buyer}</foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0">and t.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">#{creatorAccount}</foreach>)
+            </if>
+            <if test="inquiryCode != null and inquiryCode != ''">
+                and t.inquiry_code like concat('%', #{inquiryCode}, '%')
+            </if>
+            <if test="companySidList != null and companySidList.length >0">and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">and t.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">#{productSeasonSid}</foreach>)
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="productSeasonSid != null ">
+                and t.product_season_sid =#{productSeasonSid}
+            </if>
+            <if test="dateRequest != null ">
+                and t.date_request = #{dateRequest}
+            </if>
+            <if test="quotepriceDeadline != null ">
+                and t.quoteprice_deadline = #{quotepriceDeadline}
+            </if>
+            <if test="buyerName != null  and buyerName != ''">
+                and (<foreach collection="buyerName.split(';')" item="item" separator="or">t11.nick_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="buyer != null  and buyer != ''">
+                and (<foreach collection="buyer.split(';')" item="item" separator="or">t.buyer like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="buyerTelephone != null  and buyerTelephone != ''">
+                and (<foreach collection="buyerTelephone.split(';')" item="item" separator="or">t.buyer_telephone like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="buyerEmail != null  and buyerEmail != ''">
+                and (<foreach collection="buyerEmail.split(';')" item="item" separator="or">t.buyer_email like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="rawMaterialMode != null  and rawMaterialMode != ''">
+                and (<foreach collection="rawMaterialMode.split(';')" item="item" separator="or">t.raw_material_mode
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseMode != null  and purchaseMode != ''">
+                and (<foreach collection="purchaseMode.split(';')" item="item" separator="or">t.purchase_mode like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseOrg != null  and purchaseOrg != ''">
+                and (<foreach collection="purchaseOrg.split(';')" item="item" separator="or">t.purchase_org like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseGroup != null  and purchaseGroup != ''">
+                and (<foreach collection="purchaseGroup.split(';')" item="item" separator="or">t.purchase_group like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialType != null  and materialType != ''">
+                and (<foreach collection="materialType.split(';')" item="item" separator="or">t.material_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialCategory != null  and materialCategory != ''">
+                and (<foreach collection="materialCategory.split(';')" item="item" separator="or">t.material_category
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="currency != null  and currency != ''">
+                and (<foreach collection="currency.split(';')" item="item" separator="or">t.currency like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">
+                and (<foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccountName != null  and creatorAccountName != ''">
+                and (<foreach collection="creatorAccountName.split(';')" item="item" separator="or">t2.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where> order by t.inquiry_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_inquiry
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            inquiry_sid,
+            inquiry_code,
+            company_sid,
+            product_season_sid,
+            date_request,
+            quoteprice_deadline,
+            buyer,
+            buyer_telephone,
+            buyer_email,
+            raw_material_mode,
+            purchase_mode,
+            purchase_org,
+            purchase_group,
+            material_type,
+            material_category,
+            currency,
+            currency_unit,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.inquirySid},
+                #{item.inquiryCode},
+                #{item.companySid},
+                #{item.productSeasonSid},
+                #{item.dateRequest},
+                #{item.quotepriceDeadline},
+                #{item.buyer},
+                #{item.buyerTelephone},
+                #{item.buyerEmail},
+                #{item.rawMaterialMode},
+                #{item.purchaseMode},
+                #{item.purchaseOrg},
+                #{item.purchaseGroup},
+                #{item.materialType},
+                #{item.materialCategory},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_inquiry
+        <trim prefix="SET" suffixOverrides=",">
+            inquiry_code = #{inquiryCode},
+            company_sid = #{companySid},
+            product_season_sid = #{productSeasonSid},
+            date_request = #{dateRequest},
+            quoteprice_deadline = #{quotepriceDeadline},
+            buyer = #{buyer},
+            buyer_telephone = #{buyerTelephone},
+            buyer_email = #{buyerEmail},
+            raw_material_mode = #{rawMaterialMode},
+            purchase_mode = #{purchaseMode},
+            purchase_org = #{purchaseOrg},
+            purchase_group = #{purchaseGroup},
+            material_type = #{materialType},
+            material_category = #{materialCategory},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where inquiry_sid = #{inquirySid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_inquiry
+            <trim prefix="SET" suffixOverrides=",">
+                inquiry_code = #{inquiryCode},
+                company_sid = #{companySid},
+                product_season_sid = #{productSeasonSid},
+                date_request = #{dateRequest},
+                quoteprice_deadline = #{quotepriceDeadline},
+                buyer = #{buyer},
+                buyer_telephone = #{buyerTelephone},
+                buyer_email = #{buyerEmail},
+                raw_material_mode = #{rawMaterialMode},
+                purchase_mode = #{purchaseMode},
+                purchase_org = #{purchaseOrg},
+                purchase_group = #{purchaseGroup},
+                material_type = #{materialType},
+                material_category = #{materialCategory},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where inquiry_sid = #{inquirySid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.InvMaterialRequisitionItemMapper">
+
+    <resultMap type="com.platform.ems.domain.InvMaterialRequisitionItem" id="InvMaterialRequisitionItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="materialRequisitionItemSid" column="material_requisition_item_sid"/>
+        <result property="materialRequisitionSid" column="material_requisition_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="barcodeSid" column="barcode_sid"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="quantity" column="quantity"/>
+        <result property="storehouseSid" column="storehouse_sid"/>
+        <result property="storehouseLocationSid" column="storehouse_location_sid"/>
+        <result property="demandDate" column="demand_date"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="sku1Name" column="sku1_name"/>
+        <result property="sku1Code" column="sku1_code"/>
+        <result property="sku2Name" column="sku2_name"/>
+        <result property="sku2Code" column="sku2_code"/>
+    </resultMap>
+
+    <sql id="selectInvMaterialRequisitionItemVo">
+        SELECT t.client_id,
+               t.material_requisition_item_sid,
+               t.material_requisition_sid,
+               t.material_sid,
+               t.sku1_sid,
+               t.in_out_stock_status,
+               t.sku2_sid,
+               t.barcode_sid,
+               t.reserve_status,
+               t.in_out_stock_status,
+               t.unit_base,
+               t.quantity,
+               t.storehouse_sid,
+               ifnull(t.storehouse_code,t10.storehouse_code) as storehouse_code,
+               t10.storehouse_name,
+               t.storehouse_location_sid,
+               ifnull(t.storehouse_location_code,t11.location_code) as storehouse_location_code,
+               ifnull(t.storehouse_location_code,t11.location_code) as location_code,
+               t11.location_name,
+               t11.location_name as storehouse_location_name,
+               t.demand_date,
+               t.item_num,
+               t.remark,
+               t.product_quantity,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t1.material_code,
+               t1.material_name,
+               t1.specification_size,
+               t2.sku_name  AS sku1_name,
+               t2.sku_code  AS sku1_code,
+               t3.sku_name  AS sku2_name,
+               t3.sku_code  AS sku2_code,
+               t4.nick_name as creator_account_name,
+               t5.name      as unit_base_name,
+               t6.barcode,
+               t6.status,
+               t7.nick_name as creator_account_name,
+               t.product_code,
+               t.product_codes,
+               t.product_sku1_sid,
+               t.product_sku2_sid,
+               t.product_sku1_names,
+               t.product_sku2_names,
+               t8.sku_name  AS product_sku1_name,
+               t9.sku_name  AS product_sku2_name
+        FROM s_inv_material_requisition_item t
+         LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+         LEFT JOIN s_bas_sku t2 ON t2.sku_sid = t.sku1_sid
+         LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t.sku2_sid
+         LEFT JOIN sys_user t4 ON t4.user_name = t.creator_account
+         left join s_con_measure_unit t5 on t5.code = t.unit_base
+         left join s_bas_material_barcode t6 on t6.barcode_sid = t.barcode_sid
+         LEFT JOIN sys_user t7 ON t7.user_name = t.creator_account
+         LEFT JOIN s_bas_sku t8 ON t8.sku_sid = t.product_sku1_sid
+         LEFT JOIN s_bas_sku t9 ON t9.sku_sid = t.product_sku2_sid
+         LEFT JOIN s_bas_storehouse t10 on t.storehouse_sid = t10.storehouse_sid
+         LEFT JOIN s_bas_storehouse_location t11 on t.storehouse_location_sid = t11.storehouse_location_sid
+    </sql>
+
+    <sql id="reportInvMaterialRequisitionVo">
+        select t.material_sid,
+               t.sku1_sid,
+               t.sku2_sid,
+               t.barcode_sid,
+               t.unit_base,
+               t.reserve_status,
+               t.material_requisition_item_sid,
+               t.quantity,
+               t4.demand_date,
+               t.storehouse_sid,
+               t.storehouse_code,
+               t.storehouse_location_sid,
+               t.storehouse_location_code,
+               t.item_num,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t1.material_name,
+               t1.material_code,
+               t2.sku_code       AS sku1_code,
+               t2.sku_name       AS sku1_name,
+               t3.sku_code       AS sku2_code,
+               t3.sku_name       AS sku2_name,
+               t.in_out_stock_status,
+               t4.material_requisition_code,
+               t4.material_requisition_sid,
+               t4.document_type,
+               t4.document_date,
+               t4.manufacture_order_code,
+               t4.account_date,
+               t4.handle_status,
+               t4.movement_type,
+               t4.special_stock,
+               t4.vendor_sid,
+               t4.customer_sid,
+               t5.name           as movement_type_name,
+               t6.name           as unit_base_name,
+               t7.barcode,
+               t8.storehouse_name,
+               t9.location_name,
+               t10.vendor_name,
+               t11.customer_name,
+               t12.name          as special_stock_name,
+               t13.name          as document_type_name,
+               t14.nick_name     as creator_account_name,
+               t16.work_center_name,
+               t17.nick_name     as material_receiver_name,
+               t.product_quantity,
+               t.product_code,
+               t.product_codes,
+               t.product_sku1_sid,
+               t.product_sku2_sid,
+               t.product_sku1_names,
+               t.product_sku2_names,
+               t18.sku_name      AS product_sku1_name,
+               t19.sku_name      AS product_sku2_name,
+               sum(t20.quantity) as inv_quantity
+        from s_inv_material_requisition_item t
+         LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+         LEFT JOIN s_bas_sku t2 ON t2.sku_sid = t.sku1_sid
+         LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t.sku2_sid
+         left join s_inv_material_requisition t4 on t4.material_requisition_sid = t.material_requisition_sid
+         LEFT JOIN s_con_movement_type t5 on t5.code = t4.movement_type
+         left join s_con_measure_unit t6 on t6.code = t.unit_base
+         left join s_bas_material_barcode t7 on t7.barcode_sid = t.barcode_sid
+         LEFT JOIN s_bas_storehouse t8 on t8.storehouse_sid = t.storehouse_sid
+         LEFT JOIN s_bas_storehouse_location t9 on t9.storehouse_location_sid = t.storehouse_location_sid
+         LEFT JOIN s_bas_vendor t10 ON t10.vendor_sid = t4.vendor_sid
+         LEFT JOIN s_bas_customer t11 on t11.customer_sid = t4.customer_sid
+         left join s_con_special_stock t12 on t12.code = t4.special_stock
+         left join s_con_doc_type_material_requisition t13 on t13.code = t4.document_type
+         LEFT JOIN sys_user t14 ON t.creator_account = t14.user_name
+         left join s_man_work_center t16 on t16.work_center_sid = t4.work_center_sid
+         LEFT JOIN sys_user t17 ON t17.user_name = t4.material_receiver
+         LEFT JOIN s_bas_sku t18 ON t18.sku_sid = t.product_sku1_sid
+         LEFT JOIN s_bas_sku t19 ON t19.sku_sid = t.product_sku2_sid
+         left join s_inv_inventory_document_item t20
+                   on t20.refer_document_item_sid = t.material_requisition_item_sid
+    </sql>
+
+    <select id="reportInvMaterialRequisition"
+            parameterType="com.platform.ems.domain.dto.request.InvMaterialRequisitionReportRequest"
+            resultType="com.platform.ems.domain.dto.response.InvMaterialRequisitionReportResponse">
+        <include refid="reportInvMaterialRequisitionVo"/>
+        <where>
+            <if test="materialRequisitionCode != null and materialRequisitionCode !=''">
+                and t4.material_requisition_code like
+                    concat('%', #{materialRequisitionCode}, '%')
+            </if>
+            <if test="materialCode != null and materialCode !=''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator=" or ">
+                    t1.material_code like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialName != null and materialName !=''">
+                and (<foreach collection="materialName.split(';')" item="item" separator=" or ">
+                    t1.material_name like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="materialReceiverList != null and materialReceiverList.length >0">
+                and t4.material_receiver in
+                (<foreach collection="materialReceiverList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="manufactureOrderCode != null and manufactureOrderCode !=''">
+                and (<foreach collection="manufactureOrderCode.split(';')" item="item" separator=" or ">
+                    t4.manufacture_order_code like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="inOutStockStatus != null and inOutStockStatus !=''">
+                and t.in_out_stock_status=#{inOutStockStatus}
+            </if>
+            <if test="documentType != null and documentType !=''">
+                and t4.document_type=#{documentType}
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t4.creator_account in
+                (<foreach collection="creatorAccountList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="materialRequisitionItemSidList != null and materialRequisitionItemSidList.size >0">
+                and t.material_requisition_item_sid in
+                (<foreach collection="materialRequisitionItemSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="inOutStockStatusList != null and inOutStockStatusList.length >0">
+                and t4.in_out_stock_status in
+                (<foreach collection="inOutStockStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="storehouseSid != null and storehouseSid != '' ">
+                and t.storehouse_sid =#{storehouseSid}
+            </if>
+            <if test="storehouseLocationSidList != null and storehouseLocationSidList.length >0">
+                and t.storehouse_location_sid in
+                (<foreach collection="storehouseLocationSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="demandDateBeginTime != null and demandDateBeginTime!=''">
+                and date_format(t4.demand_date,'%y%m%d') &gt;= date_format(#{demandDateBeginTime},'%y%m%d')
+            </if>
+            <if test="demandDateEndTime != null and demandDateEndTime!=''">
+                and date_format(t4.demand_date,'%y%m%d') &lt;= date_format(#{demandDateEndTime},'%y%m%d')
+            </if>
+            <if test="movementTypeList != null and movementTypeList.length >0">
+                and t4.movement_type in
+                (<foreach collection="movementTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t4.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length >0">
+                and t4.document_type in
+                (<foreach collection="documentTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+        </where>
+        GROUP BY t.material_requisition_item_sid
+        order by t4.material_requisition_code desc
+    </select>
+
+    <select id="selectInvMaterialRequisitionItemById" parameterType="Long"
+            resultType="com.platform.ems.domain.InvMaterialRequisitionItem">
+        <include refid="selectInvMaterialRequisitionItemVo"/>
+        where t.material_requisition_sid = #{materialRequisitionSid}
+    </select>
+
+    <select id="getQuantity" parameterType="Long" resultType="java.math.BigDecimal">
+        select t.quantity - sum(t2.quantity)
+        from s_inv_material_requisition_item t
+                 left join s_inv_inventory_document_item t2
+                           on t2.refer_document_item_sid = t.material_requisition_item_sid
+        where t.material_requisition_item_sid = #{materialRequisitionItemSid}
+        group by t.material_requisition_item_sid
+    </select>
+
+    <select id="selectInvMaterialRequisitionItemList" parameterType="com.platform.ems.domain.InvMaterialRequisitionItem"
+            resultMap="InvMaterialRequisitionItemResult">
+        <include refid="selectInvMaterialRequisitionItemVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="materialRequisitionSid != null ">
+                and t.material_requisition_sid = #{materialRequisitionSid}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid = #{sku1Sid}
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid = #{sku2Sid}
+            </if>
+            <if test="barcodeSid != null ">
+                and t.barcode_sid = #{barcodeSid}
+            </if>
+            <if test="unitBase != null and unitBase != ''">
+                and t.unit_base = #{unitBase}
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="storehouseSid != null ">
+                and t.storehouse_sid = #{storehouseSid}
+            </if>
+            <if test="storehouseLocationSid != null ">
+                and t.storehouse_location_sid = #{storehouseLocationSid}
+            </if>
+            <if test="demandDate != null ">
+                and t.demand_date = #{demandDate}
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num = #{itemNum}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">
+                    t.creator_account like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator=" or ">
+                    t.updater_account like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator=" or ">
+                    t.data_source_sys like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_inv_material_requisition_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            material_requisition_item_sid,
+            material_requisition_sid,
+            material_sid,
+            sku1_sid,
+            sku2_sid,
+            barcode_sid,
+            unit_base,
+            quantity,
+            storehouse_sid,
+            storehouse_code,
+            storehouse_location_sid,
+            storehouse_location_code,
+            demand_date,
+            stock_type,
+            special_stock,
+            movement_type,
+            item_num,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{o.clientId},
+                #{o.materialRequisitionItemSid},
+                #{o.materialRequisitionSid},
+                #{o.materialSid},
+                #{o.sku1Sid},
+                #{o.sku2Sid},
+                #{o.barcodeSid},
+                #{o.unitBase},
+                #{o.quantity},
+                #{o.storehouseSid},
+                #{o.storehouseCode},
+                #{o.storehouseLocationSid},
+                #{o.storehouseLocationCode},
+                #{o.demandDate},
+                #{o.stockType},
+                #{o.specialStock},
+                #{o.movementType},
+                #{o.itemNum},
+                #{o.remark},
+                #{o.creatorAccount},
+                #{o.createDate},
+                #{o.updaterAccount},
+                #{o.updateDate},
+                #{o.dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_inv_material_requisition_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            material_requisition_sid = #{materialRequisitionSid},
+            material_sid = #{materialSid},
+            sku1_sid = #{sku1Sid},
+            sku2_sid = #{sku2Sid},
+            barcode_sid = #{barcodeSid},
+            unit_base = #{unitBase},
+            quantity = #{quantity},
+            storehouse_sid = #{storehouseSid},
+            storehouse_code = #{storehouseCode},
+            storehouse_location_sid = #{storehouseLocationSid},
+            storehouse_location_code = #{storehouseLocationCode},
+            demand_date = #{demandDate},
+            stock_type = #{stockType},
+            special_stock = #{specialStock},
+            movement_type = #{movementType},
+            item_num = #{itemNum},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where material_requisition_item_sid = #{materialRequisitionItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_inv_material_requisition_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                material_requisition_sid = #{materialRequisitionSid},
+                material_sid = #{materialSid},
+                sku1_sid = #{sku1Sid},
+                sku2_sid = #{sku2Sid},
+                barcode_sid = #{barcodeSid},
+                unit_base = #{unitBase},
+                quantity = #{quantity},
+                storehouse_sid = #{storehouseSid},
+                storehouse_code = #{storehouseCode},
+                storehouse_location_sid = #{storehouseLocationSid},
+                storehouse_location_code = #{storehouseLocationCode},
+                demand_date = #{demandDate},
+                stock_type = #{stockType},
+                special_stock = #{specialStock},
+                movement_type = #{movementType},
+                item_num = #{itemNum},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where material_requisition_item_sid = #{materialRequisitionItemSid}
+        </foreach>
+    </update>
+
+    <delete id="deleteInvMaterialRequisitionItemByIds" parameterType="long">
+        delete from s_inv_material_requisition_item where material_requisition_sid in
+        <foreach item="materialRequisitionSid" collection="array" open="(" separator="," close=")">
+            #{materialRequisitionSid}
+        </foreach>
+    </delete>
+
+</mapper>

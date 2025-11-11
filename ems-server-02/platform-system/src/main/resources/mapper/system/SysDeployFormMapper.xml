@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.system.mapper.SysDeployFormMapper">
+  <resultMap type="com.platform.system.domain.SysDeployForm" id="SysDeployFormResult">
+    <result property="clientId" column="client_id"/>
+    <result property="formProcessRelatSid" column="form_process_relat_sid"/>
+    <result property="key" column="key"/>
+    <result property="name" column="name"/>
+    <result property="processDefintionId" column="process_defintion_id"/>
+    <result property="processDefintionType" column="process_defintion_type"/>
+    <result property="status" column="status"/>
+    <result property="createDate" column="create_date"/>
+    <result property="modifyDate" column="modify_date"/>
+    <result property="creatorAccount" column="creator_account"/>
+    <result property="updaterAccount" column="updater_account"/>
+    <result property="createById" column="create_by_id"/>
+    <result property="modifyById" column="modify_by_id"/>
+    <result property="remark" column="remark"/>
+  </resultMap>
+  <sql id="selectSysDeployFormVo">select t.client_id, t.form_process_relat_sid, t.key, t.name, t.process_defintion_id, t.process_defintion_type, t.status, t.create_date, t.modify_date, t.creator_account, t.updater_account, t.create_by_id, t.modify_by_id, t.remark from s_sys_deploy_form t</sql>
+  <select id="selectSysDeployFormById" parameterType="Long" resultMap="SysDeployFormResult">
+    <include refid="selectSysDeployFormVo"/> where t.form_process_relat_sid = #{formProcessRelatSid}
+  </select>
+  <select id="selectDeployList" resultType="com.platform.system.domain.dto.FlowProcDefDto">
+    SELECT
+    rp.id_ as id,
+    rd.id_ as deploymentId,
+    rd.name_ as name,
+    rd.category_ as category,
+    rp.key_ as flowKey,
+    rp.version_ as version,
+    rp.suspension_state_ as suspensionState,
+    rd.deploy_time_  as deploymentTime
+    FROM
+    ACT_RE_PROCDEF rp
+    LEFT JOIN ACT_RE_DEPLOYMENT rd ON rp.deployment_id_ = rd.id_
+    <where>
+      <if test="name != null and name != ''">
+        and rd.name_ like concat('%', #{name}, '%')
+      </if>
+    </where>
+    order by rd.deploy_time_ desc
+  </select>
+  <select id="selectSysDeployFormList" parameterType="com.platform.system.domain.SysDeployForm" resultMap="SysDeployFormResult">
+    <include refid="selectSysDeployFormVo"/>
+    <where>
+      <if test="clientId != null  and clientId != ''">and (
+        <foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="key != null  and key != ''">and t.key = #{key}</if>
+      <if test="name != null  and name != ''">and t.name like concat('%', #{name}, '%')</if>
+      <if test="processDefintionId != null  and processDefintionId != ''">and (
+        <foreach collection="processDefintionId.split(';')" item="item" separator="or">t.process_defintion_id like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="processDefintionType != null  and processDefintionType != ''">and (
+        <foreach collection="processDefintionType.split(';')" item="item" separator="or">t.process_defintion_type like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="status != null  and status != ''">and (
+        <foreach collection="status.split(';')" item="item" separator="or">t.status like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')</if>
+      <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')</if>
+      <if test="modifyDate != null ">and t.modify_date = #{modifyDate}</if>
+      <if test="creatorAccount != null  and creatorAccount != ''">and (
+        <foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="updaterAccount != null  and updaterAccount != ''">and (
+        <foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="createById != null  and createById != ''">and (
+        <foreach collection="createById.split(';')" item="item" separator="or">t.create_by_id like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="modifyById != null  and modifyById != ''">and (
+        <foreach collection="modifyById.split(';')" item="item" separator="or">t.modify_by_id like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="params.dataScope != null and params.dataScope!=''">${params.dataScope}</if>
+    </where>
+  </select>
+  <!--添加多个-->
+  <insert id="inserts">insert into s_sys_deploy_form
+    <trim prefix="(" suffix=")" suffixOverrides=",">client_id, key, name, process_defintion_id, process_defintion_type, status, create_date, modify_date, creator_account, updater_account, create_by_id, modify_by_id, remark,</trim> values
+    <foreach collection="list" item="item" separator=",">
+      <trim prefix=" (" suffix=")" suffixOverrides=",">#{item.clientId}, #{item.key}, #{item.name}, #{item.processDefintionId}, #{item.processDefintionType}, #{item.status}, #{item.createDate}, #{item.modifyDate}, #{item.creatorAccount}, #{item.updaterAccount}, #{item.createById}, #{item.modifyById}, #{item.remark},</trim>
+    </foreach>
+  </insert>
+  <!--更新-->
+  <update id="updateAllById">update s_sys_deploy_form
+    <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, form_process_relat_sid = #{formProcessRelatSid}, key = #{key}, name = #{name}, process_defintion_id = #{processDefintionId}, process_defintion_type = #{processDefintionType}, status = #{status}, create_date = #{createDate}, modify_date = #{modifyDate}, creator_account = #{creatorAccount}, updater_account = #{updaterAccount}, create_by_id = #{createById}, modify_by_id = #{modifyById}, remark = #{remark},</trim> where form_process_relat_sid = #{formProcessRelatSid}
+  </update>
+  <!--更新多个-->
+  <update id="updatesAllById">
+    <foreach collection="list" item="o" separator=";">update s_sys_deploy_form
+      <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, form_process_relat_sid = #{formProcessRelatSid}, key = #{key}, name = #{name}, process_defintion_id = #{processDefintionId}, process_defintion_type = #{processDefintionType}, status = #{status}, create_date = #{createDate}, modify_date = #{modifyDate}, creator_account = #{creatorAccount}, updater_account = #{updaterAccount}, create_by_id = #{createById}, modify_by_id = #{modifyById}, remark = #{remark},</trim> where form_process_relat_sid = #{formProcessRelatSid}
+    </foreach>
+  </update>
+</mapper>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecModelAttachmentMapper">
+
+    <resultMap type="com.platform.ems.domain.TecModelAttachment" id="TecModelAttachmentResult">
+        <result property="clientId" column="client_id"/>
+        <result property="modelAttachmentSid" column="model_attachment_sid"/>
+        <result property="modelSid" column="model_sid"/>
+        <result property="fileType" column="file_type"/>
+        <result property="fileName" column="file_name"/>
+        <result property="filePath" column="file_path"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="modelCode" column="model_code"/>
+        <result property="fileTypeName" column="file_type_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+    </resultMap>
+
+    <sql id="selectTecModelAttachmentVo">
+        select t.client_id,
+               t.model_attachment_sid,
+               t.model_sid,
+               t.file_type,
+               t.file_name,
+               t.file_path,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.model_code,
+               t3.name AS file_type_name,
+               t4.nick_name AS creator_account_name
+        from s_tec_model_attachment t
+        left join s_tec_model t2 on t.model_sid = t2.model_sid
+        left join s_con_file_type t3 on t.file_type = t3.code
+        left join sys_user t4 on t.creator_account = t4.user_name
+    </sql>
+
+    <select id="selectTecModelAttachmentList" parameterType="com.platform.ems.domain.TecModelAttachment"
+            resultMap="TecModelAttachmentResult">
+        <include refid="selectTecModelAttachmentVo"/>
+        <where>
+            <if test="modelAttachmentSid != null  and modelAttachmentSid != ''">and t.model_attachment_sid =
+                #{modelAttachmentSid}
+            </if>
+            <if test="modelSid != null  and modelSid != ''">and t.model_sid = #{modelSid}</if>
+            <if test="fileType != null  and fileType != ''">and t.file_type = #{fileType}</if>
+            <if test="fileName != null  and fileName != ''">and t.file_name like concat('%', #{fileName}, '%')</if>
+            <if test="filePath != null  and filePath != ''">and t.file_path = #{filePath}</if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and t.creator_account = #{creatorAccount}</if>
+            <if test="createDate != null ">and t.create_date = #{createDate}</if>
+            <if test="updaterAccount != null  and updaterAccount != ''">and t.updater_account = #{updaterAccount}</if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and t.data_source_sys = #{dataSourceSys}</if>
+        </where>
+    </select>
+
+    <select id="selectTecModelAttachmentById" parameterType="String" resultMap="TecModelAttachmentResult">
+        <include refid="selectTecModelAttachmentVo"/>
+        where t.client_id = #{clientId}
+    </select>
+
+    <insert id="insertTecModelAttachment" parameterType="com.platform.ems.domain.TecModelAttachment">
+        insert into s_tec_model_attachment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">client_id,</if>
+            <if test="modelAttachmentSid != null and modelAttachmentSid != ''">model_attachment_sid,</if>
+            <if test="modelSid != null">model_sid,</if>
+            <if test="fileType != null">file_type,</if>
+            <if test="fileName != null and fileName != ''">file_name,</if>
+            <if test="filePath != null and filePath != ''">file_path,</if>
+            <if test="remark != null">remark,</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updaterAccount != null">updater_account,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="dataSourceSys != null">data_source_sys,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">#{clientId},</if>
+            <if test="modelAttachmentSid != null and modelAttachmentSid != ''">#{modelAttachmentSid},</if>
+            <if test="modelSid != null">#{modelSid},</if>
+            <if test="fileType != null">#{fileType},</if>
+            <if test="fileName != null and fileName != ''">#{fileName},</if>
+            <if test="filePath != null and filePath != ''">#{filePath},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">#{creatorAccount},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updaterAccount != null">#{updaterAccount},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="dataSourceSys != null">#{dataSourceSys},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTecModelAttachment" parameterType="com.platform.ems.domain.TecModelAttachment">
+        update s_tec_model_attachment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="modelAttachmentSid != null and modelAttachmentSid != ''">model_attachment_sid =
+                #{modelAttachmentSid},
+            </if>
+            <if test="modelSid != null">model_sid = #{modelSid},</if>
+            <if test="fileType != null">file_type = #{fileType},</if>
+            <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
+            <if test="filePath != null and filePath != ''">file_path = #{filePath},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account = #{creatorAccount},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updaterAccount != null">updater_account = #{updaterAccount},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="dataSourceSys != null">data_source_sys = #{dataSourceSys},</if>
+        </trim>
+        where client_id = #{clientId}
+    </update>
+
+    <delete id="deleteTecModelAttachmentById" parameterType="String">
+        delete
+        from s_tec_model_attachment
+        where client_id = #{clientId}
+    </delete>
+
+    <delete id="deleteTecModelAttachmentByIds" parameterType="String">
+        delete from s_tec_model_attachment where model_attachment_sid in
+        (<foreach collection="modelAttachmentSid.split(';')" item="item" separator=",">
+        #{item}
+    </foreach>)
+    </delete>
+
+</mapper>

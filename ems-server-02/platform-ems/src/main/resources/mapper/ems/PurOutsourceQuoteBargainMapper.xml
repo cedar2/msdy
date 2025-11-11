@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurOutsourceQuoteBargainMapper">
+
+    <resultMap type="com.platform.ems.domain.PurOutsourceQuoteBargain" id="PurOutsourceRequestQuotationResult">
+        <result property="clientId" column="client_id"/>
+        <result property="outsourceQuoteBargainSid" column="outsource_quote_bargain_sid"/>
+        <result property="outsourceQuoteBargainCode" column="outsource_quote_bargain_code"/>
+        <result property="outsourceInquirySid" column="outsource_inquiry_sid"/>
+        <result property="outsourceInquiryCode" column="outsource_inquiry_code"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="dateRequest" column="date_request"/>
+        <result property="dateQuote" column="date_quote"/>
+        <result property="dateCheck" column="date_check"/>
+        <result property="dateConfirm" column="date_confirm"/>
+        <result property="buyer" column="buyer"/>
+        <result property="buyerTelephone" column="buyer_telephone"/>
+        <result property="buyerEmail" column="buyer_email"/>
+        <result property="quoter" column="quoter"/>
+        <result property="quoterTelephone" column="quoter_telephone"/>
+        <result property="quoterEmail" column="quoter_email"/>
+        <result property="purchaseOrg" column="purchase_org"/>
+        <result property="purchaseGroup" column="purchase_group"/>
+        <result property="materialType" column="material_type"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="createdStage" column="created_stage"/>
+        <result property="remarkRequest" column="remark_request"/>
+        <result property="remarkQuote" column="remark_quote"/>
+        <result property="remarkCheck" column="remark_check"/>
+        <result property="remarkConfirm" column="remark_confirm"/>
+        <result property="remarkPurchase" column="remark_purchase"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="companyName" column="company_name"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="materialCategory" column="material_category"/>
+        <result property="checker" column="checker"/>
+        <result property="checkerName" column="checker_name"/>
+    </resultMap>
+
+    <sql id="selectPurOutsourceRequestQuotationVo">
+        SELECT
+	t.client_id,
+	t.outsource_quote_bargain_sid,
+	t.outsource_quote_bargain_code,
+    t8.outsource_inquiry_sid,
+    t8.outsource_inquiry_code,
+	t.vendor_sid,
+	t1.vendor_name,
+	t1.vendor_code,
+	t.company_sid,
+	t2.company_name,
+	t2.company_code,
+	t.product_season_sid,
+	t3.product_season_name,
+	t3.product_season_code,
+	t.date_request,
+	t.date_quote,
+	t.date_check,
+	t.date_confirm,
+	t.buyer,
+	t.buyer_telephone,
+	t.buyer_email,
+	t.quoter,
+	t.quoter_telephone,
+	t.quoter_email,
+    t.checker,
+    t10.nick_name AS checker_name,
+	t.purchase_org,
+	t.purchase_group,
+	t.material_type,
+	t.currency,
+	t.currency_unit,
+	t.start_date,
+	t.material_category,
+	t.end_date,
+	t.remark_request,
+	t.remark_quote,
+	t.remark_check,
+	t.remark_confirm,
+	t.remark_purchase,
+	t.handle_status,
+	t.creator_account,
+	t.create_date,
+	t.updater_account,
+	t.update_date,
+	t.confirmer_account,
+	t.confirm_date,
+	t.data_source_sys,
+	t4.nick_name as creator_account_name,
+	t5.nick_name as updater_account_name,
+	t6.nick_name as confirmer_account_name,
+	t7.nick_name as buyer_name,
+    t.created_stage,
+    t9.quoteprice_deadline
+FROM
+	s_pur_outsource_quote_bargain t
+	LEFT JOIN s_bas_vendor t1 ON t1.vendor_sid = t.vendor_sid
+	LEFT JOIN s_bas_company t2 ON t2.company_sid = t.company_sid
+	LEFT JOIN s_bas_product_season t3 ON t3.product_season_sid = t.product_season_sid
+	LEFT JOIN sys_user t4 ON t4.user_name = t.creator_account
+	LEFT JOIN sys_user t5 ON t5.user_name = t.updater_account
+	LEFT JOIN sys_user t6 ON t6.user_name = t.confirmer_account
+	LEFT JOIN sys_user t7 ON t7.user_name = t.buyer
+    LEFT JOIN s_pur_outsource_quote_bargain_item t8 ON t.outsource_quote_bargain_sid = t8.outsource_quote_bargain_sid
+    LEFT JOIN s_pur_outsource_inquiry t9 ON t8.outsource_inquiry_sid = t9.outsource_inquiry_sid
+    LEFT JOIN sys_user t10 ON t.checker = t10.user_name
+    </sql>
+
+    <select id="selectPurOutsourceRequestQuotationById" parameterType="Long"
+            resultMap="PurOutsourceRequestQuotationResult">
+        <include refid="selectPurOutsourceRequestQuotationVo"/>
+        where t.outsource_quote_bargain_sid = #{outsourceQuoteBargainSid}
+    </select>
+
+
+    <select id="selectPurOutsourceRequestQuotationList"
+            parameterType="com.platform.ems.domain.PurOutsourceQuoteBargain"
+            resultMap="PurOutsourceRequestQuotationResult">
+        <include refid="selectPurOutsourceRequestQuotationVo"/>
+        <where>
+            <if test="checker != null and checker != '' ">
+                and t10.nick_name like concat('%',#{checker}, '%')
+            </if>
+            <if test="checkerList != null and checkerList.length >0 ">
+                and t.checker in
+                (<foreach collection="checkerList" item="checker" separator=",">#{checker}</foreach>)
+            </if>
+            <if test="outsourceInquirySid != null and outsourceInquirySid != ''">
+                and t8.outsource_inquiry_sid = #{outsourceInquirySid}
+            </if>
+            <if test="outsourceInquiryCode != null and outsourceInquiryCode != ''">
+                and t8.outsource_inquiry_code = #{outsourceInquiryCode}
+            </if>
+            <if test="createdStage != null and createdStage != ''">
+                and t.created_stage = #{createdStage}
+            </if>
+            <if test="clientId != null and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="outsourceQuoteBargainCode != null ">
+                and t.outsource_quote_bargain_code  like
+                concat('%',
+                #{outsourceQuoteBargainCode}, '%')
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length > 0">and t.vendor_sid in
+                <foreach collection="vendorSidList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="companySidList != null and companySidList.length > 0">and t.company_sid in
+                <foreach collection="companySidList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length > 0">and t.product_season_sid in
+                <foreach collection="productSeasonSidList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="purchaseGroupList != null and purchaseGroupList.length > 0">and t.purchase_group in
+                <foreach collection="purchaseGroupList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length > 0">and t.material_type in
+                <foreach collection="materialTypeList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length > 0">and t.handle_status in
+                <foreach collection="handleStatusList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="dateQuote != null ">
+                and t.date_quote = #{dateQuote}
+            </if>
+            <if test="dateCheck != null ">
+                and t.date_check = #{dateCheck}
+            </if>
+            <if test="dateConfirm != null ">
+                and t.date_confirm = #{dateConfirm}
+            </if>
+            <if test="materialCategory != null ">
+                and t.material_category = #{materialCategory}
+            </if>
+            <if test="buyer != null  and buyer != ''">
+                and (<foreach collection="buyer.split(';')" item="item" separator="or">t7.nick_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="buyerTelephone != null  and buyerTelephone != ''">
+                and (<foreach collection="buyerTelephone.split(';')" item="item" separator="or">t.buyer_telephone like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="buyerEmail != null  and buyerEmail != ''">
+                and (<foreach collection="buyerEmail.split(';')" item="item" separator="or">t.buyer_email like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="quoter != null  and quoter != ''">
+                and (<foreach collection="quoter.split(';')" item="item" separator="or">t.quoter like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="quoterTelephone != null  and quoterTelephone != ''">
+                and (<foreach collection="quoterTelephone.split(';')" item="item" separator="or">t.quoter_telephone like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="quoterEmail != null  and quoterEmail != ''">
+                and (<foreach collection="quoterEmail.split(';')" item="item" separator="or">t.quoter_email like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseOrg != null  and purchaseOrg != ''">
+                and (<foreach collection="purchaseOrg.split(';')" item="item" separator="or">t.purchase_org like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="currency != null  and currency != ''">
+                and (<foreach collection="currency.split(';')" item="item" separator="or">t.currency like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">
+                and (<foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="startDate != null ">
+                and t.start_date = #{startDate}
+            </if>
+            <if test="endDate != null ">
+                and t.end_date = #{endDate}
+            </if>
+            <if test="remarkRequest != null  and remarkRequest != ''">
+                and (<foreach collection="remarkRequest.split(';')" item="item" separator="or">t.remark_request like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="remarkQuote != null  and remarkQuote != ''">
+                and (<foreach collection="remarkQuote.split(';')" item="item" separator="or">t.remark_quote like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="remarkCheck != null  and remarkCheck != ''">
+                and (<foreach collection="remarkCheck.split(';')" item="item" separator="or">t.remark_check like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="remarkConfirm != null  and remarkConfirm != ''">
+                and (<foreach collection="remarkConfirm.split(';')" item="item" separator="or">t.remark_confirm like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="remarkPurchase != null  and remarkPurchase != ''">
+                and (<foreach collection="remarkPurchase.split(';')" item="item" separator="or">t.remark_purchase like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t4.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.outsource_quote_bargain_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_outsource_quote_bargain
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            outsource_quote_bargain_sid,
+            outsource_quote_bargain_code,
+            vendor_sid,
+            company_sid,
+            product_season_sid,
+            date_request,
+            date_quote,
+            date_check,
+            date_confirm,
+            buyer,
+            buyer_telephone,
+            buyer_email,
+            quoter,
+            quoter_telephone,
+            quoter_email,
+            checker,
+            purchase_org,
+            purchase_group,
+            material_type,
+            currency,
+            currency_unit,
+            start_date,
+            end_date,
+            created_stage,
+            remark_request,
+            remark_quote,
+            remark_check,
+            remark_confirm,
+            remark_purchase,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{clientId},
+                #{outsourceQuoteBargainSid},
+                #{outsourceQuoteBargainCode},
+                #{vendorSid},
+                #{companySid},
+                #{productSeasonSid},
+                #{dateRequest},
+                #{dateQuote},
+                #{dateCheck},
+                #{dateConfirm},
+                #{buyer},
+                #{buyerTelephone},
+                #{buyerEmail},
+                #{quoter},
+                #{quoterTelephone},
+                #{quoterEmail},
+                #{checker}，
+                #{purchaseOrg},
+                #{purchaseGroup},
+                #{materialType},
+                #{currency},
+                #{currencyUnit},
+                #{startDate},
+                #{endDate},
+                #{createdStage},
+                #{remarkRequest},
+                #{remarkQuote},
+                #{remarkCheck},
+                #{remarkConfirm},
+                #{remarkPurchase},
+                #{handleStatus},
+                #{creatorAccount},
+                #{createDate},
+                #{updaterAccount},
+                #{updateDate},
+                #{confirmerAccount},
+                #{confirmDate},
+                #{dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_outsource_quote_bargain
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            vendor_sid = #{vendorSid},
+            company_sid = #{companySid},
+            product_season_sid = #{productSeasonSid},
+            date_request = #{dateRequest},
+            date_quote = #{dateQuote},
+            date_check = #{dateCheck},
+            date_confirm = #{dateConfirm},
+            buyer = #{buyer},
+            buyer_telephone = #{buyerTelephone},
+            buyer_email = #{buyerEmail},
+            quoter = #{quoter},
+            quoter_telephone = #{quoterTelephone},
+            quoter_email = #{quoterEmail},
+            checker = #{checker},
+            material_category = #{materialCategory},
+            purchase_org = #{purchaseOrg},
+            purchase_group = #{purchaseGroup},
+            material_type = #{materialType},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            start_date = #{startDate},
+            end_date = #{endDate},
+            created_stage = #{createdStage},
+            remark_request = #{remarkRequest},
+            remark_quote = #{remarkQuote},
+            remark_check = #{remarkCheck},
+            remark_confirm = #{remarkConfirm},
+            remark_purchase = #{remarkPurchase},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where outsource_quote_bargain_sid = #{outsourceQuoteBargainSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_outsource_quote_bargain
+            <trim prefix="SET" suffixOverrides=",">
+                outsource_quote_bargain_code = #{outsourceQuoteBargainCode},
+                vendor_sid = #{vendorSid},
+                company_sid = #{companySid},
+                product_season_sid = #{productSeasonSid},
+                date_request = #{dateRequest},
+                date_quote = #{dateQuote},
+                date_check = #{dateCheck},
+                date_confirm = #{dateConfirm},
+                buyer = #{buyer},
+                buyer_telephone = #{buyerTelephone},
+                buyer_email = #{buyerEmail},
+                quoter = #{quoter},
+                quoter_telephone = #{quoterTelephone},
+                quoter_email = #{quoterEmail},
+                checker = #{checker},
+                purchase_org = #{purchaseOrg},
+                purchase_group = #{purchaseGroup},
+                material_type = #{materialType},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+                start_date = #{startDate},
+                end_date = #{endDate},
+                created_stage = #{createdStage},
+                remark_request = #{remarkRequest},
+                remark_quote = #{remarkQuote},
+                remark_check = #{remarkCheck},
+                remark_confirm = #{remarkConfirm},
+                remark_purchase = #{remarkPurchase},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where outsource_quote_bargain_sid = #{outsourceQuoteBargainSid}
+        </foreach>
+    </update>
+
+</mapper>

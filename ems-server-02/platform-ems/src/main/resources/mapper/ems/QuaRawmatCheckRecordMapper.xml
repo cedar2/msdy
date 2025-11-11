@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.QuaRawmatCheckRecordMapper">
+
+    <resultMap type="com.platform.ems.domain.QuaRawmatCheckRecord" id="QuaRawmatCheckRecordResult">
+        <result property="clientId" column="client_id"/>
+        <result property="rawmatCheckRecordSid" column="rawmat_check_record_sid"/>
+        <result property="rawmatCheckRecordCode" column="rawmat_check_record_code"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="colorName" column="color_name"/>
+        <result property="sampleCategory" column="sample_category"/>
+        <result property="checkCategory" column="check_category"/>
+        <result property="checkType" column="check_type"/>
+        <result property="quantity" column="quantity"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="supplierProductCode" column="supplier_product_code"/>
+        <result property="supplierProductColor" column="supplier_product_color"/>
+        <result property="checkBatch" column="check_batch"/>
+        <result property="checkStandard" column="check_standard"/>
+        <result property="checkItem" column="check_item"/>
+        <result property="result" column="result"/>
+        <result property="checkResultValue" column="check_result_value"/>
+        <result property="checkReferenceValue" column="check_reference_value"/>
+        <result property="checkPartner" column="check_partner"/>
+        <result property="checkDate" column="check_date"/>
+        <result property="grade" column="grade"/>
+        <result property="safeCategory" column="safe_category"/>
+        <result property="reportCode" column="report_code"/>
+        <result property="defectType" column="defect_type"/>
+        <result property="defectDescription" column="defect_description"/>
+        <result property="resolveStatus" column="resolve_status"/>
+        <result property="solutionRemark" column="solution_remark"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="videoPath" column="video_path"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectQuaRawmatCheckRecordVo">
+        select t.client_id,
+               t.rawmat_check_record_sid,
+               t.rawmat_check_record_code,
+               t.product_season_sid,
+               t.product_season_code,
+               t.material_sid,
+               t.material_code,
+               t.plant_sid,
+               t.plant_code,
+               t.color_name,
+               t.sample_category,
+               t.check_category,
+               t.check_type,
+               t.quantity,
+               t.vendor_name,
+               t.supplier_product_code,
+               t.supplier_product_color,
+               t.check_batch,
+               t.check_standard,
+               t.check_item,
+               t.result,
+               t.check_result_value,
+               t.check_reference_value,
+               t.check_partner,
+               t.check_date,
+               t.grade,
+               t.safe_category,
+               t.report_code,
+               t.defect_type,
+               t.defect_description,
+               t.resolve_status,
+               t.solution_remark,
+               t.picture_path,
+               t.video_path,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t5.material_name,
+               t6.plant_name,
+               t6.short_name as plant_short_name,
+               t7.product_season_name,
+               t8.name as check_item_name,
+               t9.name as check_standard_name
+        from s_qua_rawmat_check_record t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t3.client_id
+         LEFT JOIN s_bas_material t5 ON t.material_sid = t5.material_sid
+         LEFT JOIN s_bas_plant t6 ON t.plant_sid = t6.plant_sid
+         LEFT JOIN s_bas_product_season t7 ON t.product_season_sid = t7.product_season_sid
+         LEFT JOIN s_con_check_item t8 ON t.check_item = t8.code
+         LEFT JOIN s_con_check_standard t9 ON t.check_standard = t9.code
+    </sql>
+
+    <select id="selectQuaRawmatCheckRecordById" parameterType="Long" resultMap="QuaRawmatCheckRecordResult">
+        <include refid="selectQuaRawmatCheckRecordVo"/>
+        where t.rawmat_check_record_sid = #{rawmatCheckRecordSid}
+    </select>
+
+    <select id="selectQuaRawmatCheckRecordList" parameterType="com.platform.ems.domain.QuaRawmatCheckRecord"
+            resultMap="QuaRawmatCheckRecordResult">
+        <include refid="selectQuaRawmatCheckRecordVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="rawmatCheckRecordSid != null ">
+                and t.rawmat_check_record_sid = #{rawmatCheckRecordSid}
+            </if>
+            <if test="rawmatCheckRecordSidList != null and rawmatCheckRecordSidList.length >0">
+                and t.rawmat_check_record_sid in
+                (<foreach collection="rawmatCheckRecordSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="rawmatCheckRecordCode != null ">
+                and t.rawmat_check_record_code like concat('%', #{rawmatCheckRecordCode}, '%')
+            </if>
+            <if test="productSeasonSid != null ">
+                and t.product_season_sid = #{productSeasonSid}
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">
+                and t7.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="productSeasonCode != null and productSeasonCode != ''">
+                and t.product_season_code = #{productSeasonCode}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and t.material_code like concat('%', #{materialCode}, '%')
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and t5.material_name like concat('%', #{materialName}, '%')
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid = #{plantSid}
+            </if>
+            <if test="plantCode != null and plantCode != ''">
+                and t.plant_code = #{plantCode}
+            </if>
+            <if test="colorName != null and colorName != ''">and
+                t.color_name like concat('%', #{colorName}, '%')
+            </if>
+            <if test="sampleCategory != null and sampleCategory != ''">
+                and t.sample_category = #{sampleCategory}
+            </if>
+            <if test="sampleCategoryList != null and sampleCategoryList.length >0">
+                and t.sample_category in
+                (<foreach collection="sampleCategoryList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="checkCategory != null and checkCategory != ''">
+                and t.check_category = #{checkCategory}
+            </if>
+            <if test="checkType != null and checkType != ''">
+                and t.check_type = #{checkType}
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="vendorName != null and vendorName != ''">
+                and t.vendor_name like concat('%', #{vendorName}, '%')
+            </if>
+            <if test="supplierProductCode != null and supplierProductCode != ''">
+                and t.supplier_product_code = #{supplierProductCode}
+            </if>
+            <if test="supplierProductColor != null and supplierProductColor != ''">
+                and t.supplier_product_color = #{supplierProductColor}
+            </if>
+            <if test="checkBatch != null ">
+                and t.check_batch = #{checkBatch}
+            </if>
+            <if test="checkStandard != null and checkStandard != ''">
+                and t.check_standard = #{checkStandard}
+            </if>
+            <if test="checkItem != null and checkItem != ''">
+                and t.check_item = #{checkItem}
+            </if>
+            <if test="checkItemList != null and checkItemList.length >0">
+                and t.check_item in
+                (<foreach collection="checkItemList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="result != null and result != ''">
+                and t.result = #{result}
+            </if>
+            <if test="resultList != null and resultList.length >0">
+                and t.result in
+                (<foreach collection="resultList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="checkResultValue != null and checkResultValue != ''">
+                and t.check_result_value = #{checkResultValue}
+            </if>
+            <if test="checkReferenceValue != null and checkReferenceValue != ''">
+                and t.check_reference_value = #{checkReferenceValue}
+            </if>
+            <if test="checkPartner != null and checkPartner != ''">
+                and t.check_partner = #{checkPartner}
+            </if>
+            <if test="checkDate != null ">
+                and t.check_date = #{checkDate}
+            </if>
+            <if test="checkDateBegin != null and checkDateBegin!=''">
+                and date_format(t.check_date,'%y%m%d') &gt;= date_format(#{checkDateBegin},'%y%m%d')
+            </if>
+            <if test="checkDateEnd != null and checkDateEnd!=''">
+                and date_format(t.check_date,'%y%m%d') &lt;= date_format(#{checkDateEnd},'%y%m%d')
+            </if>
+            <if test="grade != null and grade != ''">
+                and t.grade = #{grade}
+            </if>
+            <if test="safeCategory != null and safeCategory != ''">
+                and t.safe_category = #{safeCategory}
+            </if>
+            <if test="safeCategoryList != null and safeCategoryList.length >0">
+                and t.safe_category in
+                (<foreach collection="safeCategoryList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="reportCode != null and reportCode != ''">
+                and t.report_code like concat('%', #{reportCode}, '%')
+            </if>
+            <if test="defectType != null and defectType != ''">
+                and t.defect_type = #{defectType}
+            </if>
+            <if test="defectTypeList != null and defectTypeList.length >0">
+                and t.defect_type in
+                (<foreach collection="defectTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="defectDescription != null and defectDescription != ''">
+                and t.defect_description like concat('%', #{defectDescription}, '%')
+            </if>
+            <if test="resolveStatus != null and resolveStatus != ''">
+                and t.resolve_status = #{resolveStatus}
+            </if>
+            <if test="resolveStatusList != null and resolveStatusList.length >0">
+                and t.resolve_status in
+                (<foreach collection="resolveStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="solutionRemark != null and solutionRemark != ''">
+                and t.solution_remark like concat('%', #{solutionRemark}, '%')
+            </if>
+            <if test="picturePath != null and picturePath != ''">
+                and t.picture_path = #{picturePath}
+            </if>
+            <if test="videoPath != null and videoPath != ''">
+                and t.video_path = #{videoPath}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.rawmat_check_record_code desc, t.create_date desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_qua_rawmat_check_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            rawmat_check_record_sid,
+            rawmat_check_record_code,
+            product_season_sid,
+            product_season_code,
+            material_sid,
+            material_code,
+            plant_sid,
+            plant_code,
+            color_name,
+            sample_category,
+            check_category,
+            check_type,
+            quantity,
+            vendor_name,
+            supplier_product_code,
+            supplier_product_color,
+            check_batch,
+            check_standard,
+            check_item,
+            result,
+            check_result_value,
+            check_reference_value,
+            check_partner,
+            check_date,
+            grade,
+            safe_category,
+            report_code,
+            defect_type,
+            defect_description,
+            resolve_status,
+            solution_remark,
+            picture_path,
+            video_path,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.rawmatCheckRecordSid},
+                #{item.rawmatCheckRecordCode},
+                #{item.productSeasonSid},
+                #{item.productSeasonCode},
+                #{item.materialSid},
+                #{item.materialCode},
+                #{item.plantSid},
+                #{item.plantCode},
+                #{item.colorName},
+                #{item.sampleCategory},
+                #{item.checkCategory},
+                #{item.checkType},
+                #{item.quantity},
+                #{item.vendorName},
+                #{item.supplierProductCode},
+                #{item.supplierProductColor},
+                #{item.checkBatch},
+                #{item.checkStandard},
+                #{item.checkItem},
+                #{item.result},
+                #{item.checkResultValue},
+                #{item.checkReferenceValue},
+                #{item.checkPartner},
+                #{item.checkDate},
+                #{item.grade},
+                #{item.safeCategory},
+                #{item.reportCode},
+                #{item.defectType},
+                #{item.defectDescription},
+                #{item.resolveStatus},
+                #{item.solutionRemark},
+                #{item.picturePath},
+                #{item.videoPath},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_qua_rawmat_check_record
+        <trim prefix="SET" suffixOverrides=",">
+            product_season_sid = #{productSeasonSid},
+            product_season_code = #{productSeasonCode},
+            material_sid = #{materialSid},
+            material_code = #{materialCode},
+            plant_sid = #{plantSid},
+            plant_code = #{plantCode},
+            color_name = #{colorName},
+            sample_category = #{sampleCategory},
+            check_category = #{checkCategory},
+            check_type = #{checkType},
+            quantity = #{quantity},
+            vendor_name = #{vendorName},
+            supplier_product_code = #{supplierProductCode},
+            supplier_product_color = #{supplierProductColor},
+            check_batch = #{checkBatch},
+            check_standard = #{checkStandard},
+            check_item = #{checkItem},
+            result = #{result},
+            check_result_value = #{checkResultValue},
+            check_reference_value = #{checkReferenceValue},
+            check_partner = #{checkPartner},
+            check_date = #{checkDate},
+            grade = #{grade},
+            safe_category = #{safeCategory},
+            report_code = #{reportCode},
+            defect_type = #{defectType},
+            defect_description = #{defectDescription},
+            resolve_status = #{resolveStatus},
+            solution_remark = #{solutionRemark},
+            picture_path = #{picturePath},
+            video_path = #{videoPath},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where rawmat_check_record_sid = #{rawmatCheckRecordSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_qua_rawmat_check_record
+            <trim prefix="SET" suffixOverrides=",">
+                product_season_sid = #{productSeasonSid},
+                product_season_code = #{productSeasonCode},
+                material_sid = #{materialSid},
+                material_code = #{materialCode},
+                plant_sid = #{plantSid},
+                plant_code = #{plantCode},
+                color_name = #{colorName},
+                sample_category = #{sampleCategory},
+                check_category = #{checkCategory},
+                check_type = #{checkType},
+                quantity = #{quantity},
+                vendor_name = #{vendorName},
+                supplier_product_code = #{supplierProductCode},
+                supplier_product_color = #{supplierProductColor},
+                check_batch = #{checkBatch},
+                check_standard = #{checkStandard},
+                check_item = #{checkItem},
+                result = #{result},
+                check_result_value = #{checkResultValue},
+                check_reference_value = #{checkReferenceValue},
+                check_partner = #{checkPartner},
+                check_date = #{checkDate},
+                grade = #{grade},
+                safe_category = #{safeCategory},
+                report_code = #{reportCode},
+                defect_type = #{defectType},
+                defect_description = #{defectDescription},
+                resolve_status = #{resolveStatus},
+                solution_remark = #{solutionRemark},
+                picture_path = #{picturePath},
+                video_path = #{videoPath},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+            </trim>
+            where rawmat_check_record_sid = #{rawmatCheckRecordSid}
+        </foreach>
+    </update>
+
+</mapper>

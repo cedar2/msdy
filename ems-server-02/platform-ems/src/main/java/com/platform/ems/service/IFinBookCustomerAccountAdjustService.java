@@ -1,0 +1,24 @@
+package com.platform.ems.service;
+
+import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.platform.ems.domain.FinBookCustomerAccountAdjust;
+
+/**
+ * 财务流水账-客户调账Service接口
+ *
+ * @author linhongwei
+ * @date 2021-06-08
+ */
+public interface IFinBookCustomerAccountAdjustService extends IService<FinBookCustomerAccountAdjust> {
+
+    /**
+     * 查报表
+     *
+     * @param entity
+     * @return
+     */
+    List<FinBookCustomerAccountAdjust> getReportForm(FinBookCustomerAccountAdjust entity);
+
+}

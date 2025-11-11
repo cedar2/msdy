@@ -1,0 +1,831 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.AssAssetRecordMapper">
+
+    <resultMap type="com.platform.ems.domain.AssAssetRecord" id="AssAssetRecordResult">
+        <result property="clientId" column="client_id"/>
+        <result property="assetSid" column="asset_sid"/>
+        <result property="assetCode" column="asset_code"/>
+        <result property="assetName" column="asset_name"/>
+        <result property="assetType" column="asset_type"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="companyName" column="company_name"/>
+        <result property="seller" column="seller"/>
+        <result property="factory" column="factory"/>
+        <result property="brand" column="brand"/>
+        <result property="specification" column="specification"/>
+        <result property="buyer" column="buyer"/>
+        <result property="purchaseDate" column="purchase_date"/>
+        <result property="currencyAmount" column="currency_amount"/>
+        <result property="currentNetValue" column="current_net_value"/>
+        <result property="annualDepreciationRate" column="annual_depreciation_rate"/>
+        <result property="annualDepreciationRateString" column="annual_depreciation_rate_s"/>
+        <result property="assetAdministrator" column="asset_administrator"/>
+        <result property="enableDate" column="enable_date"/>
+        <result property="scrapDate" column="scrap_date"/>
+        <result property="assetState" column="asset_state"/>
+        <result property="assetSource" column="asset_source"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="unitBaseName" column="unit_base_name"/>
+        <result property="quantity" column="quantity"/>
+        <result property="departmentSid" column="department_sid"/>
+        <result property="departmentCode" column="department_code"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="assetCardNumber" column="asset_card_number"/>
+        <result property="estimatedRemainYears" column="estimated_remain_years"/>
+        <result property="hasUsedYears" column="has_used_years"/>
+        <result property="useTimeUnit" column="use_time_unit"/>
+        <result property="isNeedMaintenance" column="is_need_maintenance"/>
+        <result property="maintenanceCycle" column="maintenance_cycle"/>
+        <result property="maintenanceCycleUnit" column="maintenance_cycle_unit"/>
+        <result property="maintenanceLevel" column="maintenance_level"/>
+        <result property="lastestMaintenanceDate" column="lastest_maintenance_date"/>
+        <result property="isNeedInspection" column="is_need_inspection"/>
+        <result property="inspectionCycle" column="inspection_cycle"/>
+        <result property="inspectionCycleTimeUnit" column="inspection_cycle_time_unit"/>
+        <result property="lastestInspectionDate" column="lastest_inspection_date"/>
+        <result property="lastestInspectionOutcome" column="lastest_inspection_outcome"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="recipient" column="recipient"/>
+        <result property="location" column="location"/>
+        <result property="supplierPhone" column="supplier_phone"/>
+        <result property="factoryPhone" column="factory_phone"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="approvalNode" column="approval_node"/>
+        <result property="approvalUserName" column="approval_user_name"/>
+        <result property="submitUserName" column="submit_user_name"/>
+        <result property="submitDate" column="submit_date"/>
+        <result property="approvalUserId" column="approval_user_id"/>
+    </resultMap>
+
+    <resultMap type="com.platform.ems.domain.AssAssetRecord" id="AssAssetStatisticalRecordResult">
+        <result property="clientId" column="client_id"/>
+        <result property="assetSid" column="asset_sid"/>
+        <result property="assetCode" column="asset_code"/>
+        <result property="assetName" column="asset_name"/>
+        <result property="assetType" column="asset_type"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="companyName" column="company_name"/>
+        <result property="seller" column="seller"/>
+        <result property="factory" column="factory"/>
+        <result property="brand" column="brand"/>
+        <result property="specification" column="specification"/>
+        <result property="buyer" column="buyer"/>
+        <result property="purchaseDate" column="purchase_date"/>
+        <result property="currencyAmount" column="currency_amount"/>
+        <result property="currentNetValue" column="current_net_value"/>
+        <result property="annualDepreciationRate" column="annual_depreciation_rate"/>
+        <result property="annualDepreciationRateString" column="annual_depreciation_rate_s"/>
+        <result property="assetAdministrator" column="asset_administrator"/>
+        <result property="enableDate" column="enable_date"/>
+        <result property="scrapDate" column="scrap_date"/>
+        <result property="assetState" column="asset_state"/>
+        <result property="assetSource" column="asset_source"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="unitBaseName" column="unit_base_name"/>
+        <result property="quantity" column="quantity"/>
+        <result property="assetCount" column="asset_count"/>
+        <result property="departmentSid" column="department_sid"/>
+        <result property="departmentCode" column="department_code"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="assetCardNumber" column="asset_card_number"/>
+        <result property="estimatedRemainYears" column="estimated_remain_years"/>
+        <result property="hasUsedYears" column="has_used_years"/>
+        <result property="useTimeUnit" column="use_time_unit"/>
+        <result property="isNeedMaintenance" column="is_need_maintenance"/>
+        <result property="maintenanceCycle" column="maintenance_cycle"/>
+        <result property="maintenanceCycleUnit" column="maintenance_cycle_unit"/>
+        <result property="maintenanceLevel" column="maintenance_level"/>
+        <result property="lastestMaintenanceDate" column="lastest_maintenance_date"/>
+        <result property="isNeedInspection" column="is_need_inspection"/>
+        <result property="inspectionCycle" column="inspection_cycle"/>
+        <result property="inspectionCycleTimeUnit" column="inspection_cycle_time_unit"/>
+        <result property="lastestInspectionDate" column="lastest_inspection_date"/>
+        <result property="lastestInspectionOutcome" column="lastest_inspection_outcome"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="recipient" column="recipient"/>
+        <result property="location" column="location"/>
+        <result property="supplierPhone" column="supplier_phone"/>
+        <result property="factoryPhone" column="factory_phone"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="approvalNode" column="approval_node"/>
+        <result property="approvalUserName" column="approval_user_name"/>
+        <result property="submitUserName" column="submit_user_name"/>
+        <result property="submitDate" column="submit_date"/>
+        <result property="approvalUserId" column="approval_user_id"/>
+    </resultMap>
+
+
+    <sql id="selectAssAssetRecordVo">
+        select t.client_id,
+               t.asset_sid,
+               t.asset_code,
+               t.asset_name,
+               t.asset_type,
+               t.company_sid,
+               t.company_code,
+               t.seller,
+               t.factory,
+               t.brand,
+               t.specification,
+               t.buyer,
+               t.purchase_date,
+               t.currency_amount,
+               t.current_net_value,
+               t.annual_depreciation_rate,
+               (IF(t.annual_depreciation_rate IS NULL,
+                   t.annual_depreciation_rate,
+                   concat(CAST(t.annual_depreciation_rate * 100 AS DECIMAL(7,2)),'%'))
+               ) AS annual_depreciation_rate_s,
+               t.asset_administrator,
+               t.enable_date,
+               t.scrap_date,
+               t.asset_state,
+               t.asset_source,
+               t.unit_base,
+               t.quantity,
+               t.department_sid,
+               t.department_code,
+               t.department_name,
+               t.asset_card_number,
+               t.estimated_remain_years,
+               t.has_used_years,
+               t.use_time_unit,
+               t.is_need_maintenance,
+               t.maintenance_cycle,
+               t.maintenance_cycle_unit,
+               t.maintenance_level,
+               t.lastest_maintenance_date,
+               t.is_need_inspection,
+               t.inspection_cycle,
+               t.inspection_cycle_time_unit,
+               t.lastest_inspection_date,
+               t.lastest_inspection_outcome,
+               t.currency,
+               t.currency_unit,
+               t.recipient,
+               t.location,
+               t.supplier_phone,
+               t.factory_phone,
+               t.picture_path,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t5.company_name,
+               t5.short_name as company_short_name,
+               t6.name AS unit_base_name,
+               t7.approval_node,t7.approval_user_id,t7.approval_user_name,t7.create_date AS submit_date,t8.nick_name AS submit_user_name
+        from s_ass_asset_record t
+                 LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name
+                 LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name
+                 LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name
+                 LEFT JOIN s_bas_company t5 ON t.company_sid = t5.company_sid
+                 LEFT JOIN s_con_measure_unit t6 ON t.unit_base = t6.code
+                 LEFT JOIN s_sys_form_process t7 ON t.asset_sid = t7.form_id
+                 LEFT JOIN sys_user t8 ON t7.creator_account = t8.user_name
+    </sql>
+
+
+    <sql id="selectAssAssetStatisticalRecordVo">
+        select t.client_id,
+               t.asset_sid,
+               t.asset_code,
+               t.asset_name,
+               t.asset_type,
+               t.company_sid,
+               t.company_code,
+               t.seller,
+               t.factory,
+               t.brand,
+               t.specification,
+               t.buyer,
+               t.purchase_date,
+               COUNT(t.asset_sid) AS asset_count,
+               ROUND((SUM(t.currency_amount)/10000) , 4) AS currency_amount,
+               t.current_net_value,
+               t.annual_depreciation_rate,
+               (IF(t.annual_depreciation_rate IS NULL,
+                   t.annual_depreciation_rate,
+                   concat(CAST(t.annual_depreciation_rate * 100 AS DECIMAL(7,2)),'%'))
+               ) AS annual_depreciation_rate_s,
+               t.asset_administrator,
+               t.enable_date,
+               t.scrap_date,
+               t.asset_state,
+               t.asset_source,
+               t.unit_base,
+               t.quantity,
+               t.department_sid,
+               t.department_code,
+               t.department_name,
+               t.asset_card_number,
+               t.estimated_remain_years,
+               t.has_used_years,
+               t.use_time_unit,
+               t.is_need_maintenance,
+               t.maintenance_cycle,
+               t.maintenance_cycle_unit,
+               t.maintenance_level,
+               t.lastest_maintenance_date,
+               t.is_need_inspection,
+               t.inspection_cycle,
+               t.inspection_cycle_time_unit,
+               t.lastest_inspection_date,
+               t.lastest_inspection_outcome,
+               t.currency,
+               t.currency_unit,
+               t.recipient,
+               t.location,
+               t.supplier_phone,
+               t.factory_phone,
+               t.picture_path,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t5.company_name,
+               t5.short_name as company_short_name,
+               t6.name AS unit_base_name,
+               t7.approval_node,t7.approval_user_id,t7.approval_user_name,t7.create_date AS submit_date,t8.nick_name AS submit_user_name
+        from s_ass_asset_record t
+                 LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name
+                 LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name
+                 LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name
+                 LEFT JOIN s_bas_company t5 ON t.company_sid = t5.company_sid
+                 LEFT JOIN s_con_measure_unit t6 ON t.unit_base = t6.code
+                 LEFT JOIN s_sys_form_process t7 ON t.asset_sid = t7.form_id
+                 LEFT JOIN sys_user t8 ON t7.creator_account = t8.user_name
+    </sql>
+
+
+    <select id="selectAssAssetRecordById" parameterType="Long" resultMap="AssAssetRecordResult">
+        <include refid="selectAssAssetRecordVo"></include>
+        where t.asset_sid = #{assetSid}
+    </select>
+
+
+    <select id="selectAssAssetRecordList" parameterType="com.platform.ems.domain.AssAssetRecord"
+            resultMap="AssAssetRecordResult">
+        <include refid="selectAssAssetRecordVo"/>
+        <where>
+            <if test="approvalUserId != null  and approvalUserId != ''">
+                and t7.approval_user_id = #{approvalUserId}
+            </if>
+            <if test="approvalUserIdList != null  and approvalUserIdList.length >0">
+                and t7.approval_user_id in (<foreach collection="approvalUserIdList" item="approvalUserId" separator=",">#{approvalUserId}</foreach>)
+            </if>
+            <if test="assetSidList != null  and assetSidList.length >0">
+                and t.asset_sid in (<foreach collection="assetSidList" item="assetSidList" separator=",">#{assetSidList}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="assetTypeList != null and assetTypeList.length >0">and t.asset_type in
+                (<foreach collection="assetTypeList" item="assetType" separator=",">#{assetType}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and (<foreach collection="creatorAccountName.split(';')" item="item" separator="or">t2.nick_name like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="clientId != null and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id = #{item}
+            </foreach>)
+            </if>
+            <if test="assetCode != null ">
+                and t.asset_code like concat('%', #{assetCode}, '%')
+            </if>
+            <if test="assetName != null and assetName != ''">and
+                t.asset_name like concat('%', #{assetName}, '%')
+            </if>
+            <if test="assetType != null and assetType != ''">
+                and (<foreach collection="assetType.split(';')" item="item" separator="or">t.asset_type = #{item}
+            </foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="seller != null and seller != ''">
+                and (<foreach collection="seller.split(';')" item="item" separator="or">t.seller
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="factory != null and factory != ''">
+                and (<foreach collection="factory.split(';')" item="item" separator="or">t.factory
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="brand != null and brand != ''">
+                and (<foreach collection="brand.split(';')" item="item" separator="or">t.brand
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="specification != null and specification != ''">
+                and (<foreach collection="specification.split(';')" item="item" separator="or">t.specification
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="buyer != null and buyer != ''">
+                and (<foreach collection="buyer.split(';')" item="item" separator="or">t.buyer
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseDate != null ">
+                and t.purchase_date = #{purchaseDate}
+            </if>
+            <if test="currencyAmount != null ">
+                and t.currency_amount = #{currencyAmount}
+            </if>
+            <if test="currentNetValue != null ">
+                and t.current_net_value = #{currentNetValue}
+            </if>
+            <if test="annualDepreciationRate != null ">
+                and t.annual_depreciation_rate = #{annualDepreciationRate}
+            </if>
+            <if test="assetAdministrator != null and assetAdministrator != ''">
+                and (<foreach collection="assetAdministrator.split(';')" item="item" separator="or">
+                t.asset_administrator
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="enableDate != null ">
+                and t.enable_date = #{enableDate}
+            </if>
+            <if test="scrapDate != null ">
+                and t.scrap_date = #{scrapDate}
+            </if>
+            <if test="assetState != null and assetState != ''">
+                and (<foreach collection="assetState.split(';')" item="item" separator="or">t.asset_state = #{item}
+            </foreach>)
+            </if>
+            <if test="assetSource != null and assetSource != ''">
+                and (<foreach collection="assetSource.split(';')" item="item" separator="or">t.asset_source = #{item}
+            </foreach>)
+            </if>
+            <if test="unitBase != null and unitBase != ''">
+                and (<foreach collection="unitBase.split(';')" item="item" separator="or">t.unit_base = #{item}
+            </foreach>)
+            </if>
+            <if test="quantity != null ">
+                and t.quantity =#{quantity}
+            </if>
+            <if test="departmentSid != null ">
+                and t.department_sid =#{departmentSid}
+            </if>
+            <if test="assetCardNumber != null and assetCardNumber != ''">
+                and (<foreach collection="assetCardNumber.split(';')" item="item" separator="or">t.asset_card_number
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="estimatedRemainYears != null ">
+                and t.estimated_remain_years = #{estimatedRemainYears}
+            </if>
+            <if test="hasUsedYears != null ">
+                and t.has_used_years = #{hasUsedYears}
+            </if>
+            <if test="useTimeUnit != null and useTimeUnit != ''">
+                and (<foreach collection="useTimeUnit.split(';')" item="item" separator="or">t.use_time_unit = #{item}
+            </foreach>)
+            </if>
+            <if test="isNeedMaintenance != null and isNeedMaintenance != ''">
+                and (<foreach collection="isNeedMaintenance.split(';')" item="item" separator="or">t.is_need_maintenance = #{item}
+            </foreach>)
+            </if>
+            <if test="maintenanceCycle != null ">
+                and t.maintenance_cycle = #{maintenanceCycle}
+            </if>
+            <if test="maintenanceCycleUnit != null and maintenanceCycleUnit != ''">
+                and (<foreach collection="maintenanceCycleUnit.split(';')" item="item" separator="or">
+                t.maintenance_cycle_unit = #{item}
+            </foreach>)
+            </if>
+            <if test="maintenanceLevel != null and maintenanceLevel != ''">
+                and (<foreach collection="maintenanceLevel.split(';')" item="item" separator="or">t.maintenance_level = #{item}
+            </foreach>)
+            </if>
+            <if test="lastestMaintenanceDate != null ">
+                and t.lastest_maintenance_date = #{lastestMaintenanceDate}
+            </if>
+            <if test="isNeedInspection != null and isNeedInspection != ''">
+                and (<foreach collection="isNeedInspection.split(';')" item="item" separator="or">t.is_need_inspection = #{item}
+            </foreach>)
+            </if>
+            <if test="inspectionCycle != null ">
+                and t.inspection_cycle = #{inspectionCycle}
+            </if>
+            <if test="inspectionCycleTimeUnit != null  and inspectionCycleTimeUnit != ''">
+                and (<foreach collection="inspectionCycleTimeUnit.split(';')" item="item" separator="or">
+                t.inspection_cycle_time_unit = #{item}
+            </foreach>)
+            </if>
+            <if test="lastestInspectionDate != null ">
+                and t.lastest_inspection_date = #{lastestInspectionDate}
+            </if>
+            <if test="lastestInspectionOutcome != null and lastestInspectionOutcome != ''">
+                and (<foreach collection="lastestInspectionOutcome.split(';')" item="item" separator="or">
+                t.lastest_inspection_outcome = #{item}
+            </foreach>)
+            </if>
+            <if test="currency != null and currency != ''">
+                and (<foreach collection="currency.split(';')" item="item" separator="or">t.currency = #{item}
+            </foreach>)
+            </if>
+            <if test="currencyUnit != null and currencyUnit != ''">
+                and (<foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit = #{item}
+            </foreach>)
+            </if>
+            <if test="recipient != null and recipient != ''">
+                and (<foreach collection="recipient.split(';')" item="item" separator="or">t.recipient
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="location != null and location != ''">
+                and (<foreach collection="location.split(';')" item="item" separator="or">t.location
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="supplierPhone != null and supplierPhone != ''">
+                and (<foreach collection="supplierPhone.split(';')" item="item" separator="or">t.supplier_phone
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="factoryPhone != null and factoryPhone != ''">
+                and (<foreach collection="factoryPhone.split(';')" item="item" separator="or">t.factory_phone
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status = #{item}
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account = #{item}
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account = #{item}
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account = #{item}
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where> order by t.asset_code desc
+    </select>
+
+    <select id="selectAssAssetStatisticalRecordList" parameterType="com.platform.ems.domain.AssAssetRecord"
+            resultMap="AssAssetStatisticalRecordResult">
+
+        <include refid="selectAssAssetStatisticalRecordVo"></include>
+        <where>
+            t.handle_status = '5'
+            <if test="assetTypeList != null and assetTypeList.length > 0">
+            and t.asset_type in
+                (<foreach collection="assetTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length > 0">
+                and t.company_sid in (<foreach collection="companySidList" item="item" separator=",">
+                                         #{item}
+                                      </foreach>)
+            </if>
+
+        </where>
+        group by t.asset_type , t.company_sid
+        order by currency_amount
+    </select>
+
+    <select id="selectAssAssetStatisticalRecordListDetail" parameterType="com.platform.ems.domain.AssAssetRecord"
+            resultMap="AssAssetStatisticalRecordResult">
+        <include refid="selectAssAssetStatisticalRecordVo"></include>
+        where t.company_sid = #{companySid} and t.asset_type = #{assetType}
+        order by t.current_net_value desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_ass_asset_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            asset_sid,
+            asset_code,
+            asset_name,
+            asset_type,
+            company_sid,
+            company_code,
+            seller,
+            factory,
+            brand,
+            specification,
+            buyer,
+            purchase_date,
+            currency_amount,
+            current_net_value,
+            annual_depreciation_rate,
+            asset_administrator,
+            enable_date,
+            scrap_date,
+            asset_state,
+            asset_source,
+            unit_base,
+            quantity,
+            department_sid,
+            department_code,
+            department_name,
+            asset_card_number,
+            estimated_remain_years,
+            has_used_years,
+            use_time_unit,
+            is_need_maintenance,
+            maintenance_cycle,
+            maintenance_cycle_unit,
+            maintenance_level,
+            lastest_maintenance_date,
+            is_need_inspection,
+            inspection_cycle,
+            inspection_cycle_time_unit,
+            lastest_inspection_date,
+            lastest_inspection_outcome,
+            currency,
+            currency_unit,
+            recipient,
+            location,
+            supplier_phone,
+            factory_phone,
+            picture_path,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.assetSid},
+                #{item.assetCode},
+                #{item.assetName},
+                #{item.assetType},
+                #{item.companySid},
+                #{item.seller},
+                #{item.factory},
+                #{item.brand},
+                #{item.specification},
+                #{item.buyer},
+                #{item.purchaseDate},
+                #{item.currencyAmount},
+                #{item.currentNetValue},
+                #{item.annualDepreciationRate},
+                #{item.assetAdministrator},
+                #{item.enableDate},
+                #{item.scrapDate},
+                #{item.assetState},
+                #{item.assetSource},
+                #{item.unitBase},
+                #{item.quantity},
+                #{item.departmentSid},
+                #{item.departmentCode},
+                #{item.departmentName},
+                #{item.assetCardNumber},
+                #{item.estimatedRemainYears},
+                #{item.hasUsedYears},
+                #{item.useTimeUnit},
+                #{item.isNeedMaintenance},
+                #{item.maintenanceCycle},
+                #{item.maintenanceCycleUnit},
+                #{item.maintenanceLevel},
+                #{item.lastestMaintenanceDate},
+                #{item.isNeedInspection},
+                #{item.inspectionCycle},
+                #{item.inspectionCycleTimeUnit},
+                #{item.lastestInspectionDate},
+                #{item.lastestInspectionOutcome},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.recipient},
+                #{item.location},
+                #{item.supplierPhone},
+                #{item.factoryPhone},
+                #{item.picturePath},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_ass_asset_record
+        <trim prefix="SET" suffixOverrides=",">
+            asset_code = #{assetCode},
+            asset_name = #{assetName},
+            asset_type = #{assetType},
+            company_sid = #{companySid},
+            company_code = #{companyCode},
+            seller = #{seller},
+            factory = #{factory},
+            brand = #{brand},
+            specification = #{specification},
+            buyer = #{buyer},
+            purchase_date = #{purchaseDate},
+            currency_amount = #{currencyAmount},
+            current_net_value = #{currentNetValue},
+            annual_depreciation_rate = #{annualDepreciationRate},
+            asset_administrator = #{assetAdministrator},
+            enable_date = #{enableDate},
+            scrap_date = #{scrapDate},
+            asset_state = #{assetState},
+            asset_source = #{assetSource},
+            unit_base = #{unitBase},
+            quantity = #{quantity},
+            department_sid = #{departmentSid},
+            department_code = #{departmentCode},
+            department_name = #{departmentName},
+            asset_card_number = #{assetCardNumber},
+            estimated_remain_years = #{estimatedRemainYears},
+            has_used_years = #{hasUsedYears},
+            use_time_unit = #{useTimeUnit},
+            is_need_maintenance = #{isNeedMaintenance},
+            maintenance_cycle = #{maintenanceCycle},
+            maintenance_cycle_unit = #{maintenanceCycleUnit},
+            maintenance_level = #{maintenanceLevel},
+            lastest_maintenance_date = #{lastestMaintenanceDate},
+            is_need_inspection = #{isNeedInspection},
+            inspection_cycle = #{inspectionCycle},
+            inspection_cycle_time_unit = #{inspectionCycleTimeUnit},
+            lastest_inspection_date = #{lastestInspectionDate},
+            lastest_inspection_outcome = #{lastestInspectionOutcome},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            recipient = #{recipient},
+            location = #{location},
+            supplier_phone = #{supplierPhone},
+            factory_phone = #{factoryPhone},
+            picture_path = #{picturePath},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where asset_sid = #{assetSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_ass_asset_record
+            <trim prefix="SET" suffixOverrides=",">
+                asset_code = #{assetCode},
+                asset_name = #{assetName},
+                asset_type = #{assetType},
+                company_sid = #{companySid},
+                company_code = #{companyCode},
+                seller = #{seller},
+                factory = #{factory},
+                brand = #{brand},
+                specification = #{specification},
+                buyer = #{buyer},
+                purchase_date = #{purchaseDate},
+                currency_amount = #{currencyAmount},
+                current_net_value = #{currentNetValue},
+                annual_depreciation_rate = #{annualDepreciationRate},
+                asset_administrator = #{assetAdministrator},
+                enable_date = #{enableDate},
+                scrap_date = #{scrapDate},
+                asset_state = #{assetState},
+                asset_source = #{assetSource},
+                unit_base = #{unitBase},
+                quantity = #{quantity},
+                department_sid = #{departmentSid},
+                department_code = #{departmentCode},
+                department_name = #{departmentName},
+                asset_card_number = #{assetCardNumber},
+                estimated_remain_years = #{estimatedRemainYears},
+                has_used_years = #{hasUsedYears},
+                use_time_unit = #{useTimeUnit},
+                is_need_maintenance = #{isNeedMaintenance},
+                maintenance_cycle = #{maintenanceCycle},
+                maintenance_cycle_unit = #{maintenanceCycleUnit},
+                maintenance_level = #{maintenanceLevel},
+                lastest_maintenance_date = #{lastestMaintenanceDate},
+                is_need_inspection = #{isNeedInspection},
+                inspection_cycle = #{inspectionCycle},
+                inspection_cycle_time_unit = #{inspectionCycleTimeUnit},
+                lastest_inspection_date = #{lastestInspectionDate},
+                lastest_inspection_outcome = #{lastestInspectionOutcome},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+                recipient = #{recipient},
+                location = #{location},
+                supplier_phone = #{supplierPhone},
+                factory_phone = #{factoryPhone},
+                picture_path = #{picturePath},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where asset_sid = #{assetSid}
+        </foreach>
+    </update>
+
+</mapper>

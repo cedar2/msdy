@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurPurchaseOrderMaterialProductMapper">
+
+    <resultMap type="com.platform.ems.domain.PurPurchaseOrderMaterialProduct" id="PurPurchaseOrderMaterialProductResult">
+        <result property="clientId" column="client_id"/>
+        <result property="itemMaterialProductSid" column="item_material_product_sid"/>
+        <result property="productSid" column="product_sid"/>
+        <result property="productSku1Sid" column="product_sku1_sid"/>
+        <result property="productSku2Sid" column="product_sku2_sid"/>
+        <result property="productBarcodeSid" column="product_barcode_sid"/>
+        <result property="quantityMaterial" column="quantity_material"/>
+        <result property="quantityProduct" column="quantity_product"/>
+        <result property="unitBaseMaterial" column="unit_base_material"/>
+        <result property="unitBaseProduct" column="unit_base_product"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="referDocCategory" column="refer_doc_category"/>
+        <result property="referDocSid" column="refer_doc_sid"/>
+        <result property="referDocCode" column="refer_doc_code"/>
+        <result property="referDocItemSid" column="refer_doc_item_sid"/>
+        <result property="referDocItemNum" column="refer_doc_item_num"/>
+        <result property="purchaseOrderSid" column="purchase_order_sid"/>
+        <result property="purchaseOrderCode" column="purchase_order_code"/>
+        <result property="purchaseOrderItemSid" column="purchase_order_item_sid"/>
+        <result property="purchaseOrderItemNum" column="purchase_order_item_num"/>
+        <result property="salesOrderSid" column="sales_order_sid"/>
+        <result property="salesOrderCode" column="sales_order_code"/>
+        <result property="salesOrderItemSid" column="sales_order_item_sid"/>
+        <result property="salesOrderItemNum" column="sales_order_item_num"/>
+        <result property="manufactureOrderSid" column="manufacture_order_sid"/>
+        <result property="manufactureOrderCode" column="manufacture_order_code"/>
+        <result property="manufactureOrderProductSid" column="manufacture_order_product_sid"/>
+        <result property="manufactureOrderProductNum" column="manufacture_order_product_num"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="materialPurchaseOrderItemSid" column="material_purchase_order_item_sid"/>
+        <result property="materialPurchaseOrderSid" column="material_purchase_order_sid"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectPurPurchaseOrderMaterialProductVo">
+select t.client_id,
+       t.item_material_product_sid,
+       t.product_sid,
+       t.product_sku1_sid,
+       t.product_sku2_sid,
+       t.product_barcode_sid,
+       t.quantity_material,
+       t.quantity_product,
+       t.unit_base_material,
+       t.unit_base_product,
+       t.item_num,
+       t.refer_doc_category,
+       t.refer_doc_sid,
+       t.refer_doc_code,
+       t.refer_doc_item_sid,
+       t.refer_doc_item_num,
+       t.purchase_order_sid,
+       t.purchase_order_code,
+       t.purchase_order_item_sid,
+       t.purchase_order_item_num,
+       t.sales_order_sid,
+       t.sales_order_code,
+       t.sales_order_item_sid,
+       t.sales_order_item_num,
+       t.manufacture_order_sid,
+       t.manufacture_order_code,
+       t.manufacture_order_product_sid,
+       t.manufacture_order_product_num,
+       t.remark,
+       t.creator_account,
+       t.create_date,
+       t.updater_account,
+       t.update_date,
+       t.data_source_sys,
+       t.material_purchase_order_item_sid,
+       t.material_purchase_order_sid,
+       t2.nick_name AS creator_account_name,
+       t8.customer_name,
+       t9.vendor_name,
+       t10.plant_name,
+       t11.material_code as product_code,
+       t11.material_name as  product_name,
+       t12.sku_name as product_sku1_name,
+       t13.sku_name as product_sku2_name,
+      IFNULL(t14.name,t15.name) as refer_doc_category_name
+       from s_pur_purchase_order_material_product t
+        LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+        left join s_pur_purchase_order t5 on t5.purchase_order_sid=t.purchase_order_sid
+        left join s_sal_sales_order t6 on t6.sales_order_sid=t.sales_order_sid
+        left join s_man_manufacture_order t7 on t7.manufacture_order_sid=t.manufacture_order_sid
+        LEFT JOIN s_bas_customer t8 on t8.customer_sid=t6.customer_sid
+        LEFT JOIN s_bas_vendor t9 ON t9.vendor_sid = t5.vendor_sid
+        LEFT JOIN s_bas_plant t10 ON t10.plant_sid = t7.plant_sid
+        LEFT JOIN s_bas_material t11 ON t11.material_sid = t.product_sid
+        LEFT JOIN s_bas_sku t12 ON t12.sku_sid = t.product_sku1_sid
+        LEFT JOIN s_bas_sku t13 ON t13.sku_sid = t.product_sku2_sid
+        left join s_con_doc_type_purchase_order t14 on t14.code = t.refer_doc_category
+        left join s_con_dataobject_category t15 on t15.code = t.refer_doc_category
+    </sql>
+
+    <select id="selectPurPurchaseOrderMaterialProductById" parameterType="Long" resultMap="PurPurchaseOrderMaterialProductResult">
+        <include refid="selectPurPurchaseOrderMaterialProductVo"/>
+        where t.material_purchase_order_item_sid = #{purchaseOrderItemSid}
+    </select>
+
+
+    <select id="selectPurPurchaseOrderMaterialProductList" parameterType="com.platform.ems.domain.PurPurchaseOrderMaterialProduct"
+            resultMap="PurPurchaseOrderMaterialProductResult">
+        <include refid="selectPurPurchaseOrderMaterialProductVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="productSid != null ">
+                and t.product_sid =#{productSid}
+            </if>
+            <if test="productSku1Sid != null ">
+                and t.product_sku1_sid =#{productSku1Sid}
+            </if>
+            <if test="productSku2Sid != null ">
+                and t.product_sku2_sid =#{productSku2Sid}
+            </if>
+            <if test="productBarcodeSid != null ">
+                and t.product_barcode_sid =#{productBarcodeSid}
+            </if>
+            <if test="quantityMaterial != null ">
+                and t.quantity_material = #{quantityMaterial}
+            </if>
+            <if test="quantityProduct != null ">
+                and t.quantity_product = #{quantityProduct}
+            </if>
+            <if test="unitBaseMaterial != null  and unitBaseMaterial != ''">
+                and (<foreach collection="unitBaseMaterial.split(';')" item="item" separator="or">t.unit_base_material
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="unitBaseProduct != null  and unitBaseProduct != ''">
+                and (<foreach collection="unitBaseProduct.split(';')" item="item" separator="or">t.unit_base_product
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num =#{itemNum}
+            </if>
+            <if test="referDocCategory != null  and referDocCategory != ''">
+                and (<foreach collection="referDocCategory.split(';')" item="item" separator="or">t.refer_doc_category
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="referDocSid != null ">
+                and t.refer_doc_sid =#{referDocSid}
+            </if>
+            <if test="referDocCode != null ">
+                and t.refer_doc_code =#{referDocCode}
+            </if>
+            <if test="referDocItemSid != null ">
+                and t.refer_doc_item_sid =#{referDocItemSid}
+            </if>
+            <if test="referDocItemNum != null ">
+                and t.refer_doc_item_num =#{referDocItemNum}
+            </if>
+            <if test="purchaseOrderSid != null ">
+                and t.purchase_order_sid =#{purchaseOrderSid}
+            </if>
+            <if test="purchaseOrderCode != null ">
+                and t.purchase_order_code =#{purchaseOrderCode}
+            </if>
+            <if test="purchaseOrderItemSid != null ">
+                and t.purchase_order_item_sid =#{purchaseOrderItemSid}
+            </if>
+            <if test="purchaseOrderItemNum != null ">
+                and t.purchase_order_item_num =#{purchaseOrderItemNum}
+            </if>
+            <if test="salesOrderSid != null ">
+                and t.sales_order_sid =#{salesOrderSid}
+            </if>
+            <if test="salesOrderCode != null ">
+                and t.sales_order_code =#{salesOrderCode}
+            </if>
+            <if test="salesOrderItemSid != null ">
+                and t.sales_order_item_sid =#{salesOrderItemSid}
+            </if>
+            <if test="salesOrderItemNum != null ">
+                and t.sales_order_item_num =#{salesOrderItemNum}
+            </if>
+            <if test="manufactureOrderSid != null ">
+                and t.manufacture_order_sid =#{manufactureOrderSid}
+            </if>
+            <if test="manufactureOrderCode != null ">
+                and t.manufacture_order_code =#{manufactureOrderCode}
+            </if>
+            <if test="manufactureOrderProductSid != null ">
+                and t.manufacture_order_product_sid =#{manufactureOrderProductSid}
+            </if>
+            <if test="manufactureOrderProductNum != null ">
+                and t.manufacture_order_product_num =#{manufactureOrderProductNum}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialPurchaseOrderItemSid != null ">
+                and t.material_purchase_order_item_sid =#{materialPurchaseOrderItemSid}
+            </if>
+            <if test="materialPurchaseOrderSid != null ">
+                and t.material_purchase_order_sid =#{materialPurchaseOrderSid}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_purchase_order_material_product
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            item_material_product_sid,
+            product_sid,
+            product_sku1_sid,
+            product_sku2_sid,
+            product_barcode_sid,
+            quantity_material,
+            quantity_product,
+            unit_base_material,
+            unit_base_product,
+            item_num,
+            refer_doc_category,
+            refer_doc_sid,
+            refer_doc_code,
+            refer_doc_item_sid,
+            refer_doc_item_num,
+            purchase_order_sid,
+            purchase_order_code,
+            purchase_order_item_sid,
+            purchase_order_item_num,
+            sales_order_sid,
+            sales_order_code,
+            sales_order_item_sid,
+            sales_order_item_num,
+            manufacture_order_sid,
+            manufacture_order_code,
+            manufacture_order_product_sid,
+            manufacture_order_product_num,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+            material_purchase_order_item_sid,
+            material_purchase_order_sid,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.itemMaterialProductSid},
+                #{item.productSid},
+                #{item.productSku1Sid},
+                #{item.productSku2Sid},
+                #{item.productBarcodeSid},
+                #{item.quantityMaterial},
+                #{item.quantityProduct},
+                #{item.unitBaseMaterial},
+                #{item.unitBaseProduct},
+                #{item.itemNum},
+                #{item.referDocCategory},
+                #{item.referDocSid},
+                #{item.referDocCode},
+                #{item.referDocItemSid},
+                #{item.referDocItemNum},
+                #{item.purchaseOrderSid},
+                #{item.purchaseOrderCode},
+                #{item.purchaseOrderItemSid},
+                #{item.purchaseOrderItemNum},
+                #{item.salesOrderSid},
+                #{item.salesOrderCode},
+                #{item.salesOrderItemSid},
+                #{item.salesOrderItemNum},
+                #{item.manufactureOrderSid},
+                #{item.manufactureOrderCode},
+                #{item.manufactureOrderProductSid},
+                #{item.manufactureOrderProductNum},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+                #{item.materialPurchaseOrderItemSid},
+                #{item.materialPurchaseOrderSid},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_purchase_order_material_product
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            item_material_product_sid = #{itemMaterialProductSid},
+            product_sid = #{productSid},
+            product_sku1_sid = #{productSku1Sid},
+            product_sku2_sid = #{productSku2Sid},
+            product_barcode_sid = #{productBarcodeSid},
+            quantity_material = #{quantityMaterial},
+            quantity_product = #{quantityProduct},
+            unit_base_material = #{unitBaseMaterial},
+            unit_base_product = #{unitBaseProduct},
+            item_num = #{itemNum},
+            refer_doc_category = #{referDocCategory},
+            refer_doc_sid = #{referDocSid},
+            refer_doc_code = #{referDocCode},
+            refer_doc_item_sid = #{referDocItemSid},
+            refer_doc_item_num = #{referDocItemNum},
+            purchase_order_sid = #{purchaseOrderSid},
+            purchase_order_code = #{purchaseOrderCode},
+            purchase_order_item_sid = #{purchaseOrderItemSid},
+            purchase_order_item_num = #{purchaseOrderItemNum},
+            sales_order_sid = #{salesOrderSid},
+            sales_order_code = #{salesOrderCode},
+            sales_order_item_sid = #{salesOrderItemSid},
+            sales_order_item_num = #{salesOrderItemNum},
+            manufacture_order_sid = #{manufactureOrderSid},
+            manufacture_order_code = #{manufactureOrderCode},
+            manufacture_order_product_sid = #{manufactureOrderProductSid},
+            manufacture_order_product_num = #{manufactureOrderProductNum},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+            material_purchase_order_item_sid = #{materialPurchaseOrderItemSid},
+            material_purchase_order_sid = #{materialPurchaseOrderSid},
+        </trim>
+        where item_material_product_sid = #{itemMaterialProductSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_purchase_order_material_product
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                item_material_product_sid = #{itemMaterialProductSid},
+                product_sid = #{productSid},
+                product_sku1_sid = #{productSku1Sid},
+                product_sku2_sid = #{productSku2Sid},
+                product_barcode_sid = #{productBarcodeSid},
+                quantity_material = #{quantityMaterial},
+                quantity_product = #{quantityProduct},
+                unit_base_material = #{unitBaseMaterial},
+                unit_base_product = #{unitBaseProduct},
+                item_num = #{itemNum},
+                refer_doc_category = #{referDocCategory},
+                refer_doc_sid = #{referDocSid},
+                refer_doc_code = #{referDocCode},
+                refer_doc_item_sid = #{referDocItemSid},
+                refer_doc_item_num = #{referDocItemNum},
+                purchase_order_sid = #{purchaseOrderSid},
+                purchase_order_code = #{purchaseOrderCode},
+                purchase_order_item_sid = #{purchaseOrderItemSid},
+                purchase_order_item_num = #{purchaseOrderItemNum},
+                sales_order_sid = #{salesOrderSid},
+                sales_order_code = #{salesOrderCode},
+                sales_order_item_sid = #{salesOrderItemSid},
+                sales_order_item_num = #{salesOrderItemNum},
+                manufacture_order_sid = #{manufactureOrderSid},
+                manufacture_order_code = #{manufactureOrderCode},
+                manufacture_order_product_sid = #{manufactureOrderProductSid},
+                manufacture_order_product_num = #{manufactureOrderProductNum},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+                material_purchase_order_item_sid = #{materialPurchaseOrderItemSid},
+                material_purchase_order_sid = #{materialPurchaseOrderSid},
+            </trim>
+            where item_material_product_sid = #{itemMaterialProductSid}
+        </foreach>
+    </update>
+
+</mapper>

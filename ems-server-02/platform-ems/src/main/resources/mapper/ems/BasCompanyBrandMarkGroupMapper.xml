@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasCompanyBrandMarkGroupMapper">
+
+    <resultMap type="com.platform.ems.domain.BasCompanyBrandMarkGroup" id="BasCompanyBrandMarkGroupResult">
+        <result property="clientId" column="client_id"/>
+        <result property="cbbmGroupSid" column="cbbm_group_sid"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="brandMarkSid" column="brand_mark_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="companyName" column="company_name"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="brandName" column="brand_name"/>
+        <result property="brandCode" column="brand_code"/>
+        <result property="brandMarkName" column="brand_mark_name"/>
+        <result property="brandMarkCode" column="brand_mark_code"/>
+    </resultMap>
+
+    <sql id="selectBasCompanyBrandMarkGroupVo">
+        select t.client_id,
+               t.cbbm_group_sid,
+               t.company_sid,
+               t.company_brand_sid,
+               t.brand_mark_sid,
+               t.remark,
+               t.creator_account,
+               t2.nick_name AS creator_account_name,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t3.company_name,t3.company_code,t4.brand_name,t4.brand_code,t5.brand_mark_name,t5.brand_mark_code
+        from s_bas_company_brand_mark_group t
+        LEFT JOIN sys_user t2 on t.creator_account = t2.user_name
+        left join s_bas_company t3 on t.company_sid = t3.company_sid
+        left join s_bas_company_brand t4 on t.company_brand_sid = t4.company_brand_sid
+        left join s_bas_company_brand_mark t5 on t.brand_mark_sid = t5.brand_mark_sid
+    </sql>
+
+    <select id="selectBasCompanyBrandMarkGroupById" parameterType="Long" resultMap="BasCompanyBrandMarkGroupResult">
+        <include refid="selectBasCompanyBrandMarkGroupVo"/>
+        where t.cbbm_group_sid = #{cbbmGroupSid}
+    </select>
+
+
+    <select id="selectBasCompanyBrandMarkGroupList" parameterType="com.platform.ems.domain.BasCompanyBrandMarkGroup"
+            resultMap="BasCompanyBrandMarkGroupResult">
+        <include refid="selectBasCompanyBrandMarkGroupVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or"> t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="companyBrandSid != null ">
+                and t.company_brand_sid =#{companyBrandSid}
+            </if>
+            <if test="brandMarkSid != null ">
+                and t.brand_mark_sid =#{brandMarkSid}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t.creator_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or"> t.data_source_sys like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_company_brand_mark_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            cbbm_group_sid,
+            company_sid,
+            company_brand_sid,
+            brand_mark_sid,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.companySid},
+                #{item.companyBrandSid},
+                #{item.brandMarkSid},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_company_brand_mark_group
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            cbbm_group_sid = #{cbbmGroupSid},
+            company_sid = #{companySid},
+            company_brand_sid = #{companyBrandSid},
+            brand_mark_sid = #{brandMarkSid},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where cbbm_group_sid = #{cbbmGroupSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_company_brand_mark_group
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                cbbm_group_sid = #{cbbmGroupSid},
+                company_sid = #{companySid},
+                company_brand_sid = #{companyBrandSid},
+                brand_mark_sid = #{brandMarkSid},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where cbbm_group_sid = #{cbbmGroupSid}
+        </foreach>
+    </update>
+
+</mapper>

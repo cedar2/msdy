@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.InvIntransitInventoryMapper">
+
+    <resultMap type="com.platform.ems.domain.InvIntransitInventory" id="InvIntransitInventoryResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="intransitStockSid" column="intransit_stock_sid"/>
+                    <result property="materialSid" column="material_sid"/>
+                    <result property="sku1Sid" column="sku1_sid"/>
+                    <result property="sku2Sid" column="sku2_sid"/>
+                    <result property="barcodeSid" column="barcode_sid"/>
+                    <result property="inventoryTransferSid" column="inventory_transfer_sid"/>
+                    <result property="inventoryTransferCode" column="inventory_transfer_code"/>
+                    <result property="inventoryTransferItemSid" column="inventory_transfer_item_sid"/>
+                    <result property="unitBase" column="unit_base"/>
+                    <result property="storehouseSid" column="storehouse_sid"/>
+                    <result property="storehouseLocationSid" column="storehouse_location_sid"/>
+                    <result property="intransitType" column="intransit_type"/>
+                    <result property="totalQuantity" column="total_quantity"/>
+                    <result property="unlimitedQuantity" column="unlimited_quantity"/>
+                    <result property="qualityTestedQuantity" column="quality_tested_quantity"/>
+                    <result property="freezedQuantity" column="freezed_quantity"/>
+                    <result property="firstUpdateStockDate" column="first_update_stock_date"/>
+                    <result property="latestUpdateStockDate" column="latest_update_stock_date"/>
+                    <result property="remark" column="remark"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="confirmerAccount" column="confirmer_account"/>
+                    <result property="confirmDate" column="confirm_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+            </resultMap>
+
+    <sql id="selectInvIntransitInventoryVo">
+        select t.client_id,
+        t.intransit_stock_sid,
+        t.material_sid,
+        t.sku1_sid,
+        t.sku2_sid,
+        t.barcode_sid,
+        t.inventory_transfer_sid,
+        t.inventory_transfer_code,
+        t.inventory_transfer_item_sid,
+        t.unit_base,
+        t.storehouse_sid,
+        t.storehouse_location_sid,
+        t.intransit_type,
+        t.total_quantity,
+        t.unlimited_quantity,
+        t.quality_tested_quantity,
+        t.freezed_quantity,
+        t.first_update_stock_date,
+        t.latest_update_stock_date,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.out_stock_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t3.storehouse_name,
+	    t3.storehouse_code,
+	    t4.location_name,
+	    t4.location_code,
+	    t5.material_name,
+        t5.material_code,
+        t5.material_class_sid,
+        t5.material_type,
+        t6.sku_code AS sku1_code,
+        t6.sku_name AS sku1_name,
+        t7.sku_code AS sku2_code,
+        t7.sku_name AS sku2_name,
+        t8.item_num,
+        t10.name as unit_base_name,
+        t11.item_num as inventory_document_item_num,
+        t.inventory_document_code
+         from s_inv_intransit_inventory t
+         LEFT JOIN s_bas_storehouse t3 on t3.storehouse_sid=t.storehouse_sid
+         LEFT JOIN s_bas_storehouse_location t4 on t4.storehouse_location_sid=t.storehouse_location_sid
+         LEFT JOIN s_bas_material t5 ON t5.material_sid = t.material_sid
+	     LEFT JOIN s_bas_sku t6 ON t6.sku_sid = t.sku1_sid
+	     LEFT JOIN s_bas_sku t7 ON t7.sku_sid = t.sku2_sid
+	     LEFT JOIN s_inv_inventory_transfer_item t8 ON t8.inventory_transfer_item_sid = t.inventory_transfer_item_sid
+	     left join s_con_measure_unit t10 on t10.code=t.unit_base
+	     left join s_inv_inventory_document_item t11 on t11.inventory_document_item_sid=t.inventory_document_item_sid
+    </sql>
+
+    <select id="selectInvIntransitInventoryById" parameterType="Long" resultMap="InvIntransitInventoryResult">
+        <include refid="selectInvIntransitInventoryVo"/>
+        where t.intransit_stock_sid = #{intransitStockSid}
+    </select>
+
+
+    <select id="selectInvIntransitInventoryList" parameterType="com.platform.ems.domain.InvIntransitInventory"
+            resultMap="InvIntransitInventoryResult">
+        <include refid="selectInvIntransitInventoryVo"/>
+        <where>
+            <if test="inventoryDocumentCode != null  and inventoryDocumentCode != ''">
+                and t.inventory_document_code like concat('%',#{inventoryDocumentCode}, '%')
+            </if>
+            <if test="inventoryTransferCode != null  and inventoryTransferCode != ''">
+                and t.inventory_transfer_code like concat('%',#{inventoryTransferCode}, '%')
+            </if>
+            <if test="materialCode != null and materialCode !=''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator="or">t5.material_code like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialName != null and materialName !=''">
+                and (<foreach collection="materialName.split(';')" item="item" separator="or">t5.material_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="storehouseSid != null and storehouseSid != '' ">
+                and t.storehouse_sid =#{storehouseSid}
+            </if>
+            <if test="storehouseSidList != null and storehouseSidList.length > 0">
+                and t.storehouse_sid in
+                (<foreach collection="storehouseSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="storehouseLocationSidList != null and storehouseLocationSidList.length >0">
+                and t.storehouse_location_sid in
+                (<foreach collection="storehouseLocationSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="materialClassSidList != null  and materialClassSidList.length >0" >
+                and (<foreach collection="materialClassSidList" item="item" separator="or">t5.material_class_sid like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialTypeList != null  and materialTypeList.length >0" >
+                and (<foreach collection="materialTypeList" item="item" separator="or">t5.material_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+        </where>order by t.out_stock_date desc, t.inventory_transfer_code desc, t.inventory_document_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_inv_intransit_inventory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            intransit_stock_sid,
+            material_sid,
+            sku1_sid,
+            sku2_sid,
+            barcode_sid,
+            inventory_transfer_sid,
+            inventory_transfer_code,
+            inventory_transfer_item_sid,
+            unit_base,
+            storehouse_sid,
+            storehouse_location_sid,
+            intransit_type,
+            total_quantity,
+            unlimited_quantity,
+            quality_tested_quantity,
+            freezed_quantity,
+            first_update_stock_date,
+            latest_update_stock_date,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+            handle_status,
+            out_stock_date,
+            inventory_document_sid,
+            inventory_document_code,
+            inventory_document_item_sid,
+
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.intransitStockSid},
+                #{item.materialSid},
+                #{item.sku1Sid},
+                #{item.sku2Sid},
+                #{item.barcodeSid},
+                #{item.inventoryTransferSid},
+                #{item.inventoryTransferCode},
+                #{item.inventoryTransferItemSid},
+                #{item.unitBase},
+                #{item.storehouseSid},
+                #{item.storehouseLocationSid},
+                #{item.intransitType},
+                #{item.totalQuantity},
+                #{item.unlimitedQuantity},
+                #{item.qualityTestedQuantity},
+                #{item.freezedQuantity},
+                #{item.firstUpdateStockDate},
+                #{item.latestUpdateStockDate},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+                #{item.handleStatus},
+                #{item.outStockDate},
+                #{item.inventoryDocumentSid},
+                #{item.inventoryDocumentCode},
+                #{item.inventoryDocumentItemSid},
+
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_inv_intransit_inventory
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                                            material_sid = #{materialSid},
+                                                                sku1_sid = #{sku1Sid},
+                                                                sku2_sid = #{sku2Sid},
+                                                                barcode_sid = #{barcodeSid},
+                                                                inventory_transfer_sid = #{inventoryTransferSid},
+                                                                inventory_transfer_code = #{inventoryTransferCode},
+                                                                inventory_transfer_item_sid = #{inventoryTransferItemSid},
+                                                                unit_base = #{unitBase},
+                                                                storehouse_sid = #{storehouseSid},
+                                                                storehouse_location_sid = #{storehouseLocationSid},
+                                                                intransit_type = #{intransitType},
+                                                                total_quantity = #{totalQuantity},
+                                                                unlimited_quantity = #{unlimitedQuantity},
+                                                                quality_tested_quantity = #{qualityTestedQuantity},
+                                                                freezed_quantity = #{freezedQuantity},
+                                                                first_update_stock_date = #{firstUpdateStockDate},
+                                                                latest_update_stock_date = #{latestUpdateStockDate},
+                                                                remark = #{remark},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                confirmer_account = #{confirmerAccount},
+                                                                confirm_date = #{confirmDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                                                out_stock_date=#{outStockDate},
+                                                                item_num=#{itemNum},
+
+                                    </trim>
+        where intransit_stock_sid = #{intransitStockSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_inv_intransit_inventory
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    material_sid = #{materialSid},
+                                                                                sku1_sid = #{sku1Sid},
+                                                                                sku2_sid = #{sku2Sid},
+                                                                                barcode_sid = #{barcodeSid},
+                                                                                inventory_transfer_sid = #{inventoryTransferSid},
+                                                                                inventory_transfer_code = #{inventoryTransferCode},
+                                                                                inventory_transfer_item_sid = #{inventoryTransferItemSid},
+                                                                                unit_base = #{unitBase},
+                                                                                storehouse_sid = #{storehouseSid},
+                                                                                storehouse_location_sid = #{storehouseLocationSid},
+                                                                                intransit_type = #{intransitType},
+                                                                                total_quantity = #{totalQuantity},
+                                                                                unlimited_quantity = #{unlimitedQuantity},
+                                                                                quality_tested_quantity = #{qualityTestedQuantity},
+                                                                                freezed_quantity = #{freezedQuantity},
+                                                                                first_update_stock_date = #{firstUpdateStockDate},
+                                                                                latest_update_stock_date = #{latestUpdateStockDate},
+                                                                                remark = #{remark},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                confirmer_account = #{confirmerAccount},
+                                                                                confirm_date = #{confirmDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where intransit_stock_sid = #{intransitStockSid}
+        </foreach>
+    </update>
+
+</mapper>

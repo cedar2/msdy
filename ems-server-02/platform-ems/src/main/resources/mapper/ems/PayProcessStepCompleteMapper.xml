@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PayProcessStepCompleteMapper">
+
+    <resultMap type="com.platform.ems.domain.PayProcessStepComplete" id="PayProcessStepCompleteResult">
+        <result property="clientId" column="client_id"/>
+        <result property="stepCompleteSid" column="step_complete_sid"/>
+        <result property="stepCompleteCode" column="step_complete_code"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="reporter" column="reporter"/>
+        <result property="reportDate" column="report_date"/>
+        <result property="reportCycle" column="report_cycle"/>
+        <result property="enterMode" column="enter_mode"/>
+        <result property="yearmonth" column="yearmonth"/>
+        <result property="workCenterSid" column="work_center_sid"/>
+        <result property="productPriceType" column="product_price_type"/>
+        <result property="jixinWangongType" column="jixin_wangong_type"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="plantName" column="plant_name"/>
+        <result property="workCenterCode" column="work_center_code"/>
+        <result property="workCenterName" column="work_center_name"/>
+        <result property="reporterName" column="reporter_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="approvalNode" column="approval_node"/>
+        <result property="approvalUserName" column="approval_user_name"/>
+        <result property="submitDate" column="submit_date"/>
+        <result property="submitUserName" column="submit_user_name"/>
+        <result property="department" column="department"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="productSid" column="product_sid"/>
+        <result property="productCode" column="product_code"/>
+        <result property="productName" column="product_name"/>
+        <result property="enterDimension" column="enter_dimension"/>
+    </resultMap>
+
+    <sql id="selectPayProcessStepCompleteVo">
+        SELECT t.client_id,
+               t.step_complete_sid,
+               t.step_complete_code,
+               t.plant_sid,
+               t.reporter,
+               t.report_date,
+               t.report_cycle,
+               t.enter_mode,
+               t.yearmonth,
+               t.product_sid,
+               t.product_code,
+               t.enter_dimension,
+               t.work_center_sid,
+               t.product_price_type,
+               t.jixin_wangong_type,
+               t.department,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t1.plant_code,
+               t1.plant_name,
+               t2.work_center_code,
+               t2.work_center_name,
+               t3.nick_name AS reporter_name,
+               t4.nick_name AS creator_account_name,
+               t5.nick_name AS updater_account_name,
+               t6.nick_name AS confirmer_account_name,
+               t7.approval_node,
+               t7.approval_user_name,
+               t7.create_date AS submit_date,
+               t7.approval_user_id,
+               t8.nick_name AS submit_user_name,
+               t9.name AS department_name,
+               t10.material_name AS product_name,
+               t10.picture_path AS picture
+        FROM s_pay_process_step_complete t
+                 LEFT JOIN s_bas_plant t1 ON t1.plant_sid = t.plant_sid
+                 LEFT JOIN s_man_work_center t2 ON t2.work_center_sid = t.work_center_sid
+                 LEFT JOIN sys_user t3 ON t3.user_id = t.reporter
+                 LEFT JOIN sys_user t4 ON t4.user_name = t.creator_account
+                 LEFT JOIN sys_user t5 ON t5.user_name = t.updater_account
+                 LEFT JOIN sys_user t6 ON t6.user_name = t.confirmer_account
+                 LEFT JOIN s_sys_form_process t7 ON t7.form_id = t.step_complete_sid
+                 LEFT JOIN sys_user t8 ON t8.user_id = t7.create_by_id
+                 LEFT JOIN s_con_manufacture_department t9 ON t.department = t9.code
+                 LEFT JOIN s_bas_material t10 ON t.product_sid = t10.material_sid
+    </sql>
+
+    <select id="selectPayProcessStepCompleteById" parameterType="Long" resultMap="PayProcessStepCompleteResult">
+        <include refid="selectPayProcessStepCompleteVo"/>
+        where t.step_complete_sid = #{stepCompleteSid}
+    </select>
+
+    <select id="selectPayProcessStepCompleteList" parameterType="com.platform.ems.domain.PayProcessStepComplete"
+            resultMap="PayProcessStepCompleteResult">
+        <include refid="selectPayProcessStepCompleteVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="stepCompleteSid != null ">
+                and t.step_complete_sid =#{stepCompleteSid}
+            </if>
+            <if test="stepCompleteSidList != null and stepCompleteSidList.length >0 ">
+                and t.step_complete_sid in
+                (<foreach collection="stepCompleteSidList" item="stepCompleteSid" separator=",">#{stepCompleteSid}</foreach>)
+            </if>
+            <if test="stepCompleteCode != null and stepCompleteCode != ''">
+                and (<foreach collection="stepCompleteCode.split(';')" item="item" separator="or">t.step_complete_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="productSid != null ">
+                and t.product_sid =#{productSid}
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and (<foreach collection="productCode.split(';')" item="item" separator="or">t.product_code
+                like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="productName != null and productName != ''">
+                and (<foreach collection="productName.split(';')" item="item" separator="or">t10.material_name
+                like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid =#{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="reporter != null ">
+                and t.reporter =#{reporter}
+            </if>
+            <if test="reporterList != null and reporterList.length >0 ">
+                and t.reporter in
+                (<foreach collection="reporterList" item="reporter" separator=",">#{reporter}</foreach>)
+            </if>
+            <if test="reportDate != null ">
+                and t.report_date = #{reportDate}
+            </if>
+            <if test="reportBeginDate != null and reportBeginDate!=''">
+                and date_format(t.report_date,'%y%m%d') &gt;= date_format(#{reportBeginDate},'%y%m%d')
+            </if>
+            <if test="reportEndDate != null and reportEndDate!=''">
+                and date_format(t.report_date,'%y%m%d') &lt;= date_format(#{reportEndDate},'%y%m%d')
+            </if>
+            <if test="reportCycle != null and reportCycle != ''">
+                and t.report_cycle = #{reportCycle}
+            </if>
+            <if test="enterMode != null and enterMode != ''">
+                and t.enter_mode = #{enterMode}
+            </if>
+            <if test="yearmonth != null and yearmonth != ''">
+                and t.yearmonth = #{yearmonth}
+            </if>
+            <if test="department != null and department != ''">
+                and t.department = #{department}
+            </if>
+            <if test="departmentList != null and departmentList.length >0 ">
+                and t.department in
+                (<foreach collection="departmentList" item="department" separator=",">#{department}</foreach>)
+            </if>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid =#{workCenterSid}
+            </if>
+            <if test="workCenterSidList != null and workCenterSidList.length >0 ">
+                and t.work_center_sid in
+                (<foreach collection="workCenterSidList" item="workCenterSid" separator=",">#{workCenterSid}</foreach>)
+            </if>
+            <if test="productPriceType != null and productPriceType != ''">
+                and t.product_price_type = #{productPriceType}
+            </if>
+            <if test="productPriceTypeList != null and productPriceTypeList.length >0 ">
+                and t.product_price_type in
+                (<foreach collection="productPriceTypeList" item="productPriceType" separator=",">#{productPriceType}</foreach>)
+            </if>
+            <if test="jixinWangongType != null and jixinWangongType != ''">
+                and t.jixin_wangong_type = #{jixinWangongType}
+            </if>
+            <if test="jixinWangongTypeList != null and jixinWangongTypeList.length >0 ">
+                and t.jixin_wangong_type in
+                (<foreach collection="jixinWangongTypeList" item="jixinWangongType" separator=",">#{jixinWangongType}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">#{creatorAccount}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.step_complete_code desc, t.create_date desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pay_process_step_complete
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            step_complete_sid,
+            step_complete_code,
+            plant_sid,
+            reporter,
+            report_date,
+            report_cycle,
+            enter_mode,
+            yearmonth,
+            product_sid,
+            product_code,
+            enter_dimension,
+            work_center_sid,
+            product_price_type,
+            jixin_wangong_type,
+            department,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.stepCompleteCode},
+                #{item.plantSid},
+                #{item.reporter},
+                #{item.reportDate},
+                #{item.reportCycle},
+                #{item.enterMode}
+                #{item.yearmonth},
+                #{item.productSid},
+                #{item.productCode},
+                #{item.enterDimension},
+                #{item.workCenterSid},
+                #{item.productPriceType},
+                #{item.jixinWangongType},
+                #{item.department},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pay_process_step_complete
+        <trim prefix="SET" suffixOverrides=",">
+            step_complete_sid = #{stepCompleteSid},
+            step_complete_code = #{stepCompleteCode},
+            plant_sid = #{plantSid},
+            reporter = #{reporter},
+            report_date = #{reportDate},
+            report_cycle = #{reportCycle},
+            enter_mode = #{enterMode},
+            yearmonth = #{yearmonth},
+            product_sid = #{productSid},
+            product_code = #{productCode},
+            enter_dimension = #{enterDimension},
+            work_center_sid = #{workCenterSid},
+            product_price_type = #{productPriceType},
+            jixin_wangong_type = #{jixinWangongType},
+            department = #{department},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where step_complete_sid = #{stepCompleteSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pay_process_step_complete
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                step_complete_sid = #{stepCompleteSid},
+                step_complete_code = #{stepCompleteCode},
+                plant_sid = #{plantSid},
+                reporter = #{reporter},
+                report_date = #{reportDate},
+                report_cycle = #{reportCycle},
+                enter_mode = #{enterMode},
+                yearmonth = #{yearmonth},
+                product_sid = #{productSid},
+                product_code = #{productCode},
+                enter_dimension = #{enterDimension},
+                work_center_sid = #{workCenterSid},
+                product_price_type = #{productPriceType},
+                jixin_wangong_type = #{jixinWangongType},
+                department = #{department},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where step_complete_sid = #{stepCompleteSid}
+        </foreach>
+    </update>
+
+</mapper>

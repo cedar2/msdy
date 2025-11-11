@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.plug.mapper.ConMovementTypeMapper">
+
+    <resultMap type="com.platform.ems.plug.domain.ConMovementType" id="ConMovementTypeResult">
+        <result property="clientId" column="client_id"/>
+        <result property="sid" column="sid"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="isClientDefine" column="is_client_define"/>
+        <result property="sort" column="sort"/>
+        <result property="isAllowReverse" column="is_allow_reverse"/>
+        <result property="referUnitType" column="refer_unit_type"/>
+        <result property="materialFlag" column="material_flag"/>
+        <result property="isStorehouseEdit" column="is_storehouse_edit"/>
+        <result property="isStorehouseLocationEdit" column="is_storehouse_location_edit"/>
+        <result property="isUseReserve" column="is_use_reserve"/>
+        <result property="specialStock" column="special_stock"/>
+        <result property="specialStockName" column="special_stock_name"/>
+        <result property="isTransferOnestep" column="is_transfer_onestep"/>
+        <result property="isSameStorehouse" column="is_same_storehouse"/>
+    </resultMap>
+
+    <sql id="selectConMovementTypeVo">
+        select t.client_id,
+               t.movement_type_code,
+               t1.name as movement_type_name,
+               t1.sid   as movement_type_sid,
+               t.remark,
+               t.status,
+               t.handle_status,
+               t.inv_doc_category_code,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t.sort,
+               t.is_client_define,
+               t1.refer_unit_type,
+               t.is_storehouse_edit,
+               t.is_storehouse_location_edit,
+               t1.material_flag,
+               t1.is_use_reserve,
+               t1.is_same_storehouse,
+               t1.is_transfer_onestep,
+               t1.is_same_storehouse,
+               t1.special_stock,
+               t2.name as special_stock_name
+        from s_con_in_out_stock_doc_category t
+                 left join s_con_movement_type t1 on t1.code = t.movement_type_code
+                 left join s_con_special_stock t2 on t1.special_stock = t2.code
+        <where>
+            <if test="code != null and code != ''">
+                and t.inv_doc_category_code = #{code}
+            </if>
+            <if test="docCategoryCode != null and docCategoryCode != ''">
+                and t.doc_category_code = #{docCategoryCode}
+            </if>
+            <if test="isTransferOnestep != null and isTransferOnestep != ''">
+                and t1.is_transfer_onestep = #{isTransferOnestep}
+            </if>
+                and t1.material_flag is NULL
+        </where>
+    </sql>
+
+    <select id="selectConMovementTypeById" parameterType="Long" resultMap="ConMovementTypeResult">
+        <include refid="selectConMovementTypeVo"/>
+        where t.sid = #{sid}
+    </select>
+
+    <select id="getList" resultType="com.platform.ems.plug.domain.ConMovementType" parameterType="com.platform.ems.plug.domain.ConMovementType">
+        select t.client_id,
+               t.movement_type_code,
+               t1.name as movement_type_name,
+               t1.sid   as movement_type_sid,
+               t.remark,
+               t.status,
+               t.handle_status,
+               t.inv_doc_category_code,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t.sort,
+               t.is_client_define,
+               t1.refer_unit_type,
+               t.is_storehouse_edit,
+               t.is_storehouse_location_edit,
+               t1.material_flag,
+               t1.is_use_reserve,
+               t1.is_same_storehouse,
+               t1.is_transfer_onestep,
+               t1.is_same_storehouse,
+               t1.special_stock,
+               t2.name as special_stock_name
+        from s_con_in_out_stock_doc_category t
+        left join s_con_movement_type t1 on t1.code = t.movement_type_code
+        left join s_con_special_stock t2 on t1.special_stock = t2.code
+        <where>
+            and t1.material_flag is NULL
+            <if test="invDocCategoryCode != null and invDocCategoryCode != ''">
+                and t.inv_doc_category_code = #{invDocCategoryCode}
+            </if>
+            <if test="docCategoryCode != null and docCategoryCode != ''">
+                and t.doc_category_code = #{docCategoryCode}
+            </if>
+            <if test="isTransferOnestep != null and isTransferOnestep != ''">
+                and t1.is_transfer_onestep = #{isTransferOnestep}
+            </if>
+            <if test="sidList != null and sidList.length >0 ">
+                and t1.sid in
+                (<foreach collection="sidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+        </where>
+    </select>
+
+    <select id="selectConMovementTypeList" parameterType="com.platform.ems.plug.domain.ConMovementType"
+            resultMap="ConMovementTypeResult">
+        <include refid="selectConMovementTypeVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="code != null  and code != ''">
+                and (<foreach collection="code.split(';')" item="item" separator="or">t.code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="name != null  and name != ''">and
+                t.name like concat('%', #{name}, '%')
+            </if>
+            <if test="materialFlag != null and materialFlag != ''">
+                and (<foreach collection="materialFlag.split(';')" item="item" separator="or">t1.material_flag =
+                #{item}</foreach>)
+            </if>
+            <if test="isStorehouseEdit != null and isStorehouseEdit != ''">
+                and (<foreach collection="isStorehouseEdit.split(';')" item="item" separator="or">t.is_storehouse_edit
+                = #{item}</foreach>)
+            </if>
+            <if test="isTransferOnestep != null and isTransferOnestep != ''">
+                and t.is_transfer_onestep = #{isTransferOnestep}
+            </if>
+            <if test="isSameStorehouse != null and isSameStorehouse != ''">
+                and t.is_same_storehouse = #{isSameStorehouse}
+            </if>
+            <if test="isStorehouseLocationEdit != null and isStorehouseLocationEdit != ''">
+                and (<foreach collection="isStorehouseLocationEdit.split(';')" item="item" separator="or">
+                t.is_storehouse_location_edit = #{item}</foreach>)
+            </if>
+            <if test="isUseReserve != null and isUseReserve != ''">
+                and (<foreach collection="isUseReserve.split(';')" item="item" separator="or">t1.is_use_reserve =
+                #{item}</foreach>)
+            </if>
+            <if test="specialStock != null and specialStock != ''">
+                and (<foreach collection="specialStock.split(';')" item="item" separator="or">t1.special_stock =
+                #{item}</foreach>)
+            </if>
+            <if test="status != null and status != ''">
+                and (<foreach collection="status.split(';')" item="item" separator="or">t.status = #{item}</foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status =
+                #{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isClientDefine != null  and isClientDefine != ''">
+                and (<foreach collection="isClientDefine.split(';')" item="item" separator="or">t.is_client_define like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sort != null ">
+                and t.sort =#{sort}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.sort asc, t.name asc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_movement_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sid,
+            code,
+            name,
+            material_flag,
+            is_use_reserve,
+            is_storehouse_edit,
+            is_storehouse_location_edit,
+            special_stock,
+            is_transfer_onestep,
+            is_same_storehouse,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+            is_client_define,
+            sort,
+            is_allow_reverse,
+            refer_unit_type,
+        </trim>
+        values
+        <foreach collection="list" item="o" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{o.clientId},
+                #{o.sid},
+                #{o.code},
+                #{o.name},
+                #{o.materialFlag},
+                #{o.isUseReserve},
+                #{o.isStorehouseEdit},
+                #{o.isStorehouseLocationEdit},
+                #{o.specialStock},
+                #{o.isTransferOnestep,},
+                #{o.isSameStorehouse},
+                #{o.remark},
+                #{o.status},
+                #{o.handleStatus},
+                #{o.creatorAccount},
+                #{o.createDate},
+                #{o.updaterAccount},
+                #{o.updateDate},
+                #{o.confirmerAccount},
+                #{o.confirmDate},
+                #{o.dataSourceSys},
+                #{o.isClientDefine},
+                #{o.sort},
+                #{o.isAllowReverse},
+                #{o.referUnitType},
+            </trim>
+        </foreach>
+
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_movement_type
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            code = #{code},
+            name = #{name},
+            material_flag = #{materialFlag},
+            is_use_reserve = #{isUseReserve},
+            is_storehouse_edit = #{isStorehouseEdit},
+            is_storehouse_location_edit = #{isStorehouseLocationEdit},
+            special_stock = #{specialStock},
+            is_transfer_onestep = #{isTransferOnestep},
+            is_same_storehouse = #{isSameStorehouse},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            is_client_define = #{isClientDefine},
+            sort = #{sort},
+            is_allow_reverse = #{isAllowReverse},
+            refer_unit_type = #{referUnitType},
+        </trim>
+        where sid = #{sid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_movement_type
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                code = #{code},
+                name = #{name},
+                material_flag = #{materialFlag},
+                is_use_reserve = #{isUseReserve},
+                is_storehouse_edit = #{isStorehouseEdit},
+                is_storehouse_location_edit = #{isStorehouseLocationEdit},
+                special_stock = #{specialStock},
+                is_transfer_onestep = #{isTransferOnestep},
+                is_same_storehouse = #{isSameStorehouse},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+                is_client_define = #{isClientDefine},
+                sort = #{sort},
+                is_allow_reverse = #{isAllowReverse},
+                refer_unit_type = #{referUnitType},
+            </trim>
+            where sid = #{sid}
+        </foreach>
+    </update>
+
+    <select id="conMovementTypeList" parameterType="com.platform.ems.plug.domain.ConMovementType"
+            resultMap="ConMovementTypeResult">
+        select t.client_id, t.sid, t.code, t.name, t.material_flag, t.is_storehouse_edit, t.is_storehouse_location_edit,
+        t.is_use_reserve, t.special_stock, t1.name as special_stock_name, t.is_transfer_onestep, t.is_same_storehouse,
+        t.remark, t.status, t.handle_status, t.creator_account,t.is_allow_reverse,t.refer_unit_type, t.create_date,
+        t.data_source_sys, t2.nick_name AS creator_account_name
+        from s_con_movement_type t
+        LEFT JOIN s_con_special_stock t1 ON t.special_stock = t1.code
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sidList != null and sidList.size() >0 ">
+                and t.sid in
+                (<foreach collection="sidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="sid != null">
+                and t.sid= #{sid}
+            </if>
+            <if test="name != null  and name != ''">and
+                t.name like concat('%', #{name}, '%')
+            </if>
+            <if test="materialFlag != null and materialFlag != ''">
+                and (<foreach collection="materialFlag.split(';')" item="item" separator="or">t.material_flag =
+                #{item}</foreach>)
+            </if>
+            <if test="isStorehouseEdit != null and isStorehouseEdit != ''">
+                and (<foreach collection="isStorehouseEdit.split(';')" item="item" separator="or">t.is_storehouse_edit =
+                #{item}</foreach>)
+            </if>
+            <if test="isStorehouseLocationEdit != null and isStorehouseLocationEdit != ''">
+                and (<foreach collection="isStorehouseLocationEdit.split(';')" item="item" separator="or">
+                t.is_storehouse_location_edit = #{item}</foreach>)
+            </if>
+            <if test="isUseReserve != null and isUseReserve != ''">
+                and (<foreach collection="isUseReserve.split(';')" item="item" separator="or">t.is_use_reserve =
+                #{item}</foreach>)
+            </if>
+            <if test="specialStock != null and specialStock != ''">
+                and (<foreach collection="specialStock.split(';')" item="item" separator="or">t.special_stock =
+                #{item}</foreach>)
+            </if>
+            <if test="isTransferOnestep != null and isTransferOnestep != ''">
+                and t.is_transfer_onestep = #{isTransferOnestep}
+            </if>
+            <if test="isSameStorehouse != null and isSameStorehouse != ''">
+                and t.is_same_storehouse = #{isSameStorehouse}
+            </if>
+            <if test="status != null  and status != ''">
+                and (<foreach collection="status.split(';')" item="item" separator="or">t.status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t2.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isAllowReverse != null  and isAllowReverse != ''">
+                and t.is_allow_reverse = #{isAllowReverse}
+            </if>
+            <if test="referUnitType != null  and referUnitType != ''">
+                and t.refer_unit_type = #{referUnitType}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.sort asc, t.name asc
+    </select>
+    <select id="conMovementTypeById" parameterType="Long" resultMap="ConMovementTypeResult">
+        select t.client_id,
+               t.sid,
+               t.code,
+               t.name,
+               t.material_flag,
+               t.is_storehouse_edit,
+               t.is_storehouse_location_edit,
+               t.is_use_reserve,
+               t.special_stock,
+               t1.name as special_stock_name,
+               t.is_transfer_onestep,
+               t.is_same_storehouse,
+               t.remark,
+               t.status,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.data_source_sys,
+               t.is_allow_reverse,
+               refer_unit_type,
+               t2.nick_name AS creator_account_name
+        from s_con_movement_type t
+                 LEFT JOIN s_con_special_stock t1 ON t.special_stock = t1.code
+                 LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name
+        where t.sid = #{sid}
+    </select>
+
+    <select id="getConMovementTypeList" resultType="com.platform.ems.plug.domain.ConMovementType">
+        select sid,
+               code,
+               name,
+               material_flag,
+               is_storehouse_edit,
+               is_storehouse_location_edit,
+               is_use_reserve,
+               special_stock,
+               is_transfer_onestep,
+               is_same_storehouse,
+               status,
+               handle_status,
+               create_date,
+               sort,
+               is_allow_reverse,
+               refer_unit_type
+        from s_con_movement_type
+        order by sort asc, name asc
+    </select>
+
+    <select id="getMovementList" resultType="com.platform.ems.plug.domain.ConMovementType">
+        select
+        client_id,
+        sid,
+        code,
+        name,
+        material_flag,is_storehouse_edit,is_storehouse_location_edit,
+        is_use_reserve,special_stock,is_transfer_onestep,is_same_storehouse,
+        status,
+        handle_status,
+        creator_account,
+        create_date,
+        sort,
+        refer_unit_type,
+        is_allow_reverse
+        from s_con_movement_type
+        <where>
+            <if test="materialFlag != null and materialFlag != ''">
+                and material_flag = #{materialFlag}
+            </if>
+            <if test="isStorehouseEdit != null and isStorehouseEdit != ''">
+                and is_storehouse_edit = #{isStorehouseEdit}
+            </if>
+            <if test="isStorehouseLocationEdit != null and isStorehouseLocationEdit != ''">
+                and is_storehouse_location_edit = #{isStorehouseLocationEdit}
+            </if>
+            <if test="isUseReserve != null and isUseReserve != ''">
+                and is_use_reserve = #{isUseReserve}
+            </if>
+            <if test="specialStock != null and specialStock != ''">
+                and special_stock = #{specialStock}
+            </if>
+            <if test="isTransferOnestep != null and isTransferOnestep != ''">
+                and is_transfer_onestep = #{isTransferOnestep}
+            </if>
+            <if test="isSameStorehouse != null and isSameStorehouse != ''">
+                and is_same_storehouse = #{isSameStorehouse}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and handle_status = #{handleStatus}
+            </if>
+            <if test="isAllowReverse != null and isAllowReverse != ''">
+                and is_allow_reverse = #{isAllowReverse}
+            </if>
+            <if test="referUnitType != null  and referUnitType != ''">
+                and t.refer_unit_type = #{referUnitType}
+            </if>
+        </where>
+        order by sort asc, name asc
+    </select>
+</mapper>

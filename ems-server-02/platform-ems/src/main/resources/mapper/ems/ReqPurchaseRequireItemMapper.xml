@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ReqPurchaseRequireItemMapper">
+
+    <resultMap type="com.platform.ems.domain.ReqPurchaseRequireItem" id="ReqPurchaseRequireItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="purchaseRequireItemSid" column="purchase_require_item_sid"/>
+        <result property="purchaseRequireSid" column="purchase_require_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku1Code" column="sku1_code"/>
+        <result property="sku1Name" column="sku1_name"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="sku2Code" column="sku2_code"/>
+        <result property="sku2Name" column="sku2_name"/>
+        <result property="barcodeSid" column="barcode_sid"/>
+        <result property="barcodeCode" column="barcode_code"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="quantity" column="quantity"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="demandDate" column="demand_date"/>
+        <result property="latestDemandDate" column="latest_demand_date"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="purchaseRequireCode" column="purchase_require_code"/>
+        <result property="documentType" column="document_type"/>
+        <result property="businessType" column="business_type"/>
+        <result property="requireOrg" column="require_org"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="supplyType" column="supply_type"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="unitBaseName" column="unit_base_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+    </resultMap>
+
+    <sql id="selectReqPurchaseRequireItemVo">
+        select t.client_id,
+               t.purchase_require_item_sid,
+               t.purchase_require_sid,
+               t.material_sid,
+               t.material_code,
+               t.sku1_sid,
+               t.sku1_code,
+               t.sku2_sid,
+               t.sku2_code,
+               t.barcode_sid,
+               t.barcode_code,
+               t.quantity,
+               t.unit_base,
+               t.demand_date,
+               t.latest_demand_date,
+               t.item_num,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t1.purchase_require_code,
+               t1.document_date,
+               t1.company_sid,
+               t1.product_season_sid,
+               t1.document_type,
+               t1.business_type,
+               t1.require_department_sid,
+               t1.material_category,
+               t1.handle_status,
+               t2.material_name,
+               t2.picture_path,
+               t3.sku_name  as sku1_name,
+               t4.sku_name  as sku2_name,
+               t7.name      as unit_base_name,
+               t8.nick_name as creator_account_name,
+               t9.company_code,
+               t9.company_name,
+               ifnull(t9.short_name, t9.company_name) as company_short_name,
+               t10.product_season_code,
+               t10.product_season_name,
+               t11.department_code as require_department_code,
+               t11.department_name as require_department_name,
+               t12.name as document_type_name,
+               t13.name as business_type_name,
+               t16.total as have_refer_quantity,
+               ifnull(ifnull(t.quantity,0)-ifnull(t16.total,0),0) as dai_execute_quantity
+        from s_req_purchase_require_item t
+         LEFT JOIN s_req_purchase_require t1 on t1.purchase_require_sid = t.purchase_require_sid
+         LEFT JOIN s_bas_material t2 on t2.material_sid = t.material_sid
+         LEFT JOIN s_bas_sku t3 on t3.sku_sid = t.sku1_sid
+         LEFT JOIN s_bas_sku t4 on t4.sku_sid = t.sku2_sid
+         LEFT JOIN s_bas_material_barcode t6 on t6.barcode_sid = t.barcode_sid
+         LEFT JOIN s_con_measure_unit t7 ON t7.code = t.unit_base
+         LEFT JOIN sys_user t8 ON t8.user_name = t.creator_account and t8.client_id = t.client_id
+         LEFT JOIN s_bas_company t9 ON t1.company_sid = t9.company_sid
+         LEFT JOIN s_bas_product_season t10 ON t1.product_season_sid = t10.product_season_sid
+         LEFT JOIN s_bas_department t11 ON t1.require_department_sid = t11.department_sid
+         LEFT JOIN s_con_doc_type_purchase_require t12 on t1.document_type = t12.code
+         LEFT JOIN s_con_bu_type_purchase_require t13 on t1.business_type = t13.code
+         LEFT JOIN s_bas_material_sku t14 on t.material_sid = t14.material_sid and t.sku1_sid = t14.sku_sid
+         LEFT JOIN s_bas_material_sku t15 on t.material_sid = t15.material_sid and t.sku2_sid = t15.sku_sid
+         LEFT JOIN (
+            SELECT a.refer_doc_item_sid, SUM(if(IFNULL(a.quantity,0) &gt; IFNULL(a.new_quantity,0), a.quantity, a.new_quantity)) AS total
+            FROM s_pur_purchase_order_data_source a
+            GROUP BY a.refer_doc_item_sid
+         ) t16 ON t.purchase_require_item_sid = t16.refer_doc_item_sid
+    </sql>
+
+    <select id="selectReqPurchaseRequireItemById" parameterType="Long" resultMap="ReqPurchaseRequireItemResult">
+        <include refid="selectReqPurchaseRequireItemVo"/>
+        where t.purchase_require_item_sid = #{purchaseRequireItemSid}
+    </select>
+
+    <select id="selectReqPurchaseRequireItemList" parameterType="com.platform.ems.domain.ReqPurchaseRequireItem"
+            resultMap="ReqPurchaseRequireItemResult">
+        <include refid="selectReqPurchaseRequireItemVo"/>
+        <where>
+            <if test="daiExecuteQuantityBigZero != null and daiExecuteQuantityBigZero == 'Y'.toString()">
+                and ifnull(ifnull(t.quantity,0)-ifnull(t16.total,0),0) &gt; 0
+            </if>
+            <if test="daiExecuteQuantityBigZero != null and daiExecuteQuantityBigZero == 'N'.toString()">
+                and ifnull(ifnull(t.quantity,0)-ifnull(t16.total,0),0) &lt;= 0
+            </if>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="purchaseRequireItemSid != null ">
+                and t.purchase_require_item_sid = #{purchaseRequireItemSid}
+            </if>
+            <if test="purchaseRequireItemSidList != null and purchaseRequireItemSidList.length >0 ">
+                and t.purchase_require_item_sid in
+                (<foreach collection="purchaseRequireItemSidList" item="purchaseRequireItemSid" separator=",">#{purchaseRequireItemSid}</foreach>)
+            </if>
+            <if test="purchaseRequireSid != null ">
+                and t.purchase_require_sid = #{purchaseRequireSid}
+            </if>
+            <if test="purchaseRequireCode != null and purchaseRequireCode != ''">
+                and t1.purchase_require_code like concat('%',#{purchaseRequireCode}, '%')
+            </if>
+            <if test="documentType != null and documentType != ''">
+                and t1.document_type = #{documentType}
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length >0 ">
+                and t1.document_type in
+                (<foreach collection="documentTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="businessType != null and businessType != ''">
+                and t1.business_type = #{businessType}
+            </if>
+            <if test="businessTypeList != null and businessTypeList.length >0 ">
+                and t1.business_type in
+                (<foreach collection="businessTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="materialCategory != null and materialCategory != ''">
+                and t1.material_category = #{materialCategory}
+            </if>
+            <if test="materialCategoryList != null and materialCategoryList.length >0 ">
+                and t1.material_category in
+                (<foreach collection="materialCategoryList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companySid != null">
+                and t1.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t1.company_sid in
+                (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="requireDepartmentSid != null">
+                and t1.require_department_sid = #{requireDepartmentSid}
+            </if>
+            <if test="requireDepartmentSidList != null and requireDepartmentSidList.length >0 ">
+                and t1.require_department_sid in
+                (<foreach collection="requireDepartmentSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t1.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and t.material_code like concat('%', #{materialCode}, '%')
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and t2.material_name like concat('%', #{materialName}, '%')
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t8.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid = #{sku1Sid}
+            </if>
+            <if test="sku1Code != null and sku1Code != ''">
+                and t.sku1_code like concat('%', #{sku1Code}, '%')
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid = #{sku2Sid}
+            </if>
+            <if test="sku2Code != null and sku2Code != ''">
+                and t.sku2_code like concat('%', #{sku2Code}, '%')
+            </if>
+            <if test="barcodeSid != null ">
+                and t.barcode_sid = #{barcodeSid}
+            </if>
+            <if test="barcodeCode != null">
+                and t.barcode_code like concat('%', #{barcodeCode}, '%')
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="unitBase != null and unitBase != ''">
+                and t.unit_base = #{unitBase}
+            </if>
+            <if test="demandDate != null ">
+                and t.demand_date = #{demandDate}
+            </if>
+            <if test="latestDemandDate != null ">
+                and t.latest_demand_date = #{latestDemandDate}
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num = #{itemNum}
+            </if>
+            <if test="demandDateBegin != null and demandDateBegin != ''">
+                and date_format(t.demand_date,'%y%m%d') &gt;= date_format(#{demandDateBegin},'%y%m%d')
+            </if>
+            <if test="demandDateEnd != null and demandDateEnd != ''">
+                and date_format(t.demand_date,'%y%m%d') &lt;= date_format(#{demandDateEnd},'%y%m%d')
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="createDate != null ">
+                and t.create_date = #{createDate}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+        </where>
+        order by t1.purchase_require_code desc, t.material_code asc, t14.sort asc, t3.sku_name asc, t15.sort asc, t4.sku_name ASC
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_req_purchase_require_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            purchase_require_item_sid,
+            purchase_require_sid,
+            material_sid,
+            material_code,
+            sku1_sid,
+            sku1_code,
+            sku2_sid,
+            sku2_code,
+            barcode_sid,
+            barcode_code,
+            quantity,
+            unit_base,
+            demand_date,
+            latest_demand_date,
+            item_num,
+            remark,
+            creator_account,
+            create_date,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.purchaseRequireItemSid},
+                #{item.purchaseRequireSid},
+                #{item.materialSid},
+                #{item.materialCode},
+                #{item.sku1Sid},
+                #{item.sku1Code},
+                #{item.sku2Sid},
+                #{item.sku2Code},
+                #{item.barcodeSid},
+                #{item.barcodeCode},
+                #{item.quantity},
+                #{item.unitBase},
+                #{item.demandDate},
+                #{item.latestDemandDate},
+                #{item.itemNum},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_req_purchase_require_item
+        <trim prefix="SET" suffixOverrides=",">
+            purchase_require_sid = #{purchaseRequireSid},
+            material_sid = #{materialSid},
+            material_code = #{materialCode},
+            sku1_sid = #{sku1Sid},
+            sku1_code = #{sku1Code},
+            sku2_sid = #{sku2Sid},
+            sku2_code = #{sku2Code},
+            barcode_sid = #{barcodeSid},
+            barcode_code = #{barcodeCode},
+            quantity = #{quantity},
+            unit_base = #{unitBase},
+            demand_date = #{demandDate},
+            latest_demand_date = #{latestDemandDate},
+            item_num = #{itemNum},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where purchase_require_item_sid = #{purchaseRequireItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_req_purchase_require_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{o.clientId},
+                purchase_require_sid = #{o.purchaseRequireSid},
+                material_sid = #{o.materialSid},
+                material_code = #{o.materialCode},
+                sku1_sid = #{o.sku1Sid},
+                sku1_code = #{o.sku1Code},
+                sku2_sid = #{o.sku2Sid},
+                sku2_code = #{o.sku2Code},
+                barcode_sid = #{o.barcodeSid},
+                barcode_code = #{o.barcodeCode},
+                quantity = #{o.quantity},
+                unit_base = #{o.unitBase},
+                demand_date = #{o.demandDate},
+                latest_demand_date = #{o.latestDemandDate},
+                item_num = #{o.itemNum},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where purchase_require_item_sid = #{o.purchaseRequireItemSid}
+        </foreach>
+    </update>
+
+    <delete id="deleteReqPurchaseRequireItemByIds" parameterType="long">
+        delete from s_req_purchase_require_item where purchase_require_sid in
+        <foreach item="purchaseRequireSid" collection="array" open="(" separator="," close=")">
+            #{purchaseRequireSid}
+        </foreach>
+    </delete>
+
+    <sql id="getItemListVo">
+        select t.client_id,
+               t.purchase_require_item_sid,
+               t.purchase_require_sid,
+               t.material_sid,
+               t.material_code,
+               t.sku1_sid,
+               t.sku1_code,
+               t.sku2_sid,
+               t.sku2_code,
+               t.barcode_sid,
+               t.barcode_code,
+               t.quantity,
+               t.unit_base,
+               t.demand_date,
+               t.latest_demand_date,
+               t.item_num,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t1.purchase_require_code,
+               t1.handle_status,
+               t3.sku_name as sku1_name,
+               t4.sku_name as sku2_name
+        from s_req_purchase_require_item t
+         LEFT JOIN s_req_purchase_require t1 on t1.purchase_require_sid = t.purchase_require_sid
+         LEFT JOIN s_bas_material t2 on t2.material_sid = t.material_sid
+         LEFT JOIN s_bas_sku t3 on t3.sku_sid = t.sku1_sid
+         LEFT JOIN s_bas_sku t4 on t4.sku_sid = t.sku2_sid
+    </sql>
+
+    <select id="getItemList" parameterType="com.platform.ems.domain.ReqPurchaseRequireItem"
+            resultMap="ReqPurchaseRequireItemResult">
+        <include refid="getItemListVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="purchaseRequireCode != null and purchaseRequireCode != ''">
+                and (<foreach collection="purchaseRequireCode.split(';')" item="item" separator=" or ">
+                t1.purchase_require_code like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length >0 ">
+                and t1.document_type in
+                (<foreach collection="documentTypeList" item="documentType" separator=",">#{documentType}</foreach>)
+            </if>
+            <if test="businessTypeList != null and businessTypeList.length >0 ">
+                and t1.business_type in
+                (<foreach collection="businessTypeList" item="businessType" separator=",">#{businessType}</foreach>)
+            </if>
+            <if test="requireOrgList != null and requireOrgList.length >0 ">
+                and t1.require_org in
+                (<foreach collection="requireOrgList" item="requireOrg" separator=",">#{requireOrg}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t1.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="requireDepartmentSidList != null and requireDepartmentSidList.length >0 ">
+                and t1.require_department_sid in
+                (<foreach collection="requireDepartmentSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0 ">
+                and t1.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">
+                #{productSeasonSid}</foreach>)
+            </if>
+            <if test="supplyTypeList != null and supplyTypeList.length >0 ">
+                and t1.supply_type in
+                (<foreach collection="supplyTypeList" item="supplyType" separator=",">#{supplyType}</foreach>)
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator=" or ">t.material_code like
+                concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="salesOrderCode != null and salesOrderCode != ''">
+                and (<foreach collection="salesOrderCode.split(';')" item="item" separator=" or ">t.sales_order_code
+                like
+                concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="manufactureOrderCode != null and manufactureOrderCode != ''">
+                and (<foreach collection="manufactureOrderCode.split(';')" item="item" separator=" or ">
+                t.manufacture_order_code like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="purchaseRequireSid != null ">
+                and t.purchase_require_sid = #{purchaseRequireSid}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid = #{sku1Sid}
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid = #{sku2Sid}
+            </if>
+            <if test="barcodeSid != null ">
+                and t.barcode_sid = #{barcodeSid}
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="unitBase != null and unitBase != ''">
+                and t.unit_base = #{unitBase}
+            </if>
+            <if test="demandDate != null ">
+                and t.demand_date = #{demandDate}
+            </if>
+            <if test="latestDemandDate != null ">
+                and t.latest_demand_date = #{latestDemandDate}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">
+                t.creator_account like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator=" or ">
+                t.updater_account like concat('%',#{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="materialName" separator=" or ">
+                t2.material_name like concat('%', #{materialName}, '%')</foreach>)
+            </if>
+        </where>
+    </select>
+</mapper>

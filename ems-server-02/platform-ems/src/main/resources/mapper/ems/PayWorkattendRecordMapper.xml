@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PayWorkattendRecordMapper">
+
+    <resultMap type="com.platform.ems.domain.PayWorkattendRecord" id="PayWorkattendRecordResult">
+        <result property="clientId" column="client_id"/>
+        <result property="workattendRecordSid" column="workattend_record_sid"/>
+        <result property="workattendRecordCode" column="workattend_record_code"/>
+        <result property="yearmonth" column="yearmonth"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="departmentSid" column="department_sid"/>
+        <result property="departmentCode" column="department_code"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="plantName" column="plant_name"/>
+        <result property="workattendRecordType" column="workattend_record_type"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="companyName" column="company_name"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="approvalNode" column="approval_node"/>
+        <result property="approvalUserName" column="approval_user_name"/>
+        <result property="submitDate" column="submit_date"/>
+        <result property="submitUserName" column="submit_user_name"/>
+        <result property="workCenterSid" column="work_center_sid"/>
+    </resultMap>
+
+    <sql id="selectPayWorkattendRecordVo">
+        select
+        t.client_id,
+        t.workattend_record_sid,
+        t.workattend_record_code,
+        t.yearmonth,
+        t.company_sid,
+        t.company_code,
+        t.department_sid,
+        t.department_code,
+        t.plant_sid,
+        t.plant_code,
+        t.work_center_sid,
+        t.workattend_record_type,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.company_name,
+        t2.department_name,
+        t3.nick_name as creator_account_name,
+        t4.nick_name as updater_account_name,
+        t5.approval_node,
+        t5.approval_user_name,
+        t5.create_date as submit_date,
+        t5.approval_user_id,
+        t6.nick_name as submit_user_name,
+        t7.work_center_name,
+        t8.plant_name,
+        t9.nick_name as confirmer_account_name
+  from s_pay_workattend_record t
+        LEFT JOIN s_bas_company t1 ON t1.company_sid = t.company_sid
+        LEFT JOIN s_bas_department t2 ON t2.department_sid = t.department_sid
+        LEFT JOIN sys_user t3 ON t3.user_name = t.creator_account
+	    LEFT JOIN sys_user t4 ON t4.user_name = t.updater_account
+	    LEFT JOIN s_sys_form_process t5 ON t5.form_id = t.workattend_record_sid
+        LEFT JOIN sys_user t6 ON t6.user_id = t5.create_by_id
+        LEFT JOIN s_man_work_center t7 ON t7.work_center_sid = t.work_center_sid
+        LEFT JOIN s_bas_plant t8 ON t.plant_sid = t8.plant_sid
+        LEFT JOIN sys_user t9 ON t9.user_name = t.confirmer_account
+    </sql>
+
+    <select id="selectPayWorkattendRecordById" parameterType="Long" resultMap="PayWorkattendRecordResult">
+        <include refid="selectPayWorkattendRecordVo"/>
+        where t.workattend_record_sid = #{workattendRecordSid}
+    </select>
+
+
+    <select id="selectPayWorkattendRecordList" parameterType="com.platform.ems.domain.PayWorkattendRecord"
+            resultMap="PayWorkattendRecordResult">
+        <include refid="selectPayWorkattendRecordVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="workattendRecordSid != null ">
+                and t.workattend_record_sid =#{workattendRecordSid}
+            </if>
+            <if test="workattendRecordSidList != null and workattendRecordSidList.length >0 ">
+                and t.workattend_record_sid in
+                (<foreach collection="workattendRecordSidList" item="workattendRecordSid" separator=",">
+                #{workattendRecordSid}</foreach>)
+            </if>
+            <if test="workattendRecordCode != null  and workattendRecordCode != ''">
+                and (<foreach collection="workattendRecordCode.split(';')" item="item" separator="or">
+                t.workattend_record_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="yearmonth != null  and yearmonth != ''">
+                and (<foreach collection="yearmonth.split(';')" item="item" separator="or">t.yearmonth like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="companyCode != null  and companyCode != ''">
+                and (<foreach collection="companyCode.split(';')" item="item" separator="or">t.company_code like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="departmentSid != null ">
+                and t.department_sid =#{departmentSid}
+            </if>
+            <if test="departmentSidList != null and departmentSidList.length >0 ">
+                and t.department_sid in
+                (<foreach collection="departmentSidList" item="departmentSid" separator=",">#{departmentSid}</foreach>)
+            </if>
+            <if test="departmentCode != null  and departmentCode != ''">
+                and (<foreach collection="departmentCode.split(';')" item="item" separator="or">t.department_code like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid =#{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid =#{workCenterSid}
+            </if>
+            <if test="workattendRecordType != null  and workattendRecordType != ''">
+                and (<foreach collection="workattendRecordType.split(';')" item="item" separator="or">
+                t.workattend_record_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t3.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.workattend_record_code desc, t.create_date desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pay_workattend_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            workattend_record_sid,
+            workattend_record_code,
+            yearmonth,
+            company_sid,
+            company_code,
+            department_sid,
+            department_code,
+            plant_sid,
+            plant_code,
+            work_center_sid,
+            workattend_record_type,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.workattendRecordSid},
+                #{item.workattendRecordCode},
+                #{item.yearmonth},
+                #{item.companySid},
+                #{item.companyCode},
+                #{item.departmentSid},
+                #{item.departmentCode},
+                #{item.plantSid},
+                #{item.plantCode},
+                #{item.workCenterSid},
+                #{item.workattendRecordType},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pay_workattend_record
+        <trim prefix="SET" suffixOverrides=",">
+            workattend_record_sid = #{workattendRecordSid},
+            workattend_record_code = #{workattendRecordCode},
+            yearmonth = #{yearmonth},
+            company_sid = #{companySid},
+            company_code = #{companyCode},
+            department_sid = #{departmentSid},
+            department_code = #{departmentCode},
+            plant_sid = #{plantSid},
+            plant_code = #{plantCode},
+            workattend_record_type = #{workattendRecordType},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            work_center_sid = #{workCenterSid},
+        </trim>
+        where workattend_record_sid = #{workattendRecordSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pay_workattend_record
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                workattend_record_sid = #{workattendRecordSid},
+                workattend_record_code = #{workattendRecordCode},
+                yearmonth = #{yearmonth},
+                company_sid = #{companySid},
+                company_code = #{companyCode},
+                department_sid = #{departmentSid},
+                department_code = #{departmentCode},
+                plant_sid = #{plantSid},
+                plant_code = #{plantCode},
+                workattend_record_type = #{workattendRecordType},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+                work_center_sid = #{workCenterSid},
+            </trim>
+            where workattend_record_sid = #{workattendRecordSid}
+        </foreach>
+    </update>
+
+</mapper>

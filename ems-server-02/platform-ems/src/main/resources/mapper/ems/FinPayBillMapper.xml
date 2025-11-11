@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinPayBillMapper">
+
+    <resultMap type="com.platform.ems.domain.FinPayBill" id="FinPayBillResult">
+        <result property="clientId" column="client_id"/>
+        <result property="payBillSid" column="pay_bill_sid"/>
+        <result property="payBillCode" column="pay_bill_code"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="businessType" column="business_type"/>
+        <result property="documentType" column="document_type"/>
+        <result property="accountCategory" column="account_category"/>
+        <result property="payDimension" column="pay_dimension"/>
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="businessChannel" column="business_channel"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="isYoupiao" column="is_youpiao"/>
+        <result property="paymentYear" column="payment_year"/>
+        <result property="paymentMonth" column="payment_month"/>
+        <result property="paymentDay" column="payment_day"/>
+        <result property="monthAccountPeriod" column="month_account_period"/>
+        <result property="urgency" column="urgency"/>
+        <result property="departmentSid" column="department_sid"/>
+        <result property="agent" column="agent"/>
+        <result property="paymentDate" column="payment_date"/>
+        <result property="bankAccount" column="bank_account"/>
+        <result property="bankName" column="bank_name"/>
+        <result property="bankCity" column="bank_city"/>
+        <result property="payCompanySid" column="pay_company_sid"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="purchaseOrg" column="purchase_org"/>
+        <result property="accountsMethodGroup" column="accounts_method_group"/>
+        <result property="payMethod" column="pay_method"/>
+        <result property="paymentStatus" column="payment_status"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="planPaymentDate" column="plan_payment_date"/>
+        <result property="isAdvanceManual" column="is_advance_manual"/>
+        <result property="isFinanceVerify" column="is_finance_verify"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectFinPayBillVo">
+        select t.client_id,
+               t.pay_bill_sid,
+               t.pay_bill_code,
+               t.vendor_sid,
+               t.vendor_code,
+               t.company_sid,
+               t.company_code,
+               t.document_date,
+               t.business_type,
+               t.document_type,
+               t.account_category,
+               t.pay_dimension,
+               t.company_brand_sid,
+               t.business_channel,
+               t.currency_amount_tax,
+               t.is_youpiao,
+               t.payment_year,
+               t.payment_month,
+               t.payment_day,
+               t.month_account_period,
+               t.urgency,
+               t.department_sid,
+               t.agent,
+               t.payment_date,
+               t.bank_account,
+               t.bank_name,
+               t.bank_city,
+               t.pay_company_sid,
+               t.product_season_sid,
+               t.purchase_org,
+               t.accounts_method_group,
+               t.pay_method,
+               t.payment_status,
+               t.currency,
+               t.currency_unit,
+               t.plan_payment_date,
+               t.is_advance_manual,
+               t.is_finance_verify,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               u1.nick_name AS creator_account_name,
+               u2.nick_name AS updater_account_name,
+               u3.nick_name AS confirmer_account_name,
+               p1.approval_node,
+               p1.approval_user_id,
+               p1.approval_user_name,
+               p1.create_date AS submit_date,
+               u4.nick_name AS submit_user_name,
+               t1.company_name,
+               t1.short_name as company_short_name,
+               t2.vendor_name,
+               t2.short_name as vendor_short_name,
+               t3.product_season_name,
+               t4.name as business_type_name,
+               t6.name as document_type_name,
+               u5.nick_name as agent_name,
+               t7.payment_method_names,
+               CASE
+                   WHEN NOT EXISTS (SELECT 1 FROM s_fin_pay_bill_item_invoice inv WHERE t.pay_bill_sid = inv.pay_bill_sid) AND t.is_youpiao = 'Y' THEN 'Y'
+                   ELSE 'N'
+                   END AS is_remind_daopiao
+        from s_fin_pay_bill t
+                 LEFT JOIN sys_user u1 ON t.creator_account = u1.user_name
+                 LEFT JOIN sys_user u2 ON t.updater_account = u2.user_name
+                 LEFT JOIN sys_user u3 ON t.confirmer_account = u3.user_name
+                 LEFT JOIN s_sys_form_process p1 ON t.pay_bill_sid = p1.form_id
+                 LEFT JOIN sys_user u4 ON p1.creator_account = u4.user_name
+                 left join s_bas_company t1 on t.company_sid = t1.company_sid
+                 left join s_bas_vendor t2 on t.vendor_sid = t2.vendor_sid
+                 left join s_bas_product_season t3 on t.product_season_sid = t3.product_season_sid
+                 LEFT JOIN s_con_bu_type_pay_bill t4 on t.business_type = t4.code
+                 LEFT JOIN s_con_doc_type_pay_bill t6 on t.document_type = t6.code
+                 LEFT JOIN sys_user u5 ON t.agent = u5.user_name
+                 LEFT JOIN (select it1.pay_bill_sid, group_concat(DISTINCT it2.name separator ';') as payment_method_names
+                     from s_fin_pay_bill_item it1
+                     left join s_con_payment_method it2 on it1.payment_method = it2.code
+                     group by it1.pay_bill_sid
+                 ) t7 on t.pay_bill_sid = t7.pay_bill_sid
+    </sql>
+
+    <select id="selectFinPayBillById" parameterType="Long" resultMap="FinPayBillResult">
+        <include refid="selectFinPayBillVo"/>
+        where t.pay_bill_sid = #{payBillSid}
+    </select>
+
+    <select id="selectFinPayBillList" parameterType="com.platform.ems.domain.FinPayBill"
+            resultMap="FinPayBillResult">
+        <include refid="selectFinPayBillVo"/>
+        <where>
+            <if test="approvalUserId != null and approvalUserId != '' ">
+                and (p1.approval_user_id = #{approvalUserId}  or p1.approval_user_id like concat('%, ', #{approvalUserId}, ',%')
+                or p1.approval_user_id like concat('%, ', #{approvalUserId}) or p1.approval_user_id like concat(#{approvalUserId}, ',%')
+                or p1.approval_user_id like concat('%,', #{approvalUserId}, ',%') or p1.approval_user_id like concat('%,', #{approvalUserId}))
+            </if>
+            <if test="approvalUserIdList != null and approvalUserIdList.length >0 ">
+                and (<foreach collection="approvalUserIdList" item="approvalUserId" separator=" or ">
+                (p1.approval_user_id = #{approvalUserId} or p1.approval_user_id like concat('%, ', #{approvalUserId}, ',%')
+                or p1.approval_user_id like concat('%, ', #{approvalUserId}) or p1.approval_user_id like concat(#{approvalUserId}, ',%')
+                or p1.approval_user_id like concat('%,', #{approvalUserId}, ',%') or p1.approval_user_id like concat('%,', #{approvalUserId}))</foreach>)
+            </if>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="payBillSid != null ">
+                and t.pay_bill_sid = #{payBillSid}
+            </if>
+            <if test="payBillSidList != null  and payBillSidList.length >0">
+                and t.pay_bill_sid in (<foreach collection="payBillSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="payBillCode != null  and payBillCode != ''">
+                and t.pay_bill_code like concat('%', #{payBillCode}, '%')
+            </if>
+            <if test="vendorSid != null ">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="vendorSidList != null  and vendorSidList.length >0">
+                and t.vendor_sid in (<foreach collection="vendorSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="vendorCode != null and vendorCode != ''">
+                and t.vendor_code = #{vendorCode}
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null  and companySidList.length >0">
+                and t.company_sid in (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companyCode != null and companyCode != ''">
+                and t.company_code = #{companyCode}
+            </if>
+            <if test="documentDate != null ">
+                and t.document_date = #{documentDate}
+            </if>
+            <if test="documentDateBegin != null and documentDateBegin!=''">
+                and date_format(t.document_date,'%y%m%d') &gt;= date_format(#{documentDateBegin},'%y%m%d')
+            </if>
+            <if test="documentDateEnd != null and documentDateEnd!=''">
+                and date_format(t.document_date,'%y%m%d') &lt;= date_format(#{documentDateEnd},'%y%m%d')
+            </if>
+            <if test="businessType != null and businessType != ''">
+                and t.business_type = #{businessType}
+            </if>
+            <if test="businessTypeList != null  and businessTypeList.length >0">
+                and t.business_type in (<foreach collection="businessTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="documentType != null and documentType != ''">
+                and t.document_type = #{documentType}
+            </if>
+            <if test="documentTypeList != null  and documentTypeList.length >0">
+                and t.document_type in (<foreach collection="documentTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="accountCategory != null and accountCategory != ''">
+                and t.account_category = #{accountCategory}
+            </if>
+            <if test="payDimension != null and payDimension != ''">
+                and t.pay_dimension = #{payDimension}
+            </if>
+            <if test="companyBrandSid != null ">
+                and t.company_brand_sid = #{companyBrandSid}
+            </if>
+            <if test="businessChannel != null and businessChannel != ''">
+                and t.business_channel = #{businessChannel}
+            </if>
+            <if test="currencyAmountTax != null ">
+                and t.currency_amount_tax = #{currencyAmountTax}
+            </if>
+            <if test="isYoupiao != null and isYoupiao != ''">
+                and t.is_youpiao = #{isYoupiao}
+            </if>
+            <if test="paymentYear != null ">
+                and t.payment_year = #{paymentYear}
+            </if>
+            <if test="paymentMonth != null ">
+                and t.payment_month = #{paymentMonth}
+            </if>
+            <if test="paymentDay != null ">
+                and t.payment_day = #{paymentDay}
+            </if>
+            <if test="monthAccountPeriod != null and monthAccountPeriod != ''">
+                and t.month_account_period = #{monthAccountPeriod}
+            </if>
+            <if test="urgency != null and urgency != ''">
+                and t.urgency = #{urgency}
+            </if>
+            <if test="departmentSid != null ">
+                and t.department_sid = #{departmentSid}
+            </if>
+            <if test="agent != null and agent != ''">
+                and t.agent = #{agent}
+            </if>
+            <if test="agentName != null and agentName != ''">
+                and u5.nick_name like concat('%', #{agentName}, '%')
+            </if>
+            <if test="paymentDate != null ">
+                and t.payment_date = #{paymentDate}
+            </if>
+            <if test="paymentDateBegin != null and paymentDateBegin!=''">
+                and date_format(t.payment_date,'%y%m%d') &gt;= date_format(#{paymentDateBegin},'%y%m%d')
+            </if>
+            <if test="paymentDateEnd != null and paymentDateEnd!=''">
+                and date_format(t.payment_date,'%y%m%d') &lt;= date_format(#{paymentDateEnd},'%y%m%d')
+            </if>
+            <if test="bankAccount != null and bankAccount != ''">
+                and t.bank_account = #{bankAccount}
+            </if>
+            <if test="bankName != null and bankName != ''">and
+                t.bank_name like concat('%', #{bankName}, '%')
+            </if>
+            <if test="bankCity != null and bankCity != ''">
+                and t.bank_city = #{bankCity}
+            </if>
+            <if test="payCompanySid != null ">
+                and t.pay_company_sid = #{payCompanySid}
+            </if>
+            <if test="productSeasonSid != null ">
+                and t.product_season_sid = #{productSeasonSid}
+            </if>
+            <if test="productSeasonSidList != null  and productSeasonSidList.length >0">
+                and t.product_season_sid in (<foreach collection="productSeasonSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="purchaseOrg != null and purchaseOrg != ''">
+                and t.purchase_org = #{purchaseOrg}
+            </if>
+            <if test="accountsMethodGroup != null ">
+                and t.accounts_method_group = #{accountsMethodGroup}
+            </if>
+            <if test="payMethod != null and payMethod != ''">
+                and t.pay_method = #{payMethod}
+            </if>
+            <if test="payMethodList != null  and payMethodList.length >0">
+                and t.pay_method in (<foreach collection="payMethodList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="paymentStatus != null and paymentStatus != ''">
+                and t.payment_status = #{paymentStatus}
+            </if>
+            <if test="paymentStatusList != null  and paymentStatusList.length >0">
+                and t.payment_status in (<foreach collection="paymentStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="currency != null and currency != ''">
+                and t.currency = #{currency}
+            </if>
+            <if test="currencyUnit != null and currencyUnit != ''">
+                and t.currency_unit = #{currencyUnit}
+            </if>
+            <if test="planPaymentDateBegin != null and planPaymentDateBegin!=''">
+                and date_format(t.plan_payment_date,'%y%m%d') &gt;= date_format(#{planPaymentDateBegin},'%y%m%d')
+            </if>
+            <if test="planPaymentDateEnd != null and planPaymentDateEnd!=''">
+                and date_format(t.plan_payment_date,'%y%m%d') &lt;= date_format(#{planPaymentDateEnd},'%y%m%d')
+            </if>
+            <if test="isAdvanceManual != null and isAdvanceManual != ''">
+                and t.is_advance_manual = #{isAdvanceManual}
+            </if>
+            <if test="isFinanceVerify != null and isFinanceVerify != ''">
+                and t.is_finance_verify = #{isFinanceVerify}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0">
+                and t.handle_status in (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and u1.nick_name like concat('%', #{creatorAccountName}, "%")
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.pay_bill_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_pay_bill
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            pay_bill_sid,
+            pay_bill_code,
+            vendor_sid,
+            vendor_code,
+            company_sid,
+            company_code,
+            document_date,
+            business_type,
+            document_type,
+            account_category,
+            pay_dimension,
+            company_brand_sid,
+            business_channel,
+            currency_amount_tax,
+            is_youpiao,
+            payment_year,
+            payment_month,
+            payment_day,
+            month_account_period,
+            urgency,
+            department_sid,
+            agent,
+            payment_date,
+            bank_account,
+            bank_name,
+            bank_city,
+            pay_company_sid,
+            product_season_sid,
+            purchase_org,
+            accounts_method_group,
+            pay_method,
+            payment_status,
+            currency,
+            currency_unit,
+            plan_payment_date,
+            is_advance_manual,
+            is_finance_verify,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.payBillSid},
+                #{item.payBillCode},
+                #{item.vendorSid},
+                #{item.vendorCode},
+                #{item.companySid},
+                #{item.companyCode},
+                #{item.documentDate},
+                #{item.businessType},
+                #{item.documentType},
+                #{item.accountCategory},
+                #{item.payDimension},
+                #{item.companyBrandSid},
+                #{item.businessChannel},
+                #{item.currencyAmountTax},
+                #{item.isYoupiao},
+                #{item.paymentYear},
+                #{item.paymentMonth},
+                #{item.paymentDay},
+                #{item.monthAccountPeriod},
+                #{item.urgency},
+                #{item.departmentSid},
+                #{item.agent},
+                #{item.paymentDate},
+                #{item.bankAccount},
+                #{item.bankName},
+                #{item.bankCity},
+                #{item.payCompanySid},
+                #{item.productSeasonSid},
+                #{item.purchaseOrg},
+                #{item.accountsMethodGroup},
+                #{item.payMethod},
+                #{item.paymentStatus},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.planPaymentDate},
+                #{item.isAdvanceManual},
+                #{item.isFinanceVerify},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_pay_bill
+        <trim prefix="SET" suffixOverrides=",">
+            vendor_sid = #{vendorSid},
+            vendor_code = #{vendorCode},
+            company_sid = #{companySid},
+            company_code = #{companyCode},
+            document_date = #{documentDate},
+            business_type = #{businessType},
+            document_type = #{documentType},
+            account_category = #{accountCategory},
+            pay_dimension = #{payDimension},
+            company_brand_sid = #{companyBrandSid},
+            business_channel = #{businessChannel},
+            currency_amount_tax = #{currencyAmountTax},
+            is_youpiao = #{isYoupiao},
+            payment_year = #{paymentYear},
+            payment_month = #{paymentMonth},
+            payment_day = #{paymentDay},
+            month_account_period = #{monthAccountPeriod},
+            urgency = #{urgency},
+            department_sid = #{departmentSid},
+            agent = #{agent},
+            payment_date = #{paymentDate},
+            bank_account = #{bankAccount},
+            bank_name = #{bankName},
+            bank_city = #{bankCity},
+            pay_company_sid = #{payCompanySid},
+            product_season_sid = #{productSeasonSid},
+            purchase_org = #{purchaseOrg},
+            accounts_method_group = #{accountsMethodGroup},
+            pay_method = #{payMethod},
+            payment_status = #{paymentStatus},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            plan_payment_date = #{planPaymentDate},
+            is_advance_manual = #{isAdvanceManual},
+            is_finance_verify = #{isFinanceVerify},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where pay_bill_sid = #{payBillSid}
+    </update>
+
+</mapper>

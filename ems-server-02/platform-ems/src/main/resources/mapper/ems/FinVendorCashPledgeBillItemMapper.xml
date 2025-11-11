@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinVendorCashPledgeBillItemMapper">
+
+    <resultMap type="com.platform.ems.domain.FinVendorCashPledgeBillItem" id="FinVendorCashPledgeBillItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="cashPledgeBillItemSid" column="cash_pledge_bill_item_sid"/>
+        <result property="cashPledgeBillSid" column="cash_pledge_bill_sid"/>
+        <result property="pledgeType" column="pledge_type"/>
+        <result property="currencyAmount" column="currency_amount"/>
+        <result property="currencyAmountYth" column="currency_amount_yth"/>
+        <result property="currencyAmountThz" column="currency_amount_thz"/>
+        <result property="returnStatus" column="return_status"/>
+        <result property="preCashPledgeBillSid" column="pre_cash_pledge_bill_sid"/>
+        <result property="preCashPledgeBillCode" column="pre_cash_pledge_bill_code"/>
+        <result property="preCashPledgeBillItemSid" column="pre_cash_pledge_bill_item_sid"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="purchaseContractSid" column="purchase_contract_sid"/>
+        <result property="purchaseContractCode" column="purchase_contract_code"/>
+        <result property="purchaseOrderSid" column="purchase_order_sid"/>
+        <result property="purchaseOrderCode" column="purchase_order_code"/>
+        <result property="deliveryNoteSid" column="delivery_note_sid"/>
+        <result property="deliveryNoteCode" column="delivery_note_code"/>
+        <result property="paperContractCode" column="paper_contract_code"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="cashPledgeBillCode" column="cash_pledge_bill_code"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="companyName" column="company_name"/>
+        <result property="documentTypeName" column="document_type_name"/>
+        <result property="pledgeTypeName" column="pledge_type_name"/>
+        <result property="cashAmount" column="cash_amount"/>
+        <result property="currencyAmountDth" column="currency_amount_dth"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="documentType" column="document_type"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="buyerName" column="buyer_name"/>
+        <result property="preDocumentDate" column="pre_document_date"/>
+        <result property="preDocumentType" column="pre_document_type"/>
+        <result property="preDocumentTypeName" column="pre_document_type_name"/>
+        <result property="preReturnStatus" column="pre_return_status"/>
+        <result property="preCurrencyAmountYth" column="pre_currency_amount_yth"/>
+        <result property="preCurrencyAmountThz" column="pre_currency_amount_thz"/>
+        <result property="preCurrencyAmountDth" column="pre_currency_amount_dth"/>
+        <result property="preItemNum" column="pre_item_num"/>
+    </resultMap>
+
+    <sql id="selectFinVendorCashPledgeBillItemVo">
+        select t.client_id,
+               t.cash_pledge_bill_item_sid,
+               t.cash_pledge_bill_sid,
+               t.pledge_type,
+               t.currency_amount,
+               t.currency_amount_yth,
+               t9.currency_amount_yth AS pre_currency_amount_yth,
+               t.currency_amount_thz,
+               t9.currency_amount_thz AS pre_currency_amount_thz,
+               t.return_status,
+               t9.return_status AS pre_return_status,
+               t9.item_num AS pre_item_num,
+               t.pre_cash_pledge_bill_sid,
+               t.pre_cash_pledge_bill_code,
+               t.pre_cash_pledge_bill_item_sid,
+               t.item_num,
+               t.purchase_contract_sid,
+               t.purchase_contract_code,
+               t.purchase_order_sid,
+               t.purchase_order_code,
+               t.delivery_note_sid,
+               t.delivery_note_code,
+               t.paper_contract_code,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.cash_pledge_bill_code,
+               t4.document_date,
+               t10.document_date AS pre_document_date,
+               t4.document_type,
+               t10.document_type AS pre_document_type,
+               t4.handle_status,
+               t5.company_name,
+               ifnull(t5.short_name,t5.company_name) as company_short_name,
+               t6.vendor_name,
+               ifnull(t6.short_name,t6.vendor_name) as vendor_short_name,
+               t7.name AS document_type_name,
+               t13.name AS pre_document_type_name,
+               t8.name AS pledge_type_name,
+               t11.product_season_name,
+               t12.nick_name AS buyer_name,
+               if(t.pre_cash_pledge_bill_item_sid is null, t.currency_amount, t9.currency_amount) AS cash_amount,
+               if(t.pre_cash_pledge_bill_item_sid is null, (t.currency_amount - t.currency_amount_yth - t.currency_amount_thz),
+                  null) AS currency_amount_dth,
+               if(t.pre_cash_pledge_bill_item_sid is null, (t.currency_amount - t.currency_amount_yth - t.currency_amount_thz),
+                   (t9.currency_amount - t9.currency_amount_yth - t9.currency_amount_thz + t.currency_amount)) AS pre_currency_amount_dth
+        from s_fin_vendor_cash_pledge_bill_item t
+        left join sys_user t2 on t.creator_account = t2.user_name
+        left join sys_user t3 on t.updater_account = t3.user_name
+        left join s_fin_vendor_cash_pledge_bill t4 on t.cash_pledge_bill_sid = t4.cash_pledge_bill_sid
+        left join s_bas_company t5 on t4.company_sid = t5.company_sid
+        left join s_bas_vendor t6 on t4.vendor_sid = t6.vendor_sid
+        left join s_con_cash_pledge_type_vendor t8 on t.pledge_type = t8.code
+        left join s_fin_vendor_cash_pledge_bill_item t9 on t.pre_cash_pledge_bill_item_sid = t9.cash_pledge_bill_item_sid
+        left join s_fin_vendor_cash_pledge_bill t10 on t9.cash_pledge_bill_sid = t10.cash_pledge_bill_sid
+        left join s_con_doc_type_vendor_cash_pledge t7 on t4.document_type = t7.code
+        left join s_bas_product_season t11 on t4.product_season_sid = t11.product_season_sid
+        left join sys_user t12 on t4.buyer = t12.user_name
+        left join s_con_doc_type_vendor_cash_pledge t13 on t10.document_type = t13.code
+    </sql>
+
+    <select id="selectFinVendorCashPledgeBillItemById" parameterType="Long"
+            resultMap="FinVendorCashPledgeBillItemResult">
+        <include refid="selectFinVendorCashPledgeBillItemVo"/>
+        where t.cash_pledge_bill_item_sid = #{cashPledgeBillItemSid}
+    </select>
+
+
+    <select id="selectFinVendorCashPledgeBillItemList"
+            parameterType="com.platform.ems.domain.FinVendorCashPledgeBillItem"
+            resultMap="FinVendorCashPledgeBillItemResult">
+        <include refid="selectFinVendorCashPledgeBillItemVo"/>
+        <where>
+            <if test="cashPledgeBillSidList != null and cashPledgeBillSidList.length >0">and t.cash_pledge_bill_sid in
+                (<foreach collection="cashPledgeBillSidList" item="cashPledgeBillSid" separator=","> #{cashPledgeBillSid}</foreach>)
+            </if>
+            <if test="cashPledgeBillCode != null  and cashPledgeBillCode != ''">
+                and t4.cash_pledge_bill_code like concat('%',#{cashPledgeBillCode}, '%')
+            </if>
+            <if test="returnStatusList != null and returnStatusList.length >0">
+                and t.return_status in
+                (<foreach collection="returnStatusList" item="returnStatus" separator=",">#{returnStatus}</foreach>)
+            </if>
+            <if test="returnStatusNot != null and returnStatusNot != ''">
+                and t.return_status != #{returnStatusNot}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t4.handle_status =#{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t4.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length >0">
+                and t4.document_type in
+                (<foreach collection="documentTypeList" item="documentType" separator=",">#{documentType}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t4.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t4.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="documentType != null and documentType != ''">
+                and t4.document_type =#{documentType}
+            </if>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t4.vendor_sid =#{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t4.company_sid =#{companySid}
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="cashPledgeBillSid != null and cashPledgeBillSid != ''">
+                and t.cash_pledge_bill_sid =#{cashPledgeBillSid}
+            </if>
+            <if test="pledgeType != null  and pledgeType != ''">
+                and t.pledge_type = #{pledgeType}
+            </if>
+            <if test="currencyAmount != null ">
+                and t.currency_amount = #{currencyAmount}
+            </if>
+            <if test="currencyAmountYth != null ">
+                and t.currency_amount_yth = #{currencyAmountYth}
+            </if>
+            <if test="currencyAmountThz != null ">
+                and t.currency_amount_thz = #{currencyAmountThz}
+            </if>
+            <if test="returnStatus != null  and returnStatus != ''">
+                and t.return_status = #{returnStatus}
+            </if>
+            <if test="preCashPledgeBillSid != null ">
+                and t.pre_cash_pledge_bill_sid =#{preCashPledgeBillSid}
+            </if>
+            <if test="preCashPledgeBillCode != null ">
+                and t.pre_cash_pledge_bill_code =#{preCashPledgeBillCode}
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num =#{itemNum}
+            </if>
+            <if test="purchaseContractSid != null ">
+                and t.purchase_contract_sid =#{purchaseContractSid}
+            </if>
+            <if test="purchaseContractCode != null  and purchaseContractCode != ''">
+                and (<foreach collection="purchaseContractCode.split(';')" item="item" separator=" or ">
+                t.purchase_contract_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseOrderSid != null ">
+                and t.purchase_order_sid =#{purchaseOrderSid}
+            </if>
+            <if test="purchaseOrderCode != null ">
+                and t.purchase_order_code =#{purchaseOrderCode}
+            </if>
+            <if test="deliveryNoteSid != null ">
+                and t.delivery_note_sid =#{deliveryNoteSid}
+            </if>
+            <if test="deliveryNoteCode != null ">
+                and t.delivery_note_code =#{deliveryNoteCode}
+            </if>
+            <if test="paperContractCode != null and paperContractCode != ''">
+                and t.paper_contract_code like concat('%', #{paperContractCode}, '%')
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">t2.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where> order by t4.cash_pledge_bill_code desc, t.create_date desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_vendor_cash_pledge_bill_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            cash_pledge_bill_item_sid,
+            cash_pledge_bill_sid,
+            pledge_type,
+            currency_amount,
+            currency_amount_yth,
+            currency_amount_thz,
+            return_status,
+            pre_cash_pledge_bill_sid,
+            pre_cash_pledge_bill_code,
+            pre_cash_pledge_bill_item_sid,
+            item_num,
+            purchase_contract_sid,
+            purchase_contract_code,
+            purchase_order_sid,
+            purchase_order_code,
+            delivery_note_sid,
+            delivery_note_code,
+            paper_contract_code,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.cashPledgeBillItemSid},
+                #{item.cashPledgeBillSid},
+                #{item.pledgeType},
+                #{item.currencyAmount},
+                #{item.currencyAmountYth},
+                #{item.currencyAmountThz},
+                #{item.returnStatus},
+                #{item.preCashPledgeBillSid},
+                #{item.preCashPledgeBillCode},
+                #{item.preCashPledgeBillItemSid},
+                #{item.itemNum},
+                #{item.purchaseContractSid},
+                #{item.purchaseContractCode},
+                #{item.purchaseOrderSid},
+                #{item.purchaseOrderCode},
+                #{item.deliveryNoteSid},
+                #{item.deliveryNoteCode},
+                #{item.paperContractCode},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_vendor_cash_pledge_bill_item
+        <trim prefix="SET" suffixOverrides=",">
+            pledge_type = #{pledgeType},
+            currency_amount = #{currencyAmount},
+            currency_amount_yth = #{currencyAmountYth},
+            currency_amount_thz = #{currencyAmountThz},
+            return_status = #{returnStatus},
+            pre_cash_pledge_bill_sid = #{preCashPledgeBillSid},
+            pre_cash_pledge_bill_code = #{preCashPledgeBillCode},
+            pre_cash_pledge_bill_item_sid = #{preCashPledgeBillItemSid},
+            item_num = #{itemNum},
+            purchase_contract_sid = #{purchaseContractSid},
+            purchase_contract_code = #{purchaseContractCode},
+            purchase_order_sid = #{purchaseOrderSid},
+            purchase_order_code = #{purchaseOrderCode},
+            delivery_note_sid = #{deliveryNoteSid},
+            delivery_note_code = #{deliveryNoteCode},
+            paper_contract_code = #{paperContractCode},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where cash_pledge_bill_item_sid = #{cashPledgeBillItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById" parameterType="com.platform.ems.domain.FinVendorCashPledgeBillItem">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_vendor_cash_pledge_bill_item
+            <trim prefix="SET" suffixOverrides=",">
+                pledge_type = #{o.pledgeType},
+                currency_amount = #{o.currencyAmount},
+                currency_amount_yth = #{o.currencyAmountYth},
+                currency_amount_thz = #{o.currencyAmountThz},
+                return_status = #{o.returnStatus},
+                pre_cash_pledge_bill_sid = #{o.preCashPledgeBillSid},
+                pre_cash_pledge_bill_code = #{o.preCashPledgeBillCode},
+                pre_cash_pledge_bill_item_sid = #{o.preCashPledgeBillItemSid},
+                item_num = #{o.itemNum},
+                purchase_contract_sid = #{o.purchaseContractSid},
+                purchase_contract_code = #{o.purchaseContractCode},
+                purchase_order_sid = #{o.purchaseOrderSid},
+                purchase_order_code = #{o.purchaseOrderCode},
+                delivery_note_sid = #{o.deliveryNoteSid},
+                delivery_note_code = #{o.deliveryNoteCode},
+                paper_contract_code = #{o.paperContractCode},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                data_source_sys = #{o.dataSourceSys},
+            </trim>
+            where cash_pledge_bill_item_sid = #{o.cashPledgeBillItemSid}
+        </foreach>
+    </update>
+
+</mapper>

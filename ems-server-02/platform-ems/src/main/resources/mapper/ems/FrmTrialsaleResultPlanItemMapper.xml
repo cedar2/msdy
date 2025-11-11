@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FrmTrialsaleResultPlanItemMapper">
+
+    <resultMap type="com.platform.ems.domain.FrmTrialsaleResultPlanItem" id="FrmTrialsaleResultPlanItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="trialsaleResultPlanItemSid" column="trialsale_result_plan_item_sid"/>
+        <result property="trialsaleResultSid" column="trialsale_result_sid"/>
+        <result property="itemName" column="item_name"/>
+        <result property="liulConversionRate" column="liul_conversion_rate"/>
+        <result property="saleAmount" column="sale_amount"/>
+        <result property="displayQuantity" column="display_quantity"/>
+        <result property="visitorQuantity" column="visitor_quantity"/>
+        <result property="saleQuantity" column="sale_quantity"/>
+        <result property="clickNum" column="click_num"/>
+        <result property="clickRate" column="click_rate"/>
+        <result property="dianjConversionRate" column="dianj_conversion_rate"/>
+        <result property="cost" column="cost"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="orderAmount" column="order_amount"/>
+        <result property="costRate" column="cost_rate"/>
+        <result property="acos" column="acos"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectFrmTrialsaleResultPlanItemVo">
+        select t.client_id,
+               t.trialsale_result_plan_item_sid,
+               t.trialsale_result_sid,
+               t.item_name,
+               t.liul_conversion_rate,
+               if(t.liul_conversion_rate is null, null, concat(round(t.liul_conversion_rate*100,2), ''))
+                   as liul_conversion_rate_string,
+               t.sale_amount,
+               t.display_quantity,
+               t.visitor_quantity,
+               t.sale_quantity,
+               t.click_num,
+               t.click_rate,
+               if(t.click_rate is null, null, concat(round(t.click_rate*100,2), '')) as click_rate_string,
+               t.dianj_conversion_rate,
+               if(t.dianj_conversion_rate is null, null, concat(round(t.dianj_conversion_rate*100,2), ''))
+                   as dianj_conversion_rate_string,
+               t.cost,
+               t.order_num,
+               t.order_amount,
+               t.cost_rate,
+               if(t.cost_rate is null, null, concat(round(t.cost_rate*100,2), '')) as cost_rate_string,
+               t.acos,
+               if(t.acos is null, null, concat(round(t.acos*100,2), '')) as acos_string,
+               t.currency,
+               t.currency_unit,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name
+        from s_frm_trialsale_result_plan_item t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+    </sql>
+
+    <select id="selectFrmTrialsaleResultPlanItemById" parameterType="Long" resultMap="FrmTrialsaleResultPlanItemResult">
+        <include refid="selectFrmTrialsaleResultPlanItemVo"/>
+        where t.trialsale_result_plan_item_sid = #{trialsaleResultPlanItemSid}
+    </select>
+
+    <select id="selectFrmTrialsaleResultPlanItemList" parameterType="com.platform.ems.domain.FrmTrialsaleResultPlanItem"
+            resultMap="FrmTrialsaleResultPlanItemResult">
+        <include refid="selectFrmTrialsaleResultPlanItemVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="trialsaleResultPlanItemSid != null ">
+                and t.trialsale_result_plan_item_sid = #{trialsaleResultPlanItemSid}
+            </if>
+            <if test="trialsaleResultSid != null ">
+                and t.trialsale_result_sid = #{trialsaleResultSid}
+            </if>
+            <if test="itemName != null and itemName != ''">
+                and t.item_name like concat('%', #{itemName}, '%')
+            </if>
+            <if test="liulConversionRate != null ">
+                and t.liul_conversion_rate = #{liulConversionRate}
+            </if>
+            <if test="saleAmount != null and saleAmount != ''">
+                and t.sale_amount = #{saleAmount}
+            </if>
+            <if test="displayQuantity != null and displayQuantity != ''">
+                and t.display_quantity = #{displayQuantity}
+            </if>
+            <if test="visitorQuantity != null and visitorQuantity != ''">
+                and t.visitor_quantity = #{visitorQuantity}
+            </if>
+            <if test="saleQuantity != null and saleQuantity != ''">
+                and t.sale_quantity = #{saleQuantity}
+            </if>
+            <if test="clickNum != null and clickNum != ''">
+                and t.click_num = #{clickNum}
+            </if>
+            <if test="clickRate != null ">
+                and t.click_rate = #{clickRate}
+            </if>
+            <if test="dianjConversionRate != null ">
+                and t.dianj_conversion_rate = #{dianjConversionRate}
+            </if>
+            <if test="cost != null ">
+                and t.cost = #{cost}
+            </if>
+            <if test="orderNum != null ">
+                and t.order_num = #{orderNum}
+            </if>
+            <if test="orderAmount != null ">
+                and t.order_amount = #{orderAmount}
+            </if>
+            <if test="costRate != null ">
+                and t.cost_rate = #{costRate}
+            </if>
+            <if test="acos != null ">
+                and t.acos = #{acos}
+            </if>
+            <if test="currency != null and currency != ''">
+                and t.currency = #{currency}
+            </if>
+            <if test="currencyUnit != null and currencyUnit != ''">
+                and t.currency_unit = #{currencyUnit}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="createDate != null ">
+                and date_format(t.create_date,'%y%m%d') = date_format(#{createDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_frm_trialsale_result_plan_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            trialsale_result_plan_item_sid,
+            trialsale_result_sid,
+            item_name,
+            liul_conversion_rate,
+            sale_amount,
+            display_quantity,
+            visitor_quantity,
+            sale_quantity,
+            click_num,
+            click_rate,
+            dianj_conversion_rate,
+            cost,
+            order_num,
+            order_amount,
+            cost_rate,
+            acos,
+            currency,
+            currency_unit,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.trialsaleResultPlanItemSid},
+                #{item.trialsaleResultSid},
+                #{item.itemName},
+                #{item.liulConversionRate},
+                #{item.saleAmount},
+                #{item.displayQuantity},
+                #{item.visitorQuantity},
+                #{item.saleQuantity},
+                #{item.clickNum},
+                #{item.clickRate},
+                #{item.dianjConversionRate},
+                #{item.cost},
+                #{item.orderNum},
+                #{item.orderAmount},
+                #{item.costRate},
+                #{item.acos},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_frm_trialsale_result_plan_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            trialsale_result_sid = #{trialsaleResultSid},
+            item_name = #{itemName},
+            liul_conversion_rate = #{liulConversionRate},
+            sale_amount = #{saleAmount},
+            display_quantity = #{displayQuantity},
+            visitor_quantity = #{visitorQuantity},
+            sale_quantity = #{saleQuantity},
+            click_num = #{clickNum},
+            click_rate = #{clickRate},
+            dianj_conversion_rate = #{dianjConversionRate},
+            cost = #{cost},
+            order_num = #{orderNum},
+            order_amount = #{orderAmount},
+            cost_rate = #{costRate},
+            acos = #{acos},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where trialsale_result_plan_item_sid = #{trialsaleResultPlanItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_frm_trialsale_result_plan_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                trialsale_result_sid = #{trialsaleResultSid},
+                item_name = #{itemName},
+                liul_conversion_rate = #{liulConversionRate},
+                sale_amount = #{saleAmount},
+                display_quantity = #{displayQuantity},
+                visitor_quantity = #{visitorQuantity},
+                sale_quantity = #{saleQuantity},
+                click_num = #{clickNum},
+                click_rate = #{clickRate},
+                dianj_conversion_rate = #{dianjConversionRate},
+                cost = #{cost},
+                order_num = #{orderNum},
+                order_amount = #{orderAmount},
+                cost_rate = #{costRate},
+                acos = #{acos},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+            </trim>
+            where trialsale_result_plan_item_sid = #{trialsaleResultPlanItemSid}
+        </foreach>
+    </update>
+
+</mapper>

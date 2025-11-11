@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecLinePositionMapper">
+
+    <resultMap type="com.platform.ems.domain.TecLinePosition" id="TecLinePositionResult">
+        <result property="clientId" column="client_id"/>
+        <result property="linePositionSid" column="line_position_sid"/>
+        <result property="linePositionCode" column="line_position_code"/>
+        <result property="linePositionName" column="line_position_name"/>
+        <result property="measureDescription" column="measure_description"/>
+        <result property="linePositionCategory" column="line_position_category"/>
+        <result property="unit" column="unit"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="upDownSuit" column="up_down_suit"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="disableRemark" column="disable_remark"/>
+    </resultMap>
+
+    <sql id="selectTecLinePositionVo">
+        select
+        t.client_id,
+        t.line_position_sid,
+        t.line_position_code,
+        t.line_position_name,
+        t.measure_description,
+        t.line_position_category,
+        t.unit,
+        t.picture_path,
+        t.up_down_suit,
+        t.remark,
+        t.disable_remark,
+        t.status,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.nick_name as creator_account_name,
+        t2.nick_name as updater_account_name,
+        t3.nick_name as confirmer_account_name
+  from s_tec_line_position t
+	    LEFT JOIN sys_user t1 ON t1.user_name = t.creator_account
+	    LEFT JOIN sys_user t2 ON t2.user_name = t.updater_account
+	    LEFT JOIN sys_user t3 ON t3.user_name = t.confirmer_account
+    </sql>
+
+    <select id="selectTecLinePositionById" parameterType="Long" resultMap="TecLinePositionResult">
+        <include refid="selectTecLinePositionVo"/>
+        where t.line_position_sid = #{linePositionSid}
+    </select>
+
+
+    <select id="selectTecLinePositionList" parameterType="com.platform.ems.domain.TecLinePosition"
+            resultMap="TecLinePositionResult">
+        <include refid="selectTecLinePositionVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="linePositionCode != null">
+                and t.line_position_code like concat('%',#{linePositionCode}, '%')
+            </if>
+            <if test="linePositionCodeList != null and linePositionCodeList.size() >0 ">
+                and t.line_position_code in
+                (<foreach collection="linePositionCodeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="linePositionName != null  and linePositionName != ''">and
+                t.line_position_name like concat('%', #{linePositionName}, '%')
+            </if>
+            <if test="linePositionNameList != null and linePositionNameList.size() >0 ">
+                and t.line_position_name in
+                (<foreach collection="linePositionNameList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="measureDescription != null  and measureDescription != ''">
+                and (<foreach collection="measureDescription.split(';')" item="item" separator="or">
+                t.measure_description like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="linePositionCategory != null and linePositionCategory != ''">
+                and t.line_position_category = #{linePositionCategory}
+            </if>
+            <if test="unit != null  and unit != ''">
+                and (<foreach collection="unit.split(';')" item="item" separator="or">t.unit like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="picturePath != null  and picturePath != ''">
+                and (<foreach collection="picturePath.split(';')" item="item" separator="or">t.picture_path like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="upDownSuit != null  and upDownSuit != ''">
+                and (<foreach collection="upDownSuit.split(';')" item="item" separator="or">t.up_down_suit like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="upDownSuitList != null and upDownSuitList.length >0 ">
+                and t.up_down_suit in
+                (<foreach collection="upDownSuitList" item="upDownSuit" separator=",">#{upDownSuit}</foreach>)
+            </if>
+            <if test="status != null  and status != ''">
+                and (<foreach collection="status.split(';')" item="item" separator="or">t.status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t1.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.line_position_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_tec_line_position
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            line_position_code,
+            line_position_name,
+            measure_description,
+            line_position_category,
+            unit,
+            picture_path,
+            up_down_suit,
+            remark,
+            disable_remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.linePositionCode},
+                #{item.linePositionName},
+                #{item.measureDescription},
+                #{item.linePositionCategory},
+                #{item.unit},
+                #{item.picturePath},
+                #{item.upDownSuit},
+                #{item.remark},
+                #{item.disableRemark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_tec_line_position
+        <trim prefix="SET" suffixOverrides=",">
+            line_position_sid = #{linePositionSid},
+            line_position_code = #{linePositionCode},
+            line_position_name = #{linePositionName},
+            measure_description = #{measureDescription},
+            line_position_category = #{linePositionCategory},
+            unit = #{unit},
+            picture_path = #{picturePath},
+            up_down_suit = #{upDownSuit},
+            remark = #{remark},
+            disable_remark = #{disableRemark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where line_position_sid = #{linePositionSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_tec_line_position
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                line_position_sid = #{linePositionSid},
+                line_position_code = #{linePositionCode},
+                line_position_name = #{linePositionName},
+                measure_description = #{measureDescription},
+                line_position_category = #{linePositionCategory},
+                unit = #{unit},
+                picture_path = #{picturePath},
+                up_down_suit = #{upDownSuit},
+                remark = #{remark},
+                disable_remark = #{disableRemark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where line_position_sid = #{linePositionSid}
+        </foreach>
+    </update>
+
+</mapper>

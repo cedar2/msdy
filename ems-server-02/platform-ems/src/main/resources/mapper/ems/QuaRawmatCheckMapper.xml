@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.QuaRawmatCheckMapper">
+
+    <resultMap type="com.platform.ems.domain.QuaRawmatCheck" id="QuaRawmatCheckResult">
+        <result property="clientId" column="client_id"/>
+        <result property="rawmatCheckSid" column="rawmat_check_sid"/>
+        <result property="rawmatCheckCode" column="rawmat_check_code"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sampleCategory" column="sample_category"/>
+        <result property="checkCategory" column="check_category"/>
+        <result property="checkType" column="check_type"/>
+        <result property="quantity" column="quantity"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="supplierProductCode" column="supplier_product_code"/>
+        <result property="supplierProductColor" column="supplier_product_color"/>
+        <result property="checkDegree" column="check_degree"/>
+        <result property="isSupplierCheck" column="is_supplier_check"/>
+        <result property="checkBatch" column="check_batch"/>
+        <result property="composition" column="composition"/>
+        <result property="grade" column="grade"/>
+        <result property="safeCategory" column="safe_category"/>
+        <result property="checkStandard" column="check_standard"/>
+        <result property="checkLabSid" column="check_lab_sid"/>
+        <result property="iqc" column="iqc"/>
+        <result property="reportCode" column="report_code"/>
+        <result property="result" column="result"/>
+        <result property="stockBatch" column="stock_batch"/>
+        <result property="preRawmatCheckSid" column="pre_rawmat_check_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectQuaRawmatCheckVo">
+      select
+      t.client_id,
+      t.rawmat_check_sid,
+      t.rawmat_check_code,
+      t.product_season_sid,
+      t.material_sid,
+      t.sku1_sid,
+      t.sample_category,
+      t.check_category,
+      t.check_type,
+      t.quantity,
+      t.vendor_sid,
+      t.supplier_product_code,
+      t.supplier_product_color,
+      t.check_degree,
+      t.is_supplier_check,
+      t.check_batch,
+      t.composition,
+      t.grade,
+      t.safe_category,
+      t.check_standard,
+      t.check_lab_sid,
+      t.iqc,
+      t.report_code,
+      t.result,
+      t.stock_batch,
+      t.pre_rawmat_check_sid,
+      t.remark,
+      t.handle_status,
+      t.creator_account,
+      t.create_date,
+      t.updater_account,
+      t.update_date,
+      t.confirmer_account,
+      t.confirm_date,
+      t.data_source_sys,
+      t1.product_season_code,
+	  t1.product_season_name,
+	  t2.material_code,
+	  t2.material_name,
+	  t3.sku_name,
+	  t4.vendor_code,
+	  t4.vendor_name,
+	  t4.short_name,
+	  t5.nick_name as iqc_name,
+	  t6.inventory_document_code,
+	  t7.nick_name as creator_account_name,
+      t8.nick_name as updater_account_name,
+      t9.nick_name as confirmer_account_name,
+      t10.laboratory_code,
+      t10.laboratory_name
+from s_qua_rawmat_check t
+      LEFT JOIN s_bas_product_season t1 ON t1.product_season_sid = t.product_season_sid
+      LEFT JOIN s_bas_material t2 ON t2.material_sid = t.material_sid
+      LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t.sku1_sid
+      LEFT JOIN s_bas_vendor t4 ON t4.vendor_sid = t.vendor_sid
+      LEFT JOIN sys_user t5 ON t5.user_name = t.iqc
+      LEFT JOIN s_inv_inventory_document t6 ON t6.inventory_document_sid = t.stock_batch
+      LEFT JOIN sys_user t7 ON t7.user_name = t.creator_account
+      LEFT JOIN sys_user t8 ON t8.user_name = t.updater_account
+      LEFT JOIN sys_user t9 ON t9.user_name = t.confirmer_account
+      LEFT JOIN s_bas_laboratory t10 ON t10.laboratory_sid = t.check_lab_sid
+    </sql>
+
+    <select id="selectQuaRawmatCheckById" parameterType="Long" resultMap="QuaRawmatCheckResult">
+        <include refid="selectQuaRawmatCheckVo"/>
+        where t.rawmat_check_sid = #{rawmatCheckSid}
+    </select>
+
+
+    <select id="selectQuaRawmatCheckList" parameterType="com.platform.ems.domain.QuaRawmatCheck"
+            resultMap="QuaRawmatCheckResult">
+        <include refid="selectQuaRawmatCheckVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="rawmatCheckSid != null ">
+                and t.rawmat_check_sid =#{rawmatCheckSid}
+            </if>
+            <if test="rawmatCheckCode != null">
+                and t.rawmat_check_code like concat('%',#{rawmatCheckCode}, '%')
+            </if>
+            <if test="productSeasonSid != null ">
+                and t.product_season_sid =#{productSeasonSid}
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0 ">
+                and t.product_season_sid in (<foreach collection="productSeasonSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid =#{materialSid}
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid =#{sku1Sid}
+            </if>
+            <if test="sampleCategory != null  and sampleCategory != ''">
+                and t.sample_category = #{sampleCategory}
+            </if>
+            <if test="sampleCategoryList != null and sampleCategoryList.length >0 ">
+                and t.sample_category in (<foreach collection="sampleCategoryList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="checkCategory != null  and checkCategory != ''">
+                and t.check_category = #{checkCategory}
+            </if>
+            <if test="checkCategoryList != null and checkCategoryList.length >0 ">
+                and t.check_category in (<foreach collection="checkCategoryList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="checkType != null  and checkType != ''">
+                and t.check_type = #{checkType}
+            </if>
+            <if test="checkTypeList != null and checkTypeList.length >0 ">
+                and t.check_type in (<foreach collection="checkTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="quantity != null ">
+                and t.quantity =#{quantity}
+            </if>
+            <if test="vendorSid != null ">
+                and t.vendor_sid =#{vendorSid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0 ">
+                and t.vendor_sid in (<foreach collection="vendorSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="supplierProductCode != null  and supplierProductCode != ''">
+                and (<foreach collection="supplierProductCode.split(';')" item="item" separator="or">
+                t.supplier_product_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="supplierProductColor != null  and supplierProductColor != ''">
+                and (<foreach collection="supplierProductColor.split(';')" item="item" separator="or">
+                t.supplier_product_color
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="checkDegree != null  and checkDegree != ''">
+                and t.check_degree = #{checkDegree}
+            </if>
+            <if test="checkDegreeList != null and checkDegreeList.length >0 ">
+                and t.check_degree in (<foreach collection="checkDegreeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="isSupplierCheck != null  and isSupplierCheck != ''">
+                and (<foreach collection="isSupplierCheck.split(';')" item="item" separator="or">t.is_supplier_check
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="checkBatch != null ">
+                and t.check_batch =#{checkBatch}
+            </if>
+            <if test="composition != null  and composition != ''">
+                and (<foreach collection="composition.split(';')" item="item" separator="or">t.composition
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="grade != null  and grade != ''">
+                and (<foreach collection="grade.split(';')" item="item" separator="or">t.grade
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="safeCategory != null  and safeCategory != ''">
+                and (<foreach collection="safeCategory.split(';')" item="item" separator="or">t.safe_category
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="checkStandard != null ">
+                and t.check_standard =#{checkStandard}
+            </if>
+            <if test="checkLabSid != null ">
+                and t.check_lab_sid =#{checkLabSid}
+            </if>
+            <if test="checkLabSidList != null and checkLabSidList.length >0 ">
+                and t.check_lab_sid in (<foreach collection="checkLabSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="iqc != null  and iqc != ''">
+                and (<foreach collection="iqc.split(';')" item="item" separator="or">t.iqc
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="reportCode != null  and reportCode != ''">
+                and (<foreach collection="reportCode.split(';')" item="item" separator="or">t.report_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="result != null  and result != ''">
+                and (<foreach collection="result.split(';')" item="item" separator="or">t.result
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="stockBatch != null ">
+                and t.stock_batch =#{stockBatch}
+            </if>
+            <if test="preRawmatCheckSid != null ">
+                and t.pre_rawmat_check_sid =#{preRawmatCheckSid}
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.rawmat_check_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_qua_rawmat_check
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            rawmat_check_sid,
+            rawmat_check_code,
+            product_season_sid,
+            material_sid,
+            sku1_sid,
+            sample_category,
+            check_category,
+            check_type,
+            quantity,
+            vendor_sid,
+            supplier_product_code,
+            supplier_product_color,
+            check_degree,
+            is_supplier_check,
+            check_batch,
+            composition,
+            grade,
+            safe_category,
+            check_standard,
+            check_lab_sid,
+            iqc,
+            report_code,
+            result,
+            stock_batch,
+            pre_rawmat_check_sid,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.rawmatCheckSid},
+                #{item.rawmatCheckCode},
+                #{item.productSeasonSid},
+                #{item.materialSid},
+                #{item.sku1Sid},
+                #{item.sampleCategory},
+                #{item.checkCategory},
+                #{item.checkType},
+                #{item.quantity},
+                #{item.vendorSid},
+                #{item.supplierProductCode},
+                #{item.supplierProductColor},
+                #{item.checkDegree},
+                #{item.isSupplierCheck},
+                #{item.checkBatch},
+                #{item.composition},
+                #{item.grade},
+                #{item.safeCategory},
+                #{item.checkStandard},
+                #{item.checkLabSid},
+                #{item.iqc},
+                #{item.reportCode},
+                #{item.result},
+                #{item.stockBatch},
+                #{item.preRawmatCheckSid},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_qua_rawmat_check
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            rawmat_check_sid = #{rawmatCheckSid},
+            rawmat_check_code = #{rawmatCheckCode},
+            product_season_sid = #{productSeasonSid},
+            material_sid = #{materialSid},
+            sku1_sid = #{sku1Sid},
+            sample_category = #{sampleCategory},
+            check_category = #{checkCategory},
+            check_type = #{checkType},
+            quantity = #{quantity},
+            vendor_sid = #{vendorSid},
+            supplier_product_code = #{supplierProductCode},
+            supplier_product_color = #{supplierProductColor},
+            check_degree = #{checkDegree},
+            is_supplier_check = #{isSupplierCheck},
+            check_batch = #{checkBatch},
+            composition = #{composition},
+            grade = #{grade},
+            safe_category = #{safeCategory},
+            check_standard = #{checkStandard},
+            check_lab_sid = #{checkLabSid},
+            iqc = #{iqc},
+            report_code = #{reportCode},
+            result = #{result},
+            stock_batch = #{stockBatch},
+            pre_rawmat_check_sid = #{preRawmatCheckSid},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where rawmat_check_sid = #{rawmatCheckSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_qua_rawmat_check
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                rawmat_check_sid = #{rawmatCheckSid},
+                rawmat_check_code = #{rawmatCheckCode},
+                product_season_sid = #{productSeasonSid},
+                material_sid = #{materialSid},
+                sku1_sid = #{sku1Sid},
+                sample_category = #{sampleCategory},
+                check_category = #{checkCategory},
+                check_type = #{checkType},
+                quantity = #{quantity},
+                vendor_sid = #{vendorSid},
+                supplier_product_code = #{supplierProductCode},
+                supplier_product_color = #{supplierProductColor},
+                check_degree = #{checkDegree},
+                is_supplier_check = #{isSupplierCheck},
+                check_batch = #{checkBatch},
+                composition = #{composition},
+                grade = #{grade},
+                safe_category = #{safeCategory},
+                check_standard = #{checkStandard},
+                check_lab_sid = #{checkLabSid},
+                iqc = #{iqc},
+                report_code = #{reportCode},
+                result = #{result},
+                stock_batch = #{stockBatch},
+                pre_rawmat_check_sid = #{preRawmatCheckSid},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where rawmat_check_sid = #{rawmatCheckSid}
+        </foreach>
+    </update>
+
+</mapper>

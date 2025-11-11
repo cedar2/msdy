@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.system.mapper.SysDictDataMapper">
+
+	<resultMap type="com.platform.common.core.domain.entity.SysDictData" id="SysDictDataResult">
+		<id     property="dictCode"   column="dict_code"   />
+		<result property="dictSort"   column="dict_sort"   />
+		<result property="dictLabel"  column="dict_label"  />
+		<result property="dictValue"  column="dict_value"  />
+		<result property="dictType"   column="dict_type"   />
+		<result property="cssClass"   column="css_class"   />
+		<result property="listClass"  column="list_class"  />
+		<result property="isDefault"  column="is_default"  />
+		<result property="status"     column="status"      />
+		<result property="createBy"   column="create_by"   />
+		<result property="createTime" column="create_time" />
+		<result property="updateBy"   column="update_by"   />
+		<result property="updateTime" column="update_time" />
+		<result property="clientId"   column="client_id"   />
+		<result property="handleStatus" column="handle_status" />
+		<result property="otherSystemLabel" column="other_system_label" />
+		<result property="otherSystemValue" column="other_system_value" />
+	</resultMap>
+
+	<select id="selectDictData" resultType="com.platform.common.core.domain.model.DictData">
+		select t.client_id, t.dict_type, t.dict_label, t.dict_value, t.status, t.handle_status
+		from sys_dict_data t
+		where t.dict_type = #{dictType}
+	</select>
+
+	<update id="checkData" parameterType="Long">
+		update sys_dict_data
+		set handle_status=5,
+		update_time = sysdate()
+		where dict_code in
+		<foreach collection="array" item="dictCode" open="(" separator="," close=")">
+			#{dictCode}
+		</foreach>
+	</update>
+
+	<select id="selectDictDataListByJingque" parameterType="com.platform.common.core.domain.entity.SysDictData" resultMap="SysDictDataResult">
+		<include refid="selectDictDataVo"/>
+		<where>
+			<if test="dictType != null and dictType != ''">
+				AND dict_type = #{dictType}
+			</if>
+			<if test="dictValue != null and dictValue != ''">
+				AND dict_value = #{dictValue}
+			</if>
+			<if test="dictLabel != null and dictLabel != ''">
+				AND dict_label = #{dictLabel}
+			</if>
+			<if test="status != null and status != ''">
+				AND status = #{status}
+			</if>
+			<if test="clientId != null ">
+				AND client_id = #{clientId}
+			</if>
+			<if test="clientIdList != null and clientIdList.length >0 ">
+				AND client_id in
+				(<foreach collection="clientIdList" item="clientId" separator=",">#{clientId}</foreach>)
+			</if>
+		</where>
+		order by dict_sort asc, dict_label asc
+	</select>
+
+	<resultMap type="com.platform.common.core.domain.model.DictData" id="DictDataResult">
+		<result property="dictType" column="dict_type"/>
+		<collection property="dataList" ofType="com.platform.common.core.domain.model.DictData">
+			<result property="dictLabel" column="dict_label"/>
+			<result property="dictValue" column="dict_value"/>
+		</collection>
+	</resultMap>
+
+	<select id="getDictDataList" resultMap="DictDataResult">
+		select t.dict_type,t.dict_label,t.dict_value  from sys_dict_data t
+	</select>
+
+	<select id="getDictDataPrtvateList" resultMap="DictDataResult">
+		select
+			t.dict_type,
+			t.dict_value,
+			t1.dict_label
+		from
+			sys_dict_data t
+				left join sys_dict_data_alias  t1 on t1.dict_code=t.dict_code
+		where t1.client_id =#{clientId}
+	</select>
+
+	<select id="verify" resultType="com.platform.common.core.domain.entity.SysDictData">
+		<include refid="selectDictDataVo"/>
+		<where>
+			<if test="dictLabel != null and dictLabel != ''">
+				and dict_label = #{dictLabel}
+			</if>
+			<if test="dictType != null and dictType != ''">
+				and dict_type = #{dictType}
+			</if>
+			<if test="dictValue != null and dictValue != ''">
+				and dict_value = #{dictValue}
+			</if>
+			<if test="clientId != null ">
+				and client_id = #{clientId}
+			</if>
+			<if test="clientIdList != null and clientIdList.length >0 ">
+				and client_id in
+				(<foreach collection="clientIdList" item="clientId" separator=",">#{clientId}</foreach>)
+			</if>
+		</where>
+	</select>
+
+	<select id="selectPrivateDictDataByType"  resultMap="SysDictDataResult">
+		<include refid="selectDictDataVo"/>
+		where status = '0' and dict_type = #{dictType} and handle_status='5' and client_id=#{clientId}    order by dict_sort asc, dict_label asc
+	</select>
+
+	<select id="selectPublicDictDataByType" parameterType="com.platform.common.core.domain.entity.SysDictData" resultMap="SysDictDataResult">
+		<include refid="selectDictDataVo"/>
+		where status = '0' and dict_type = #{dictType} and handle_status='5' and client_id='10000'    order by dict_sort asc, dict_label asc
+	</select>
+
+	<sql id="selectDictDataVo">
+        select dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, remark,
+			   other_system_label, other_system_value, client_id, handle_status
+		from sys_dict_data
+    </sql>
+
+	<select id="selectDictDataList" parameterType="com.platform.common.core.domain.entity.SysDictData" resultMap="SysDictDataResult">
+	    <include refid="selectDictDataVo"/>
+		<where>
+		    <if test="dictType != null and dictType != ''">
+				AND dict_type = #{dictType}
+			</if>
+			<if test="dictLabel != null and dictLabel != ''">
+				AND dict_label like concat('%', #{dictLabel}, '%')
+			</if>
+			<if test="status != null and status != ''">
+				AND status = #{status}
+			</if>
+			<if test="clientId != null ">
+				AND client_id = #{clientId}
+			</if>
+			<if test="clientIdList != null and clientIdList.length >0 ">
+				AND client_id in
+				(<foreach collection="clientIdList" item="clientId" separator=",">#{clientId}</foreach>)
+			</if>
+		</where>
+		order by dict_sort asc
+	</select>
+
+	<select id="selectDictDataByType" parameterType="com.platform.common.core.domain.entity.SysDictData" resultMap="SysDictDataResult">
+		<include refid="selectDictDataVo"/>
+		where status = '0' and dict_type = #{dictType}  and handle_status='5' order by dict_sort asc, dict_label asc
+	</select>
+
+	<select id="selectDictLabel" resultType="String">
+		select dict_label from sys_dict_data
+		where dict_type = #{dictType} and dict_value = #{dictValue}
+	</select>
+
+	<select id="selectDictDataById" parameterType="Long" resultMap="SysDictDataResult">
+		<include refid="selectDictDataVo"/>
+		where dict_code = #{dictCode}
+	</select>
+
+	<select id="countDictDataByType" resultType="Integer">
+	    select count(1) from sys_dict_data where dict_type=#{dictType}
+	</select>
+
+	<delete id="deleteDictDataById" parameterType="Long">
+ 		delete from sys_dict_data where dict_code = #{dictCode}
+ 	</delete>
+
+ 	<delete id="deleteDictDataByIds" parameterType="Long">
+ 		delete from sys_dict_data where dict_code in
+ 		<foreach collection="array" item="dictCode" open="(" separator="," close=")">
+ 			#{dictCode}
+        </foreach>
+ 	</delete>
+
+	<update id="updateDictData" parameterType="com.platform.common.core.domain.entity.SysDictData">
+ 		update sys_dict_data
+ 		<set>
+ 			<if test="dictSort != null">dict_sort = #{dictSort},</if>
+ 			<if test="dictLabel != null and dictLabel != ''">dict_label = #{dictLabel},</if>
+ 			<if test="dictValue != null and dictValue != ''">dict_value = #{dictValue},</if>
+ 			<if test="dictType != null and dictType != ''">dict_type = #{dictType},</if>
+ 			<if test="cssClass != null">css_class = #{cssClass},</if>
+ 			<if test="listClass != null">list_class = #{listClass},</if>
+ 			<if test="isDefault != null and isDefault != ''">is_default = #{isDefault},</if>
+ 			<if test="status != null">status = #{status},</if>
+			<if test="otherSystemLabel != null">other_system_label = #{otherSystemLabel},</if>
+			<if test="otherSystemValue != null">other_system_value = #{otherSystemValue},</if>
+ 			<if test="remark != null">remark = #{remark},</if>
+ 			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+			<if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>
+ 			update_time = sysdate()
+ 		</set>
+ 		where dict_code = #{dictCode}
+	</update>
+
+	<update id="updateDictDataType" parameterType="String">
+ 		update sys_dict_data set dict_type = #{newDictType} where dict_type = #{oldDictType}
+	</update>
+
+ 	<insert id="insertDictData" parameterType="com.platform.common.core.domain.entity.SysDictData">
+ 		insert into sys_dict_data(
+ 			<if test="dictSort != null">dict_sort,</if>
+ 			<if test="dictLabel != null and dictLabel != ''">dict_label,</if>
+ 			<if test="dictValue != null and dictValue != ''">dict_value,</if>
+ 			<if test="dictType != null and dictType != ''">dict_type,</if>
+ 			<if test="cssClass != null and cssClass != ''">css_class,</if>
+ 			<if test="listClass != null and listClass != ''">list_class,</if>
+ 			<if test="isDefault != null and isDefault != ''">is_default,</if>
+ 			<if test="status != null">status,</if>
+			<if test="otherSystemLabel != null">other_system_label,</if>
+			<if test="otherSystemValue != null">other_system_value,</if>
+ 			<if test="remark != null and remark != ''">remark,</if>
+ 			<if test="createBy != null and createBy != ''">create_by,</if>
+			<if test="clientId != null and clientId != ''">client_id,</if>
+			<if test="handleStatus != null and handleStatus != ''">handle_status,</if>
+ 			create_time
+ 		)values(
+ 		    <if test="dictSort != null">#{dictSort},</if>
+ 		    <if test="dictLabel != null and dictLabel != ''">#{dictLabel},</if>
+ 			<if test="dictValue != null and dictValue != ''">#{dictValue},</if>
+ 			<if test="dictType != null and dictType != ''">#{dictType},</if>
+ 			<if test="cssClass != null and cssClass != ''">#{cssClass},</if>
+ 			<if test="listClass != null and listClass != ''">#{listClass},</if>
+ 			<if test="isDefault != null and isDefault != ''">#{isDefault},</if>
+ 			<if test="status != null">#{status},</if>
+			<if test="otherSystemLabel != null">#{otherSystemLabel},</if>
+			<if test="otherSystemValue != null">#{otherSystemValue},</if>
+ 			<if test="remark != null and remark != ''">#{remark},</if>
+ 			<if test="createBy != null and createBy != ''">#{createBy},</if>
+			<if test="clientId != null and clientId != ''">#{clientId},</if>
+			<if test="handleStatus != null and handleStatus != ''">#{handleStatus},</if>
+ 			sysdate()
+ 		)
+	</insert>
+
+</mapper>

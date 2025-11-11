@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManDayManufactureProgressDetailMapper">
+
+    <resultMap type="com.platform.ems.domain.ManDayManufactureProgressDetail"
+               id="ManDayManufactureProgressDetailResult">
+        <result property="clientId" column="client_id"/>
+        <result property="dayManufactureProgressDetailSid" column="day_manufacture_progress_detail_sid"/>
+        <result property="dayManufactureProgressItemSid" column="day_manufacture_progress_item_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku1Type" column="sku1_type"/>
+        <result property="sku1Name" column="sku1_name"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="sku2Type" column="sku2_type"/>
+        <result property="sku2Name" column="sku2_name"/>
+        <result property="quantity" column="quantity"/>
+        <result property="planQuantity" column="plan_quantity"/>
+        <result property="issueQuantity" column="issue_quantity"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectManDayManufactureProgressDetailVo">
+        select t.client_id,
+               t.day_manufacture_progress_detail_sid,
+               t.day_manufacture_progress_item_sid,
+               t.sku1_sid,
+               t.sku1_type,
+               t.sku2_sid,
+               t.sku2_type,
+               t.quantity,
+               t.plan_quantity,
+               t.issue_quantity,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.sku_name as sku1_name,
+               t5.sku_name as sku2_name,
+               t7.document_date
+        from s_man_day_manufacture_progress_detail t
+         LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+         LEFT JOIN sys_user t3 ON t3.user_name = t.updater_account
+         LEFT JOIN s_bas_sku t4 ON t.sku1_sid = t4.sku_sid
+         LEFT JOIN s_bas_sku t5 ON t.sku2_sid = t5.sku_sid
+         LEFT JOIN s_man_day_manufacture_progress_item t6 ON t.day_manufacture_progress_item_sid = t6.day_manufacture_progress_item_sid
+         LEFT JOIN s_man_day_manufacture_progress t7 ON t6.day_manufacture_progress_sid = t7.day_manufacture_progress_sid
+    </sql>
+
+    <select id="selectManDayManufactureProgressDetailById" parameterType="Long"
+            resultMap="ManDayManufactureProgressDetailResult">
+        <include refid="selectManDayManufactureProgressDetailVo"/>
+        where t.day_manufacture_progress_detail_sid = #{dayManufactureProgressDetailSid}
+    </select>
+
+
+    <select id="selectManDayManufactureProgressDetailList"
+            parameterType="com.platform.ems.domain.ManDayManufactureProgressDetail"
+            resultMap="ManDayManufactureProgressDetailResult">
+        <include refid="selectManDayManufactureProgressDetailVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="dayManufactureProgressItemSid != null ">
+                and t.day_manufacture_progress_item_sid =#{dayManufactureProgressItemSid}
+            </if>
+            <if test="dayManufactureProgressItemSidList != null and dayManufactureProgressItemSidList.length > 0">
+                and t.day_manufacture_progress_item_sid in
+                (<foreach collection="dayManufactureProgressItemSidList" item="dayManufactureProgressItemSid" separator=",">
+                #{dayManufactureProgressItemSid}</foreach>)
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid =#{sku1Sid}
+            </if>
+            <if test="sku1Type != null and sku1Type != ''">
+                and t.sku1_type = #{sku1Type}
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid =#{sku2Sid}
+            </if>
+            <if test="sku2Type != null and sku2Type != ''">
+                and t.sku2_type = #{sku2Type}
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="planQuantity != null ">
+                and t.plan_quantity = #{planQuantity}
+            </if>
+            <if test="issueQuantity != null ">
+                and t.issue_quantity = #{issueQuantity}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_day_manufacture_progress_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            day_manufacture_progress_detail_sid,
+            day_manufacture_progress_item_sid,
+            sku1_sid,
+            sku1_type,
+            sku2_sid,
+            sku2_type,
+            quantity,
+            plan_quantity,
+            issue_quantity,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.dayManufactureProgressDetailSid},
+                #{item.dayManufactureProgressItemSid},
+                #{item.sku1Sid},
+                #{item.sku1Type},
+                #{item.sku2Sid},
+                #{item.sku2Type},
+                #{item.quantity},
+                #{item.planQuantity},
+                #{item.issueQuantity},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_day_manufacture_progress_detail
+        <trim prefix="SET" suffixOverrides=",">
+            day_manufacture_progress_item_sid = #{dayManufactureProgressItemSid},
+            sku1_sid = #{sku1Sid},
+            sku1_type = #{sku1Type},
+            sku2_sid = #{sku2Sid},
+            sku2_type = #{sku2Type},
+            quantity = #{quantity},
+            plan_quantity = #{planQuantity},
+            issue_quantity = #{issueQuantity},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where day_manufacture_progress_detail_sid = #{dayManufactureProgressDetailSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_day_manufacture_progress_detail
+            <trim prefix="SET" suffixOverrides=",">
+                day_manufacture_progress_item_sid = #{dayManufactureProgressItemSid},
+                sku1_sid = #{sku1Sid},
+                sku1_type = #{sku1Type},
+                sku2_sid = #{sku2Sid},
+                sku2_type = #{sku2Type},
+                quantity = #{quantity},
+                plan_quantity = #{planQuantity},
+                issue_quantity = #{issueQuantity},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where day_manufacture_progress_detail_sid = #{dayManufactureProgressDetailSid}
+        </foreach>
+    </update>
+
+</mapper>

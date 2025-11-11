@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasMaterialCertificateAttachmentMapper">
+
+    <resultMap type="com.platform.ems.domain.BasMaterialCertificateAttachment"
+               id="BasMaterialCertificateAttachmentResult">
+        <result property="clientId" column="client_id"/>
+        <result property="materialCertificateAttachmentSid" column="material_certificate_attachment_sid"/>
+        <result property="materialCertificateSid" column="material_certificate_sid"/>
+        <result property="fileType" column="file_type"/>
+        <result property="fileTypeName" column="file_type_name"/>
+        <result property="fileName" column="file_name"/>
+        <result property="filePath" column="file_path"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectBasMaterialCertificateAttachmentVo">
+        select t.client_id,
+               t.material_certificate_attachment_sid,
+               t.material_certificate_sid,
+               t.file_type,
+               t.file_name,
+               t.file_path,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.name AS file_type_name
+        from s_bas_material_certificate_attachment t
+            LEFT JOIN sys_user t2 on t.creator_account = t2.user_name
+            LEFT JOIN s_con_file_type t3 ON t.file_type = t3.code
+    </sql>
+
+    <select id="selectBasMaterialCertificateAttachmentById" parameterType="String"
+            resultMap="BasMaterialCertificateAttachmentResult">
+        <include refid="selectBasMaterialCertificateAttachmentVo"/>
+        where t.material_certificate_attachment_sid = #{materialCertificateAttachmentSid}
+    </select>
+
+
+    <select id="selectBasMaterialCertificateAttachmentList"
+            parameterType="com.platform.ems.domain.BasMaterialCertificateAttachment"
+            resultMap="BasMaterialCertificateAttachmentResult">
+        <include refid="selectBasMaterialCertificateAttachmentVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and t.client_id in (
+                <foreach collection="clientId.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="materialCertificateSid != null  and materialCertificateSid != ''">
+                and t.material_certificate_sid = #{materialCertificateSid}
+            </if>
+            <if test="fileType != null  and fileType != ''">
+                and t.file_type in (
+                <foreach collection="fileType.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="fileName != null  and fileName != ''">and t.file_name like concat('%', #{fileName}, '%')</if>
+            <if test="filePath != null  and filePath != ''">
+                and t.file_path in (
+                <foreach collection="filePath.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and t.creator_account in (
+                <foreach collection="creatorAccount.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="createDate != null ">and t.create_date = #{createDate}</if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and t.updater_account in (
+                <foreach collection="updaterAccount.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and t.data_source_sys in (
+                <foreach collection="dataSourceSys.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_material_certificate_attachment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            material_certificate_attachment_sid,
+            material_certificate_sid,
+            file_type,
+            file_name,
+            file_path,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.materialCertificateAttachmentSid},
+                #{item.materialCertificateSid},
+                #{item.fileType},
+                #{item.fileName},
+                #{item.filePath},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_material_certificate_attachment
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            material_certificate_sid = #{materialCertificateSid},
+            file_type = #{fileType},
+            file_name = #{fileName},
+            file_path = #{filePath},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where material_certificate_attachment_sid = #{materialCertificateAttachmentSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_material_certificate_attachment
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                material_certificate_sid = #{materialCertificateSid},
+                file_type = #{fileType},
+                file_name = #{fileName},
+                file_path = #{filePath},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where material_certificate_attachment_sid = #{materialCertificateAttachmentSid}
+        </foreach>
+    </update>
+
+    <delete id="deleteMaterialCertificateAttachmentById" parameterType="Long">
+        delete
+        from s_bas_material_certificate_attachment
+        where material_certificate_sid = #{materialCertificateSid}
+    </delete>
+
+    <delete id="deleteBasMaterialCertificateAttachmentByIds" parameterType="long">
+        delete from s_bas_material_certificate_attachment where material_certificate_sid in
+        <foreach item="materialCertificateSid" collection="list" open="(" separator="," close=")">
+            #{materialCertificateSid}
+        </foreach>
+    </delete>
+</mapper>

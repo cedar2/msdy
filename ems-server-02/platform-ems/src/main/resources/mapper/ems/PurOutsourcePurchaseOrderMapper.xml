@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurOutsourcePurchaseOrderMapper">
+
+    <resultMap type="com.platform.ems.domain.PurOutsourcePurchaseOrder" id="PurOutsourcePurchaseOrderResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="outsourcePurchaseOrderSid" column="outsource_purchase_order_sid"/>
+                    <result property="outsourcePurchaseOrderCode" column="outsource_purchase_order_code"/>
+                    <result property="vendorSid" column="vendor_sid"/>
+                    <result property="companySid" column="company_sid"/>
+                    <result property="documentDate" column="document_date"/>
+                    <result property="buyer" column="buyer"/>
+                    <result property="documentType" column="document_type"/>
+                    <result property="businessType" column="business_type"/>
+                    <result property="productSeasonSid" column="product_season_sid"/>
+                    <result property="orderBatch" column="order_batch"/>
+                    <result property="materialType" column="material_type"/>
+                    <result property="purchaseOrg" column="purchase_org"/>
+                    <result property="purchaseGroup" column="purchase_group"/>
+                    <result property="customerSid" column="customer_sid"/>
+                    <result property="currency" column="currency"/>
+                    <result property="currencyUnit" column="currency_unit"/>
+                    <result property="consignee" column="consignee"/>
+                    <result property="consigneePhone" column="consignee_phone"/>
+                    <result property="consigneeAddr" column="consignee_addr"/>
+                    <result property="purchaseContractSid" column="purchase_contract_sid"/>
+                    <result property="vendorOrderCode" column="vendor_order_code"/>
+                    <result property="deliveryStatus" column="delivery_status"/>
+                    <result property="materialIssueStatus" column="material_issue_status"/>
+                    <result property="remark" column="remark"/>
+                    <result property="handleStatus" column="handle_status"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="confirmerAccount" column="confirmer_account"/>
+                    <result property="confirmDate" column="confirm_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+                    <result property="vendorCode" column="vendor_code"/>
+                    <result property="vendorName" column="vendor_name"/>
+                    <result property="shortName" column="short_name"/>
+                    <result property="companyCode" column="company_code"/>
+                    <result property="companyName" column="company_name"/>
+                    <result property="productSeasonCode" column="product_season_code"/>
+                    <result property="productSeasonName" column="product_season_name"/>
+                    <result property="purchaseContractCode" column="purchase_contract_code"/>
+            </resultMap>
+
+    <sql id="selectPurOutsourcePurchaseOrderVo">
+        select
+        t.client_id,
+        t.outsource_purchase_order_sid,
+        t.outsource_purchase_order_code,
+        t.vendor_sid,
+        t.company_sid,
+        t.document_date,
+        t.buyer,
+        t.document_type,
+        t.business_type,
+        t.product_season_sid,
+        t.order_batch,
+        t.material_type,
+        t.purchase_org,
+        t.purchase_group,
+        t.customer_sid,
+        t.currency,
+        t.currency_unit,
+        t.consignee,
+        t.consignee_phone,
+        t.consignee_addr,
+        t.purchase_contract_sid,
+        t.vendor_order_code,
+        t.delivery_status,
+        t.material_issue_status,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.vendor_code,
+	    t1.vendor_name,
+	    t2.nick_name,
+	    t3.product_season_code,
+        t3.product_season_name,
+        t4.purchase_contract_code
+  from s_pur_outsource_purchase_order t
+        LEFT JOIN s_bas_vendor t1 ON t1.vendor_sid = t.vendor_sid
+        LEFT JOIN sys_user t2 ON t2.user_name = t.buyer
+        LEFT JOIN s_bas_product_season t3 ON t3.product_season_sid = t.product_season_sid
+        LEFT JOIN s_pur_purchase_contract t4 ON t4.purchase_contract_sid = t.purchase_contract_sid
+    </sql>
+
+    <select id="selectPurOutsourcePurchaseOrderById" parameterType="Long" resultMap="PurOutsourcePurchaseOrderResult">
+        <include refid="selectPurOutsourcePurchaseOrderVo"/>
+        where t.outsource_purchase_order_sid = #{outsourcePurchaseOrderSid}
+    </select>
+
+
+    <select id="selectPurOutsourcePurchaseOrderList" parameterType="com.platform.ems.domain.PurOutsourcePurchaseOrder"
+            resultMap="PurOutsourcePurchaseOrderResult">
+        <include refid="selectPurOutsourcePurchaseOrderVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or"> t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0 ">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length >0 ">
+                and t.document_type in
+                (<foreach collection="documentTypeList" item="documentType" separator=",">#{documentType}</foreach>)
+            </if>
+            <if test="businessTypeList != null and businessTypeList.length >0 ">
+                and t.business_type in
+                (<foreach collection="businessTypeList" item="businessType" separator=",">#{businessType}</foreach>)
+            </if>
+            <if test="purchaseContractCode != null and purchaseContractCode != ''">
+                and (<foreach collection="purchaseContractCode.split(';')" item="item" separator="or"> t4.purchase_contract_code like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="materialIssueStatusList != null and materialIssueStatusList.length >0 ">
+                and t.material_issue_status in
+                (<foreach collection="materialIssueStatusList" item="materialIssueStatus" separator=",">#{materialIssueStatus}</foreach>)
+            </if>
+            <if test="deliveryStatusList != null and deliveryStatusList.length >0 ">
+                and t.delivery_status in
+                (<foreach collection="deliveryStatusList" item="deliveryStatus" separator=",">#{deliveryStatus}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0 ">
+                and t.product_seasonSid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">#{productSeasonSid}</foreach>)
+            </if>
+            <if test="outsourcePurchaseOrderSid != null ">
+                and t.outsource_purchase_order_sid =#{outsourcePurchaseOrderSid}
+            </if>
+            <if test="outsourcePurchaseOrderCode != null ">
+                and t.outsource_purchase_order_code like concat('%',#{outsourcePurchaseOrderCode}, '%')
+            </if>
+            <if test="vendorSid != null ">
+                and t.vendor_sid =#{vendorSid}
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="documentDate != null ">
+                and t.document_date = #{documentDate}
+            </if>
+            <if test="buyer != null  and buyer != ''">
+                and (<foreach collection="buyer.split(';')" item="item" separator="or"> t.buyer like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseContractCode != null  and purchaseContractCode != ''">
+                and ( <foreach collection="purchaseContractCode.split(';')" item="item" separator="or"> t4.purchase_contract_code like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="documentType != null  and documentType != ''">
+                and (<foreach collection="documentType.split(';')" item="item" separator="or"> t.document_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="businessType != null  and businessType != ''">
+                and (<foreach collection="businessType.split(';')" item="item" separator="or"> t.business_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="productSeasonSid != null ">
+                and t.product_season_sid =#{productSeasonSid}
+            </if>
+            <if test="orderBatch != null ">
+                and t.order_batch =#{orderBatch}
+            </if>
+            <if test="materialType != null  and materialType != ''">
+                and (<foreach collection="materialType.split(';')" item="item" separator="or"> t.material_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseOrg != null  and purchaseOrg != ''">
+                and (<foreach collection="purchaseOrg.split(';')" item="item" separator="or"> t.purchase_org like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseGroup != null  and purchaseGroup != ''">
+                and (<foreach collection="purchaseGroup.split(';')" item="item" separator="or"> t.purchase_group like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="customerSid != null ">
+                and t.customer_sid =#{customerSid}
+            </if>
+            <if test="currency != null  and currency != ''">
+                and (<foreach collection="currency.split(';')" item="item" separator="or"> t.currency like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">
+                and (<foreach collection="currencyUnit.split(';')" item="item" separator="or"> t.currency_unit like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="consignee != null  and consignee != ''">
+                and (<foreach collection="consignee.split(';')" item="item" separator="or"> t.consignee like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="consigneePhone != null  and consigneePhone != ''">
+                and (<foreach collection="consigneePhone.split(';')" item="item" separator="or"> t.consignee_phone like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="consigneeAddr != null  and consigneeAddr != ''">
+                and (<foreach collection="consigneeAddr.split(';')" item="item" separator="or"> t.consignee_addr like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseContractSid != null ">
+                and t.purchase_contract_sid =#{purchaseContractSid}
+            </if>
+            <if test="vendorOrderCode != null  and vendorOrderCode != ''">
+                and (<foreach collection="vendorOrderCode.split(';')" item="item" separator="or"> t.vendor_order_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="deliveryStatus != null  and deliveryStatus != ''">
+                and (<foreach collection="deliveryStatus.split(';')" item="item" separator="or"> t.delivery_status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialIssueStatus != null  and materialIssueStatus != ''">
+                and (<foreach collection="materialIssueStatus.split(';')" item="item" separator="or"> t.material_issue_status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or"> t.handle_status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t.creator_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or"> t.confirmer_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or"> t.data_source_sys like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.outsource_purchase_order_code desc, t.create_date desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_outsource_purchase_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                outsource_purchase_order_sid,
+                                                                outsource_purchase_order_code,
+                                                                vendor_sid,
+                                                                company_sid,
+                                                                document_date,
+                                                                buyer,
+                                                                document_type,
+                                                                business_type,
+                                                                product_season_sid,
+                                                                order_batch,
+                                                                material_type,
+                                                                purchase_org,
+                                                                purchase_group,
+                                                                customer_sid,
+                                                                currency,
+                                                                currency_unit,
+                                                                consignee,
+                                                                consignee_phone,
+                                                                consignee_addr,
+                                                                purchase_contract_sid,
+                                                                vendor_order_code,
+                                                                delivery_status,
+                                                                material_issue_status,
+                                                                remark,
+                                                                handle_status,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                confirmer_account,
+                                                                confirm_date,
+                                                                data_source_sys,
+                                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                                                            #{clientId},
+                                                                                #{outsourcePurchaseOrderSid},
+                                                                                #{outsourcePurchaseOrderCode},
+                                                                                #{vendorSid},
+                                                                                #{companySid},
+                                                                                #{documentDate},
+                                                                                #{buyer},
+                                                                                #{documentType},
+                                                                                #{businessType},
+                                                                                #{productSeasonSid},
+                                                                                #{orderBatch},
+                                                                                #{materialType},
+                                                                                #{purchaseOrg},
+                                                                                #{purchaseGroup},
+                                                                                #{customerSid},
+                                                                                #{currency},
+                                                                                #{currencyUnit},
+                                                                                #{consignee},
+                                                                                #{consigneePhone},
+                                                                                #{consigneeAddr},
+                                                                                #{purchaseContractSid},
+                                                                                #{vendorOrderCode},
+                                                                                #{deliveryStatus},
+                                                                                #{materialIssueStatus},
+                                                                                #{remark},
+                                                                                #{handleStatus},
+                                                                                #{creatorAccount},
+                                                                                #{createDate},
+                                                                                #{updaterAccount},
+                                                                                #{updateDate},
+                                                                                #{confirmerAccount},
+                                                                                #{confirmDate},
+                                                                                #{dataSourceSys},
+                                                </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_outsource_purchase_order
+        <trim prefix="SET" suffixOverrides=",">
+                                                                outsource_purchase_order_code = #{outsourcePurchaseOrderCode},
+                                                                vendor_sid = #{vendorSid},
+                                                                company_sid = #{companySid},
+                                                                document_date = #{documentDate},
+                                                                buyer = #{buyer},
+                                                                document_type = #{documentType},
+                                                                business_type = #{businessType},
+                                                                product_season_sid = #{productSeasonSid},
+                                                                order_batch = #{orderBatch},
+                                                                material_type = #{materialType},
+                                                                purchase_org = #{purchaseOrg},
+                                                                purchase_group = #{purchaseGroup},
+                                                                customer_sid = #{customerSid},
+                                                                currency = #{currency},
+                                                                currency_unit = #{currencyUnit},
+                                                                consignee = #{consignee},
+                                                                consignee_phone = #{consigneePhone},
+                                                                consignee_addr = #{consigneeAddr},
+                                                                purchase_contract_sid = #{purchaseContractSid},
+                                                                vendor_order_code = #{vendorOrderCode},
+                                                                delivery_status = #{deliveryStatus},
+                                                                material_issue_status = #{materialIssueStatus},
+                                                                remark = #{remark},
+                                                                handle_status = #{handleStatus},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                confirmer_account = #{confirmerAccount},
+                                                                confirm_date = #{confirmDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where outsource_purchase_order_sid = #{outsourcePurchaseOrderSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_outsource_purchase_order
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    outsource_purchase_order_code = #{outsourcePurchaseOrderCode},
+                                                                                vendor_sid = #{vendorSid},
+                                                                                company_sid = #{companySid},
+                                                                                document_date = #{documentDate},
+                                                                                buyer = #{buyer},
+                                                                                document_type = #{documentType},
+                                                                                business_type = #{businessType},
+                                                                                product_season_sid = #{productSeasonSid},
+                                                                                order_batch = #{orderBatch},
+                                                                                material_type = #{materialType},
+                                                                                purchase_org = #{purchaseOrg},
+                                                                                purchase_group = #{purchaseGroup},
+                                                                                customer_sid = #{customerSid},
+                                                                                currency = #{currency},
+                                                                                currency_unit = #{currencyUnit},
+                                                                                consignee = #{consignee},
+                                                                                consignee_phone = #{consigneePhone},
+                                                                                consignee_addr = #{consigneeAddr},
+                                                                                purchase_contract_sid = #{purchaseContractSid},
+                                                                                vendor_order_code = #{vendorOrderCode},
+                                                                                delivery_status = #{deliveryStatus},
+                                                                                material_issue_status = #{materialIssueStatus},
+                                                                                remark = #{remark},
+                                                                                handle_status = #{handleStatus},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                confirmer_account = #{confirmerAccount},
+                                                                                confirm_date = #{confirmDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where outsource_purchase_order_sid = #{outsourcePurchaseOrderSid}
+        </foreach>
+    </update>
+
+    <select id="countByDomain" resultType="java.lang.Integer">
+        select count(1) from s_pur_outsource_purchase_order
+        <where>
+            <if test="outsourcePurchaseOrderSids != null  and outsourcePurchaseOrderSids.size > 0">
+                and outsource_purchase_order_sid in (
+                <foreach collection="outsourcePurchaseOrderSids" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or"> handle_status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+        </where>
+    </select>
+</mapper>

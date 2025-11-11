@@ -1,0 +1,1746 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PrjProjectMapper">
+
+    <resultMap type="com.platform.ems.domain.PrjProject" id="PrjProjectResult">
+        <result property="clientId" column="client_id"/>
+        <result property="projectSid" column="project_sid"/>
+        <result property="projectCode" column="project_code"/>
+        <result property="projectName" column="project_name"/>
+        <result property="projectType" column="project_type"/>
+        <result property="year" column="year"/>
+        <result property="saleStationSid" column="sale_station_sid"/>
+        <result property="saleStationCode" column="sale_station_code"/>
+        <result property="projectStatus" column="project_status"/>
+        <result property="priorityProject" column="priority_project"/>
+        <result property="handleSortProject" column="handle_sort_project"/>
+        <result property="trialsaleType" column="trialsale_type"/>
+        <result property="projectPhase" column="project_phase"/>
+        <result property="planType" column="plan_type"/>
+        <result property="yearmonthProject" column="yearmonth_project"/>
+        <result property="planStartDate" column="plan_start_date"/>
+        <result property="planEndDate" column="plan_end_date"/>
+        <result property="actualEndDate" column="actual_end_date"/>
+        <result property="toexpireDaysProj" column="toexpire_days_proj"/>
+        <result property="marketRegion" column="market_region"/>
+        <result property="projectLeaderSid" column="project_leader_sid"/>
+        <result property="projectLeaderCode" column="project_leader_code"/>
+        <result property="developPlanSid" column="develop_plan_sid"/>
+        <result property="developPlanCode" column="develop_plan_code"/>
+        <result property="sampleSid" column="sample_sid"/>
+        <result property="sampleCode" column="sample_code"/>
+        <result property="productSid" column="product_sid"/>
+        <result property="productCode" column="product_code"/>
+        <result property="erpMaterialSkuBarcode" column="erp_material_sku_barcode"/>
+        <result property="erpMaterialMskuCode" column="erp_material_msku_code"/>
+        <result property="materialBarcodeSid" column="material_barcode_sid"/>
+        <result property="materialBarcodeCode" column="material_barcode_code"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="categoryPlanSid" column="category_plan_sid"/>
+        <result property="categoryPlanCode" column="category_plan_code"/>
+        <result property="projectDescription" column="project_description"/>
+        <result property="preProjectSid" column="pre_project_sid"/>
+        <result property="preProjectCode" column="pre_project_code"/>
+        <result property="firstPurchaseFlag" column="first_purchase_flag"/>
+        <result property="firstPurchaseFlagUpdateDate" column="first_purchase_flag_update_date"/>
+        <result property="secondPurchaseFlag" column="second_purchase_flag"/>
+        <result property="secondPurchaseFlagUpdateDate" column="second_purchase_flag_update_date"/>
+        <result property="arrivalNoticeFlagFirstPurchase" column="arrival_notice_flag_first_purchase"/>
+        <result property="arrivalNoticeFlagFirstPurchaseUpdateDate" column="arrival_notice_flag_first_purchase_update_date"/>
+        <result property="operateMode" column="operate_mode"/>
+        <result property="cancelRemark" column="cancel_remark"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectPrjProjectVo">
+        select t.client_id,
+               t.project_sid,
+               t.project_code,
+               t.project_name,
+               t.project_type,
+               t.year,
+               t.sale_station_sid,
+               t.sale_station_code,
+               t.project_status,
+               t.priority_project,
+               t.handle_sort_project,
+               t.trialsale_type,
+               t.project_phase,
+               t.plan_type,
+               t.plan_start_date,
+               t.yearmonth_project,
+               t.plan_end_date,
+               t.actual_end_date,
+               t.toexpire_days_proj,
+               t.market_region,
+               t.project_leader_sid,
+               t.project_leader_code,
+               t.develop_plan_sid,
+               t.develop_plan_code,
+               t.sample_sid,
+               t.sample_code,
+               t.product_sid,
+               t.product_code,
+               t.material_barcode_sid,
+               t.material_barcode_code,
+               t.erp_material_msku_code,
+               t.product_season_sid,
+               t.product_season_code,
+               t.category_plan_sid,
+               t.category_plan_code,
+               t.project_description,
+               t.pre_project_sid,
+               t.pre_project_code,
+               t.first_purchase_flag,
+               t.first_purchase_flag_update_date,
+               t.second_purchase_flag,
+               t.second_purchase_flag_update_date,
+               t.arrival_notice_flag_first_purchase,
+               t.arrival_notice_flag_first_purchase_update_date,
+               t.operate_mode,
+               t.cancel_remark,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t5.develop_plan_name,
+               t5.develop_type,
+               t5.yearmonth as yearmonth_develop,
+               t7.product_season_name,
+               t8.staff_name as project_leader_name,
+               t9.material_name,
+               t10.big_class_sid,
+               t10.big_class_code,
+               t10.middle_class_sid,
+               t10.middle_class_code,
+               t10.small_class_sid,
+               t10.small_class_code,
+               t10.group_type,
+               t11.node_name as big_class_name,
+               t12.node_name as middle_class_name,
+               t13.node_name as small_class_name,
+               IF(t.project_type = 'KAIF',IF(t15.pre_project_sid is null,'N','Y'),NULL) AS is_have_shixiao,
+               t.erp_material_sku_barcode,
+               t17.sale_station_name,
+               t18.market_region_name
+        from s_prj_project t
+                 LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+                 LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+                 LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t4.client_id
+                 LEFT JOIN s_dev_develop_plan t5 ON t.develop_plan_sid = t5.develop_plan_sid
+                 LEFT JOIN s_dev_category_plan t6 ON t.category_plan_sid = t6.category_plan_sid
+                 LEFT JOIN s_bas_product_season t7 ON t.product_season_sid = t7.product_season_sid
+                 LEFT JOIN s_bas_staff t8 ON t.project_leader_sid = t8.staff_sid
+                 LEFT JOIN s_bas_material t9 ON t.product_sid = t9.material_sid
+                 LEFT JOIN s_dev_category_plan_item t10 ON t5.category_plan_item_sid = t10.category_plan_item_sid
+                 LEFT JOIN s_con_material_class t11 ON t10.big_class_sid = t11.material_class_sid
+                 LEFT JOIN s_con_material_class t12 ON t10.middle_class_sid = t12.material_class_sid
+                 LEFT JOIN s_con_material_class t13 ON t10.small_class_sid = t13.material_class_sid
+                 LEFT JOIN (select ta.pre_project_sid from s_prj_project ta WHERE ta.project_type != 'KAIF'
+                            group by ta.pre_project_sid having ta.pre_project_sid is not null) t15 ON t.project_sid = t15.pre_project_sid
+                 LEFT JOIN s_bas_material_barcode t16 ON t.material_barcode_sid = t16.barcode_sid
+                 LEFT JOIN (
+            SELECT ta.project_sid, GROUP_CONCAT(tb.name ORDER BY tb.name ASC SEPARATOR ';') as sale_station_name
+            FROM s_prj_project ta
+                     LEFT JOIN s_con_sale_station tb ON ta.client_id = tb.client_id and
+                                                        (ta.sale_station_code = tb.code or ta.sale_station_code like concat(tb.code, ';%')
+                                                            or ta.sale_station_code like concat('%;', tb.code, ';%') or ta.sale_station_code like concat('%;', tb.code))
+            GROUP BY ta.project_sid
+        ) t17 ON t.project_sid = t17.project_sid
+                 LEFT JOIN (
+            SELECT ta.project_sid, GROUP_CONCAT(tb.dict_label  ORDER BY tb.dict_label ASC SEPARATOR ';') as market_region_name
+            FROM s_prj_project ta
+                     LEFT JOIN sys_dict_data tb ON tb.dict_type = 's_market_region' AND
+                                                   (ta.market_region = tb.dict_value or ta.market_region like concat(tb.dict_value, ';%')
+                                                       or ta.market_region like concat('%;', tb.dict_value, ';%') or ta.market_region like concat('%;', tb.dict_value))
+            GROUP BY ta.project_sid
+        ) t18 ON t.project_sid = t18.project_sid
+                 LEFT JOIN s_sys_default_setting_client t19 ON t.client_id = t19.client_id
+                 LEFT JOIN sys_dict_data d1 ON d1.dict_type = 's_project_type' AND d1.dict_value = t.project_type
+                 LEFT JOIN sys_dict_data d2 ON d2.dict_type = 's_trialsale_type' AND d2.dict_value = t.trialsale_type
+    </sql>
+
+    <select id="selectPrjProjectById" parameterType="Long" resultMap="PrjProjectResult">
+        <include refid="selectPrjProjectVo"/>
+        where t.project_sid = #{projectSid}
+    </select>
+
+    <select id="selectPrjProjectList" parameterType="com.platform.ems.domain.PrjProject"
+            resultMap="PrjProjectResult">
+        <include refid="selectPrjProjectVo"/>
+        <include refid="whereVo"/>
+        order by t.create_date desc, t.project_code desc
+    </select>
+
+    <select id="selectPrjProjectListAll" parameterType="com.platform.ems.domain.PrjProject"
+            resultMap="PrjProjectResult">
+        <include refid="selectPrjProjectVo"/>
+        <include refid="whereVo"/>
+        order by t.create_date desc, t.project_code desc
+    </select>
+
+    <sql id="whereVo">
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="productCodeIsNull != null and productCodeIsNull == 'Y'.toString()">
+                and t.product_code is null
+            </if>
+            <if test="productCodeIsNull != null and productCodeIsNull == 'N'.toString()">
+                and t.product_code is not null
+            </if>
+            <if test="erpMaterialSkuBarcode != null and erpMaterialSkuBarcode != ''">
+                and t.erp_material_sku_barcode like concat('%', #{erpMaterialSkuBarcode}, '%')
+            </if>
+            <if test="erpMaterialSkuBarcodeIsNull != null and erpMaterialSkuBarcodeIsNull == 'Y'.toString()">
+                and t.erp_material_sku_barcode is null
+            </if>
+            <if test="erpMaterialSkuBarcodeIsNull != null and erpMaterialSkuBarcodeIsNull == 'N'.toString()">
+                and t.erp_material_sku_barcode is not null
+            </if>
+            <if test="erpMaterialMskuCode != null and erpMaterialMskuCode != ''">
+                and t.erp_material_msku_code like concat('%', #{erpMaterialMskuCode}, '%')
+            </if>
+            <if test="erpMaterialMskuCodeIsNull != null and erpMaterialMskuCodeIsNull == 'Y'.toString()">
+                and t.erp_material_msku_code is null
+            </if>
+            <if test="erpMaterialMskuCodeIsNull != null and erpMaterialMskuCodeIsNull == 'N'.toString()">
+                and t.erp_material_msku_code is not null
+            </if>
+            <if test="isHaveShixiao != null and isHaveShixiao == 'Y'.toString()">
+                and t15.pre_project_sid is not null
+            </if>
+            <if test="isHaveShixiao != null and isHaveShixiao == 'N'.toString()">
+                and t.project_type != 'SHIX' and t15.pre_project_sid is null
+            </if>
+            <if test="projectSid != null ">
+                and t.project_sid = #{projectSid}
+            </if>
+            <if test="projectSidList != null and projectSidList.length >0 ">
+                and t.project_sid in
+                (<foreach collection="projectSidList" item="projectSid" separator=",">#{projectSid}</foreach>)
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                and t.project_code like concat('%', #{projectCode}, '%')
+            </if>
+            <if test="projectName != null and projectName != ''">
+                and t.project_name like concat('%', #{projectName}, '%')
+            </if>
+            <if test="projectType != null and projectType != ''">
+                and t.project_type = #{projectType}
+            </if>
+            <if test="projectTypeList != null and projectTypeList.length >0 ">
+                and t.project_type in
+                (<foreach collection="projectTypeList" item="projectType" separator=",">#{projectType}</foreach>)
+            </if>
+            <if test="projectTypeName != null and projectTypeName != ''">
+                and (<foreach collection="projectTypeName.split(';')" item="item" separator=" or ">
+                d1.dict_label = #{item}</foreach>)
+            </if>
+            <if test="year != null and year != ''">
+                and t.year = #{year}
+            </if>
+            <if test="yearList != null and yearList.length >0 ">
+                and t.year in
+                (<foreach collection="yearList" item="year" separator=",">#{year}</foreach>)
+            </if>
+            <if test="saleStationSid != null">
+                and t.sale_station_sid = #{saleStationSid}
+            </if>
+            <if test="saleStationSidList != null and saleStationSidList.length >0 ">
+                and t.sale_station_sid in
+                (<foreach collection="saleStationSidList" item="saleStationSid" separator=",">#{saleStationSid}</foreach>)
+            </if>
+            <if test="saleStationCodeList != null and saleStationCodeList.length >0 ">
+                and (<foreach collection="saleStationCodeList" item="item" separator=" or ">
+                t.sale_station_code = #{item} or t.sale_station_code like concat(#{item}, ';%')
+                or t.sale_station_code like concat('%;', #{item}, ';%') or t.sale_station_code like concat('%;', #{item})
+            </foreach>)
+            </if>
+            <if test="projectStatus != null and projectStatus != ''">
+                and t.project_status = #{projectStatus}
+            </if>
+            <if test="projectStatusNot != null and projectStatusNot != ''">
+                and t.project_status != #{projectStatusNot}
+            </if>
+            <if test="projectStatusList != null and projectStatusList.length >0 ">
+                and t.project_status in
+                (<foreach collection="projectStatusList" item="projectStatus" separator=",">#{projectStatus}</foreach>)
+            </if>
+            <if test="priorityProject != null and priorityProject != ''">
+                and t.priority_project = #{priorityProject}
+            </if>
+            <if test="priorityProjectNot != null and priorityProjectNot != ''">
+                and t.priority_project != #{priorityProjectNot}
+            </if>
+            <if test="priorityProjectList != null and priorityProjectList.length >0 ">
+                and t.priority_project in
+                (<foreach collection="priorityProjectList" item="priorityProject" separator=",">#{priorityProject}</foreach>)
+            </if>
+            <if test="trialsaleType != null and trialsaleType != ''">
+                and t.trialsale_type = #{trialsaleType}
+            </if>
+            <if test="trialsaleTypeList != null and trialsaleTypeList.length >0 ">
+                and t.trialsale_type in
+                (<foreach collection="trialsaleTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="trialsaleTypeName != null and trialsaleTypeName != ''">
+                and (<foreach collection="trialsaleTypeName.split(';')" item="item" separator=" or ">
+                d2.dict_label = #{item}</foreach>)
+            </if>
+            <if test="projectPhase != null and projectPhase != ''">
+                and t.project_phase = #{projectPhase}
+            </if>
+            <if test="projectPhaseList != null and projectPhaseList.length >0 ">
+                and t.project_phase in
+                (<foreach collection="projectPhaseList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="planType != null and planType != ''">
+                and t.plan_type = #{planType}
+            </if>
+            <if test="planStartDate != null ">
+                and t.plan_start_date = #{planStartDate}
+            </if>
+            <if test="planStartDateBegin != null and planStartDateBegin!=''">
+                and date_format(t.plan_start_date,'%y%m%d') &gt;= date_format(#{planStartDateBegin},'%y%m%d')
+            </if>
+            <if test="planStartDateEnd != null and planStartDateEnd!=''">
+                and date_format(t.plan_start_date,'%y%m%d') &lt;= date_format(#{planStartDateEnd},'%y%m%d')
+            </if>
+            <if test="planEndDate != null ">
+                and t.plan_end_date = #{planEndDate}
+            </if>
+            <if test="planEndDateBegin != null and planEndDateBegin!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(#{planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="planEndDateEnd != null and planEndDateEnd!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &lt;= date_format(#{planEndDateEnd},'%y%m%d')
+            </if>
+            <if test="actualEndDate != null ">
+                and t.actual_end_date = #{actualEndDate}
+            </if>
+            <if test="actualEndDateBegin != null and actualEndDateBegin!=''">
+                and date_format(t.actual_end_date,'%y%m%d') &gt;= date_format(#{actualEndDateBegin},'%y%m%d')
+            </if>
+            <if test="actualEndDateEnd != null and actualEndDateEnd!=''">
+                and date_format(t.actual_end_date,'%y%m%d') &lt;= date_format(#{actualEndDateEnd},'%y%m%d')
+            </if>
+            <if test="marketRegion != null and marketRegion != ''">
+                and t.market_region = #{marketRegion}
+            </if>
+            <if test="marketRegionList != null and marketRegionList.length >0 ">
+                and (<foreach collection="marketRegionList" item="item" separator=" or ">
+                t.market_region = #{item} or t.market_region like concat(#{item}, ';%')
+                or t.market_region like concat('%;', #{item}, ';%') or t.market_region like concat('%;', #{item})
+            </foreach>)
+            </if>
+            <if test="marketRegionName != null and marketRegionName != ''">
+                and (<foreach collection="marketRegionName.split(';')" item="item" separator=" or ">
+                (t18.market_region_name = #{item} or t18.market_region_name like concat(#{item}, ';%')
+                or t18.market_region_name like concat('%;', #{item}, ';%') or t18.market_region_name like concat('%;', #{item}))
+            </foreach>)
+            </if>
+            <if test="projectLeaderSid != null ">
+                and t.project_leader_sid = #{projectLeaderSid}
+            </if>
+            <if test="projectLeaderSidList != null and projectLeaderSidList.length >0 ">
+                and t.project_leader_sid in
+                (<foreach collection="projectLeaderSidList" item="projectLeaderSid" separator=",">#{projectLeaderSid}</foreach>)
+            </if>
+            <if test="projectLeaderCode != null and projectLeaderCode != ''">
+                and t.project_leader_code = #{projectLeaderCode}
+            </if>
+            <if test="developPlanSid != null">
+                and t.develop_plan_sid = #{developPlanSid}
+            </if>
+            <if test="developPlanCode != null and developPlanCode != ''">
+                and t.develop_plan_code like concat('%', #{developPlanCode}, '%')
+            </if>
+            <if test="developPlanName != null and developPlanName != ''">
+                and t5.develop_plan_name like concat('%', #{developPlanName}, '%')
+            </if>
+            <if test="developType != null and developType != ''">
+                and t5.develop_type = #{developType}
+            </if>
+            <if test="developTypeList != null and developTypeList.length >0 ">
+                and t5.develop_type in
+                (<foreach collection="developTypeList" item="developType" separator=",">#{developType}</foreach>)
+            </if>
+            <if test="yearmonthDevelop != null and yearmonthDevelop != ''">
+                and t5.yearmonth = #{yearmonthDevelop}
+            </if>
+            <if test="groupType != null and groupType != ''">
+                and t10.group_type = #{groupType}
+            </if>
+            <if test="groupTypeList != null and groupTypeList.length >0 ">
+                and t10.group_type in
+                (<foreach collection="groupTypeList" item="groupType" separator=",">#{groupType}</foreach>)
+            </if>
+            <if test="sampleSid != null">
+                and t.sample_sid = #{sampleSid}
+            </if>
+            <if test="sampleCode != null and sampleCode != ''">
+                and t.sample_code like concat('%', #{sampleCode}, '%')
+            </if>
+            <if test="productSid != null">
+                and t.product_sid = #{productSid}
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and t.product_code like concat('%', #{productCode}, '%')
+            </if>
+            <if test="materialBarcodeSid != null">
+                and t.material_barcode_sid = #{materialBarcodeSid}
+            </if>
+            <if test="materialBarcodeCode != null and materialBarcodeCode != ''">
+                and t.material_barcode_sid like concat('%', #{materialBarcodeCode}, '%')
+            </if>
+            <if test="productSeasonSid != null ">
+                and t.product_season_sid = #{productSeasonSid}
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0 ">
+                and t.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">#{productSeasonSid}</foreach>)
+            </if>
+            <if test="productSeasonCode != null and productSeasonCode != ''">
+                and t.product_season_code = #{productSeasonCode}
+            </if>
+            <if test="categoryPlanSid != null ">
+                and t.category_plan_sid = #{categoryPlanSid}
+            </if>
+            <if test="categoryPlanCode != null and categoryPlanCode != ''">
+                and t.category_plan_code like concat('%', #{categoryPlanCode}, '%')
+            </if>
+            <if test="projectDescription != null and projectDescription != ''">
+                and t.project_description like concat('%', #{projectDescription}, '%')
+            </if>
+            <if test="preProjectSid != null">
+                and t.pre_project_sid = #{preProjectSid}
+            </if>
+            <if test="preProjectCode != null and preProjectCode != ''">
+                and t.pre_project_code like concat('%', #{preProjectCode}, '%')
+            </if>
+            <if test="firstPurchaseFlag != null and firstPurchaseFlag != ''">
+                <if test="firstPurchaseFlag == 'N'.toString()">
+                    and (t.first_purchase_flag = #{firstPurchaseFlag} or t.first_purchase_flag is null or t.first_purchase_flag = '')
+                </if>
+                <if test="firstPurchaseFlag != 'N'.toString()">
+                    and (t.first_purchase_flag = #{firstPurchaseFlag})
+                </if>
+            </if>
+            <if test="secondPurchaseFlag != null and secondPurchaseFlag != ''">
+                <if test="secondPurchaseFlag == 'N'.toString()">
+                    and (t.second_purchase_flag = #{secondPurchaseFlag} or t.second_purchase_flag is null or t.second_purchase_flag = '')
+                </if>
+                <if test="secondPurchaseFlag != 'N'.toString()">
+                    and (t.second_purchase_flag = #{secondPurchaseFlag})
+                </if>
+            </if>
+            <if test="arrivalNoticeFlagFirstPurchase != null and arrivalNoticeFlagFirstPurchase != ''">
+                <if test="arrivalNoticeFlagFirstPurchase == 'N'.toString()">
+                    and (t.arrival_notice_flag_first_purchase = #{arrivalNoticeFlagFirstPurchase} or t.arrival_notice_flag_first_purchase is null
+                    or t.arrival_notice_flag_first_purchase = '')
+                </if>
+                <if test="arrivalNoticeFlagFirstPurchase != 'N'.toString()">
+                    and (t.arrival_notice_flag_first_purchase = #{arrivalNoticeFlagFirstPurchase})
+                </if>
+            </if>
+            <if test="fstPurFlagUpdDateBegin != null and fstPurFlagUpdDateBegin!=''">
+                and date_format(t.first_purchase_flag_update_date,'%y%m%d') &gt;= date_format(#{fstPurFlagUpdDateBegin},'%y%m%d')
+            </if>
+            <if test="fstPurFlagUpdDateEnd != null and fstPurFlagUpdDateEnd!=''">
+                and date_format(t.first_purchase_flag_update_date,'%y%m%d') &lt;= date_format(#{fstPurFlagUpdDateEnd},'%y%m%d')
+            </if>
+            <if test="sndPurFlagUpdDateBegin != null and sndPurFlagUpdDateBegin!=''">
+                and date_format(t.second_purchase_flag_update_date,'%y%m%d') &gt;= date_format(#{sndPurFlagUpdDateBegin},'%y%m%d')
+            </if>
+            <if test="sndPurFlagUpdDateEnd != null and sndPurFlagUpdDateEnd!=''">
+                and date_format(t.second_purchase_flag_update_date,'%y%m%d') &lt;= date_format(#{sndPurFlagUpdDateEnd},'%y%m%d')
+            </if>
+            <if test="arrNtcFlagFstPurUpdDateBegin != null and arrNtcFlagFstPurUpdDateBegin!=''">
+                and date_format(t.arrival_notice_flag_first_purchase_update_date,'%y%m%d') &gt;= date_format(#{arrNtcFlagFstPurUpdDateBegin},'%y%m%d')
+            </if>
+            <if test="arrNtcFlagFstPurUpdDateEnd != null and arrNtcFlagFstPurUpdDateEnd!=''">
+                and date_format(t.arrival_notice_flag_first_purchase_update_date,'%y%m%d') &lt;= date_format(#{arrNtcFlagFstPurUpdDateEnd},'%y%m%d')
+            </if>
+            <if test="isRepeatOrder != null and isRepeatOrder == 'Y'.toString()">
+                and EXISTS (SELECT a.trialsale_result_sid FROM s_frm_trialsale_result a WHERE a.project_sid = t.project_sid
+                AND a.handle_status = '5' AND a.is_repeat_order = 'Y')
+            </if>
+            <if test="operateMode != null and operateMode != ''">
+                and t.operate_mode = #{operateMode}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (t.creator_account = #{creatorAccount}
+                <if test="currentUserIsLeaderSid != null">
+                    or t.project_leader_sid = #{currentUserIsLeaderSid}
+                </if>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="createDate != null ">
+                and date_format(t.create_date,'%y%m%d') = date_format(#{createDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </sql>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_prj_project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            project_sid,
+            project_code,
+            project_name,
+            project_type,
+            year,
+            sale_station_sid,
+            sale_station_code,
+            project_status,
+            priority_project,
+            handle_sort_project,
+            trialsale_type,
+            project_phase,
+            plan_type,
+            yearmonth_project,
+            plan_start_date,
+            plan_end_date,
+            actual_end_date,
+            toexpire_days_proj,
+            market_region,
+            project_leader_sid,
+            project_leader_code,
+            develop_plan_sid,
+            develop_plan_code,
+            sample_sid,
+            sample_code,
+            product_sid,
+            product_code,
+            erp_material_sku_barcode,
+            erp_material_msku_code,
+            material_barcode_sid,
+            material_barcode_code,
+            product_season_sid,
+            product_season_code,
+            category_plan_sid,
+            category_plan_code,
+            project_description,
+            pre_project_sid,
+            pre_project_code,
+            first_purchase_flag,
+            first_purchase_flag_update_date,
+            second_purchase_flag,
+            second_purchase_flag_update_date,
+            arrival_notice_flag_first_purchase,
+            arrival_notice_flag_first_purchase_update_date,
+            operate_mode,
+            cancel_remark,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.projectSid},
+                #{item.projectCode},
+                #{item.projectName},
+                #{item.projectType},
+                #{item.year},
+                #{item.saleStationSid},
+                #{item.saleStationCode},
+                #{item.projectStatus},
+                #{item.priorityProject},
+                #{item.handleSortProject},
+                #{item.trialsaleType},
+                #{item.projectPhase},
+                #{item.planType},
+                #{item.yearmonthProject},
+                #{item.planStartDate},
+                #{item.planEndDate},
+                #{item.actualEndDate},
+                #{item.toexpireDaysProj},
+                #{item.marketRegion},
+                #{item.projectLeaderSid},
+                #{item.projectLeaderCode},
+                #{item.developPlanSid},
+                #{item.developPlanCode},
+                #{item.sampleSid},
+                #{item.sampleCode},
+                #{item.productSid},
+                #{item.productCode},
+                #{item.erpMaterialSkuBarcode},
+                #{item.erpMaterialMskuCode},
+                #{item.materialBarcodeSid},
+                #{item.materialBarcodeCode},
+                #{item.productSeasonSid},
+                #{item.productSeasonCode},
+                #{item.categoryPlanSid},
+                #{item.categoryPlanCode},
+                #{item.projectDescription},
+                #{item.preProjectSid},
+                #{item.preProjectCode},
+                #{item.firstPurchaseFlag},
+                #{item.firstPurchaseFlagUpdateDate},
+                #{item.secondPurchaseFlag},
+                #{item.secondPurchaseFlagUpdateDate},
+                #{item.arrivalNoticeFlagFirstPurchase},
+                #{item.arrivalNoticeFlagFirstPurchaseUpdateDate},
+                #{item.operateMode},
+                #{item.cancelRemark},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_prj_project
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            project_code = #{projectCode},
+            project_name = #{projectName},
+            project_type = #{projectType},
+            year = #{year},
+            sale_station_sid = #{saleStationSid},
+            sale_station_code = #{saleStationCode},
+            project_status = #{projectStatus},
+            priority_project = #{priorityProject},
+            handle_sort_project = #{handleSortProject},
+            trialsale_type = #{trialsaleType},
+            project_phase = #{projectPhase},
+            plan_type = #{planType},
+            yearmonth_project = #{yearmonthProject},
+            plan_start_date = #{planStartDate},
+            plan_end_date = #{planEndDate},
+            actual_end_date = #{actualEndDate},
+            toexpire_days_proj = #{toexpireDaysProj},
+            market_region = #{marketRegion},
+            project_leader_sid = #{projectLeaderSid},
+            project_leader_code = #{projectLeaderCode},
+            develop_plan_sid = #{developPlanSid},
+            develop_plan_code = #{developPlanCode},
+            sample_sid = #{sampleSid},
+            sample_code = #{sampleCode},
+            product_sid = #{productSid},
+            erp_material_sku_barcode = #{erpMaterialSkuBarcode},
+            erp_material_msku_code = #{erpMaterialMskuCode},
+            product_code = #{productCode},
+            material_barcode_sid = #{materialBarcodeSid},
+            material_barcode_code = #{materialBarcodeCode},
+            product_season_sid = #{productSeasonSid},
+            product_season_code = #{productSeasonCode},
+            category_plan_sid = #{categoryPlanSid},
+            category_plan_code = #{categoryPlanCode},
+            project_description = #{projectDescription},
+            pre_project_sid = #{preProjectSid},
+            pre_project_code = #{preProjectCode},
+            first_purchase_flag = #{firstPurchaseFlag},
+            first_purchase_flag_update_date = #{firstPurchaseFlagUpdateDate},
+            second_purchase_flag = #{secondPurchaseFlag},
+            second_purchase_flag_update_date = #{secondPurchaseFlagUpdateDate},
+            arrival_notice_flag_first_purchase = #{arrivalNoticeFlagFirstPurchase},
+            arrival_notice_flag_first_purchase_update_date = #{arrivalNoticeFlagFirstPurchaseUpdateDate},
+            operate_mode = #{operateMode},
+            cancel_remark = #{cancelRemark},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where project_sid = #{projectSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_prj_project
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{o.clientId},
+                project_code = #{o.projectCode},
+                project_name = #{o.projectName},
+                project_type = #{o.projectType},
+                year = #{o.year},
+                sale_station_sid = #{o.saleStationSid},
+                sale_station_code = #{o.saleStationCode},
+                project_status = #{o.projectStatus},
+                priority_project = #{o.priorityProject},
+                handle_sort_project = #{o.handleSortProject},
+                trialsale_type = #{o.trialsaleType},
+                project_phase = #{o.projectPhase},
+                plan_type = #{o.planType},
+                yearmonth_project = #{o.yearmonthProject},
+                plan_start_date = #{o.planStartDate},
+                plan_end_date = #{o.planEndDate},
+                actual_end_date = #{o.actualEndDate},
+                toexpire_days_proj = #{o.toexpireDaysProj},
+                market_region = #{o.marketRegion},
+                project_leader_sid = #{o.projectLeaderSid},
+                project_leader_code = #{o.projectLeaderCode},
+                develop_plan_sid = #{o.developPlanSid},
+                develop_plan_code = #{o.developPlanCode},
+                sample_sid = #{o.sampleSid},
+                sample_code = #{o.sampleCode},
+                product_sid = #{productSid},
+                product_code = #{productCode},
+                erp_material_sku_barcode = #{o.erpMaterialSkuBarcode},
+                erp_material_msku_code = #{o.erpMaterialMskuCode},
+                material_barcode_sid = #{materialBarcodeSid},
+                material_barcode_code = #{materialBarcodeCode},
+                product_season_sid = #{o.productSeasonSid},
+                product_season_code = #{o.productSeasonCode},
+                category_plan_sid = #{o.categoryPlanSid},
+                category_plan_code = #{o.categoryPlanCode},
+                project_description = #{o.projectDescription},
+                pre_project_sid = #{o.preProjectSid},
+                pre_project_code = #{o.preProjectCode},
+                first_purchase_flag = #{o.firstPurchaseFlag},
+                first_purchase_flag_update_date = #{o.firstPurchaseFlagUpdateDate},
+                second_purchase_flag = #{o.secondPurchaseFlag},
+                second_purchase_flag_update_date = #{o.secondPurchaseFlagUpdateDate},
+                arrival_notice_flag_first_purchase = #{o.arrivalNoticeFlagFirstPurchase},
+                arrival_notice_flag_first_purchase_update_date = #{o.arrivalNoticeFlagFirstPurchaseUpdateDate},
+                operate_mode = #{o.operateMode},
+                cancel_remark = #{o.cancelRemark},
+                remark = #{o.remark},
+                handle_status = #{o.handleStatus},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+            </trim>
+            where project_sid = #{o.projectSid}
+        </foreach>
+    </update>
+
+    <select id="getToexpireBusiness" resultType="com.platform.ems.domain.PrjProject">
+        select t.client_id,
+        t.project_sid,
+        t.project_code,
+        t.project_name,
+        t.project_type,
+        t.year,
+        t.sale_station_sid,
+        t.sale_station_code,
+        t.project_status,
+        t.priority_project,
+        t.handle_sort_project,
+        t.trialsale_type,
+        t.project_phase,
+        t.plan_type,
+        t.yearmonth_project,
+        t.plan_start_date,
+        t.plan_end_date,
+        t.actual_end_date,
+        t.toexpire_days_proj,
+        t.market_region,
+        t.project_leader_sid,
+        t.project_leader_code,
+        t.develop_plan_sid,
+        t.develop_plan_code,
+        t.sample_sid,
+        t.sample_code,
+        t.product_sid,
+        t.product_code,
+        t.material_barcode_sid,
+        t.material_barcode_code,
+        t.product_season_sid,
+        t.product_season_code,
+        t.category_plan_sid,
+        t.category_plan_code,
+        t.project_description,
+        t.pre_project_sid,
+        t.pre_project_code,
+        t.first_purchase_flag,
+        t.first_purchase_flag_update_date,
+        t.second_purchase_flag,
+        t.second_purchase_flag_update_date,
+        t.arrival_notice_flag_first_purchase,
+        t.arrival_notice_flag_first_purchase_update_date,
+        t.erp_material_msku_code,
+        t.operate_mode,
+        t.cancel_remark,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t2.user_id as creator_account_id,
+        t3.staff_name as project_leader_name,
+        t4.user_id as project_leader_id,
+        t.erp_material_sku_barcode,
+        t10.group_type
+        from s_prj_project t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN s_bas_staff t3 ON t.project_leader_sid = t3.staff_sid
+        LEFT JOIN sys_user t4 ON t3.staff_sid = t4.staff_sid AND t3.client_id = t4.client_id
+        LEFT JOIN s_dev_develop_plan t5 ON t.develop_plan_sid = t5.develop_plan_sid
+        LEFT JOIN s_dev_category_plan t6 ON t.category_plan_sid = t6.category_plan_sid
+        LEFT JOIN s_bas_material_barcode t7 ON t.material_barcode_sid = t7.barcode_sid
+        LEFT JOIN s_sys_default_setting_client t8 ON t.client_id = t8.client_id
+        LEFT JOIN s_dev_category_plan_item t10 ON t5.category_plan_item_sid = t10.category_plan_item_sid
+        <where>
+            (t.handle_status = '5' AND t.project_status = 'JXZ' AND t.plan_end_date &gt;= DATE_FORMAT(NOW(), '%Y-%m-%d') AND
+            t.plan_end_date &lt;= DATE_FORMAT(date_add(now(), interval t.toexpire_days_proj day), '%Y-%m-%d'))
+            <if test="entity.clientId != null and entity.clientId != ''">
+                and t.client_id = #{entity.clientId}
+            </if>
+            <if test="entity.creatorAccount != null and entity.creatorAccount != ''">
+                and t.creator_account = #{entity.creatorAccount}
+            </if>
+            <if test="entity.projectCode != null and entity.projectCode != ''">
+                and t.project_code like concat('%', #{entity.projectCode}, '%')
+            </if>
+            <if test="entity.projectName != null and entity.projectName != ''">
+                and t.project_name like concat('%', #{entity.projectName}, '%')
+            </if>
+            <if test="entity.productCode != null and entity.productCode != ''">
+                and t.product_code like concat('%', #{entity.productCode}, '%')
+            </if>
+            <if test="entity.yearmonthProjectBegin != null and entity.yearmonthProjectBegin != ''">
+                and t.yearmonth_project &gt;= #{entity.yearmonthProjectBegin}
+            </if>
+            <if test="entity.yearmonthProjectEnd != null and entity.yearmonthProjectEnd != ''">
+                and t.yearmonth_project &lt;= #{entity.yearmonthProjectEnd}
+            </if>
+            <if test="entity.materialBarcodeCode != null and entity.materialBarcodeCode != ''">
+                and t.material_barcode_code like concat('%', #{entity.materialBarcodeCode}, '%')
+            </if>
+            <if test="entity.erpMaterialSkuBarcode != null and entity.erpMaterialSkuBarcode != ''">
+                and t.erp_material_sku_barcode like concat('%', #{entity.erpMaterialSkuBarcode}, '%')
+            </if>
+            <if test="entity.projectType != null and entity.projectType != ''">
+                and t.project_type = #{entity.projectType}
+            </if>
+            <if test="entity.projectTypeList != null and entity.projectTypeList.length >0 ">
+                and t.project_type in
+                (<foreach collection="entity.projectTypeList" item="projectType" separator=",">#{projectType}</foreach>)
+            </if>
+            <if test="entity.projectStatus != null and entity.projectStatus != ''">
+                and t.project_status = #{entity.projectStatus}
+            </if>
+            <if test="entity.projectStatusList != null and entity.projectStatusList.length >0 ">
+                and t.project_status in
+                (<foreach collection="entity.projectStatusList" item="projectStatus" separator=",">#{projectStatus}</foreach>)
+            </if>
+            <if test="entity.developPlanCode != null and entity.developPlanCode != ''">
+                and t.develop_plan_code like concat('%', #{entity.developPlanCode}, '%')
+            </if>
+            <if test="entity.developPlanName != null and entity.developPlanName != ''">
+                and t5.develop_plan_name like concat('%', #{entity.developPlanName}, '%')
+            </if>
+            <if test="entity.categoryPlanSid != null ">
+                and t.category_plan_sid = #{entity.categoryPlanSid}
+            </if>
+            <if test="entity.categoryPlanCode != null and entity.categoryPlanCode != ''">
+                and t.category_plan_code like concat('%', #{entity.categoryPlanCode}, '%')
+            </if>
+            <if test="entity.sampleSid != null">
+                and t.sample_sid = #{entity.sampleSid}
+            </if>
+            <if test="entity.sampleCode != null and entity.sampleCode != ''">
+                and t.sample_code like concat('%', #{entity.sampleCode}, '%')
+            </if>
+            <if test="entity.marketRegion != null and entity.marketRegion != ''">
+                and t.market_region = #{entity.marketRegion}
+            </if>
+            <if test="entity.marketRegionList != null and entity.marketRegionList.length >0 ">
+                and (<foreach collection="entity.marketRegionList" item="item" separator=" or ">
+                t.market_region = #{item} or t.market_region like concat(#{item}, ';%')
+                or t.market_region like concat('%;', #{item}, ';%') or t.market_region like concat('%;', #{item})
+            </foreach>)
+            </if>
+            <if test="entity.projectLeaderSid != null ">
+                and t.project_leader_sid = #{entity.projectLeaderSid}
+            </if>
+            <if test="entity.projectLeaderSidList != null and entity.projectLeaderSidList.length >0 ">
+                and t.project_leader_sid in
+                (<foreach collection="entity.projectLeaderSidList" item="projectLeaderSid" separator=",">#{projectLeaderSid}</foreach>)
+            </if>
+            <if test="entity.projectLeaderCode != null and entity.projectLeaderCode != ''">
+                and t.project_leader_code = #{entity.projectLeaderCode}
+            </if>
+            <if test="entity.year != null and entity.year != ''">
+                and t.year = #{entity.year}
+            </if>
+            <if test="entity.yearList != null and entity.yearList.length >0 ">
+                and t.year in
+                (<foreach collection="entity.yearList" item="year" separator=",">#{year}</foreach>)
+            </if>
+            <if test="entity.planStartDate != null ">
+                and t.plan_start_date = #{entity.planStartDate}
+            </if>
+            <if test="entity.planStartDateBegin != null and entity.planStartDateBegin!=''">
+                and date_format(t.plan_start_date,'%y%m%d') &gt;= date_format(#{entity.planStartDateBegin},'%y%m%d')
+            </if>
+            <if test="entity.planStartDateEnd != null and entity.planStartDateEnd!=''">
+                and date_format(t.plan_start_date,'%y%m%d') &lt;= date_format(#{entity.planStartDateEnd},'%y%m%d')
+            </if>
+            <if test="entity.planEndDate != null ">
+                and t.plan_end_date = #{entity.planEndDate}
+            </if>
+            <if test="entity.planEndDateBegin != null and entity.planEndDateBegin!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(#{entity.planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="entity.planEndDateEnd != null and entity.planEndDateEnd!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &lt;= date_format(#{entity.planEndDateEnd},'%y%m%d')
+            </if>
+            <if test="entity.groupType != null and entity.groupType != ''">
+                and t10.group_type = #{entity.groupType}
+            </if>
+            <if test="entity.groupTypeList != null and entity.groupTypeList.length >0 ">
+                and t10.group_type in
+                (<foreach collection="entity.groupTypeList" item="groupType" separator=",">
+                #{groupType}</foreach>)
+            </if>
+        </where>
+        <if test="entity.pageNum != null and entity.pageSize != null">LIMIT ${entity.pageBegin},${entity.pageSize}</if>
+    </select>
+
+    <select id="getOverdueBusiness" parameterType="com.platform.ems.domain.PrjProject" resultType="com.platform.ems.domain.PrjProject">
+        select t.client_id,
+        t.project_sid,
+        t.project_code,
+        t.project_name,
+        t.project_type,
+        t.year,
+        t.sale_station_sid,
+        t.sale_station_code,
+        t.project_status,
+        t.priority_project,
+        t.handle_sort_project,
+        t.plan_type,
+        t.yearmonth_project,
+        t.plan_start_date,
+        t.plan_end_date,
+        t.actual_end_date,
+        t.toexpire_days_proj,
+        t.market_region,
+        t.project_leader_sid,
+        t.project_leader_code,
+        t.develop_plan_sid,
+        t.develop_plan_code,
+        t.sample_sid,
+        t.sample_code,
+        t.product_sid,
+        t.product_code,
+        t.material_barcode_sid,
+        t.material_barcode_code,
+        t.erp_material_msku_code,
+        t.product_season_sid,
+        t.product_season_code,
+        t.category_plan_sid,
+        t.category_plan_code,
+        t.project_description,
+        t.pre_project_sid,
+        t.pre_project_code,
+        t.first_purchase_flag,
+        t.first_purchase_flag_update_date,
+        t.second_purchase_flag,
+        t.second_purchase_flag_update_date,
+        t.arrival_notice_flag_first_purchase,
+        t.arrival_notice_flag_first_purchase_update_date,
+        t.operate_mode,
+        t.cancel_remark,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t2.user_id as creator_account_id,
+        t3.staff_name as project_leader_name,
+        t4.user_id as project_leader_id,
+        t5.develop_plan_name,
+        t5.develop_type,
+        t.erp_material_sku_barcode,
+        t10.group_type
+        from s_prj_project t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN s_bas_staff t3 ON t.project_leader_sid = t3.staff_sid
+        LEFT JOIN sys_user t4 ON t3.staff_sid = t4.staff_sid AND t3.client_id = t4.client_id
+        LEFT JOIN s_dev_develop_plan t5 ON t.develop_plan_sid = t5.develop_plan_sid
+        LEFT JOIN s_bas_material_barcode t7 ON t.material_barcode_sid = t7.barcode_sid
+        LEFT JOIN s_sys_default_setting_client t8 ON t.client_id = t8.client_id
+        LEFT JOIN s_dev_category_plan_item t10 ON t5.category_plan_item_sid = t10.category_plan_item_sid
+        <where>
+            (t.handle_status = '5' AND t.project_status = 'JXZ'
+            AND t.plan_end_date &lt; DATE_FORMAT(NOW(), '%Y-%m-%d'))
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                and t.project_code like concat('%', #{projectCode}, '%')
+            </if>
+            <if test="projectName != null and projectName != ''">
+                and t.project_name like concat('%', #{projectName}, '%')
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and t.product_code like concat('%', #{productCode}, '%')
+            </if>
+            <if test="yearmonthProjectBegin != null and yearmonthProjectBegin != ''">
+                and t.yearmonth_project &gt;= #{yearmonthProjectBegin}
+            </if>
+            <if test="yearmonthProjectEnd != null and yearmonthProjectEnd != ''">
+                and t.yearmonth_project &lt;= #{yearmonthProjectEnd}
+            </if>
+            <if test="materialBarcodeCode != null and materialBarcodeCode != ''">
+                and t.material_barcode_code like concat('%', #{materialBarcodeCode}, '%')
+            </if>
+            <if test="erpMaterialSkuBarcode != null and erpMaterialSkuBarcode != ''">
+                and t.erp_material_sku_barcode like concat('%', #{erpMaterialSkuBarcode}, '%')
+            </if>
+            <if test="projectType != null and projectType != ''">
+                and t.project_type = #{projectType}
+            </if>
+            <if test="projectTypeList != null and projectTypeList.length >0 ">
+                and t.project_type in
+                (<foreach collection="projectTypeList" item="projectType" separator=",">#{projectType}</foreach>)
+            </if>
+            <if test="projectStatus != null and projectStatus != ''">
+                and t.project_status = #{projectStatus}
+            </if>
+            <if test="projectStatusList != null and projectStatusList.length >0 ">
+                and t.project_status in
+                (<foreach collection="projectStatusList" item="projectStatus" separator=",">#{projectStatus}</foreach>)
+            </if>
+            <if test="developPlanCode != null and developPlanCode != ''">
+                and t.develop_plan_code like concat('%', #{developPlanCode}, '%')
+            </if>
+            <if test="developPlanName != null and developPlanName != ''">
+                and t5.develop_plan_name like concat('%', #{developPlanName}, '%')
+            </if>
+            <if test="categoryPlanSid != null ">
+                and t.category_plan_sid = #{categoryPlanSid}
+            </if>
+            <if test="categoryPlanCode != null and categoryPlanCode != ''">
+                and t.category_plan_code like concat('%', #{categoryPlanCode}, '%')
+            </if>
+            <if test="sampleSid != null">
+                and t.sample_sid = #{sampleSid}
+            </if>
+            <if test="sampleCode != null and sampleCode != ''">
+                and t.sample_code like concat('%', #{sampleCode}, '%')
+            </if>
+            <if test="marketRegion != null and marketRegion != ''">
+                and t.market_region = #{marketRegion}
+            </if>
+            <if test="marketRegionList != null and marketRegionList.length >0 ">
+                and (<foreach collection="marketRegionList" item="item" separator=" or ">
+                t.market_region = #{item} or t.market_region like concat(#{item}, ';%')
+                or t.market_region like concat('%;', #{item}, ';%') or t.market_region like concat('%;', #{item})
+            </foreach>)
+            </if>
+            <if test="projectLeaderSid != null ">
+                and t.project_leader_sid = #{projectLeaderSid}
+            </if>
+            <if test="projectLeaderSidList != null and projectLeaderSidList.length >0 ">
+                and t.project_leader_sid in
+                (<foreach collection="projectLeaderSidList" item="projectLeaderSid" separator=",">#{projectLeaderSid}</foreach>)
+            </if>
+            <if test="projectLeaderCode != null and projectLeaderCode != ''">
+                and t.project_leader_code = #{projectLeaderCode}
+            </if>
+            <if test="year != null and year != ''">
+                and t.year = #{year}
+            </if>
+            <if test="yearList != null and yearList.length >0 ">
+                and t.year in
+                (<foreach collection="yearList" item="year" separator=",">#{year}</foreach>)
+            </if>
+            <if test="planStartDate != null ">
+                and t.plan_start_date = #{planStartDate}
+            </if>
+            <if test="planStartDateBegin != null and planStartDateBegin!=''">
+                and date_format(t.plan_start_date,'%y%m%d') &gt;= date_format(#{planStartDateBegin},'%y%m%d')
+            </if>
+            <if test="planStartDateEnd != null and planStartDateEnd!=''">
+                and date_format(t.plan_start_date,'%y%m%d') &lt;= date_format(#{planStartDateEnd},'%y%m%d')
+            </if>
+            <if test="planEndDate != null ">
+                and t.plan_end_date = #{planEndDate}
+            </if>
+            <if test="planEndDateBegin != null and planEndDateBegin!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(#{planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="planEndDateEnd != null and planEndDateEnd!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &lt;= date_format(#{planEndDateEnd},'%y%m%d')
+            </if>
+            <if test="groupType != null and groupType != ''">
+                and t10.group_type = #{groupType}
+            </if>
+            <if test="groupTypeList != null and groupTypeList.length >0 ">
+                and t10.group_type in
+                (<foreach collection="groupTypeList" item="groupType" separator=",">
+                #{groupType}</foreach>)
+            </if>
+        </where>
+        <if test="pageNum != null and pageSize != null">LIMIT ${pageBegin},${pageSize}</if>
+    </select>
+
+    <select id="getToexpireBusinessNoUser" resultType="com.platform.ems.domain.PrjProject">
+        select t.client_id,
+        t.project_sid,
+        t.project_code,
+        t.project_name,
+        t.project_type,
+        t.year,
+        t.sale_station_sid,
+        t.sale_station_code,
+        t.project_status,
+        t.priority_project,
+        t.handle_sort_project,
+        t.trialsale_type,
+        t.project_phase,
+        t.plan_type,
+        t.yearmonth_project,
+        t.plan_start_date,
+        t.plan_end_date,
+        t.actual_end_date,
+        t.toexpire_days_proj,
+        t.market_region,
+        t.project_leader_sid,
+        t.project_leader_code,
+        t.develop_plan_sid,
+        t.develop_plan_code,
+        t.sample_sid,
+        t.sample_code,
+        t.product_sid,
+        t.product_code,
+        t.material_barcode_sid,
+        t.material_barcode_code,
+        t.erp_material_msku_code,
+        t.product_season_sid,
+        t.product_season_code,
+        t.category_plan_sid,
+        t.category_plan_code,
+        t.project_description,
+        t.pre_project_sid,
+        t.pre_project_code,
+        t.first_purchase_flag,
+        t.first_purchase_flag_update_date,
+        t.second_purchase_flag,
+        t.second_purchase_flag_update_date,
+        t.arrival_notice_flag_first_purchase,
+        t.arrival_notice_flag_first_purchase_update_date,
+        t.operate_mode
+        t.cancel_remark,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t2.user_id as creator_account_id,
+        t3.staff_name as project_leader_name,
+        t5.develop_plan_name,
+        t5.develop_type,
+        t8.market_region_name,
+        t.erp_material_sku_barcode,
+        t10.group_type
+        from s_prj_project t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN s_bas_staff t3 ON t.project_leader_sid = t3.staff_sid
+        LEFT JOIN s_dev_develop_plan t5 ON t.develop_plan_sid = t5.develop_plan_sid
+        LEFT JOIN s_dev_category_plan t6 ON t.category_plan_sid = t6.category_plan_sid
+        LEFT JOIN s_bas_material_barcode t7 ON t.material_barcode_sid = t7.barcode_sid
+        LEFT JOIN (
+        SELECT ta.project_sid, GROUP_CONCAT(tb.dict_label  ORDER BY tb.dict_label ASC SEPARATOR ';') as market_region_name
+        FROM s_prj_project ta
+        LEFT JOIN sys_dict_data tb ON tb.dict_type = 's_market_region' AND
+        (ta.market_region = tb.dict_value or ta.market_region like concat(tb.dict_value, ';%')
+        or ta.market_region like concat('%;', tb.dict_value, ';%') or ta.market_region like concat('%;', tb.dict_value))
+        GROUP BY ta.project_sid
+        ) t8 ON t.project_sid = t8.project_sid
+        LEFT JOIN s_sys_default_setting_client t9 ON t.client_id = t9.client_id
+        LEFT JOIN s_dev_category_plan_item t10 ON t5.category_plan_item_sid = t10.category_plan_item_sid
+        <where>
+            (t.handle_status = '5' AND t.project_status = 'JXZ' AND t.plan_end_date &gt;= DATE_FORMAT(NOW(), '%Y-%m-%d') AND
+            t.plan_end_date &lt;= DATE_FORMAT(date_add(now(), interval t.toexpire_days_proj day), '%Y-%m-%d'))
+            <if test="entity.clientId != null and entity.clientId != ''">
+                and t.client_id = #{entity.clientId}
+            </if>
+            <if test="entity.creatorAccount != null and entity.creatorAccount != ''">
+                and (t.creator_account = #{entity.creatorAccount}
+                <if test="entity.currentUserIsLeaderSid != null">
+                    or t.project_leader_sid = #{entity.currentUserIsLeaderSid}
+                </if>)
+            </if>
+            <if test="entity.projectCode != null and entity.projectCode != ''">
+                and t.project_code like concat('%', #{entity.projectCode}, '%')
+            </if>
+            <if test="entity.projectName != null and entity.projectName != ''">
+                and t.project_name like concat('%', #{entity.projectName}, '%')
+            </if>
+            <if test="entity.productCode != null and entity.productCode != ''">
+                and t.product_code like concat('%', #{entity.productCode}, '%')
+            </if>
+            <if test="entity.yearmonthProjectBegin != null and entity.yearmonthProjectBegin != ''">
+                and t.yearmonth_project &gt;= #{entity.yearmonthProjectBegin}
+            </if>
+            <if test="entity.yearmonthProjectEnd != null and entity.yearmonthProjectEnd != ''">
+                and t.yearmonth_project &lt;= #{entity.yearmonthProjectEnd}
+            </if>
+            <if test="entity.materialBarcodeCode != null and entity.materialBarcodeCode != ''">
+                and t.material_barcode_code like concat('%', #{entity.materialBarcodeCode}, '%')
+            </if>
+            <if test="entity.erpMaterialSkuBarcode != null and entity.erpMaterialSkuBarcode != ''">
+                and t.erp_material_sku_barcode like concat('%', #{entity.erpMaterialSkuBarcode}, '%')
+            </if>
+            <if test="entity.projectType != null and entity.projectType != ''">
+                and t.project_type = #{entity.projectType}
+            </if>
+            <if test="entity.projectTypeList != null and entity.projectTypeList.length >0 ">
+                and t.project_type in
+                (<foreach collection="entity.projectTypeList" item="projectType" separator=",">#{projectType}</foreach>)
+            </if>
+            <if test="entity.projectStatus != null and entity.projectStatus != ''">
+                and t.project_status = #{entity.projectStatus}
+            </if>
+            <if test="entity.projectStatusList != null and entity.projectStatusList.length >0 ">
+                and t.project_status in
+                (<foreach collection="entity.projectStatusList" item="projectStatus" separator=",">#{projectStatus}</foreach>)
+            </if>
+            <if test="entity.developPlanCode != null and entity.developPlanCode != ''">
+                and t.develop_plan_code like concat('%', #{entity.developPlanCode}, '%')
+            </if>
+            <if test="entity.developPlanName != null and entity.developPlanName != ''">
+                and t5.develop_plan_name like concat('%', #{entity.developPlanName}, '%')
+            </if>
+            <if test="entity.categoryPlanSid != null ">
+                and t.category_plan_sid = #{entity.categoryPlanSid}
+            </if>
+            <if test="entity.categoryPlanCode != null and entity.categoryPlanCode != ''">
+                and t.category_plan_code like concat('%', #{entity.categoryPlanCode}, '%')
+            </if>
+            <if test="entity.sampleSid != null">
+                and t.sample_sid = #{entity.sampleSid}
+            </if>
+            <if test="entity.sampleCode != null and entity.sampleCode != ''">
+                and t.sample_code like concat('%', #{entity.sampleCode}, '%')
+            </if>
+            <if test="entity.marketRegion != null and entity.marketRegion != ''">
+                and t.market_region = #{entity.marketRegion}
+            </if>
+            <if test="entity.marketRegionList != null and entity.marketRegionList.length >0 ">
+                and (<foreach collection="entity.marketRegionList" item="item" separator=" or ">
+                t.market_region = #{item} or t.market_region like concat(#{item}, ';%')
+                or t.market_region like concat('%;', #{item}, ';%') or t.market_region like concat('%;', #{item})
+            </foreach>)
+            </if>
+            <if test="entity.projectLeaderSid != null ">
+                and t.project_leader_sid = #{entity.projectLeaderSid}
+            </if>
+            <if test="entity.projectLeaderSidList != null and entity.projectLeaderSidList.length >0 ">
+                and t.project_leader_sid in
+                (<foreach collection="entity.projectLeaderSidList" item="projectLeaderSid" separator=",">#{projectLeaderSid}</foreach>)
+            </if>
+            <if test="entity.projectLeaderCode != null and entity.projectLeaderCode != ''">
+                and t.project_leader_code = #{entity.projectLeaderCode}
+            </if>
+            <if test="entity.year != null and entity.year != ''">
+                and t.year = #{entity.year}
+            </if>
+            <if test="entity.yearList != null and entity.yearList.length >0 ">
+                and t.year in
+                (<foreach collection="entity.yearList" item="year" separator=",">#{year}</foreach>)
+            </if>
+            <if test="entity.planStartDate != null ">
+                and t.plan_start_date = #{entity.planStartDate}
+            </if>
+            <if test="entity.planStartDateBegin != null and entity.planStartDateBegin!=''">
+                and date_format(t.plan_start_date,'%y%m%d') &gt;= date_format(#{entity.planStartDateBegin},'%y%m%d')
+            </if>
+            <if test="entity.planStartDateEnd != null and entity.planStartDateEnd!=''">
+                and date_format(t.plan_start_date,'%y%m%d') &lt;= date_format(#{entity.planStartDateEnd},'%y%m%d')
+            </if>
+            <if test="entity.planEndDate != null ">
+                and t.plan_end_date = #{entity.planEndDate}
+            </if>
+            <if test="entity.planEndDateBegin != null and entity.planEndDateBegin!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(#{entity.planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="entity.planEndDateEnd != null and entity.planEndDateEnd!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &lt;= date_format(#{entity.planEndDateEnd},'%y%m%d')
+            </if>
+            <if test="entity.groupType != null and entity.groupType != ''">
+                and t10.group_type = #{entity.groupType}
+            </if>
+            <if test="entity.groupTypeList != null and entity.groupTypeList.length >0 ">
+                and t10.group_type in
+                (<foreach collection="entity.groupTypeList" item="groupType" separator=",">
+                #{groupType}</foreach>)
+            </if>
+        </where>
+        <if test="entity.pageNum != null and entity.pageSize != null">LIMIT ${entity.pageBegin},${entity.pageSize}</if>
+    </select>
+
+    <select id="getOverdueBusinessNoUser" parameterType="com.platform.ems.domain.PrjProject" resultType="com.platform.ems.domain.PrjProject">
+        select t.client_id,
+        t.project_sid,
+        t.project_code,
+        t.project_name,
+        t.project_type,
+        t.year,
+        t.sale_station_sid,
+        t.sale_station_code,
+        t.project_status,
+        t.priority_project,
+        t.handle_sort_project,
+        t.trialsale_type,
+        t.project_phase,
+        t.plan_type,
+        t.yearmonth_project,
+        t.plan_start_date,
+        t.plan_end_date,
+        t.actual_end_date,
+        t.toexpire_days_proj,
+        t.market_region,
+        t.project_leader_sid,
+        t.project_leader_code,
+        t.develop_plan_sid,
+        t.develop_plan_code,
+        t.sample_sid,
+        t.sample_code,
+        t.product_sid,
+        t.product_code,
+        t.material_barcode_sid,
+        t.material_barcode_code,
+        t.erp_material_msku_code,
+        t.product_season_sid,
+        t.product_season_code,
+        t.category_plan_sid,
+        t.category_plan_code,
+        t.project_description,
+        t.pre_project_sid,
+        t.pre_project_code,
+        t.first_purchase_flag,
+        t.first_purchase_flag_update_date,
+        t.second_purchase_flag,
+        t.second_purchase_flag_update_date,
+        t.arrival_notice_flag_first_purchase,
+        t.arrival_notice_flag_first_purchase_update_date,
+        t.operate_mode,
+        t.cancel_remark,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t2.user_id as creator_account_id,
+        t3.staff_name as project_leader_name,
+        t5.develop_plan_name,
+        t5.develop_type,
+        t8.market_region_name,
+        t.erp_material_sku_barcode,
+        t10.group_type
+        from s_prj_project t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN s_bas_staff t3 ON t.project_leader_sid = t3.staff_sid
+        LEFT JOIN s_dev_develop_plan t5 ON t.develop_plan_sid = t5.develop_plan_sid
+        LEFT JOIN s_dev_category_plan t6 ON t.category_plan_sid = t6.category_plan_sid
+        LEFT JOIN s_bas_material_barcode t7 ON t.material_barcode_sid = t7.barcode_sid
+        LEFT JOIN (
+        SELECT ta.project_sid, GROUP_CONCAT(tb.dict_label  ORDER BY tb.dict_label ASC SEPARATOR ';') as market_region_name
+        FROM s_prj_project ta
+        LEFT JOIN sys_dict_data tb ON tb.dict_type = 's_market_region' AND
+        (ta.market_region = tb.dict_value or ta.market_region like concat(tb.dict_value, ';%')
+        or ta.market_region like concat('%;', tb.dict_value, ';%') or ta.market_region like concat('%;', tb.dict_value))
+        GROUP BY ta.project_sid
+        ) t8 ON t.project_sid = t8.project_sid
+        LEFT JOIN s_sys_default_setting_client t9 ON t.client_id = t9.client_id
+        LEFT JOIN s_dev_category_plan_item t10 ON t5.category_plan_item_sid = t10.category_plan_item_sid
+        <where>
+            (t.handle_status = '5' AND t.project_status = 'JXZ'
+            AND t.plan_end_date &lt; DATE_FORMAT(NOW(), '%Y-%m-%d'))
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (t.creator_account = #{creatorAccount}
+                <if test="currentUserIsLeaderSid != null">
+                    or t.project_leader_sid = #{currentUserIsLeaderSid}
+                </if>)
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                and t.project_code like concat('%', #{projectCode}, '%')
+            </if>
+            <if test="projectName != null and projectName != ''">
+                and t.project_name like concat('%', #{projectName}, '%')
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and t.product_code like concat('%', #{productCode}, '%')
+            </if>
+            <if test="yearmonthProjectBegin != null and yearmonthProjectBegin != ''">
+                and t.yearmonth_project &gt;= #{yearmonthProjectBegin}
+            </if>
+            <if test="yearmonthProjectEnd != null and yearmonthProjectEnd != ''">
+                and t.yearmonth_project &lt;= #{yearmonthProjectEnd}
+            </if>
+            <if test="materialBarcodeCode != null and materialBarcodeCode != ''">
+                and t.material_barcode_code like concat('%', #{materialBarcodeCode}, '%')
+            </if>
+            <if test="erpMaterialSkuBarcode != null and erpMaterialSkuBarcode != ''">
+                and t.erp_material_sku_barcode like concat('%', #{erpMaterialSkuBarcode}, '%')
+            </if>
+            <if test="projectType != null and projectType != ''">
+                and t.project_type = #{projectType}
+            </if>
+            <if test="projectTypeList != null and projectTypeList.length >0 ">
+                and t.project_type in
+                (<foreach collection="projectTypeList" item="projectType" separator=",">#{projectType}</foreach>)
+            </if>
+            <if test="projectStatus != null and projectStatus != ''">
+                and t.project_status = #{projectStatus}
+            </if>
+            <if test="projectStatusList != null and projectStatusList.length >0 ">
+                and t.project_status in
+                (<foreach collection="projectStatusList" item="projectStatus" separator=",">#{projectStatus}</foreach>)
+            </if>
+            <if test="developPlanCode != null and developPlanCode != ''">
+                and t.develop_plan_code like concat('%', #{developPlanCode}, '%')
+            </if>
+            <if test="developPlanName != null and developPlanName != ''">
+                and t5.develop_plan_name like concat('%', #{developPlanName}, '%')
+            </if>
+            <if test="categoryPlanSid != null ">
+                and t.category_plan_sid = #{categoryPlanSid}
+            </if>
+            <if test="categoryPlanCode != null and categoryPlanCode != ''">
+                and t.category_plan_code like concat('%', #{categoryPlanCode}, '%')
+            </if>
+            <if test="sampleSid != null">
+                and t.sample_sid = #{sampleSid}
+            </if>
+            <if test="sampleCode != null and sampleCode != ''">
+                and t.sample_code like concat('%', #{sampleCode}, '%')
+            </if>
+            <if test="marketRegion != null and marketRegion != ''">
+                and t.market_region = #{marketRegion}
+            </if>
+            <if test="marketRegionList != null and marketRegionList.length >0 ">
+                and (<foreach collection="marketRegionList" item="item" separator=" or ">
+                t.market_region = #{item} or t.market_region like concat(#{item}, ';%')
+                or t.market_region like concat('%;', #{item}, ';%') or t.market_region like concat('%;', #{item})
+            </foreach>)
+            </if>
+            <if test="projectLeaderSid != null ">
+                and t.project_leader_sid = #{projectLeaderSid}
+            </if>
+            <if test="projectLeaderSidList != null and projectLeaderSidList.length >0 ">
+                and t.project_leader_sid in
+                (<foreach collection="projectLeaderSidList" item="projectLeaderSid" separator=",">#{projectLeaderSid}</foreach>)
+            </if>
+            <if test="projectLeaderCode != null and projectLeaderCode != ''">
+                and t.project_leader_code = #{projectLeaderCode}
+            </if>
+            <if test="year != null and year != ''">
+                and t.year = #{year}
+            </if>
+            <if test="yearList != null and yearList.length >0 ">
+                and t.year in
+                (<foreach collection="yearList" item="year" separator=",">#{year}</foreach>)
+            </if>
+            <if test="planStartDate != null ">
+                and t.plan_start_date = #{planStartDate}
+            </if>
+            <if test="planStartDateBegin != null and planStartDateBegin!=''">
+                and date_format(t.plan_start_date,'%y%m%d') &gt;= date_format(#{planStartDateBegin},'%y%m%d')
+            </if>
+            <if test="planStartDateEnd != null and planStartDateEnd!=''">
+                and date_format(t.plan_start_date,'%y%m%d') &lt;= date_format(#{planStartDateEnd},'%y%m%d')
+            </if>
+            <if test="planEndDate != null ">
+                and t.plan_end_date = #{planEndDate}
+            </if>
+            <if test="planEndDateBegin != null and planEndDateBegin!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(#{planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="planEndDateEnd != null and planEndDateEnd!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &lt;= date_format(#{planEndDateEnd},'%y%m%d')
+            </if>
+            <if test="groupType != null and groupType != ''">
+                and t10.group_type = #{groupType}
+            </if>
+            <if test="groupTypeList != null and groupTypeList.length >0 ">
+                and t10.group_type in
+                (<foreach collection="groupTypeList" item="groupType" separator=",">
+                #{groupType}</foreach>)
+            </if>
+        </where>
+        <if test="pageNum != null and pageSize != null">LIMIT ${pageBegin},${pageSize}</if>
+    </select>
+
+    <select id = "selectPrjProjectExecuteCondition" parameterType="com.platform.ems.domain.dto.response.form.PrjProjectExecuteCondition"
+            resultType="com.platform.ems.domain.dto.response.form.PrjProjectExecuteCondition">
+        SELECT
+        t.*,
+        t1.sale_station_name as pre_sale_station_name, t2.market_region_name as pre_market_region_name,
+        t3.develop_plan_name, t4.group_type, t5.sale_station_name, t6.market_region_name,
+        IF(t1.sale_station_name != t5.sale_station_name
+        or (t1.sale_station_name is null and t5.sale_station_name is not null)
+        or (t1.sale_station_name is not null and t5.sale_station_name is null),'Y','N') as light_sale_station,
+        IF(t2.market_region_name != t6.market_region_name
+        or (t2.market_region_name is null and t6.market_region_name is not null)
+        or (t2.market_region_name is not null and t6.market_region_name is null),'Y','N') as light_market_region
+        FROM (
+        SELECT
+        t.*
+        FROM s_prj_project t
+        WHERE t.project_type = 'KAIF' AND t.handle_status = '5'
+        ) t
+        LEFT JOIN (
+        SELECT t.pre_project_sid, GROUP_CONCAT(t.sale_station_name ORDER BY CONVERT (t.sale_station_name USING gbk) ASC SEPARATOR ';') as sale_station_name
+        FROM (
+        SELECT t.pre_project_sid, t.sale_station_code, t1.name as sale_station_name
+        FROM (
+        SELECT
+        a.project_sid, a.pre_project_sid,
+        substring_index(substring_index(a.sale_station_code,';',b.help_topic_id + 1),';' ,- 1) AS sale_station_code
+        FROM (
+        SELECT base.project_sid, base.pre_project_sid, base.sale_station_code
+        FROM s_prj_project base
+        WHERE base.sale_station_code IS NOT NULL AND base.project_type = 'SHIX'
+        ) a
+        join mysql.help_topic b on b.help_topic_id &lt; ( length(a.sale_station_code) - length(REPLACE (a.sale_station_code, ';', ''))  + 1)
+        ) t
+        LEFT JOIN s_con_sale_station t1 ON t.sale_station_code = t1.code
+        GROUP BY t.pre_project_sid, t.sale_station_code
+        ) t
+        GROUP BY t.pre_project_sid
+        ) t1 ON t.project_sid = t1.pre_project_sid
+        LEFT JOIN (
+        SELECT t.pre_project_sid, GROUP_CONCAT(t.market_region_name ORDER BY CONVERT (t.market_region_name USING gbk) ASC SEPARATOR ';') as market_region_name
+        FROM (
+        SELECT t.pre_project_sid, t.market_region, t1.dict_label as market_region_name
+        FROM (
+        SELECT
+        a.project_sid, a.pre_project_sid,
+        substring_index(substring_index(a.market_region,';',b.help_topic_id + 1),';' ,- 1) AS market_region
+        FROM (
+        SELECT base.project_sid, base.pre_project_sid, base.market_region
+        FROM s_prj_project base
+        WHERE base.market_region IS NOT NULL AND base.project_type = 'SHIX'
+        ) a
+        join mysql.help_topic b on b.help_topic_id &lt; ( length(a.market_region) - length(REPLACE (a.market_region, ';', ''))  + 1)
+        ) t
+        LEFT JOIN sys_dict_data t1 ON t.market_region = t1.dict_value AND t1.dict_type = 's_market_region'
+        GROUP BY t.pre_project_sid, t.market_region
+        ) t
+        GROUP BY t.pre_project_sid
+        ) t2 ON t.project_sid = t2.pre_project_sid
+        LEFT JOIN s_dev_develop_plan t3 ON t.develop_plan_sid = t3.develop_plan_sid
+        LEFT JOIN s_dev_category_plan_item t4 ON t3.category_plan_item_sid = t4.category_plan_item_sid
+        LEFT JOIN (
+        SELECT t.project_sid, GROUP_CONCAT(t1.name ORDER BY CONVERT (t1.name USING gbk) ASC SEPARATOR ';') as sale_station_name
+        FROM (
+        SELECT
+        t.project_sid, t.sale_station_code
+        FROM s_prj_project t
+        WHERE t.project_type = 'KAIF' AND t.handle_status = '5' AND t.sale_station_code IS NOT NULL
+        ) t
+        LEFT JOIN s_con_sale_station t1 ON t.sale_station_code like concat('%;', t1.code, ';%') or t.sale_station_code like concat(t1.code, ';%')
+        or t.sale_station_code like concat('%;', t1.code) or t.sale_station_code = t1.code
+        GROUP BY t.project_sid
+        ) t5 ON t.project_sid = t5.project_sid
+        LEFT JOIN (
+        SELECT t.project_sid, GROUP_CONCAT(t1.dict_label ORDER BY CONVERT (t1.dict_label USING gbk) ASC SEPARATOR ';') as market_region_name
+        FROM (
+        SELECT
+        t.project_sid, t.market_region
+        FROM s_prj_project t
+        WHERE t.project_type = 'KAIF' AND t.handle_status = '5' AND t.market_region IS NOT NULL
+        ) t
+        LEFT JOIN sys_dict_data t1 ON t1.dict_type = 's_market_region' AND (t.market_region like concat('%;', t1.dict_value, ';%')
+        or t.market_region like concat('%;', t1.dict_value) or t.market_region like concat(t1.dict_value, ';%') or t.market_region = t1.dict_value)
+        GROUP BY t.project_sid
+        ) t6 ON t.project_sid = t6.project_sid
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                and t.project_code like concat('%', #{projectCode}, '%')
+            </if>
+            <if test="developPlanCode != null and developPlanCode != ''">
+                and t.develop_plan_code like concat('%', #{developPlanCode}, '%')
+            </if>
+            <if test="year != null and year != ''">
+                and t.year = #{year}
+            </if>
+            <if test="yearList != null and yearList.length >0 ">
+                and t.year in
+                (<foreach collection="yearList" item="year" separator=",">#{year}</foreach>)
+            </if>
+            <if test="groupType != null and groupType != ''">
+                and t4.group_type = #{groupType}
+            </if>
+            <if test="groupTypeList != null and groupTypeList.length >0 ">
+                and t4.group_type in
+                (<foreach collection="groupTypeList" item="groupType" separator=",">#{groupType}</foreach>)
+            </if>
+            <if test="saleStationCodeList != null and saleStationCodeList.length >0 ">
+                and (<foreach collection="saleStationCodeList" item="item" separator=" or ">
+                t.sale_station_code = #{item} or t.sale_station_code like concat(#{item}, ';%')
+                or t.sale_station_code like concat('%;', #{item}, ';%') or t.sale_station_code like concat('%;', #{item})
+            </foreach>)
+            </if>
+            <if test="marketRegionList != null and marketRegionList.length >0 ">
+                and (<foreach collection="marketRegionList" item="item" separator=" or ">
+                t.market_region = #{item} or t.market_region like concat(#{item}, ';%')
+                or t.market_region like concat('%;', #{item}, ';%') or t.market_region like concat('%;', #{item})
+            </foreach>)
+            </if>
+            <if test="lightSaleStation != null and lightSaleStation == 'Y'.toString()">
+                and (t1.sale_station_name != t5.sale_station_name
+                or (t1.sale_station_name is null and t5.sale_station_name is not null)
+                or (t1.sale_station_name is not null and t5.sale_station_name is null))
+            </if>
+            <if test="lightSaleStation != null and lightSaleStation == 'N'.toString()">
+                and (t1.sale_station_name = t5.sale_station_name or (t1.sale_station_name is null and t5.sale_station_name is null))
+            </if>
+            <if test="lightMarketRegion != null and lightMarketRegion == 'Y'.toString()">
+                and (t2.market_region_name != t6.market_region_name
+                or (t2.market_region_name is null and t6.market_region_name is not null)
+                or (t2.market_region_name is not null and t6.market_region_name is null))
+            </if>
+            <if test="lightMarketRegion != null and lightMarketRegion == 'N'.toString()">
+                and (t2.market_region_name = t6.market_region_name or (t2.market_region_name is null and t6.market_region_name is null))
+            </if>
+        </where>
+        <if test="pageNum != null and pageSize != null">LIMIT ${pageBegin},${pageSize}</if>
+    </select>
+
+    <select id = "selectPrjProjectNeedComplete" parameterType="com.platform.ems.domain.PrjProject"
+            resultType="com.platform.ems.domain.PrjProject">
+        SELECT t.project_sid, t.task_status
+        FROM (
+                 SELECT t.project_sid, t.task_status
+                 FROM s_prj_project_task t
+                 GROUP BY t.project_sid, t.task_status
+             ) t
+                 LEFT JOIN s_prj_project t1 ON t.project_sid = t1.project_sid
+                 LEFT JOIN s_sys_default_setting_client t2 ON t1.client_id = t2.client_id
+        WHERE t1.project_status = 'JXZ' AND t2.is_auto_set_project_status = 'Y'
+        GROUP BY t.project_sid
+        HAVING COUNT(t.project_sid) = 1 AND t.task_status = 'YWC'
+    </select>
+
+    <update id = "updatePrjProject" parameterType="com.platform.ems.domain.PrjProject">
+        update s_prj_project t
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectStatus != null and projectStatus != ''">
+                t.project_status = #{projectStatus},
+            </if>
+            <if test="firstPurchaseFlag != null and firstPurchaseFlag != ''">
+                t.first_purchase_flag = #{firstPurchaseFlag},
+            </if>
+            <if test="firstPurchaseFlagUpdateDate != null">
+                t.first_purchase_flag_update_date = #{firstPurchaseFlagUpdateDate},
+            </if>
+            <if test="secondPurchaseFlag != null and secondPurchaseFlag != ''">
+                t.second_purchase_flag = #{secondPurchaseFlag},
+            </if>
+            <if test="secondPurchaseFlagUpdateDate != null">
+                t.second_purchase_flag_update_date = #{secondPurchaseFlagUpdateDate},
+            </if>
+            <if test="arrivalNoticeFlagFirstPurchase != null and arrivalNoticeFlagFirstPurchase != ''">
+                t.arrival_notice_flag_first_purchase = #{arrivalNoticeFlagFirstPurchase},
+            </if>
+            <if test="arrivalNoticeFlagFirstPurchaseUpdateDate != null">
+                t.arrival_notice_flag_first_purchase_update_date = #{arrivalNoticeFlagFirstPurchaseUpdateDate},
+            </if>
+        </trim>
+        where t.project_sid in
+        (<foreach collection="projectSidList" item="projectSid" separator=",">#{projectSid}</foreach>)
+    </update>
+
+</mapper>

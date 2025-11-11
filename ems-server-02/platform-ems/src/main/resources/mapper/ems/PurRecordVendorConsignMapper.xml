@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurRecordVendorConsignMapper">
+
+    <resultMap type="com.platform.ems.domain.PurRecordVendorConsign" id="PurRecordVendorConsignResult">
+        <result property="clientId" column="client_id"/>
+        <result property="recordVendorConsignSid" column="record_vendor_consign_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="barcodeSid" column="barcode_sid"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="materialName" column="material_name"/>
+        <result property="quantity" column="quantity"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="purchaseUnit" column="purchase_unit"/>
+        <result property="unitConversionRate" column="unit_conversion_rate"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="unitBaseName" column="unit_base_name"/>
+    </resultMap>
+
+    <sql id="selectPurRecordVendorConsignVo">
+        select t.client_id,
+        t.record_vendor_consign_sid,
+        t.material_sid,
+        t.sku1_sid,
+        t.sku2_sid,
+        t.vendor_sid,
+        t.barcode_sid,
+        t.material_name,
+        t.quantity,
+        t.unit_base,
+        t.purchase_unit,
+        t.unit_conversion_rate,
+        t.item_num,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+	    t1.vendor_code,
+        t1.vendor_name,
+        t2.material_code,
+        t3.sku_code AS sku1_code,
+        t3.sku_name AS sku1_name,
+        t4.sku_code AS sku2_code,
+        t4.sku_name AS sku2_name,
+        t5.name as unit_base_name
+  from s_pur_record_vendor_consign t
+	    LEFT JOIN s_bas_vendor t1 on t1.vendor_sid=t.vendor_sid
+        LEFT JOIN s_bas_material t2 ON t2.material_sid = t.material_sid
+	    LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t.sku1_sid
+	    LEFT JOIN s_bas_sku t4 ON t4.sku_sid = t.sku2_sid
+	    LEFT JOIN s_con_measure_unit t5 ON t5.code = t.unit_base
+    </sql>
+
+    <select id="selectPurRecordVendorConsignById" parameterType="Long"
+            resultType="com.platform.ems.domain.PurRecordVendorConsign">
+        <include refid="selectPurRecordVendorConsignVo"/>
+        where t.record_vendor_consign_sid = #{recordVendorConsignSid}
+    </select>
+
+
+    <select id="selectPurRecordVendorConsignList" parameterType="com.platform.ems.domain.PurRecordVendorConsign"
+            resultMap="PurRecordVendorConsignResult">
+        <include refid="selectPurRecordVendorConsignVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid =#{materialSid}
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid =#{sku1Sid}
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid =#{sku2Sid}
+            </if>
+            <if test="barcodeSid != null ">
+                and t.barcode_sid =#{barcodeSid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0 ">
+                and t.vendor_sid in (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="materialCode" separator="or">t2.material_code like concat('%', #{materialCode}, '%')</foreach>)
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="materialName" separator="or">t.material_name like concat('%', #{materialName}, '%')</foreach>)
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length >0 ">
+                and t2.material_type in (<foreach collection="materialTypeList" item="materialType" separator=",">#{materialType}</foreach>)
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="unitBase != null  and unitBase != ''">
+                and (<foreach collection="unitBase.split(';')" item="item" separator="or">t.unit_base like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseUnit != null  and purchaseUnit != ''">
+                and (<foreach collection="purchaseUnit.split(';')" item="item" separator="or">t.purchase_unit like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="unitConversionRate != null ">
+                and t.unit_conversion_rate = #{unitConversionRate}
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num =#{itemNum}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_record_vendor_consign
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            record_vendor_consign_sid,
+            material_sid,
+            sku1_sid,
+            sku2_sid,
+            barcode_sid,
+            material_name,
+            quantity,
+            unit_base,
+            purchase_unit,
+            unit_conversion_rate,
+            item_num,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.recordVendorConsignSid},
+                #{item.materialSid},
+                #{item.sku1Sid},
+                #{item.sku2Sid},
+                #{item.barcodeSid},
+                #{item.materialName},
+                #{item.quantity},
+                #{item.unitBase},
+                #{item.purchaseUnit},
+                #{item.unitConversionRate},
+                #{item.itemNum},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_record_vendor_consign
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            material_sid = #{materialSid},
+            sku1_sid = #{sku1Sid},
+            sku2_sid = #{sku2Sid},
+            barcode_sid = #{barcodeSid},
+            material_name = #{materialName},
+            quantity = #{quantity},
+            unit_base = #{unitBase},
+            purchase_unit = #{purchaseUnit},
+            unit_conversion_rate = #{unitConversionRate},
+            item_num = #{itemNum},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where record_vendor_consign_sid = #{recordVendorConsignSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_record_vendor_consign
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                material_sid = #{materialSid},
+                sku1_sid = #{sku1Sid},
+                sku2_sid = #{sku2Sid},
+                barcode_sid = #{barcodeSid},
+                material_name = #{materialName},
+                quantity = #{quantity},
+                unit_base = #{unitBase},
+                purchase_unit = #{purchaseUnit},
+                unit_conversion_rate = #{unitConversionRate},
+                item_num = #{itemNum},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where record_vendor_consign_sid = #{recordVendorConsignSid}
+        </foreach>
+    </update>
+
+</mapper>

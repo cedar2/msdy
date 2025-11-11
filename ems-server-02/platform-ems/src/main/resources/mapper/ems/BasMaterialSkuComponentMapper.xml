@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasMaterialSkuComponentMapper">
+
+    <resultMap type="com.platform.ems.domain.BasMaterialSkuComponent" id="BasMaterialSkuComponentResult">
+        <result property="clientId"    column="client_id"    />
+        <result property="materialSkuComponentSid"    column="material_sku_component_sid"    />
+        <result property="materialSid"    column="material_sid"    />
+        <result property="companySid"    column="company_sid"    />
+        <result property="skuSid"    column="sku_sid"    />
+        <result property="skuType"    column="sku_type"    />
+        <result property="actualComponent"    column="actual_component"    />
+        <result property="bottomsActualComponent"    column="bottoms_actual_component"    />
+        <result property="remark"    column="remark"    />
+        <result property="creatorAccount"    column="creator_account"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updaterAccount"    column="updater_account"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="dataSourceSys"    column="data_source_sys"    />
+        <result property="skuCode"    column="sku_code"    />
+        <result property="skuName"    column="sku_name"    />
+        <result property="componentOutFabric"    column="component_out_fabric"    />
+        <result property="componentInFabric"    column="component_in_fabric"    />
+        <result property="componentPadding"    column="component_padding"    />
+        <result property="bottomsComponentOutFabric"    column="bottoms_component_out_fabric"    />
+        <result property="bottomsComponentInFabric"    column="bottoms_component_in_fabric"    />
+        <result property="bottomsComponentPadding"    column="bottoms_component_padding"    />
+    </resultMap>
+
+    <sql id="selectBasMaterialSkuComponentVo">
+        select t.client_id, t.material_sku_component_sid, t.material_sid, t.company_sid, t.sku_sid, t.sku_type, t.actual_component, t.bottoms_actual_component,
+        t.remark, t.creator_account, t.create_date, t.updater_account, t.update_date, t.data_source_sys, t.component_out_fabric, t.component_in_fabric,
+        t.component_padding, t.bottoms_component_out_fabric, t.bottoms_component_in_fabric, t.bottoms_component_padding,
+        t1.sku_code, t1.sku_name
+        from s_bas_material_sku_component t
+        LEFT JOIN s_bas_sku t1 ON t1.sku_sid = t.sku_sid
+    </sql>
+
+    <sql id="selectForExternalVO">
+        select t.client_id,
+               t.material_sku_component_sid,
+               t.material_sid AS product_sid,
+               t.company_sid,
+               t.sku_sid AS sku_color_sid,
+               t.sku_type,
+               t.actual_component,
+               t.bottoms_actual_component,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t.component_out_fabric,
+               t.component_in_fabric,
+               t.component_padding,
+               t.bottoms_component_out_fabric,
+               t.bottoms_component_in_fabric,
+               t.bottoms_component_padding,
+               t1.sku_code AS sku_color_code,
+               t1.sku_name AS sku_color_name
+        from s_bas_material_sku_component t
+        LEFT JOIN s_bas_sku t1 ON t1.sku_sid = t.sku_sid
+    </sql>
+
+    <select id="selectForExternalList" parameterType="long" resultType="com.platform.ems.domain.dto.response.external.BasMaterialSkuComponentExternal">
+        <include refid="selectForExternalVO"/>
+        <where>
+            <if test="materialSid != null and materialSid != ''">
+                and  t.material_sid  = #{materialSid}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectBasMaterialSkuComponentById" parameterType="String" resultMap="BasMaterialSkuComponentResult">
+        <include refid="selectBasMaterialSkuComponentVo"/>
+        where t.client_id = #{clientId}
+    </select>
+
+    <select id="selectBasMaterialSkuComponentList" parameterType="com.platform.ems.domain.BasMaterialSkuComponent" resultMap="BasMaterialSkuComponentResult">
+        <include refid="selectBasMaterialSkuComponentVo"/>
+        <where>
+                                                        <if test="materialSkuComponentSid != null  and materialSkuComponentSid != ''">
+        and  t.material_sku_component_sid  = #{materialSkuComponentSid}</if>
+        <if test="materialSid != null  and materialSid != ''">
+            and  t.material_sid = #{materialSid}</if>
+        <if test="companySid != null ">
+            and  t.company_sid = #{companySid}
+        </if>
+                                                                                                                <if test="actualComponent != null  and actualComponent != ''">
+        and  t.actual_component in (
+        <foreach collection="actualComponent.split(';')" item="item" separator=",">
+        #{item}
+        </foreach>
+        )
+        </if>
+                                                                <if test="bottomsActualComponent != null  and bottomsActualComponent != ''">
+        and  t.bottoms_actual_component in (
+        <foreach collection="bottomsActualComponent.split(';')" item="item" separator=",">
+        #{item}
+        </foreach>
+        )
+        </if>
+                                                                <if test="creatorAccount != null  and creatorAccount != ''">
+        and  t.creator_account in (
+        <foreach collection="creatorAccount.split(';')" item="item" separator=",">
+        #{item}
+        </foreach>
+        )
+        </if>
+                                                                <if test="createDate != null "> and t.create_date = #{createDate}</if>
+                                                                <if test="updaterAccount != null  and updaterAccount != ''">
+        and  t.updater_account in (
+        <foreach collection="updaterAccount.split(';')" item="item" separator=",">
+        #{item}
+        </foreach>
+        )
+        </if>
+                                                                <if test="updateDate != null "> and t.update_date = #{updateDate}</if>
+                                                                <if test="dataSourceSys != null  and dataSourceSys != ''">
+        and  t.data_source_sys in (
+        <foreach collection="dataSourceSys.split(';')" item="item" separator=",">
+        #{item}
+        </foreach>
+        )
+        </if>
+                                        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_material_sku_component
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                        client_id,
+                                material_sku_component_sid,
+                                material_sid,
+                                company_sid,
+                                sku_sid,
+                                sku_type,
+                                actual_component,
+                                bottoms_actual_component,
+                                remark,
+                                creator_account,
+                                create_date,
+                                updater_account,
+                                update_date,
+                                data_source_sys,
+                        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+        <foreach collection="list" item="o" separator=",">
+                        #{clientId},
+                                #{materialSkuComponentSid},
+                                #{materialSid},
+                                #{companySid},
+                                #{skuSid},
+                                #{skuType},
+                                #{actualComponent},
+                                #{bottomsActualComponent},
+                                #{remark},
+                                #{creatorAccount},
+                                #{createDate},
+                                #{updaterAccount},
+                                #{updateDate},
+                                #{dataSourceSys},
+                        </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_material_sku_component
+        <trim prefix="SET" suffixOverrides=",">
+                                        material_sku_component_sid = #{materialSkuComponentSid},
+                                material_sid = #{materialSid},
+                                company_sid = #{companySid},
+                                sku_sid = #{skuSid},
+                                sku_type = #{skuType},
+                                actual_component = #{actualComponent},
+                                bottoms_actual_component = #{bottomsActualComponent},
+                                remark = #{remark},
+                                creator_account = #{creatorAccount},
+                                create_date = #{createDate},
+                                updater_account = #{updaterAccount},
+                                update_date = #{updateDate},
+                                data_source_sys = #{dataSourceSys},
+                        </trim>
+        where client_id = #{clientId}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+        update s_bas_material_sku_component
+        <trim prefix="SET" suffixOverrides=",">
+                                        material_sku_component_sid = #{materialSkuComponentSid},
+                                material_sid = #{materialSid},
+                                company_sid = #{companySid},
+                                sku_sid = #{skuSid},
+                                sku_type = #{skuType},
+                                actual_component = #{actualComponent},
+                                bottoms_actual_component = #{bottomsActualComponent},
+                                remark = #{remark},
+                                creator_account = #{creatorAccount},
+                                create_date = #{createDate},
+                                updater_account = #{updaterAccount},
+                                update_date = #{updateDate},
+                                data_source_sys = #{dataSourceSys},
+                        </trim>
+        where client_id = #{clientId}
+        </foreach>
+    </update>
+
+    <delete id="deleteMaterialSkuComponentById" parameterType="Long">
+        delete from s_bas_material_sku_component where material_sid = #{materialSid}
+    </delete>
+
+    <delete id="deleteBasMaterialSkuComponentByIds" parameterType="Long">
+        delete from s_bas_material_sku_component where material_sid in
+        <foreach item="materialSid" collection="list" open="(" separator="," close=")">
+            #{materialSid}
+        </foreach>
+    </delete>
+
+</mapper>

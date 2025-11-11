@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.SysUserWorkItemCacheMapper">
+
+    <resultMap type="com.platform.ems.domain.SysUserWorkItemCache" id="SysUserWorkItemCacheResult">
+        <result property="clientId" column="client_id"/>
+        <result property="userWorkItemCacheSid" column="user_work_item_cache_sid"/>
+        <result property="userId" column="user_id"/>
+        <result property="dbQuantity" column="db_quantity"/>
+        <result property="dpQuantity" column="dp_quantity"/>
+        <result property="yyqQuantity" column="yyq_quantity"/>
+        <result property="jjdqQuantity" column="jjdq_quantity"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+    </resultMap>
+
+    <sql id="selectSysUserWorkItemCacheVo">
+        select t.client_id,
+               t.user_work_item_cache_sid,
+               t.user_id,
+               t.db_quantity,
+               t.dp_quantity,
+               t.yyq_quantity,
+               t.jjdq_quantity,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               u1.nick_name AS creator_account_name
+        from s_sys_user_work_item_cache t
+                 LEFT JOIN sys_user u1 ON t.creator_account = u1.user_name
+    </sql>
+
+    <select id="selectSysUserWorkItemCacheById" parameterType="Long" resultMap="SysUserWorkItemCacheResult">
+        <include refid="selectSysUserWorkItemCacheVo"/>
+        where t.user_work_item_cache_sid = #{userWorkItemCacheSid}
+    </select>
+
+    <select id="selectSysUserWorkItemCacheList" parameterType="com.platform.ems.domain.SysUserWorkItemCache"
+            resultMap="SysUserWorkItemCacheResult">
+        <include refid="selectSysUserWorkItemCacheVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="userId != null ">
+                and t.user_id = #{userId}
+            </if>
+            <if test="dbQuantity != null ">
+                and t.db_quantity = #{dbQuantity}
+            </if>
+            <if test="dpQuantity != null ">
+                and t.dp_quantity = #{dpQuantity}
+            </if>
+            <if test="yyqQuantity != null ">
+                and t.yyq_quantity = #{yyqQuantity}
+            </if>
+            <if test="jjdqQuantity != null ">
+                and t.jjdq_quantity = #{jjdqQuantity}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_sys_user_work_item_cache
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            user_work_item_cache_sid,
+            user_id,
+            db_quantity,
+            dp_quantity,
+            yyq_quantity,
+            jjdq_quantity,
+            remark,
+            creator_account,
+            create_date,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.userWorkItemCacheSid},
+                #{item.userId},
+                #{item.dbQuantity},
+                #{item.dpQuantity},
+                #{item.yyqQuantity},
+                #{item.jjdqQuantity},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_sys_user_work_item_cache
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            user_id = #{userId},
+            db_quantity = #{dbQuantity},
+            dp_quantity = #{dpQuantity},
+            yyq_quantity = #{yyqQuantity},
+            jjdq_quantity = #{jjdqQuantity},
+            remark = #{remark},
+        </trim>
+        where user_work_item_cache_sid = #{userWorkItemCacheSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_sys_user_work_item_cache
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{o.clientId},
+                user_id = #{o.userId},
+                db_quantity = #{o.dbQuantity},
+                dp_quantity = #{o.dpQuantity},
+                yyq_quantity = #{o.yyqQuantity},
+                jjdq_quantity = #{o.jjdqQuantity},
+                remark = #{o.remark},
+            </trim>
+            where user_work_item_cache_sid = #{o.userWorkItemCacheSid}
+        </foreach>
+    </update>
+
+</mapper>

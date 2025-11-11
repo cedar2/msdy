@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.SysUserFavoriteMenuMapper">
+
+    <resultMap type="com.platform.ems.domain.SysUserFavoriteMenu" id="SysUserFavoriteMenuResult">
+        <result property="clientId" column="client_id"/>
+        <result property="favoriteMenuSid" column="favorite_menu_sid"/>
+        <result property="userId" column="user_id"/>
+        <result property="menuId" column="menu_id"/>
+        <result property="menuRename" column="menu_rename"/>
+        <result property="serialNum" column="serial_num"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+    </resultMap>
+
+    <sql id="selectSysUserFavoriteMenuVo">
+        select
+        t.client_id,
+        t.favorite_menu_sid,
+        t.user_id,
+        t.menu_id,
+        t.menu_rename,
+        t.serial_num,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.nick_name as creator_account_name
+  from s_sys_user_favorite_menu t
+        LEFT JOIN sys_user t1 ON t1.user_name = t.creator_account
+    </sql>
+
+    <select id="selectSysUserFavoriteMenuById" parameterType="Long" resultMap="SysUserFavoriteMenuResult">
+        <include refid="selectSysUserFavoriteMenuVo"/>
+        where t.favorite_menu_sid = #{favoriteMenuSid}
+    </select>
+
+
+    <select id="selectSysUserFavoriteMenuList" parameterType="com.platform.ems.domain.SysUserFavoriteMenu"
+            resultMap="SysUserFavoriteMenuResult">
+        <include refid="selectSysUserFavoriteMenuVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="userId != null  and userId != ''">
+                and t.user_id =#{userId}
+            </if>
+            <if test="menuId != null ">
+                and t.menu_id =#{menuId}
+            </if>
+            <if test="menuRename != null  and menuRename != ''">and
+                t.menu_rename like concat('%', #{menuRename}, '%')
+            </if>
+            <if test="serialNum != null ">
+                and t.serial_num =#{serialNum}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_sys_user_favorite_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            favorite_menu_sid,
+            user_id,
+            menu_id,
+            menu_rename,
+            serial_num,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.favoriteMenuSid},
+                #{item.userId},
+                #{item.menuId},
+                #{item.menuRename},
+                #{item.serialNum},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_sys_user_favorite_menu
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            user_id = #{userId},
+            menu_id = #{menuId},
+            menu_rename = #{menuRename},
+            serial_num = #{serialNum},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where favorite_menu_sid = #{favoriteMenuSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_sys_user_favorite_menu
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                user_id = #{userId},
+                menu_id = #{menuId},
+                menu_rename = #{menuRename},
+                serial_num = #{serialNum},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where favorite_menu_sid = #{favoriteMenuSid}
+        </foreach>
+    </update>
+
+</mapper>

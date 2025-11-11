@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.plug.mapper.ConTaxRateMapper">
+
+    <resultMap type="com.platform.ems.plug.domain.ConTaxRate" id="ConTaxRateResult">
+        <result property="clientId" column="client_id"/>
+        <result property="taxRateSid" column="tax_rate_sid"/>
+        <result property="taxRateCode" column="tax_rate_code"/>
+        <result property="taxRateName" column="tax_rate_name"/>
+        <result property="taxRateValue" column="tax_rate_value"/>
+        <result property="isDefault" column="is_default"/>
+        <result property="sort" column="sort"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="sort" column="sort"/>
+    </resultMap>
+
+    <sql id="selectConTaxRateVo">
+        select t.client_id,
+               t.tax_rate_sid,
+               t.tax_rate_code,
+               t.tax_rate_name,
+               t.tax_rate_value,
+               t.sort,
+               t.remark,
+               t.status,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t.is_default
+        from s_con_tax_rate t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name
+    </sql>
+
+    <select id="selectConTaxRateById" parameterType="Long" resultMap="ConTaxRateResult">
+        <include refid="selectConTaxRateVo"/>
+        where t.tax_rate_sid = #{taxRateSid}
+    </select>
+
+    <select id="selectConTaxRateList" parameterType="com.platform.ems.plug.domain.ConTaxRate"
+            resultMap="ConTaxRateResult">
+        <include refid="selectConTaxRateVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="isDefault != null">
+                and t.is_default = #{isDefault}
+            </if>
+            <if test="taxRateSidList != null and taxRateSidList.length >0 ">
+                and t.tax_rate_sid in
+                (<foreach collection="taxRateSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="taxRateSid != null">
+                and t.tax_rate_sid = #{taxRateSid}
+            </if>
+            <if test="taxRateCode != null ">
+                and t.tax_rate_code =#{taxRateCode}
+            </if>
+            <if test="taxRateName != null  and taxRateName != ''">and
+                t.tax_rate_name like concat('%', #{taxRateName}, '%')
+            </if>
+            <if test="taxRateValue != null ">
+                and t.tax_rate_value = #{taxRateValue}
+            </if>
+            <if test="sort != null ">
+                and t.sort =#{sort}
+            </if>
+            <if test="status != null  and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">t2.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.sort asc, t.tax_rate_value asc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_tax_rate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            tax_rate_sid,
+            tax_rate_code,
+            tax_rate_name,
+            tax_rate_value,
+            is_default,
+            sort,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{clientId},
+                #{taxRateSid},
+                #{taxRateCode},
+                #{taxRateName},
+                #{taxRateValue},
+                #{isDefault},
+                #{sort},
+                #{remark},
+                #{status},
+                #{handleStatus},
+                #{creatorAccount},
+                #{createDate},
+                #{confirmerAccount},
+                #{confirmDate},
+                #{dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_tax_rate
+        <trim prefix="SET" suffixOverrides=",">
+            tax_rate_code = #{taxRateCode},
+            tax_rate_name = #{taxRateName},
+            tax_rate_value = #{taxRateValue},
+            is_default = #{isDefault},
+            sort = #{sort},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where tax_rate_sid = #{taxRateSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_tax_rate
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                tax_rate_code = #{taxRateCode},
+                tax_rate_name = #{taxRateName},
+                tax_rate_value = #{taxRateValue},
+                is_default = #{isDefault},
+                sort = #{sort},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where tax_rate_sid = #{taxRateSid}
+        </foreach>
+    </update>
+
+    <select id="getConTaxRateList" resultType="com.platform.ems.plug.domain.ConTaxRate">
+        select tax_rate_sid,tax_rate_code,tax_rate_name,tax_rate_value,is_default,sort,status,handle_status
+        from s_con_tax_rate
+        where status = '1' and handle_status = '5'
+        order by sort asc, tax_rate_value asc
+    </select>
+
+    <select id="getList" parameterType="com.platform.ems.plug.domain.ConTaxRate"
+            resultType="com.platform.ems.plug.domain.ConTaxRate">
+        select tax_rate_sid,tax_rate_code,tax_rate_name,tax_rate_value,is_default,sort,status,handle_status
+        from s_con_tax_rate
+        <where>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and handle_status = #{handleStatus}
+            </if>
+        </where>
+        order by sort asc, tax_rate_value asc
+    </select>
+</mapper>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.MatManProdProgressMapper">
+
+<!--    <resultMap id="MatManProdProgressResult" type="com.platform.ems.domain.MatManProdProgress">-->
+<!--        -->
+<!--    </resultMap>-->
+
+    <select id="selectMatManProgressList"
+            parameterType="com.platform.ems.domain.MatManProdProgress"
+            resultType="com.platform.ems.domain.MatManProdProgress">
+            SELECT
+--                 t0.day_manufacture_progress_item_sid,
+--                 t1.day_manufacture_progress_sid,
+                t2.plant_name,
+                t3.material_code,
+                t3.material_name,
+                t3.paichan_batch,
+                t4.sku_code,
+                t4.sku_type,
+                t4.sku_name,
+                t5.process_name,
+                t5.quantity,
+                t5.plan_start_date,
+                t5.plan_end_date,
+                t0.manufacture_order_code,
+                t0.unit_base
+
+            FROM s_man_day_manufacture_progress_item t0
+            LEFT JOIN s_man_day_manufacture_progress t1  ON t1.day_manufacture_progress_sid = t0.day_manufacture_progress_sid
+            LEFT JOIN s_bas_plant t2 ON t2.plant_sid = t1.plant_sid
+            LEFT JOIN s_man_manufacture_order t3 ON t3.manufacture_order_sid = t0.manufacture_order_sid
+            LEFT JOIN s_bas_sku t4 ON t4.sku_sid = t3.sku_sid
+--             LEFT JOIN (
+--                 SELECT
+--                     t0.manufacture_order_process_sid,
+--                     t1.process_name,
+--                     SUM(t0.quantity) AS total_complete_quantity,
+--                     t1.plan_start_date,
+--                     t1.plan_end_date,
+--                     t1.quantity
+--                 FROM s_man_day_manufacture_progress_item t0
+--                 LEFT JOIN s_man_manufacture_order_process t1 ON t1.manufacture_order_process_sid = t0.manufacture_order_process_sid
+--                 GROUP BY t0.manufacture_order_process_sid
+--             ) t5 ON t5.manufacture_order_process_sid = t0.manufacture_order_process_sid
+
+
+
+
+            <where>
+                <if test="yearmonthday != null and yearmonthday != ''">
+                    and t.plan_date BETWEEN #{yearmonthday} AND LAST_DAY(#{yearmonthday})
+                </if>
+                <if test="yearmonthdayBegin != null and yearmonthdayBegin!=''">
+                    and date_format(t.plan_date,'%y%m%d') &gt;= date_format(#{yearmonthdayBegin},'%y%m%d')
+                </if>
+                <if test="yearmonthdayEnd != null and yearmonthdayEnd!=''">
+                    and date_format(t.plan_date,'%y%m%d') &lt;= date_format(#{yearmonthdayEnd},'%y%m%d')
+                </if>
+            </where>
+
+    </select>
+
+</mapper>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.SysFormProcessMapper">
+    <resultMap type="com.platform.ems.domain.SysFormProcess" id="SysFormProcessResult">
+        <result property="id" column="id"/>
+        <result property="processInstanceId" column="process_instance_id"/>
+        <result property="formId" column="form_id"/>
+        <result property="formType" column="form_type"/>
+        <result property="formStatus" column="form_status"/>
+        <result property="approvalNode" column="approval_node"/>
+        <result property="createDate" column="create_date"/>
+        <result property="approvalUserId" column="approval_user_id"/>
+        <result property="approvalUserName" column="approval_user_name"/>
+        <result property="modifyDate" column="modify_date"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="createById" column="create_by_id"/>
+        <result property="modifyById" column="modify_by_id"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="clientId" column="client_id"/>
+    </resultMap>
+    <sql id="selectSysFormProcessVo">
+        select t.id,
+               t.process_instance_id,
+               t.form_id,
+               t.form_type,
+               t.form_status,
+               t.approval_node,
+               t.create_date,
+               t.approval_user_id,
+               t.approval_user_name,
+               t.modify_date,
+               t.creator_account,
+               t.updater_account,
+               t.create_by_id,
+               t.modify_by_id,
+               t.remark,
+               t.status,
+               t.client_id
+        from s_sys_form_process t
+    </sql>
+
+    <select id="selectSysFormProcessById" parameterType="Long" resultMap="SysFormProcessResult">
+        <include refid="selectSysFormProcessVo"/>
+        where t.id = #{id}
+    </select>
+
+    <select id="selectSysFormProcessList" parameterType="com.platform.ems.domain.SysFormProcess"
+            resultMap="SysFormProcessResult">
+        <include refid="selectSysFormProcessVo"/>
+        <where>
+            <if test="processInstanceId != null and processInstanceId != ''">
+                and t.process_instance_id = {processInstanceId}
+            </if>
+            <if test="formId != null ">and t.form_id = #{formId}</if>
+            <if test="formType != null and formType != ''">
+                and t.form_type = #{formType}
+            </if>
+            <if test="formStatus != null and formStatus != ''">
+                and t.form_status = #{formStatus}
+            </if>
+            <if test="approvalNode != null and approvalNode != ''">
+                and t.approval_node = #{approvalNode}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="approvalUserName != null and approvalUserName != ''">
+                and t.approval_user_name like concat('%', #{approvalUserName}, '%')
+            </if>
+            <if test="approvalUserId != null and approvalUserId != ''">
+                and t.approval_user_id = {#{approvalUserId}}
+            </if>
+            <if test="modifyDate != null ">and t.modify_date = #{modifyDate}</if>
+            <if test="creatorAccount != null and creatorAccount != ''">and (
+                <foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">and (
+                <foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="createById != null and createById != ''">
+                and t.create_by_id = #{createById}
+            </if>
+            <if test="modifyById != null and modifyById != ''">
+                and t.modify_by_id = #{modifyById}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">${params.dataScope}</if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">insert into s_sys_form_process
+        <trim prefix="(" suffix=")" suffixOverrides=",">process_instance_id, form_id, form_type, form_status,
+            approval_node, create_date, approval_user_id, approval_user_name, modify_date, creator_account,
+            updater_account, create_by_id, modify_by_id, remark, status, client_id,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">#{item.processInstanceId}, #{item.formId},
+                #{item.formType}, #{item.formStatus}, #{item.approvalNode}, #{item.createDate}, #{item.approvalUserId},
+                #{item.approvalUserName}, #{item.modifyDate}, #{item.creatorAccount}, #{item.updaterAccount},
+                #{item.createById}, #{item.modifyById}, #{item.remark}, #{item.status}, #{item.clientId},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">update s_sys_form_process
+        <trim prefix="SET" suffixOverrides=",">id = #{id}, process_instance_id = #{processInstanceId}, form_id =
+            #{formId}, form_type = #{formType}, form_status = #{formStatus}, approval_node = #{approvalNode},
+            create_date = #{createDate}, approval_user_id = #{approvalUserId}, approval_user_name = #{approvalUserName},
+            modify_date = #{modifyDate}, creator_account = #{creatorAccount}, updater_account = #{updaterAccount},
+            create_by_id = #{createById}, modify_by_id = #{modifyById}, remark = #{remark}, status = #{status},
+            client_id = #{clientId},
+        </trim>
+        where id = #{id}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">update s_sys_form_process
+            <trim prefix="SET" suffixOverrides=",">id = #{id}, process_instance_id = #{processInstanceId}, form_id =
+                #{formId}, form_type = #{formType}, form_status = #{formStatus}, approval_node = #{approvalNode},
+                create_date = #{createDate}, approval_user_id = #{approvalUserId}, approval_user_name =
+                #{approvalUserName}, modify_date = #{modifyDate}, creator_account = #{creatorAccount}, updater_account =
+                #{updaterAccount}, create_by_id = #{createById}, modify_by_id = #{modifyById}, remark = #{remark},
+                status = #{status}, client_id = #{clientId},
+            </trim>
+            where id = #{id}
+        </foreach>
+    </update>
+
+    <insert id="insertSysFormProcess">
+        insert into s_sys_form_process
+        (process_instance_id, form_id, form_type, approval_node,
+         approval_user_id, approval_user_name, form_status, create_date,
+         modify_date, creator_account, updater_account, create_by_id,
+         modify_by_id, remark, status, client_id)
+            value (#{processInstanceId}, #{formId}, #{formType}, #{approvalNode}, #{approvalUserId},
+            #{approvalUserName}, #{formStatus}, #{createDate}, #{modifyDate}, #{creatorAccount},
+            #{updaterAccount}, #{createById}, #{modifyById}, #{remark}, #{status}, #{clientId})
+    </insert>
+</mapper>

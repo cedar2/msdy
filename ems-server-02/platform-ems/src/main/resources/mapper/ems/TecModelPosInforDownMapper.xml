@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecModelPosInforDownMapper">
+
+    <resultMap type="com.platform.ems.domain.TecModelPosInforDown" id="TecModelPosInforDownResult">
+        <result property="clientId" column="client_id"/>
+        <result property="modelPositionInforSid" column="model_position_infor_sid"/>
+        <result property="modelSid" column="model_sid"/>
+        <result property="modelPositionSid" column="model_position_sid"/>
+        <result property="modelPositionName" column="model_position_name"/>
+        <result property="measureDescription" column="measure_description"/>
+        <result property="deviation" column="deviation"/>
+        <result property="deviationMinus" column="deviation_minus"/>
+        <result property="serialNum" column="serial_num"/>
+        <result property="unit" column="unit"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="modelPositionCode" column="model_position_code"/>
+        <result property="modelPositionName" column="model_position_name"/>
+        <result property="measureDescription" column="measure_description"/>
+    </resultMap>
+
+    <sql id="selectTecModelPosInforDownVo">
+        select t.client_id, t.model_position_infor_sid, t.model_sid, t.model_position_sid, t.model_position_name, t.measure_description, t.deviation, t.deviation_minus, t.serial_num, t.unit, t.remark, t.creator_account, t.create_date, t.updater_account, t.update_date, t.data_source_sys,stmp.model_position_code ,
+	stmp.model_position_name ,
+	stmp.measure_description from s_tec_model_pos_infor_down t
+	left join s_tec_model_position stmp on stmp.model_position_sid =t.model_position_sid
+
+    </sql>
+
+    <select id="selectTecModelPosInforDownById" parameterType="Long" resultMap="TecModelPosInforDownResult">
+        <include refid="selectTecModelPosInforDownVo"/>
+        where t.model_position_infor_sid = #{modelPositionInforSid}
+    </select>
+
+
+    <select id="selectTecModelPosInforDownList" parameterType="com.platform.ems.domain.TecModelPosInforDown"
+            resultMap="TecModelPosInforDownResult">
+        <include refid="selectTecModelPosInforDownVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="modelSid != null ">
+                and t.model_sid = #{modelSid}
+            </if>
+            <if test="modelPositionSid != null ">
+                and t.model_position_sid = #{modelPositionSid}
+            </if>
+            <if test="modelPositionName != null  and modelPositionName != ''">and
+                t.model_position_name like concat('%', #{modelPositionName}, '%')
+            </if>
+            <if test="measureDescription != null  and measureDescription != ''">
+                and (<foreach collection="measureDescription.split(';')" item="item" separator="or">
+                t.measure_description like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="deviation != null ">
+                and t.deviation = #{deviation}
+            </if>
+            <if test="deviationMinus != null ">
+                and t.deviation_minus = #{deviationMinus}
+            </if>
+            <if test="serialNum != null ">
+                and t.serial_num =#{serialNum}
+            </if>
+            <if test="unit != null  and unit != ''">
+                and (<foreach collection="unit.split(';')" item="item" separator="or">t.unit like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+        </where>
+        order by t.serial_num asc, stmp.model_position_code asc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_tec_model_pos_infor_down
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            model_position_infor_sid,
+            model_sid,
+            model_position_sid,
+            model_position_name,
+            measure_description,
+            deviation,
+            deviation_minus,
+            serial_num,
+            unit,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{clientId},
+                #{modelPositionInforSid},
+                #{modelSid},
+                #{modelPositionSid},
+                #{modelPositionName},
+                #{measureDescription},
+                #{deviation},
+                #{deviationMinus},
+                #{serialNum},
+                #{unit},
+                #{remark},
+                #{creatorAccount},
+                #{createDate},
+                #{updaterAccount},
+                #{updateDate},
+                #{dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_tec_model_pos_infor_down
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            model_sid = #{modelSid},
+            model_position_sid = #{modelPositionSid},
+            model_position_name = #{modelPositionName},
+            measure_description = #{measureDescription},
+            deviation = #{deviation},
+            deviation_minus = #{deviationMinus},
+            serial_num = #{serialNum},
+            unit = #{unit},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where model_position_infor_sid = #{modelPositionInforSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_tec_model_pos_infor_down
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                model_sid = #{modelSid},
+                model_position_sid = #{modelPositionSid},
+                model_position_name = #{modelPositionName},
+                measure_description = #{measureDescription},
+                deviation = #{deviation},
+                deviation_minus = #{deviationMinus},
+                serial_num = #{serialNum},
+                unit = #{unit},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where model_position_infor_sid = #{modelPositionInforSid}
+        </foreach>
+    </update>
+
+    <delete id="deleteTecModelPosInforDownByModelSid">
+        delete from s_tec_model_pos_infor_down where model_sid = #{modelSid}
+    </delete>
+
+</mapper>

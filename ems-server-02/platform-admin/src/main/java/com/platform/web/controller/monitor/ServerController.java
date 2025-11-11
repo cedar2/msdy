@@ -1,0 +1,25 @@
+package com.platform.web.controller.monitor;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.platform.common.core.domain.AjaxResult;
+import com.platform.framework.web.domain.Server;
+
+/**
+ * 服务器监控
+ *
+ * @author platform
+ */
+@RestController
+@RequestMapping("/monitor/server")
+public class ServerController
+{
+    @GetMapping()
+    public AjaxResult getInfo() throws Exception
+    {
+        Server server = new Server();
+        server.copyTo();
+        return AjaxResult.success(server);
+    }
+}

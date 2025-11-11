@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManProcessRouteMapper">
+
+    <resultMap type="com.platform.ems.domain.ManProcessRoute" id="ManProcessRouteResult">
+        <result property="clientId" column="client_id"/>
+        <result property="processRouteSid" column="process_route_sid"/>
+        <result property="processRouteCode" column="process_route_code"/>
+        <result property="processRouteName" column="process_route_name"/>
+        <result property="processRouteCategory" column="process_route_category"/>
+        <result property="effectiveDate" column="effective_date"/>
+        <result property="useableType" column="useable_type"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectManProcessRouteVo">
+        select t.client_id,
+         t.process_route_sid,
+         t.process_route_code,
+         t.process_route_name,
+         t.process_route_category,
+         t.effective_date,
+         t.useable_type,
+         t.company_sid,
+         t.remark,
+         t.status,
+         t.handle_status,
+         t.creator_account,
+         t.create_date,
+         t.updater_account,
+         t.update_date,
+         t.confirmer_account,
+         t.confirm_date,
+         t.data_source_sys,
+         t1.company_name,
+         t2.nick_name as updater_account_name,
+         t3.nick_name as creator_account_name,
+         t4.nick_name as confirmer_account_name,
+         t.plant_sid,
+         t.plant_code,
+         t6.plant_name,
+         t6.short_name as plant_short_name,
+         t.customer_sid,
+         t.customer_code,
+         t5.customer_name
+         from s_man_process_route t
+         left join s_bas_company t1 on t1.company_sid = t.company_sid
+         LEFT JOIN sys_user t2 ON t2.user_name = t.updater_account
+         LEFT JOIN sys_user t3 ON t3.user_name = t.creator_account
+         LEFT JOIN sys_user t4 ON t4.user_name = t.confirmer_account
+         left join s_bas_customer t5 on t5.customer_sid=t.customer_sid
+         left join s_bas_plant t6 on t6.plant_sid = t.plant_sid
+    </sql>
+
+    <select id="selectManProcessRouteById" parameterType="Long" resultMap="ManProcessRouteResult">
+        <include refid="selectManProcessRouteVo"/>
+        where t.process_route_sid = #{processRouteSid}
+    </select>
+    <select id="addItem" parameterType="Long" resultType="com.platform.ems.domain.ManMonthManufacturePlanProcess">
+        select
+        t.process_sid,
+        t.process_name,
+        t3.plan_end_date
+        from s_man_process_route_item t
+        left join (
+        select
+        t2.process_sid,
+        t2.plan_end_date
+        from
+        s_man_manufacture_order_process t2
+        where t2.manufacture_order_sid=#{manufactureOrderSid} and t2.work_center_sid=#{workCenterSid}
+        ) t3 on t3.process_sid=t.process_sid
+        where t.process_route_sid = #{processRouteSid}
+        order by t.serial_num asc
+    </select>
+
+
+    <select id="selectManProcessRouteList" parameterType="com.platform.ems.domain.ManProcessRoute"
+            resultMap="ManProcessRouteResult">
+        <include refid="selectManProcessRouteVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid = #{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="processRouteSid != null ">
+                and t.process_route_sid = #{processRouteSid}
+            </if>
+            <if test="processRouteSidList != null and processRouteSidList.length >0 ">
+                and t.process_route_sid in
+                (<foreach collection="processRouteSidList" item="processRouteSid" separator=",">
+                #{processRouteSid}</foreach>)
+            </if>
+            <if test="processRouteCode != null and processRouteCode != ''">
+                and (<foreach collection="processRouteCode.split(';')" item="item" separator="or">t.process_route_code
+                like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="processRouteName != null and processRouteName != ''">
+                and (<foreach collection="processRouteName.split(';')" item="item" separator="or">t.process_route_name
+                like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="processRouteCategory != null  and processRouteCategory != ''">
+                and (<foreach collection="processRouteCategory.split(';')" item="item" separator="or">
+                t.process_route_category like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="processRouteCategoryList != null and processRouteCategoryList.length >0 ">
+                and t.process_route_category in
+                (<foreach collection="processRouteCategoryList" item="processRouteCategory" separator=",">
+                #{processRouteCategory}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0 ">
+                and t.customer_sid in
+                (<foreach collection="customerSidList" item="customer" separator=",">
+                #{customer}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="customer" separator=",">
+                #{customer}</foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">
+                #{creatorAccount}</foreach>)
+            </if>
+            <if test="effectiveDate != null ">
+                and t.effective_date = #{effectiveDate}
+            </if>
+            <if test="useableType != null  and useableType != ''">
+                and (<foreach collection="useableType.split(';')" item="item" separator="or">t.useable_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.create_date desc, t.process_route_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_process_route
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            process_route_sid,
+            process_route_code,
+            process_route_name,
+            process_route_category,
+            effective_date,
+            useable_type,
+            company_sid,
+            plant_sid,
+            plant_code,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.processRouteSid},
+                #{item.processRouteCode},
+                #{item.processRouteName},
+                #{item.processRouteCategory},
+                #{item.effectiveDate},
+                #{item.useableType},
+                #{item.companySid},
+                #{item.plantSid},
+                #{item.plantCode},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_process_route
+        <trim prefix="SET" suffixOverrides=",">
+            process_route_code = #{processRouteCode},
+            process_route_name = #{processRouteName},
+            process_route_category = #{processRouteCategory},
+            effective_date = #{effectiveDate},
+            useable_type = #{useableType},
+            company_sid = #{companySid},
+            plant_sid = #{plantSid},
+            plant_code = #{plantCode},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            customer_sid = #{customerSid},
+            customer_code = #{customerCode},
+        </trim>
+        where process_route_sid = #{processRouteSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_process_route
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                process_route_code = #{processRouteCode},
+                process_route_name = #{processRouteName},
+                process_route_category = #{processRouteCategory},
+                effective_date = #{effectiveDate},
+                useable_type = #{useableType},
+                company_sid = #{companySid},
+                plant_sid = #{o.plantSid},
+                plant_code = #{o.plantCode},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where process_route_sid = #{processRouteSid}
+        </foreach>
+    </update>
+
+    <select id="getManProcessRouteList" resultType="com.platform.ems.domain.ManProcessRoute">
+        select
+        process_route_sid,
+        process_route_code,
+        process_route_name,
+        status,
+        handle_status,
+        create_date
+  from s_man_process_route
+        <where>
+            <if test="handleStatus != null and handleStatus != ''">
+                and handle_status = #{handleStatus}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+        order by process_route_name asc
+    </select>
+
+</mapper>

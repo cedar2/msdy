@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManProduceConcernTaskGroupItemMapper">
+
+    <resultMap type="com.platform.ems.domain.ManProduceConcernTaskGroupItem" id="ManProduceConcernTaskGroupItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="concernTaskGroupItemSid" column="concern_task_group_item_sid"/>
+        <result property="concernTaskGroupSid" column="concern_task_group_sid"/>
+        <result property="concernTaskCode" column="concern_task_code"/>
+        <result property="handlerSid" column="handler_sid"/>
+        <result property="handlerCode" column="handler_code"/>
+        <result property="milestone" column="milestone"/>
+        <result property="isPictureUpload" column="is_picture_upload"/>
+        <result property="isAttachUpload" column="is_attach_upload"/>
+        <result property="sort" column="sort"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="concernTaskSid" column="concern_task_sid"/>
+        <result property="handlerName" column="handler_name"/>
+
+    </resultMap>
+
+    <sql id="selectManProduceConcernTaskGroupItemVo">
+        select
+               t.client_id, t.concern_task_group_item_sid, t.concern_task_group_sid, t.concern_task_sid,
+               t.is_picture_upload,t.is_attach_upload,
+               t.concern_task_code, t.handler_sid, t.handler_code, t.milestone, t.sort, t.remark, t.creator_account,
+               t.create_date, t.updater_account, t.update_date, t.data_source_sys ,t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name , s.staff_name AS handler_name,
+               t4.concern_task_name, t4.concern_task_type
+        from
+               s_man_produce_concern_task_group_item t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+        LEFT JOIN s_bas_staff s ON t.handler_sid = s.staff_sid
+        left join s_man_produce_concern_task t4 on t4.concern_task_sid=t.concern_task_sid
+    </sql>
+
+    <sql id="getReportVo">
+        select
+               t.client_id,
+               t.concern_task_group_item_sid,
+               t.concern_task_group_sid,
+               t.concern_task_sid,
+               t.concern_task_code,
+               t.handler_sid,
+               t.handler_code,
+               t.milestone,
+               t.is_picture_upload,
+               t.is_attach_upload,
+               t.sort,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.concern_task_group_code,
+               t3.concern_task_group_name,
+               t5.name as produce_stage_name,
+               t4.status,
+               t4.concern_task_name,
+               t3.handle_status,
+               t6.short_name as plant_name,
+               t7.staff_name as handler_name
+        from
+               s_man_produce_concern_task_group_item t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        left join s_man_produce_concern_task_group t3 on t3.concern_task_group_sid= t.concern_task_group_sid
+        left join s_man_produce_concern_task t4 on t4.concern_task_sid=t.concern_task_sid
+        LEFT JOIN s_con_produce_stage t5 ON t4.produce_stage = t5.code
+        LEFT JOIN s_bas_plant t6 ON t6.plant_sid = t3.plant_sid
+        left join s_bas_staff t7 on t7.staff_sid=handler_sid
+    </sql>
+
+    <select id="getReport"
+            parameterType="com.platform.ems.domain.dto.request.ManProduceConcernTaskGroupRequest"
+            resultType="com.platform.ems.domain.dto.response.ManProduceConcernTaskGroupResponse">
+        <include refid="getReportVo"/>
+        <where>
+            <if test="concernTaskCode != null and concernTaskCode != ''">
+                and t.concern_task_code LIKE concat('%', #{concernTaskCode}, '%')
+            </if>
+            <if test="concernTaskName != null and concernTaskName != ''">
+                and t4.concern_task_name LIKE concat('%', #{concernTaskName}, '%')
+            </if>
+            <if test="concernTaskGroupCode != null and concernTaskGroupCode != ''">
+                and t3.concern_task_group_code like CONCAT("%" , #{concernTaskGroupCode} , "%")
+            </if>
+            <if test="concernTaskGroupName != null and concernTaskGroupName != ''">
+                and t3.concern_task_group_name like concat('%', #{concernTaskGroupName}, '%')
+            </if>
+            <if test="status != null and status !=''">
+                and t4.status = #{status}
+            </if>
+            <if test="plantSidList != null and plantSidList.length > 0">
+                and t3.plant_sid in (
+                <foreach collection="plantSidList" item="plantSid" separator=",">
+                    #{plantSid}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatusList != null and handleStatusList.size > 0">
+                and t3.handle_status in (
+                <foreach collection="handleStatusList" separator="," item="handleStatus">
+                    #{handleStatus}
+                </foreach>
+                )
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length > 0">
+                and t.creator_account in (
+                <foreach collection="creatorAccountList" separator="," item="item">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+        </where>
+        ORDER BY t.create_date  desc
+    </select>
+
+    <select id="selectManProduceConcernTaskGroupItemById" parameterType="Long"
+            resultMap="ManProduceConcernTaskGroupItemResult">
+        <include refid="selectManProduceConcernTaskGroupItemVo"/>
+        where t.concern_task_group_item_sid = #{concernTaskGroupItemSid}
+    </select>
+
+    <select id="selectManProduceConcernTaskGroupItemList"
+            parameterType="com.platform.ems.domain.ManProduceConcernTaskGroupItem"
+            resultMap="ManProduceConcernTaskGroupItemResult">
+        <include refid="selectManProduceConcernTaskGroupItemVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="concernTaskGroupSid != null ">
+                and t.concern_task_group_sid = #{concernTaskGroupSid}
+            </if>
+            <if test="concernTaskSid != null ">
+                and t.concern_task_sid = #{concernTaskSid}
+            </if>
+            <if test="concernTaskCode != null and concernTaskCode != ''">
+                and t.concern_task_code = #{concernTaskCode}
+            </if>
+            <if test="handlerSid != null ">
+                and t.handler_sid = #{handlerSid}
+            </if>
+            <if test="handlerCode != null and handlerCode != ''">
+                and t.handler_code = #{handlerCode}
+            </if>
+            <if test="sort != null ">
+                and t.sort = #{sort}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                and ${params.dataScope}
+            </if>
+        </where>
+        ORDER BY t.sort asc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_produce_concern_task_group_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            concern_task_group_item_sid,
+            concern_task_group_sid,
+            concern_task_sid,
+            concern_task_code,
+            handler_sid,
+            handler_code,
+            milestone,
+            is_picture_upload,
+            is_attach_upload,
+            sort,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.concernTaskGroupItemSid},
+                #{item.concernTaskGroupSid},
+                #{item.concernTaskSid},
+                #{item.concernTaskCode},
+                #{item.handlerSid},
+                #{item.handlerCode},
+                #{item.milestone},
+                #{item.isPictureUpload},
+                #{item.isAttachUpload},
+                #{item.sort},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_produce_concern_task_group_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            concern_task_group_sid = #{concernTaskGroupSid},
+            concern_task_sid = #{concernTaskSid},
+            concern_task_code = #{concernTaskCode},
+            handler_sid = #{handlerSid},
+            handler_code = #{handlerCode},
+            milestone = #{milestone},
+            is_picture_upload = #{isPictureUpload},
+            is_attach_upload = #{isAttachUpload},
+            sort = #{sort},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where concern_task_group_item_sid = #{concernTaskGroupItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_produce_concern_task_group_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                concern_task_group_sid = #{concernTaskGroupSid},
+                concern_task_sid = #{concernTaskSid},
+                concern_task_code = #{concernTaskCode},
+                handler_sid = #{handlerSid},
+                handler_code = #{handlerCode},
+                milestone = #{o.milestone},
+                is_picture_upload = #{isPictureUpload},
+                is_attach_upload = #{isAttachUpload},
+                sort = #{sort},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+            </trim>
+            where concern_task_group_item_sid = #{concernTaskGroupItemSid}
+        </foreach>
+    </update>
+
+</mapper>

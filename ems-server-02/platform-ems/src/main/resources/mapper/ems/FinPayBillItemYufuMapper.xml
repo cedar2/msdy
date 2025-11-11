@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinPayBillItemYufuMapper">
+
+    <resultMap type="com.platform.ems.domain.FinPayBillItemYufu" id="FinPayBillItemYufuResult">
+        <result property="clientId" column="client_id"/>
+        <result property="payBillItemYufuSid" column="pay_bill_item_yufu_sid"/>
+        <result property="payBillSid" column="pay_bill_sid"/>
+        <result property="bookPaymentSid" column="book_payment_sid"/>
+        <result property="bookPaymentCode" column="book_payment_code"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectFinPayBillItemYufuVo">
+        select t.client_id,
+        t.pay_bill_item_yufu_sid,
+        t.pay_bill_sid,
+        t.book_payment_sid,
+        t.book_payment_code,
+        t.currency_amount_tax,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+        u1.nick_name AS creator_account_name,
+        u2.nick_name AS updater_account_name,
+        t1.pay_bill_code,
+        t1.handle_status,
+        t1.agent,
+        u3.nick_name as agent_name,
+        t2.currency_amount_tax_yhx,
+        t2.currency_amount_tax_dhx,
+        t2.currency_amount_tax_fk,
+        t2.refer_doc_sid,
+        t2.refer_doc_code,
+        t2.product_season_sid,
+        t2.product_season_name,
+        t2.clear_status,
+        t2.agent AS refer_agent,
+        t2.agent_name AS refer_agent_name,
+        t3.company_name,
+        t3.short_name as company_short_name,
+        t4.vendor_name,
+        t4.short_name as vendor_short_name
+        from s_fin_pay_bill_item_yufu t
+        LEFT JOIN sys_user u1 ON t.creator_account = u1.user_name
+        LEFT JOIN sys_user u2 ON t.updater_account = u2.user_name
+        LEFT JOIN s_fin_pay_bill t1 ON t.pay_bill_sid = t1.pay_bill_sid
+        LEFT JOIN sys_user u3 ON t1.agent = u3.user_name
+        LEFT JOIN (<include refid="com.platform.ems.mapper.FinBookPaymentItemMapper.selectFinBookPaymentItemVo"/>)
+        t2 ON t.book_payment_sid = t2.book_payment_sid
+        LEFT JOIN s_bas_company t3 ON t1.company_sid = t3.company_sid
+        LEFT JOIN s_bas_vendor t4 ON t1.vendor_sid = t4.vendor_sid
+    </sql>
+
+    <select id="selectFinPayBillItemYufuById" parameterType="Long" resultMap="FinPayBillItemYufuResult">
+        <include refid="selectFinPayBillItemYufuVo"/>
+        where t.pay_bill_item_yufu_sid = #{payBillItemYufuSid}
+    </select>
+
+    <select id="selectFinPayBillItemYufuList" parameterType="com.platform.ems.domain.FinPayBillItemYufu"
+            resultMap="FinPayBillItemYufuResult">
+        <include refid="selectFinPayBillItemYufuVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="payBillItemYufuSid != null ">
+                and t.pay_bill_item_yufu_sid = #{payBillItemYufuSid}
+            </if>
+            <if test="payBillItemYufuSidList != null  and payBillItemYufuSidList.length >0">
+                and t.pay_bill_item_yufu_sid in (<foreach collection="payBillItemYufuSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="payBillSid != null ">
+                and t.pay_bill_sid = #{payBillSid}
+            </if>
+            <if test="payBillSidList != null  and payBillSidList.length >0">
+                and t.pay_bill_sid in (<foreach collection="payBillSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="bookPaymentSid != null ">
+                and t.book_payment_sid = #{bookPaymentSid}
+            </if>
+            <if test="bookPaymentSidList != null  and bookPaymentSidList.length >0">
+                and t.book_payment_sid in (<foreach collection="bookPaymentSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="bookPaymentCode != null ">
+                and t.book_payment_code like concat('%', #{bookPaymentCode},'%')
+            </if>
+            <if test="currencyAmountTax != null ">
+                and t.currency_amount_tax = #{currencyAmountTax}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t1.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="payBillCode != null">
+                and t1.pay_bill_code like concat('%', #{payBillCode},'%')
+            </if>
+            <if test="agent != null and agent != ''">
+                and t1.agent = #{agent}
+            </if>
+            <if test="agentList != null and agentList.length >0">
+                and t1.agent in
+                (<foreach collection="agentList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="agentName != null and agentName != ''">
+                and u3.nick_name like concat('%', #{agentName},'%')
+            </if>
+            <if test="agentName != null and agentName != ''">
+                and u3.nick_name like concat('%', #{agentName},'%')
+            </if>
+            <if test="referDocCode != null">
+                and t2.refer_doc_code like concat('%', #{referDocCode},'%')
+            </if>
+            <if test="referAgent != null and referAgent != ''">
+                and t2.agent = #{referAgent}
+            </if>
+            <if test="referAgentList != null and referAgentList.length >0">
+                and t2.agent in
+                (<foreach collection="referAgentList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="referAgentName != null and referAgentName != ''">
+                and t2.agent_name like concat('%', #{referAgentName},'%')
+            </if>
+            <if test="clearStatus != null and clearStatus != ''">
+                and t2.clear_status = #{clearStatus}
+            </if>
+            <if test="clearStatusList != null and clearStatusList.length >0">
+                and t2.clear_status in
+                (<foreach collection="clearStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t3.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t3.company_sid in
+                (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="vendorSid != null ">
+                and t4.vendor_sid = #{vendorSid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t4.vendor_sid in
+                (<foreach collection="vendorSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.create_date desc, t2.refer_doc_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_pay_bill_item_yufu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            pay_bill_item_yufu_sid,
+            pay_bill_sid,
+            book_payment_sid,
+            book_payment_code,
+            currency_amount_tax,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.payBillItemYufuSid},
+                #{item.payBillSid},
+                #{item.bookPaymentSid},
+                #{item.bookPaymentCode},
+                #{item.currencyAmountTax},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_pay_bill_item_yufu
+        <trim prefix="SET" suffixOverrides=",">
+            currency_amount_tax = #{currencyAmountTax},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where pay_bill_item_yufu_sid = #{payBillItemYufuSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_pay_bill_item_yufu
+            <trim prefix="SET" suffixOverrides=",">
+                currency_amount_tax = #{o.currencyAmountTax},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where pay_bill_item_yufu_sid = #{o.payBillItemYufuSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.RepManufactureStatisticMapper">
+
+    <resultMap type="com.platform.ems.domain.RepManufactureStatistic" id="RepManufactureStatisticResult">
+        <result property="clientId" column="client_id"/>
+        <result property="dataRecordSid" column="data_record_sid"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="plantShortName" column="plant_short_name"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="moBusinessType" column="mo_business_type"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="quantityDaipc" column="quantity_daipc"/>
+        <result property="quantityZaic" column="quantity_zaic"/>
+        <result property="quantityCip" column="quantity_cip"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="createDate" column="create_date"/>
+    </resultMap>
+
+    <sql id="selectRepManufactureStatisticVo">
+        select t.client_id,
+               t.data_record_sid,
+               t.plant_sid,
+               t.plant_code,
+               t.plant_short_name,
+               t.product_season_code,
+               t.mo_business_type,
+               t.material_sid,
+               t.material_code,
+               t.quantity_daipc,
+               t.quantity_zaic,
+               t.quantity_cip,
+               t.picture_path,
+               t.create_date
+        from s_rep_manufacture_statistic t
+    </sql>
+
+    <select id="selectRepManufactureStatisticById" parameterType="Long" resultMap="RepManufactureStatisticResult">
+        <include refid="selectRepManufactureStatisticVo"/>
+        where t.data_record_sid = #{dataRecordSid}
+    </select>
+
+
+    <select id="selectRepManufactureStatisticList" parameterType="com.platform.ems.domain.RepManufactureStatistic"
+            resultMap="RepManufactureStatisticResult">
+        <include refid="selectRepManufactureStatisticVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid =#{plantSid}
+            </if>
+            <if test="plantCode != null  and plantCode != ''">
+                and (<foreach collection="plantCode.split(';')" item="item" separator="or">t.plant_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="plantShortName != null  and plantShortName != ''">and
+                t.plant_short_name like concat('%', #{plantShortName}, '%')
+            </if>
+            <if test="productSeasonCode != null  and productSeasonCode != ''">
+                and (<foreach collection="productSeasonCode.split(';')" item="item" separator="or">t.product_season_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="moBusinessType != null  and moBusinessType != ''">
+                and (<foreach collection="moBusinessType.split(';')" item="item" separator="or">t.mo_business_type
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid =#{materialSid}
+            </if>
+            <if test="materialCode != null  and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator="or">t.material_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="quantityDaipc != null ">
+                and t.quantity_daipc = #{quantityDaipc}
+            </if>
+            <if test="quantityZaic != null ">
+                and t.quantity_zaic = #{quantityZaic}
+            </if>
+            <if test="quantityCip != null ">
+                and t.quantity_cip = #{quantityCip}
+            </if>
+            <if test="picturePath != null  and picturePath != ''">
+                and (<foreach collection="picturePath.split(';')" item="item" separator="or">t.picture_path
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_rep_manufacture_statistic
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            data_record_sid,
+            plant_sid,
+            plant_code,
+            plant_short_name,
+            product_season_code,
+            mo_business_type,
+            material_sid,
+            material_code,
+            quantity_daipc,
+            quantity_zaic,
+            quantity_cip,
+            picture_path,
+            create_date,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.plantSid},
+                #{item.plantCode},
+                #{item.plantShortName},
+                #{item.productSeasonCode},
+                #{item.moBusinessType},
+                #{item.materialSid},
+                #{item.materialCode},
+                #{item.quantityDaipc},
+                #{item.quantityZaic},
+                #{item.quantityCip},
+                #{item.picturePath},
+                #{item.createDate},
+            </trim>
+        </foreach>
+    </insert>
+
+</mapper>

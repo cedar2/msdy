@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ReqRequireDocMapper">
+
+    <resultMap type="com.platform.ems.domain.ReqRequireDoc" id="ReqRequireDocResult">
+        <result property="clientId" column="client_id"/>
+        <result property="requireDocSid" column="require_doc_sid"/>
+        <result property="requireDocCode" column="require_doc_code"/>
+        <result property="documentType" column="document_type"/>
+        <result property="requireOrgType" column="require_org_type"/>
+        <result property="businessChannel" column="business_channel"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="requireOrg" column="require_org"/>
+        <result property="requireDepartment" column="require_department"/>
+        <result property="consignee" column="consignee"/>
+        <result property="consigneePhone" column="consignee_phone"/>
+        <result property="consigneeAddr" column="consignee_addr"/>
+        <result property="supplyType" column="supply_type"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="salesOrderCode" column="sales_order_code"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="companyName" column="company_name"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="departmentCode" column="department_code"/>
+        <result property="departmentName" column="department_name"/>
+    </resultMap>
+
+    <sql id="selectReqRequireDocVo">
+        select
+        t.client_id,
+        t.require_doc_sid,
+        t.require_doc_code,
+        t.document_type,
+        t.require_org_type,
+        t.business_channel,
+        t.document_date,
+        t.company_sid,
+        t.company_brand_sid,
+        t.product_season_sid,
+        t.require_org,
+        t.require_department,
+        t.consignee,
+        t.consignee_phone,
+        t.consignee_addr,
+        t.supply_type,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.company_name,
+        t2.product_season_name,
+        t3.department_code,
+        t3.department_name,
+        t4.customer_code,
+        t4.customer_name,
+        t4.short_name,
+        t5.vendor_code,
+        t5.vendor_name
+  from s_req_require_doc t
+        LEFT JOIN s_bas_company t1 ON t1.company_sid = t.company_sid
+        LEFT JOIN s_bas_product_season t2 on t2.product_season_sid = t.product_season_sid
+        LEFT JOIN s_bas_department t3 on t3.department_sid = t.require_department
+        LEFT JOIN s_bas_customer t4 on t4.customer_sid = t.require_org
+        LEFT JOIN s_bas_vendor t5 on t5.vendor_sid = t.require_org
+    </sql>
+
+    <select id="selectReqRequireDocById" parameterType="long" resultMap="ReqRequireDocResult">
+        <include refid="selectReqRequireDocVo"/>
+        where t.require_doc_sid = #{requireDocSid}
+    </select>
+
+    <select id="selectReqRequireDocList" parameterType="com.platform.ems.domain.ReqRequireDoc"
+            resultMap="ReqRequireDocResult">
+        <include refid="selectReqRequireDocVo"/>
+        <where>
+            <if test="requireDocSid != null ">
+                and t.require_doc_sid in
+                (<foreach collection="requireDocSid" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="requireDocCode != null and requireDocCode != ''">
+                and (<foreach collection="requireDocCode.split(';')" item="item" separator="or">t.require_doc_code like
+                concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="documentType != null  and documentType != ''">
+                and (<foreach collection="documentType.split(';')" item="item" separator="or">t.document_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length >0 ">
+                and t.document_type in
+                (<foreach collection="documentTypeList" item="documentType" separator=",">#{documentType}</foreach>)
+            </if>
+            <if test="requireOrgType != null  and requireOrgType != ''">
+                and (<foreach collection="requireOrgType.split(';')" item="item" separator="or">t.require_org_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="businessChannel != null  and businessChannel != ''">
+                and (<foreach collection="businessChannel.split(';')" item="item" separator="or">t.business_channel like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="documentBeginTime != null and documentBeginTime!=''">
+                and date_format(t.document_date,'%y%m%d') &gt;= date_format(#{documentBeginTime},'%y%m%d')
+            </if>
+            <if test="documentEndTime != null and documentEndTime!=''">
+                and date_format(t.document_date,'%y%m%d') &lt;= date_format(#{documentEndTime},'%y%m%d')
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="companyBrandSid != null ">
+                and t.company_brand_sid = #{companyBrandSid}
+            </if>
+            <if test="productSeasonSid != null ">
+                and t.product_season_sid = #{productSeasonSid}
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0 ">
+                and t.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">
+                #{productSeasonSid}</foreach>)
+            </if>
+            <if test="requireOrg != null">
+                and t.require_org = #{requireOrg}
+            </if>
+            <if test="requireOrgList != null and requireOrgList.length >0 ">
+                and t.require_org in
+                (<foreach collection="requireOrgList" item="requireOrg" separator=",">#{requireOrg}</foreach>)
+            </if>
+            <if test="requireDepartment != null">
+                and t.require_department = #{requireDepartment}
+            </if>
+            <if test="requireDepartmentList != null and requireDepartmentList.length >0 ">
+                and t.require_department in
+                (<foreach collection="requireDepartmentList" item="requireDepartment" separator=",">
+                #{requireDepartment}</foreach>)
+            </if>
+            <if test="consignee != null  and consignee != ''">
+                and (<foreach collection="consignee.split(';')" item="item" separator="or">t.consignee like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="consigneePhone != null  and consigneePhone != ''">
+                and (<foreach collection="consigneePhone.split(';')" item="item" separator="or">t.consignee_phone like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="consigneeAddr != null  and consigneeAddr != ''">
+                and (<foreach collection="consigneeAddr.split(';')" item="item" separator="or">t.consignee_addr like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="supplyType != null  and supplyType != ''">
+                and (<foreach collection="supplyType.split(';')" item="item" separator="or">t.supply_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="supplyTypeList != null and supplyTypeList.length >0 ">
+                and t.supply_type in
+                (<foreach collection="supplyTypeList" item="supplyType" separator=",">#{supplyType}</foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+        </where>
+        order by t.create_date desc, t.require_doc_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_req_require_doc
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            require_doc_sid,
+            require_doc_code,
+            document_type,
+            require_org_type,
+            business_channel,
+            document_date,
+            company_sid,
+            company_brand_sid,
+            product_season_sid,
+            require_org,
+            require_department,
+            consignee,
+            consignee_phone,
+            consignee_addr,
+            supply_type,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{clientId},
+                #{requireDocSid},
+                #{requireDocCode},
+                #{documentType},
+                #{requireOrgType},
+                #{businessChannel},
+                #{documentDate},
+                #{companySid},
+                #{companyBrandSid},
+                #{productSeasonSid},
+                #{requireOrg},
+                #{requireDepartment},
+                #{consignee},
+                #{consigneePhone},
+                #{consigneeAddr},
+                #{supplyType},
+                #{remark},
+                #{handleStatus},
+                #{creatorAccount},
+                #{createDate},
+                #{updaterAccount},
+                #{updateDate},
+                #{confirmerAccount},
+                #{confirmDate},
+                #{dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_req_require_doc
+        <trim prefix="SET" suffixOverrides=",">
+            require_doc_code = #{requireDocCode},
+            document_type = #{documentType},
+            require_org_type = #{requireOrgType},
+            business_channel = #{businessChannel},
+            document_date = #{documentDate},
+            company_sid = #{companySid},
+            company_brand_sid = #{companyBrandSid},
+            product_season_sid = #{productSeasonSid},
+            require_org = #{requireOrg},
+            require_department = #{requireDepartment},
+            consignee = #{consignee},
+            consignee_phone = #{consigneePhone},
+            consignee_addr = #{consigneeAddr},
+            supply_type = #{supplyType},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where require_doc_sid = #{requireDocSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_req_require_doc
+            <trim prefix="SET" suffixOverrides=",">
+                require_doc_sid = #{requireDocSid},
+                require_doc_code = #{requireDocCode},
+                document_type = #{documentType},
+                require_org_type = #{requireOrgType},
+                business_channel = #{businessChannel},
+                document_date = #{documentDate},
+                company_sid = #{companySid},
+                company_brand_sid = #{companyBrandSid},
+                product_season_sid = #{productSeasonSid},
+                require_org = #{requireOrg},
+                require_department = #{requireDepartment},
+                consignee = #{consignee},
+                consignee_phone = #{consigneePhone},
+                consignee_addr = #{consigneeAddr},
+                supply_type = #{supplyType},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where client_id = #{clientId}
+        </foreach>
+    </update>
+
+    <select id="countByDomain" resultType="java.lang.Integer">
+        select count(1) from s_req_require_doc
+        <where>
+            <if test="requireDocSids != null  and requireDocSids.length > 0">
+                and require_doc_sid in (
+                <foreach collection="requireDocSids" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and handle_status in (
+                <foreach collection="handleStatus.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteReqRequireDocByIds" parameterType="long">
+        delete from s_req_require_doc where require_doc_sid in
+        <foreach item="requireDocSid" collection="array" open="(" separator="," close=")">
+            #{requireDocSid}
+        </foreach>
+    </delete>
+
+    <update id="confirm" parameterType="com.platform.ems.domain.ReqRequireDoc">
+        update s_req_require_doc
+        <set>
+            <if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmDate != null">confirm_date = #{confirmDate},</if>
+        </set>
+        where require_doc_sid in
+        (<foreach collection="requireDocSids" item="requireDocSid" separator=",">#{requireDocSid}</foreach>)
+    </update>
+</mapper>

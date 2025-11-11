@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.SamOsbSampleReimburseMapper">
+    <resultMap type="com.platform.ems.domain.SamOsbSampleReimburse" id="SamOsbSampleReimburseResult">
+        <result property="clientId" column="client_id"/>
+        <result property="reimburseSid" column="reimburse_sid"/>
+        <result property="reimburseCode" column="reimburse_code"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyName" column="company_name"/>
+        <result property="departmentSid" column="department_sid"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="reimburser" column="reimburser"/>
+        <result property="reimburserName" column="reimburser_name"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="approvalNode" column="approval_node"/>
+        <result property="approvalUserName" column="approval_user_name"/>
+        <result property="approvalUserId" column="approval_user_id" />
+        <collection property="itemList" ofType="com.platform.ems.domain.SamOsbSampleReimburseItem">
+            <result property="sampleSid" column="sample_sid"/>
+            <result property="sampleCode" column="sample_code"/>
+            <result property="quantity" column="quantity"/>
+            <result property="purchasePrice" column="purchase_price"/>
+            <result property="unitBase" column="unit_base"/>
+            <result property="itemNum" column="item_num"/>
+        </collection>
+        <collection property="attachList" ofType="com.platform.ems.domain.SamOsbSampleReimburseAttach">
+            <result property="fileType" column="file_type"/>
+            <result property="fileName" column="file_name"/>
+            <result property="filePath" column="file_path"/>
+        </collection>
+    </resultMap>
+    <sql id="selectSamOsbSampleReimburseVo">
+        SELECT
+            t.client_id,
+            t.reimburse_sid,
+            t.reimburse_code,
+            t.document_date,
+            t.company_sid,
+            t.department_sid,
+            t.reimburser,
+            t.currency,
+            t.currency_unit,
+            t.remark,
+            t.handle_status,
+            t.creator_account,
+            t.create_date,
+            t.updater_account,
+            t.update_date,
+            t.confirmer_account,
+            t.confirm_date,
+            t.data_source_sys,
+            t2.company_name,
+            t3.department_name,
+            t4.nick_name AS reimburser_name,
+            t5.nick_name AS creator_account_name,
+            t6.nick_name AS updater_account_name,
+            t7.nick_name AS confirmer_account_name,
+						t8.approval_node,
+						t8.approval_user_id,
+						t8.approval_user_name
+        FROM
+            s_sam_osb_sample_reimburse t
+        LEFT JOIN s_bas_company t2 ON t2.company_sid = t.company_sid
+        LEFT JOIN s_bas_department t3 ON t3.department_sid = t.department_sid
+        LEFT JOIN sys_user t4 ON t4.user_name = t.reimburser
+        LEFT JOIN sys_user t5 ON t5.user_name = t.creator_account
+        LEFT JOIN sys_user t6 ON t6.user_name = t.updater_account
+        LEFT JOIN sys_user t7 ON t7.user_name = t.confirmer_account
+				LEFT JOIN s_sys_form_process t8 ON t8.form_id = t.reimburse_sid
+    </sql>
+    <sql id="selectByIdVo">
+        SELECT
+            t.client_id,
+            t.reimburse_sid,
+            t.reimburse_code,
+            t.document_date,
+            t.company_sid,
+            t.department_sid,
+            t.reimburser,
+            t.currency,
+            t.currency_unit,
+            t.remark,
+            t.handle_status,
+            t.creator_account,
+            t.create_date,
+            t.updater_account,
+            t.update_date,
+            t.confirmer_account,
+            t.confirm_date,
+            t.data_source_sys,
+            t2.company_name,
+            t3.department_name,
+            t4.nick_name AS reimburser_name,
+            t5.nick_name AS creator_account_name,
+            t6.nick_name AS updater_account_name,
+            t7.nick_name AS confirmer_account_name,
+			t8.sample_sid,
+            t8.sample_code,
+            t8.quantity,
+            t8.purchase_price,
+            t8.unit_base,
+            t8.item_num,
+            t9.file_type,
+            t9.file_name,
+            t9.file_path,
+            t10.approval_node,
+            t10.approval_user_id,
+			t10.approval_user_name
+        FROM
+            s_sam_osb_sample_reimburse t
+        LEFT JOIN s_bas_company t2 ON t2.company_sid = t.company_sid
+        LEFT JOIN s_bas_department t3 ON t3.department_sid = t.department_sid
+        LEFT JOIN sys_user t4 ON t4.user_name = t.reimburser
+        LEFT JOIN sys_user t5 ON t5.user_name = t.creator_account
+        LEFT JOIN sys_user t6 ON t6.user_name = t.updater_account
+        LEFT JOIN sys_user t7 ON t7.user_name = t.confirmer_account
+		LEFT JOIN s_sam_osb_sample_reimburse_item t8 ON t8.reimburse_sid = t.reimburse_sid
+        LEFT JOIN s_sam_osb_sample_reimburse_attach t9 ON t9.reimburse_sid = t.reimburse_sid
+        LEFT JOIN s_sys_form_process t10 ON t10.form_id = t.reimburse_sid
+    </sql>
+    <select id="selectSamOsbSampleReimburseById" parameterType="Long" resultMap="SamOsbSampleReimburseResult">
+        <include refid="selectByIdVo"/> where t.reimburse_sid = #{reimburseSid}
+    </select>
+    <select id="selectSamOsbSampleReimburseList" parameterType="com.platform.ems.domain.SamOsbSampleReimburse" resultMap="SamOsbSampleReimburseResult">
+        <include refid="selectSamOsbSampleReimburseVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">and (
+                <foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="reimburseCode != null  and reimburseCode != ''" >
+                and t.reimburse_code like concat( '%', #{reimburseCode}, '%')
+            </if>
+            <if test="documentDate != null ">and t.document_date = #{documentDate}</if>
+            <if test="companySid != null ">and t.company_sid =#{companySid}</if>
+            <if test="departmentSidList != null and departmentSidList.size() >0 ">
+                and t.department_sid in
+                (<foreach collection="departmentSidList" item="departmentSid" separator=",">#{departmentSid}</foreach>)
+            </if>
+            <if test="reimburserList != null and reimburserList.size() >0">
+                and t.reimburser in(<foreach collection="reimburserList" item="reimburser" separator=",">#{reimburser}</foreach>)
+            </if>
+            <if test="currency != null  and currency != ''">and (
+                <foreach collection="currency.split(';')" item="item" separator="or">t.currency like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">and (
+                <foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in(<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and (
+                <foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="creatorAccountName != null  and creatorAccountName != ''" >
+                and t5.nick_name like concat( '%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')</if>
+            <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')</if>
+            <if test="updaterAccount != null  and updaterAccount != ''">and (
+                <foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">and (
+                <foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="confirmDate != null ">and t.confirm_date = #{confirmDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and (
+                <foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">${params.dataScope}</if>
+        </where>
+        order by t.reimburse_code desc
+    </select>
+    <!--添加多个-->
+    <insert id="inserts">insert into s_sam_osb_sample_reimburse
+        <trim prefix="(" suffix=")" suffixOverrides=",">client_id, reimburse_sid, reimburse_code, document_date, company_sid, department_sid, reimburser, currency, currency_unit, remark, handle_status, creator_account, create_date, updater_account, update_date, confirmer_account, confirm_date, data_source_sys,</trim> values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">#{item.clientId}, #{item.reimburseCode}, #{item.documentDate}, #{item.companySid}, #{item.departmentSid}, #{item.reimburser}, #{item.currency}, #{item.currencyUnit}, #{item.remark}, #{item.handleStatus}, #{item.creatorAccount}, #{item.createDate}, #{item.updaterAccount}, #{item.updateDate}, #{item.confirmerAccount}, #{item.confirmDate}, #{item.dataSourceSys},</trim>
+        </foreach>
+    </insert>
+    <!--更新-->
+    <update id="updateAllById">update s_sam_osb_sample_reimburse
+        <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, reimburse_sid = #{reimburseSid}, reimburse_code = #{reimburseCode}, document_date = #{documentDate}, company_sid = #{companySid}, department_sid = #{departmentSid}, reimburser = #{reimburser}, currency = #{currency}, currency_unit = #{currencyUnit}, remark = #{remark}, handle_status = #{handleStatus}, creator_account = #{creatorAccount}, create_date = #{createDate}, updater_account = #{updaterAccount}, update_date = #{updateDate}, confirmer_account = #{confirmerAccount}, confirm_date = #{confirmDate}, data_source_sys = #{dataSourceSys},</trim> where reimburse_sid = #{reimburseSid}
+    </update>
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">update s_sam_osb_sample_reimburse
+            <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, reimburse_sid = #{reimburseSid}, reimburse_code = #{reimburseCode}, document_date = #{documentDate}, company_sid = #{companySid}, department_sid = #{departmentSid}, reimburser = #{reimburser}, currency = #{currency}, currency_unit = #{currencyUnit}, remark = #{remark}, handle_status = #{handleStatus}, creator_account = #{creatorAccount}, create_date = #{createDate}, updater_account = #{updaterAccount}, update_date = #{updateDate}, confirmer_account = #{confirmerAccount}, confirm_date = #{confirmDate}, data_source_sys = #{dataSourceSys},</trim> where reimburse_sid = #{reimburseSid}
+        </foreach>
+    </update>
+
+
+    <!--明细报表-->
+    <resultMap type="com.platform.ems.domain.dto.request.SamOsbSampleReimburseReportRequert" id="reportResult">
+        <result property="reimburseItemSid" column="reimburse_item_sid" />
+        <result property="reimburseCode" column="reimburse_code"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyName" column="company_name"/>
+        <result property="departmentSid" column="department_sid"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="reimburser" column="reimburser"/>
+        <result property="reimburserName" column="reimburser_name"/>
+        <result property="sampleCode" column="sample_code"/>
+        <result property="sampleName" column="sample_name"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="quantity" column="quantity"/>
+        <result property="purchasePrice" column="purchase_price"/>
+        <result property="remark" column="remark"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="creatorAccount" column="create_date"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="unitBaseName" column="unit_base_name"/>
+    </resultMap>
+    <select id="selectReport" parameterType="com.platform.ems.domain.dto.request.SamOsbSampleReimburseReportRequert" resultMap="reportResult">
+        SELECT
+            t2.reimburse_item_sid,
+            t.reimburse_sid,
+            t.reimburse_code,
+            t3.company_name,
+            t4.department_name,
+            t5.nick_name AS reimburser_name,
+            t2.sample_code,
+            t7.material_name AS sample_name,
+            t.handle_status,
+            t2.quantity,
+            t2.purchase_price,
+            t2.remark,
+            t.document_date,
+            t2.create_date,
+            t6.nick_name AS creator_account_name,
+            t8.name as unit_base_name
+        FROM
+            s_sam_osb_sample_reimburse t
+        LEFT JOIN s_sam_osb_sample_reimburse_item t2 ON t2.reimburse_sid = t.reimburse_sid
+        LEFT JOIN s_bas_company t3 ON t3.company_sid = t.company_sid
+        LEFT JOIN s_bas_department t4 ON t4.department_sid = t.department_sid
+        LEFT JOIN sys_user t5 ON t5.user_name = t.reimburser
+        LEFT JOIN sys_user t6 ON t6.user_name = t2.creator_account
+        LEFT JOIN s_bas_material t7 ON t7.material_sid = t2.sample_sid
+        LEFT JOIN s_con_measure_unit t8 ON t7.unit_base = t8.code
+        <where>
+            <if test="reimburseCode != null and reimburseCode != ''" >
+                and t.reimburse_code like concat('%', #{reimburseCode}, '%')
+            </if>
+            <if test="companySid != null and companySid != ''" >
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="departmentSid != null and departmentSid != ''" >
+                and t.department_sid = #{departmentSid}
+            </if>
+            <if test="departmentSidList != null and departmentSidList.length > 0">
+                and t.department_sid in
+                (<foreach collection="departmentSidList" item="departmentSid" separator=",">#{departmentSid}</foreach>)
+            </if>
+            <if test="reimburser != null and reimburser != ''" >
+                and t.reimburser = #{reimburser}
+            </if>
+            <if test="reimburserList != null and reimburserList.length > 0" >
+                and t.reimburser in
+                (<foreach collection="reimburserList" item="reimburser" separator=",">#{reimburser}</foreach>)
+            </if>
+            <if test="sampleCode != null and sampleCode != ''" >
+                and t2.sample_code like concat('%', #{sampleCode}, '%')
+            </if>
+            <if test="sampleName != null and sampleName != ''" >
+                and t7.material_name like concat('%', #{sampleName}, '%')
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length > 0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t6.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+        </where>
+    </select>
+</mapper>

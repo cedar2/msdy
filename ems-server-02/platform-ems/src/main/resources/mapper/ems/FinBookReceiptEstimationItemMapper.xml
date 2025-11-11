@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinBookReceiptEstimationItemMapper">
+
+    <resultMap type="com.platform.ems.domain.FinBookReceiptEstimationItem" id="FinBookReceiptEstimationItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="bookReceiptEstimationItemSid" column="book_receipt_estimation_item_sid"/>
+        <result property="bookReceiptEstimationSid" column="book_receipt_estimation_sid"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="barcodeSid" column="barcode_sid"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="bookTypeName" column="book_type_name"/>
+        <result property="bookSourceCategoryName" column="book_source_category_name"/>
+        <result property="unitBaseName" column="unit_base_name"/>
+        <result property="quantity" column="quantity"/>
+        <result property="priceTax" column="price_tax"/>
+        <result property="price" column="price"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="currencyAmountTaxYhx" column="currency_amount_tax_yhx"/>
+        <result property="currencyAmountTaxHxz" column="currency_amount_tax_hxz"/>
+        <result property="quantityYhx" column="quantity_yhx"/>
+        <result property="quantityHxz" column="quantity_hxz"/>
+        <result property="currencyAmountTaxSkYhx" column="currency_amount_tax_sk_yhx"/>
+        <result property="currencyAmountTaxSkHxz" column="currency_amount_tax_sk_hxz"/>
+        <result property="currencyAmountTaxDpYhx" column="currency_amount_tax_dp_yhx"/>
+        <result property="currencyAmountTaxDpHxz" column="currency_amount_tax_dp_hxz"/>
+        <result property="saleContractSid" column="sale_contract_sid"/>
+        <result property="saleContractCode" column="sale_contract_code"/>
+        <result property="salesOrderSid" column="sales_order_sid"/>
+        <result property="salesOrderCode" column="sales_order_code"/>
+        <result property="deliveryNoteSid" column="delivery_note_sid"/>
+        <result property="deliveryNoteCode" column="delivery_note_code"/>
+        <result property="referDocCategory" column="refer_doc_category"/>
+        <result property="referDocSid" column="refer_doc_sid"/>
+        <result property="referDocCode" column="refer_doc_code"/>
+        <result property="referDocItemSid" column="refer_doc_item_sid"/>
+        <result property="referDocItemCode" column="refer_doc_item_code"/>
+        <result property="taxRate" column="tax_rate"/>
+        <result property="clearStatus" column="clear_status"/>
+        <result property="clearStatusMoney" column="clear_status_money"/>
+        <result property="clearStatusQuantity" column="clear_status_quantity"/>
+        <result property="accountValidDays" column="account_valid_days"/>
+        <result property="dayType" column="day_type"/>
+        <result property="accountValidDate" column="account_valid_date"/>
+        <result property="isBusinessVerify" column="is_business_verify"/>
+        <result property="isFinanceVerify" column="is_finance_verify"/>
+        <result property="businessVerifyPeriod" column="business_verify_period"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="companyName" column="company_name"/>
+        <result property="taxRateName" column="tax_rate_name"/>
+        <result property="quantityLeft" column="quantity_left"/>
+        <result property="currencyAmountTaxLeft" column="currency_amount_tax_left"/>
+        <result property="currentPrice" column="current_price"/>
+        <result property="currentPriceTax" column="current_price_tax"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="unitPriceName" column="unit_price_name"/>
+        <result property="bookType" column="book_type"/>
+        <result property="bookSourceCategory" column="book_source_category"/>
+        <result property="rawMaterialMode" column="raw_material_mode"/>
+        <result property="saleMode" column="sale_mode"/>
+    </resultMap>
+
+    <sql id="selectFinBookReceiptEstimationItemVo">
+        select t.client_id, t.book_receipt_estimation_item_sid, t.book_receipt_estimation_sid,
+        t6.book_receipt_estimation_code, t6.book_type, t6.book_source_category, t7.name AS book_type_name, t8.name AS book_source_category_name,
+        t.item_num, t.material_sid, t2.material_code, t2.material_name, t3.sku_name as sku1_name, t4.sku_name as sku2_name,
+        t.sku1_sid, t.sku2_sid, t.barcode_sid, t.unit_base, t5.name AS unit_base_name, t.quantity, t.price_tax, t.price,
+        t.currency_amount_tax, t.currency_amount_tax_yhx, ifnull(t22.currency_amount_tax_log, 0) as currency_amount_tax_hxz, t.quantity_yhx, t.quantity_hxz,
+        t.currency_amount_tax_sk_yhx,t.currency_amount_tax_sk_hxz,t.currency_amount_tax_dp_yhx,t.currency_amount_tax_dp_hxz,
+        t10.sale_contract_sid, t10.sale_contract_code, t.sales_order_sid, t9.sales_order_code, t.delivery_note_sid,
+        t11.delivery_note_code AS delivery_note_code, t.delivery_note_code, t.refer_doc_category, t.refer_doc_sid,
+        t.refer_doc_code, t.refer_doc_item_sid, t.refer_doc_item_code, t.tax_rate, t.clear_status, t.clear_status_money,
+        t.clear_status_quantity, t.account_valid_days, t.day_type,t12.customer_name,t13.company_name,t.unit_price, t14.name AS unit_price_name,
+        t.account_valid_date, t.is_business_verify, t.business_verify_period, t.is_finance_verify, t.remark, t.creator_account, t.create_date, t.updater_account, t.update_date, t.data_source_sys,
+        (t.quantity - t.quantity_yhx - t.quantity_hxz) AS quantity_left,
+        (t.currency_amount_tax - t.currency_amount_tax_yhx) AS currency_amount_tax_left,
+        t10.accounts_method_group, t6.customer_sid, t6.company_sid,
+        t17.name AS accounts_method_group_name, t9.raw_material_mode, t9.sale_mode
+        from s_fin_book_receipt_estimation_item t
+          LEFT JOIN s_bas_material t2 ON t.material_sid = t2.material_sid
+          LEFT JOIN s_bas_sku t3 ON t.sku1_sid = t3.sku_sid
+          LEFT JOIN s_bas_sku t4 ON t.sku2_sid = t4.sku_sid
+          LEFT JOIN s_con_measure_unit t5 ON t5.code = t.unit_base
+          LEFT JOIN s_fin_book_receipt_estimation t6 ON t6.book_receipt_estimation_sid = t.book_receipt_estimation_sid
+          LEFT JOIN s_con_book_type t7 ON t7.code = t6.book_type
+          LEFT JOIN s_con_book_source_category t8 ON t8.code = t6.book_source_category
+          LEFT JOIN s_sal_sales_order t9 ON t.sales_order_sid = t9.sales_order_sid
+          LEFT JOIN s_sal_sale_contract t10 ON t9.sale_contract_sid = t10.sale_contract_sid
+          LEFT JOIN s_del_delivery_note t11 ON t.delivery_note_sid = t11.delivery_note_sid
+          LEFT JOIN s_bas_customer t12 ON t6.customer_sid = t12.customer_sid
+          LEFT JOIN s_con_measure_unit t14 ON t.unit_price = t14.code
+          LEFT JOIN s_con_account_method_group t17 ON t10.accounts_method_group = t17.sid
+          LEFT JOIN s_bas_company t13 ON t6.company_sid = t13.company_sid
+          LEFT JOIN (
+            SELECT log.book_receipt_estimation_item_sid, SUM(log.currency_amount_tax) as currency_amount_tax_log
+            FROM s_fin_clear_log_receipt_estimation log
+            WHERE log.shengxiao_status = 'WSX'
+            GROUP BY log.book_receipt_estimation_item_sid
+          ) t22 ON t22.book_receipt_estimation_item_sid = t.book_receipt_estimation_item_sid
+    </sql>
+
+    <select id="selectFinBookReceiptEstimationItemById" parameterType="Long"
+            resultMap="FinBookReceiptEstimationItemResult">
+        <include refid="selectFinBookReceiptEstimationItemVo"/>
+        where t.book_receipt_estimation_item_sid = #{bookReceiptEstimationItemSid}
+    </select>
+
+    <select id="selectFinBookReceiptEstimationItemList"
+            parameterType="com.platform.ems.domain.FinBookReceiptEstimationItem"
+            resultMap="FinBookReceiptEstimationItemResult">
+        <include refid="selectFinBookReceiptEstimationItemVo"/>
+        <where>
+            and t.book_receipt_estimation_item_sid not in (SELECT a.account_item_sid FROM s_fin_receipt_estimation_adjust_bill_item a
+            LEFT JOIN s_fin_receipt_estimation_adjust_bill b on a.receipt_estimation_adjust_bill_sid = b.receipt_estimation_adjust_bill_sid
+            WHERE b.handle_status in ('1','3','4'))
+            and not exists (
+                select log.book_receipt_estimation_item_sid
+                from s_fin_clear_log_receipt_estimation log
+                where log.book_receipt_estimation_item_sid = t.book_receipt_estimation_item_sid
+            )
+            <if test="invoiceType != null and invoiceType == 'RI'">
+                and t.currency_amount_tax &lt;= 0
+            </if>
+            <if test="customerSid != null  and customerSid != ''">
+                and t6.customer_sid = #{customerSid}
+            </if>
+            <if test="companySid != null  and companySid != ''">
+                and t6.company_sid = #{companySid}
+            </if>
+            <if test="saleContractCode != null  and saleContractCode != ''">
+                and (<foreach collection="saleContractCode.split(';')" item="item" separator=" or ">
+                t10.sale_contract_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="salesOrderCode != null  and salesOrderCode != ''">
+                and (<foreach collection="salesOrderCode.split(';')" item="item" separator=" or ">
+                t9.sales_order_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="deliveryNoteCode != null  and deliveryNoteCode != ''">
+                and (<foreach collection="deliveryNoteCode.split(';')" item="item" separator=" or ">
+                t11.delivery_note_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="clearStatusNot != null and clearStatusNot != ''">
+                and t.clear_status != #{clearStatusNot}
+            </if>
+            <if test="clearStatusNot != null and clearStatusNot != ''">
+                and t.clear_status_quantity != #{clearStatusNot}
+            </if>
+            <if test="handleStatusNotList != null  and handleStatusNotList.length >0">and t6.handle_status not in
+                (<foreach collection="handleStatusNotList" item="handleStatusNot" separator=",">#{handleStatusNot}</foreach>)
+            </if>
+            <if test="bookType != null and bookType != ''">
+                and t6.book_type = #{bookType}
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="bookReceiptEstimationSid != null ">
+                and t.book_receipt_estimation_sid =#{bookReceiptEstimationSid}
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num =#{itemNum}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid =#{materialSid}
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid =#{sku1Sid}
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid =#{sku2Sid}
+            </if>
+            <if test="barcodeSid != null ">
+                and t.barcode_sid =#{barcodeSid}
+            </if>
+            <if test="unitBase != null  and unitBase != ''">
+                and t.unit_base = #{unitBase}
+            </if>
+            <if test="unitPrice != null  and unitPrice != ''">
+                and t.unit_price = #{unitPrice}
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="priceTax != null ">
+                and t.price_tax = #{priceTax}
+            </if>
+            <if test="price != null ">
+                and t.price = #{price}
+            </if>
+            <if test="currencyAmountTax != null ">
+                and t.currency_amount_tax = #{currencyAmountTax}
+            </if>
+            <if test="currencyAmountTaxYhx != null ">
+                and t.currency_amount_tax_yhx = #{currencyAmountTaxYhx}
+            </if>
+            <if test="currencyAmountTaxHxz != null ">
+                and t.currency_amount_tax_hxz = #{currencyAmountTaxHxz}
+            </if>
+            <if test="quantityYhx != null ">
+                and t.quantity_yhx = #{quantityYhx}
+            </if>
+            <if test="quantityHxz != null ">
+                and t.quantity_hxz = #{quantityHxz}
+            </if>
+            <if test="currencyAmountTaxSkYhx != null ">
+                and t.currency_amount_tax_sk_yhx = #{currencyAmountTaxSkYhx}
+            </if>
+            <if test="currencyAmountTaxSkHxz != null ">
+                and t.currency_amount_tax_sk_hxz = #{currencyAmountTaxSkHxz}
+            </if>
+            <if test="currencyAmountTaxDpYhx != null ">
+                and t.currency_amount_tax_dp_yhx = #{currencyAmountTaxDpYhx}
+            </if>
+            <if test="currencyAmountTaxDpHxz != null ">
+                and t.currency_amount_tax_dp_hxz = #{currencyAmountTaxDpHxz}
+            </if>
+            <if test="saleContractSid != null ">
+                and t.sale_contract_sid =#{saleContractSid}
+            </if>
+            <if test="salesOrderSid != null ">
+                and t.sales_order_sid =#{salesOrderSid}
+            </if>
+            <if test="deliveryNoteSid != null ">and t.delivery_note_sid =#{deliveryNoteSid}</if>
+            <if test="referDocCategory != null ">and t.refer_doc_category =#{referDocCategory}</if>
+            <if test="referDocSid != null ">and t.refer_doc_sid =#{referDocSid}</if>
+            <if test="referDocCode != null ">and t.refer_doc_code =#{referDocCode}</if>
+            <if test="referDocItemSid != null ">
+                and t.refer_doc_item_sid =#{referDocItemSid}
+            </if>
+            <if test="referDocItemCode != null ">
+                and t.refer_doc_item_code =#{referDocItemCode}
+            </if>
+            <if test="taxRate != null ">
+                and t.tax_rate = #{taxRate}
+            </if>
+            <if test="clearStatus != null  and clearStatus != ''">
+                and t.clear_status = #{clearStatus}
+            </if>
+            <if test="clearStatusMoney != null  and clearStatusMoney != ''">
+                and t.clear_status_money = #{clearStatusMoney}
+            </if>
+            <if test="clearStatusQuantity != null  and clearStatusQuantity != ''">
+                and t.clear_status_quantity = #{clearStatusQuantity}
+            </if>
+            <if test="accountValidDays != null ">and t.account_valid_days = #{accountValidDays}</if>
+            <if test="dayType != null ">and t.day_type = #{dayType}</if>
+            <if test="accountValidDate != null ">
+                and t.account_valid_date = #{accountValidDate}
+            </if>
+            <if test="isBusinessVerify != null and isBusinessVerify != ''">and t.is_business_verify = #{isBusinessVerify}</if>
+            <if test="businessVerifyPeriod != null and businessVerifyPeriod != ''">and t.business_verify_period = #{businessVerifyPeriod}</if>
+            <if test="isFinanceVerify != null and isFinanceVerify != ''">and t.is_finance_verify = #{isFinanceVerify}</if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where> order by t6.book_receipt_estimation_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_book_receipt_estimation_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            book_receipt_estimation_item_sid,
+            book_receipt_estimation_sid,
+            item_num,
+            material_sid,
+            sku1_sid,
+            sku2_sid,
+            barcode_sid,
+            unit_base,
+            unit_price,
+            quantity,
+            price_tax,
+            price,
+            currency_amount_tax,
+            currency_amount_tax_yhx,
+            currency_amount_tax_hxz,
+            quantity_yhx,
+            quantity_hxz,
+            currency_amount_tax_sk_yhx,
+            currency_amount_tax_sk_hxz,
+            currency_amount_tax_dp_yhx,
+            currency_amount_tax_dp_hxz,
+            sale_contract_sid,
+            sale_contract_code,
+            sales_order_sid,
+            sales_order_code,
+            delivery_note_sid,
+            delivery_note_code,
+            refer_doc_category,
+            refer_doc_sid,
+            refer_doc_code,
+            refer_doc_item_sid,
+            refer_doc_item_code,
+            tax_rate,
+            clear_status,
+            clear_status_money,
+            clear_status_quantity,
+            account_valid_days,
+            day_type,
+            account_valid_date,
+            is_business_verify,
+            business_verify_period,
+            is_finance_verify,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.bookReceiptEstimationItemSid},
+                #{item.bookReceiptEstimationSid},
+                #{item.itemNum},
+                #{item.materialSid},
+                #{item.sku1Sid},
+                #{item.sku2Sid},
+                #{item.barcodeSid},
+                #{item.unitBase},
+                #{item.unitPrice},
+                #{item.quantity},
+                #{item.priceTax},
+                #{item.price},
+                #{item.currencyAmountTax},
+                #{item.currencyAmountTaxYhx},
+                #{item.currencyAmountTaxHxz},
+                #{item.quantityYhx},
+                #{item.quantityHxz},
+                #{item.currencyAmountTaxSkYhx},
+                #{item.currencyAmountTaxSkHxz},
+                #{item.currencyAmountTaxDpYhx},
+                #{item.currencyAmountTaxDpHxz},
+                #{item.saleContractSid},
+                #{item.saleContractCode},
+                #{item.salesOrderSid},
+                #{item.salesOrderCode},
+                #{deliveryNoteSid},
+                #{deliveryNoteCode},
+                #{referDocCategory},
+                #{referDocSid},
+                #{referDocCode},
+                #{item.referDocItemSid},
+                #{item.referDocItemCode},
+                #{item.taxRate},
+                #{item.clearStatus},
+                #{item.clearStatusMoney},
+                #{item.clearStatusQuantity},
+                #{accountValidDays},
+                #{item.dayType},
+                #{item.accountValidDate},
+                #{item.isBusinessVerify},
+                #{item.businessVerifyPeriod},
+                #{item.isFinanceVerify},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_book_receipt_estimation_item
+        <trim prefix="SET" suffixOverrides=",">
+            item_num = #{itemNum},
+            material_sid = #{materialSid},
+            sku1_sid = #{sku1Sid},
+            sku2_sid = #{sku2Sid},
+            barcode_sid = #{barcodeSid},
+            unit_base = #{unitBase},
+            unit_price = #{unitPrice},
+            quantity = #{quantity},
+            price_tax = #{priceTax},
+            price = #{price},
+            currency_amount_tax = #{currencyAmountTax},
+            currency_amount_tax_yhx = #{currencyAmountTaxYhx},
+            currency_amount_tax_hxz = #{currencyAmountTaxHxz},
+            quantity_yhx = #{quantityYhx},
+            quantity_hxz = #{quantityHxz},
+            currency_amount_tax_sk_yhx = #{currencyAmountTaxSkYhx},
+            currency_amount_tax_sk_hxz = #{currencyAmountTaxSkHxz},
+            currency_amount_tax_dp_yhx = #{currencyAmountTaxDpYhx},
+            currency_amount_tax_dp_hxz = #{currencyAmountTaxDpHxz},
+            sale_contract_sid = #{saleContractSid},
+            sale_contract_code = #{saleContractCode},
+            sales_order_sid = #{salesOrderSid},
+            sales_order_code = #{salesOrderCode},
+            delivery_note_sid = #{deliveryNoteSid}, delivery_note_code = #{deliveryNoteCode}, refer_doc_category =
+            #{referDocCategory}, refer_doc_sid = #{referDocSid}, refer_doc_code = #{referDocCode},
+            refer_doc_item_sid = #{referDocItemSid},
+            refer_doc_item_code = #{referDocItemCode},
+            tax_rate = #{taxRate},
+            clear_status = #{clearStatus},
+            clear_status_money = #{clearStatusMoney},
+            clear_status_quantity = #{clearStatusQuantity},
+            account_valid_days = #{accountValidDays}, day_type = #{dayType},
+            account_valid_date = #{accountValidDate},
+            is_business_verify = #{isBusinessVerify}, business_verify_period = #{businessVerifyPeriod},
+            is_finance_verify = #{isFinanceVerify},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where book_receipt_estimation_item_sid = #{bookReceiptEstimationItemSid}
+    </update>
+
+    <select id="getItemList" parameterType="com.platform.ems.domain.FinBookReceiptEstimation"
+            resultMap="FinBookReceiptEstimationItemResult">
+        SELECT
+        t.client_id,
+        t.book_receipt_estimation_item_sid,
+        t.book_receipt_estimation_sid,
+        t.item_num,
+        t.material_sid,
+        t.sku1_sid,
+        t.sku2_sid,
+        t.barcode_sid,
+        t.unit_base,
+        t.unit_price,
+        t.quantity,
+        t.price_tax,
+        t.price,
+        t.currency_amount_tax,
+        t.currency_amount_tax_yhx,
+        ifnull(t22.currency_amount_tax_log, 0) as currency_amount_tax_hxz,
+        (t.currency_amount_tax - t.currency_amount_tax_yhx - ifnull(t22.currency_amount_tax_log, 0)) AS currency_amount_tax_left,
+        t.quantity_yhx,
+        t.quantity_hxz,
+        t.currency_amount_tax_sk_yhx,
+        t.currency_amount_tax_sk_hxz,
+        t.currency_amount_tax_dp_yhx,
+        t.currency_amount_tax_dp_hxz,
+        t.sale_contract_sid,
+        t.sale_contract_code,
+        t.sales_order_sid,
+        t.sales_order_code,
+        t.delivery_note_sid,
+        t.delivery_note_code,
+        t.refer_doc_category,
+        t.refer_doc_sid,
+        t.refer_doc_code,
+        t.refer_doc_item_sid,
+        t.refer_doc_item_code,
+        t.tax_rate,
+        t.clear_status,
+        t.clear_status_money,
+        t.clear_status_quantity,
+        t.account_valid_days,
+        t.day_type,
+        t.account_valid_date,
+        t.is_business_verify,
+        t.business_verify_period,
+        t.is_finance_verify,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+        t.refer_doc_sid,
+        t.refer_doc_code,
+        t.refer_doc_category
+        FROM
+        s_fin_book_receipt_estimation_item t
+        RIGHT JOIN s_fin_book_receipt_estimation t2 ON t.book_receipt_estimation_sid = t2.book_receipt_estimation_sid
+        LEFT JOIN (
+            SELECT log.book_receipt_estimation_item_sid, SUM(log.currency_amount_tax) as currency_amount_tax_log
+            FROM s_fin_clear_log_receipt_estimation log
+            WHERE log.shengxiao_status = 'WSX'
+            GROUP BY log.book_receipt_estimation_item_sid
+        ) t22 ON t22.book_receipt_estimation_item_sid = t.book_receipt_estimation_item_sid
+        <where>
+            <if test="customerSid != null">and t2.customer_sid = #{customerSid}</if>
+            <if test="companySid != null">and t2.company_sid = #{companySid}</if>
+            <if test="clearStatus != null and clearStatus != ''">
+                and t.clear_status = #{clearStatus}
+            </if>
+            <if test="clearStatusList != null  and clearStatusList.length >0">and t.clear_status in
+                (<foreach collection="clearStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="isTuihuo != null and isTuihuo != ''">
+                and t2.is_tuihuo = #{isTuihuo}
+            </if>
+        </where>
+    </select>
+
+    <!--更新-->
+    <update id="updatePart">update s_fin_book_receipt_estimation_item
+        <trim prefix="SET" suffixOverrides=",">currency_amount_tax_yhx = #{currencyAmountTaxYhx},
+            currency_amount_tax_hxz = #{currencyAmountTaxHxz}, quantity_yhx = #{quantityYhx}, quantity_hxz =
+            #{quantityHxz}, updater_account = #{updaterAccount}, update_date = #{updateDate}, data_source_sys =
+            #{dataSourceSys},
+        </trim>
+        where book_receipt_estimation_item_sid = #{bookReceiptEstimationItemSid}
+    </update>
+</mapper>

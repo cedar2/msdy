@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.system.mapper.SysUserDataRoleMapper">
+
+    <resultMap type="com.platform.common.core.domain.entity.SysUserDataRole" id="SysUserDataRoleResult">
+        <result property="clientId" column="client_id"/>
+        <result property="userDataRoleSid" column="user_data_role_sid"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="roleDataSid" column="role_data_sid"/>
+        <result property="roleDataCode" column="role_data_code"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectSysUserDataRoleVo">
+        select t.client_id,
+               t.user_data_role_sid,
+               t.user_id,
+               t.user_name,
+               t.role_data_sid,
+               t.role_data_code,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name,
+               t3.role_data_name,
+               t3.status,
+               t3.handle_status,
+               t4.nick_name as creator_account_name
+        from s_sys_user_data_role t
+                 LEFT JOIN sys_user t2 ON t.user_id = t2.user_id
+                 LEFT JOIN sys_role_data t3 ON t.role_data_sid = t3.role_data_sid
+                 LEFT JOIN sys_user t4 ON t.creator_account = t4.user_name AND t.client_id = t4.client_id
+    </sql>
+
+    <select id="selectSysUserDataRoleById" parameterType="Long" resultMap="SysUserDataRoleResult">
+        <include refid="selectSysUserDataRoleVo"/>
+        where t.user_data_role_sid = #{userDataRoleSid}
+    </select>
+
+    <select id="selectSysUserDataRoleList" parameterType="com.platform.common.core.domain.entity.SysUserDataRole"
+            resultMap="SysUserDataRoleResult">
+        <include refid="selectSysUserDataRoleVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="userId != null ">
+                and t.user_id = #{userId}
+            </if>
+            <if test="userIdList != null and userIdList.length >0 ">
+                and t.user_id in
+                (<foreach collection="userIdList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="userName != null and userName != ''">and
+                t.user_name like concat('%', #{userName}, '%')
+            </if>
+            <if test="roleDataSid != null ">
+                and t.role_data_sid = #{roleDataSid}
+            </if>
+            <if test="roleDataSidList != null and roleDataSidList.length >0 ">
+                and t.role_data_sid in
+                (<foreach collection="roleDataSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="roleDataCode != null and roleDataCode != ''">
+                and t.role_data_code = #{roleDataCode}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_sys_user_data_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            user_data_role_sid,
+            user_id,
+            user_name,
+            role_data_sid,
+            role_data_code,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.userDataRoleSid},
+                #{item.userId},
+                #{item.userName},
+                #{item.roleDataSid},
+                #{item.roleDataCode},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_sys_user_data_role
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            user_id = #{userId},
+            user_name = #{userName},
+            role_data_sid = #{roleDataSid},
+            role_data_code = #{roleDataCode},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where user_data_role_sid = #{userDataRoleSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_sys_user_data_role
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{o.clientId},
+                user_id = #{o.userId},
+                user_name = #{o.userName},
+                role_data_sid = #{o.roleDataSid},
+                role_data_code = #{o.roleDataCode},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where user_data_role_sid = #{o.userDataRoleSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PayProcessStepMapper">
+
+    <resultMap type="com.platform.ems.domain.PayProcessStep" id="PayProcessStepResult">
+        <result property="clientId" column="client_id"/>
+        <result property="processStepSid" column="process_step_sid"/>
+        <result property="processStepCode" column="process_step_code"/>
+        <result property="processStepName" column="process_step_name"/>
+        <result property="stepCategory" column="step_category"/>
+        <result property="standardPrice" column="standard_price"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="taskUnit" column="task_unit"/>
+        <result property="processSid" column="process_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="processCode" column="process_code"/>
+        <result property="processName" column="process_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="taskUnitName" column="task_unit_name"/>
+        <result property="disableRemark" column="disable_remark"/>
+    </resultMap>
+
+    <sql id="selectPayProcessStepVo">
+        select
+        t.client_id,
+        t.process_step_sid,
+        t.process_step_code,
+        t.process_step_name,
+        t.step_category,
+        t.standard_price,
+        t.currency,
+        t.currency_unit,
+        t.task_unit,
+        t.process_sid,
+        t.remark,
+        t.status,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t.disable_remark,
+        t1.process_code,
+        t1.process_name,
+        t2.nick_name as creator_account_name,
+        t3.nick_name as updater_account_name,
+        t4.nick_name as confirmer_account_name,
+        t5.name as task_unit_name
+  from s_pay_process_step t
+        LEFT JOIN s_man_process t1 ON t1.process_sid = t.process_sid
+        LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+        LEFT JOIN sys_user t3 ON t3.user_name = t.updater_account
+        LEFT JOIN sys_user t4 ON t4.user_name = t.confirmer_account
+        LEFT JOIN s_con_measure_unit t5 ON t5.code = t.task_unit
+    </sql>
+
+    <select id="selectPayProcessStepById" parameterType="Long" resultMap="PayProcessStepResult">
+        <include refid="selectPayProcessStepVo"/>
+        where t.process_step_sid = #{processStepSid}
+    </select>
+
+
+    <select id="selectPayProcessStepList" parameterType="com.platform.ems.domain.PayProcessStep"
+            resultMap="PayProcessStepResult">
+        <include refid="selectPayProcessStepVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="processStepSid != null ">
+                and t.process_step_sid =#{processStepSid}
+            </if>
+            <if test="processStepSidList != null and processStepSidList.length >0 ">
+                and t.process_step_sid in
+                (<foreach collection="processStepSidList" item="processStepSid" separator=",">#{processStepSid}</foreach>)
+            </if>
+            <if test="processStepCode != null">
+                and t.process_step_code like concat('%',#{processStepCode}, '%')
+            </if>
+            <if test="processStepName != null  and processStepName != ''">and
+                t.process_step_name like concat('%', #{processStepName}, '%')
+            </if>
+            <if test="stepCategory != null and stepCategory != ''">
+                and t.step_category = #{stepCategory}
+            </if>
+            <if test="standardPrice != null ">
+                and t.standard_price = #{standardPrice}
+            </if>
+            <if test="currency != null  and currency != ''">
+                and (<foreach collection="currency.split(';')" item="item" separator="or">t.currency like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">
+                and (<foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="taskUnit != null  and taskUnit != ''">
+                and (<foreach collection="taskUnit.split(';')" item="item" separator="or">t.task_unit like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="processSid != null ">
+                and t.process_sid =#{processSid}
+            </if>
+            <if test="processSidList != null and processSidList.length >0 ">
+                and t.process_sid in
+                (<foreach collection="processSidList" item="processSid" separator=",">#{processSid}</foreach>)
+            </if>
+            <if test="status != null  and status != ''">
+                and (<foreach collection="status.split(';')" item="item" separator="or">t.status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccountName != null  and creatorAccountName != ''">
+                and (<foreach collection="creatorAccountName.split(';')" item="item" separator="or">t2.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.process_step_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pay_process_step
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            process_step_sid,
+            process_step_code,
+            process_step_name,
+            step_category,
+            standard_price,
+            currency,
+            currency_unit,
+            task_unit,
+            process_sid,
+            remark,
+            disable_remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.processStepSid},
+                #{item.processStepCode},
+                #{item.processStepName},
+                #{item.stepCategory},
+                #{item.standardPrice},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.taskUnit},
+                #{item.processSid},
+                #{item.remark},
+                #{item.disableRemark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pay_process_step
+        <trim prefix="SET" suffixOverrides=",">
+            process_step_sid = #{processStepSid},
+            process_step_code = #{processStepCode},
+            process_step_name = #{processStepName},
+            step_category = #{stepCategory},
+            standard_price = #{standardPrice},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            task_unit = #{taskUnit},
+            process_sid = #{processSid},
+            remark = #{remark},
+            disable_remark = #{disableRemark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where process_step_sid = #{processStepSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pay_process_step
+            <trim prefix="SET" suffixOverrides=",">
+                process_step_sid = #{processStepSid},
+                process_step_code = #{processStepCode},
+                process_step_name = #{processStepName},
+                step_category = #{stepCategory},
+                standard_price = #{standardPrice},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+                task_unit = #{taskUnit},
+                process_sid = #{processSid},
+                remark = #{remark},
+                disable_remark = #{disableRemark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where process_step_sid = #{processStepSid}
+        </foreach>
+    </update>
+
+</mapper>

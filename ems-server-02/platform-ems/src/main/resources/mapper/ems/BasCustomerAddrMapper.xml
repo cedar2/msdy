@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasCustomerAddrMapper">
+
+    <resultMap type="com.platform.ems.domain.BasCustomerAddr" id="BasCustomerAddrResult">
+        <result property="clientId" column="client_id"/>
+        <result property="customerContactSid" column="customer_contact_sid"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="contactInforCode" column="contact_infor_code"/>
+        <result property="contacterName" column="contacter_name"/>
+        <result property="contacterPosition" column="contacter_position"/>
+        <result property="contacterMobphone" column="contacter_mobphone"/>
+        <result property="contacterTelephone" column="contacter_telephone"/>
+        <result property="contacterFax" column="contacter_fax"/>
+        <result property="contacterEmail" column="contacter_email"/>
+        <result property="contacterAddress" column="contacter_address"/>
+        <result property="contacterDepartment" column="contacter_department"/>
+        <result property="businessType" column="business_type"/>
+        <result property="isDefault" column="is_default"/>
+        <result property="contactPartyRemark" column="contact_party_remark"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectBasCustomerAddrVo">
+        select t.client_id,
+               t.customer_contact_sid,
+               t.customer_sid,
+               t.contact_infor_code,
+               t.contacter_name,
+               t.contacter_position,
+               t.contacter_mobphone,
+               t.contacter_telephone,
+               t.contacter_fax,
+               t.contacter_email,
+               t.contacter_address,
+               t.contacter_department,
+               t.business_type,
+               t.is_default,
+               t.contact_party_remark,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.customer_name,
+               t4.customer_code
+        from s_bas_customer_addr t
+        left join sys_user t2 on t.creator_account = t2.user_name
+        left join sys_user t3 on t.updater_account = t3.user_name
+        left join s_bas_customer t4 on t.customer_sid = t4.customer_sid
+    </sql>
+
+    <select id="selectBasCustomerAddrList" parameterType="com.platform.ems.domain.BasCustomerAddr"
+            resultMap="BasCustomerAddrResult">
+        <include refid="selectBasCustomerAddrVo"/>
+        <where>
+            <if test="customerName != null and customerName != ''">
+                and t4.customer_name like concat('%', #{customerName}, '%')
+            </if>
+            <if test="customerCode != null and customerCode != ''">
+                and t4.customer_code like concat('%', #{customerCode}, '%')
+            </if>
+            <if test="customerSid != null  and customerSid != ''">and t.customer_sid =
+                #{customerSid}
+            </if>
+            <if test="customerContactSid != null  and customerContactSid != ''">and t.customer_contact_sid =
+                #{customerContactSid}
+            </if>
+            <if test="contacterName != null  and contacterName != ''">and t.contacter_name like concat('%',
+                #{contacterName}, '%')
+            </if>
+            <if test="contacterPosition != null  and contacterPosition != ''">and t.contacter_position =
+                #{contacterPosition}
+            </if>
+            <if test="contacterMobphone != null  and contacterMobphone != ''">and t.contacter_mobphone =
+                #{contacterMobphone}
+            </if>
+            <if test="contacterTelephone != null  and contacterTelephone != ''">and t.contacter_telephone =
+                #{contacterTelephone}
+            </if>
+            <if test="contacterFax != null  and contacterFax != ''">and t.contacter_fax = #{contacterFax}</if>
+            <if test="contacterEmail != null  and contacterEmail != ''">and t.contacter_email = #{contacterEmail}</if>
+            <if test="contacterAddress != null  and contacterAddress != ''">and t.contacter_address =
+                #{contacterAddress}
+            </if>
+            <if test="contacterDepartment != null  and contacterDepartment != ''">and t.contacter_department =
+                #{contacterDepartment}
+            </if>
+            <if test="businessType != null  and businessType != ''">and t.business_type = #{businessType}</if>
+            <if test="isDefault != null  and isDefault != ''">and t.is_default = #{isDefault}</if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and t.creator_account = #{creatorAccount}</if>
+            <if test="createDate != null ">and t.create_date = #{createDate}</if>
+            <if test="updaterAccount != null  and updaterAccount != ''">and t.updater_account = #{updaterAccount}</if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and t.data_source_sys = #{dataSourceSys}</if>
+        </where>
+        order by customer_contact_sid desc
+    </select>
+
+    <select id="selectBasCustomerAddrById" parameterType="Long" resultMap="BasCustomerAddrResult">
+        <include refid="selectBasCustomerAddrVo"/>
+        where customer_contact_sid = #{customerContactSid}
+    </select>
+
+    <insert id="insertBasCustomerAddr" parameterType="com.platform.ems.domain.BasCustomerAddr">
+        insert into s_bas_customer_addr
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">client_id,</if>
+            <if test="customerContactSid != null and customerContactSid != ''">customer_contact_sid,</if>
+            <if test="customerSid != null">customer_sid,</if>
+            <if test="contactInforCode != null">contact_infor_code,</if>
+            <if test="contacterName != null and contacterName != ''">contacter_name,</if>
+            <if test="contacterPosition != null">contacter_position,</if>
+            <if test="contacterMobphone != null and contacterMobphone != ''">contacter_mobphone,</if>
+            <if test="contacterTelephone != null">contacter_telephone,</if>
+            <if test="contacterFax != null">contacter_fax,</if>
+            <if test="contacterEmail != null">contacter_email,</if>
+            <if test="contacterAddress != null">contacter_address,</if>
+            <if test="contacterDepartment != null">contacter_department,</if>
+            <if test="businessType != null">business_type,</if>
+            <if test="isDefault != null">is_default,</if>
+            <if test="contactPartyRemark != null">contact_party_remark,</if>
+            <if test="remark != null">remark,</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updaterAccount != null">updater_account,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="dataSourceSys != null">data_source_sys,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">#{clientId},</if>
+            <if test="customerContactSid != null and customerContactSid != ''">#{customerContactSid},</if>
+            <if test="customerSid != null">#{customerSid},</if>
+            <if test="contactInforCode != null">#{contactInforCode},</if>
+            <if test="contacterName != null and contacterName != ''">#{contacterName},</if>
+            <if test="contacterPosition != null">#{contacterPosition},</if>
+            <if test="contacterMobphone != null and contacterMobphone != ''">#{contacterMobphone},</if>
+            <if test="contacterTelephone != null">#{contacterTelephone},</if>
+            <if test="contacterFax != null">#{contacterFax},</if>
+            <if test="contacterEmail != null">#{contacterEmail},</if>
+            <if test="contacterAddress != null">#{contacterAddress},</if>
+            <if test="contacterDepartment != null">#{contacterDepartment},</if>
+            <if test="businessType != null">#{businessType},</if>
+            <if test="isDefault != null">#{isDefault},</if>
+            <if test="contactPartyRemark != null">#{contactPartyRemark},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">#{creatorAccount},</if>
+            <if test="createDate != null">now(),</if>
+            <if test="updaterAccount != null">#{updaterAccount},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="dataSourceSys != null">#{dataSourceSys},</if>
+        </trim>
+    </insert>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_customer_addr
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            customer_contact_sid,
+            customer_sid,
+            contact_infor_code,
+            contacter_name,
+            contacter_position,
+            contacter_mobphone,
+            contacter_telephone,
+            contacter_fax,
+            contacter_email,
+            contacter_address,
+            contacter_department,
+            business_type,
+            is_default,
+            contact_party_remark,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys
+        </trim>
+        values
+        <foreach collection="list" item="o" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{o.clientId},
+                #{o.customerContactSid},
+                #{o.customerSid},
+                #{o.contactInforCode},
+                #{o.contacterName},
+                #{o.contacterPosition},
+                #{o.contacterMobphone},
+                #{o.contacterTelephone},
+                #{o.contacterFax},
+                #{o.contacterEmail},
+                #{o.contacterAddress},
+                #{o.contacterDepartment},
+                #{o.businessType},
+                #{o.isDefault},
+                #{o.contactPartyRemark},
+                #{o.remark},
+                #{o.creatorAccount},
+                #{o.createDate},
+                #{o.updaterAccount},
+                #{o.updateDate},
+                #{o.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+
+    <update id="updateBasCustomerAddr" parameterType="com.platform.ems.domain.BasCustomerAddr">
+        update s_bas_customer_addr
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="customerSid != null">customer_sid = #{customerSid},</if>
+            <if test="contactInforCode != null">contact_infor_code = #{contactInforCode},</if>
+            <if test="contacterName != null and contacterName != ''">contacter_name = #{contacterName},</if>
+            <if test="contacterPosition != null">contacter_position = #{contacterPosition},</if>
+            <if test="contacterMobphone != null and contacterMobphone != ''">contacter_mobphone =
+                #{contacterMobphone},
+            </if>
+            <if test="contacterTelephone != null">contacter_telephone = #{contacterTelephone},</if>
+            <if test="contacterFax != null">contacter_fax = #{contacterFax},</if>
+            <if test="contacterEmail != null">contacter_email = #{contacterEmail},</if>
+            <if test="contacterAddress != null">contacter_address = #{contacterAddress},</if>
+            <if test="contacterDepartment != null">contacter_department = #{contacterDepartment},</if>
+            <if test="businessType != null">business_type = #{businessType},</if>
+            <if test="isDefault != null">is_default = #{isDefault},</if>
+            <if test="contactPartyRemark != null">contact_party_remark = #{contactPartyRemark},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account = #{creatorAccount},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updaterAccount != null">updater_account = #{updaterAccount},</if>
+            <if test="updateDate != null">update_date = now(),</if>
+            <if test="dataSourceSys != null">data_source_sys = #{dataSourceSys},</if>
+        </trim>
+        where customer_contact_sid = #{customerContactSid}
+    </update>
+
+    <delete id="deleteBasCustomerAddrById" parameterType="Long">
+        delete
+        from s_bas_customer_addr
+        where customer_contact_sid = #{customerContactSid}
+    </delete>
+
+    <delete id="deleteBasCustomerAddrByIds" parameterType="Long">
+        delete from s_bas_customer_addr where customer_contact_sid in
+        <foreach item="customerContactSid" collection="array" open="(" separator="," close=")">
+            #{customerContactSid}
+        </foreach>
+    </delete>
+
+</mapper>

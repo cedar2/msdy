@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManWorkCenterMapper">
+
+    <resultMap type="com.platform.ems.domain.ManWorkCenter" id="ManWorkCenterResult">
+        <result property="clientId" column="client_id"/>
+        <result property="workCenterSid" column="work_center_sid"/>
+        <result property="workCenterCode" column="work_center_code"/>
+        <result property="workCenterName" column="work_center_name"/>
+        <result property="workCenterCategory" column="work_center_category"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="processSids" column="process_sids"/>
+        <result property="processCodes" column="process_codes"/>
+        <result property="processNames" column="process_names"/>
+        <result property="director" column="director"/>
+        <result property="useableType" column="useable_type"/>
+        <result property="output" column="output"/>
+        <result property="depositArea" column="deposit_area"/>
+        <result property="timeUnit" column="time_unit"/>
+        <result property="unit" column="unit"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="directorName" column="director_name"/>
+        <result property="departmentSid" column="department_sid"/>
+    </resultMap>
+
+    <sql id="selectManWorkCenterVo">
+        select
+        t.client_id,
+        t.work_center_sid,
+        t.work_center_code,
+        t.work_center_name,
+        t.work_center_category,
+        t.company_sid,
+        t.plant_sid,
+        t.department_sid,
+        t.process_sids,
+        t.process_codes,
+        t.director,
+        t.useable_type,
+        t.output,
+        t.deposit_area,
+        t.time_unit,
+        t.unit,
+        t.phone,
+        t.address,
+        t.remark,
+        t.status,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.work_center_type,
+        t.vendor_sid,
+        t.vendor_code,
+        t.department_code,
+        t1.company_name,
+        t2.plant_name,
+        t.data_source_sys,
+        t3.nick_name as creator_account_name,
+        t4.nick_name as updater_account_name,
+        t5.nick_name as confirmer_account_name,
+        t6.staff_name as director_name,
+        t7.name as department_name,
+        t8.short_name as vendor_name
+  from s_man_work_center t
+        left join s_bas_company t1 on t1.company_sid = t.company_sid
+        left join s_bas_plant t2 on t2.plant_sid=t.plant_sid
+        LEFT JOIN sys_user t3 ON t3.user_name = t.creator_account
+	    LEFT JOIN sys_user t4 ON t4.user_name = t.updater_account
+	    LEFT JOIN sys_user t5 ON t5.user_name = t.confirmer_account
+	    LEFT JOIN s_bas_staff t6 ON t6.staff_code = t.director
+	    LEFT JOIN s_con_manufacture_department t7 ON t7.sid = t.department_sid
+	    left join s_bas_vendor t8 on t8.vendor_sid=t.vendor_sid
+    </sql>
+
+    <select id="selectManWorkCenterById" parameterType="Long" resultMap="ManWorkCenterResult">
+        <include refid="selectManWorkCenterVo"/>
+        where t.work_center_sid = #{workCenterSid}
+    </select>
+    <select id="getList" resultType="com.platform.ems.domain.ManWorkCenter">
+    select work_center_sid,
+    work_center_code,
+    work_center_name,
+    handle_status,
+    status,
+    department_code,
+    department_sid
+    from s_man_work_center
+</select>
+
+
+    <resultMap type="com.platform.ems.domain.ManManufactureOrderProcess" id="reportResult">
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantName" column="plant_name"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="workCenterSid" column="work_center_sid"/>
+        <result property="workCenterCode" column="work_center_code"/>
+        <result property="workCenterName" column="work_center_name"/>
+        <collection property="datas" ofType="com.platform.ems.domain.ManManufactureOrderProcess">
+        <result property="planStartDate" column="plan_start_date"/>
+        <result property="planEndDate" column="plan_end_date"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectManWorkCenterReportList"
+            parameterType="com.platform.ems.domain.dto.request.ManWorkCenterReportRequest"
+            resultMap="reportResult">
+        SELECT
+        t1.plant_sid,t1.plant_name,t1.plant_code,t2.work_center_sid,t2.work_center_name,t2.work_center_code,t.plan_start_date,t.plan_end_date
+        FROM
+        s_man_manufacture_order_process t
+        LEFT JOIN s_bas_plant t1 on t1.plant_sid=t.plant_sid
+        LEFT JOIN s_man_work_center t2 on t2.work_center_sid=t.work_center_sid
+        <where>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid =#{workCenterSid}
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid=#{plantSid}
+            </if>
+            <if test="beginTime != null ">
+                and date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null ">
+                and date_format(t.plan_start_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectManWorkCenterList" parameterType="com.platform.ems.domain.ManWorkCenter"
+            resultMap="ManWorkCenterResult">
+        <include refid="selectManWorkCenterVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="processSids != null and processSids != ''">
+                and t.process_sids =#{processSids}
+            </if>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid =#{workCenterSid}
+            </if>
+            <if test="workCenterSidList != null and workCenterSidList.length >0 ">
+                and t.work_center_sid in
+                (<foreach collection="workCenterSidList" item="workCenterSid" separator=",">#{workCenterSid}</foreach>)
+            </if>
+            <if test="workCenterCode != null and workCenterCode != ''">
+                and (<foreach collection="workCenterCode.split(';')" item="item" separator="or">t.work_center_code like
+                concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="workCenterName != null and workCenterName != ''">
+                and (<foreach collection="workCenterName.split(';')" item="item" separator="or">t.work_center_name like
+                concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="workCenterCategory != null  and workCenterCategory != ''">
+                and (<foreach collection="workCenterCategory.split(';')" item="item" separator="or">
+                t.work_center_category like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="workCenterCategoryList != null and workCenterCategoryList.length >0 ">
+                and t.work_center_category in
+                (<foreach collection="workCenterCategoryList" item="workCenterCategory" separator=",">
+                #{workCenterCategory}</foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid =#{plantSid}
+            </if>
+            <if test="departmentSid != null ">
+                and t.department_sid =#{departmentSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="departmentList != null and departmentList.length >0 ">
+                and t.department_sid in
+                (<foreach collection="departmentList" item="department" separator=",">#{department}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0 ">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="workCenterTypeList != null and workCenterTypeList.length >0 ">
+                and t.work_center_type in
+                (<foreach collection="workCenterTypeList" item="workCenterType" separator=",">#{workCenterType}</foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">#{creatorAccount}</foreach>)
+            </if>
+            <if test="director != null  and director != ''">
+                and (<foreach collection="director.split(';')" item="item" separator="or">t.director like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="useableType != null  and useableType != ''">
+                and (<foreach collection="useableType.split(';')" item="item" separator="or">t.useable_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="output != null ">
+                and t.output =#{output}
+            </if>
+            <if test="depositArea != null ">
+                and t.deposit_area =#{depositArea}
+            </if>
+            <if test="timeUnit != null  and timeUnit != ''">
+                and (<foreach collection="timeUnit.split(';')" item="item" separator="or">t.time_unit like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="unit != null  and unit != ''">
+                and (<foreach collection="unit.split(';')" item="item" separator="or">t.unit like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="phone != null  and phone != ''">
+                and (<foreach collection="phone.split(';')" item="item" separator="or">t.phone like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="address != null  and address != ''">
+                and (<foreach collection="address.split(';')" item="item" separator="or">t.address like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t2.plant_name asc, t.work_center_name asc, t.create_date desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_work_center
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            work_center_sid,
+            work_center_code,
+            work_center_name,
+            work_center_category,
+            company_sid,
+            plant_sid,
+            process_sids,
+            process_codes,
+            director,
+            useable_type,
+            output,
+            deposit_area,
+            time_unit,
+            unit,
+            phone,
+            address,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+            department_sid,
+            department_code,
+            vendor_sid,
+            vendor_code,
+            work_center_type,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.workCenterSid},
+                #{item.workCenterCode},
+                #{item.workCenterName},
+                #{item.workCenterCategory},
+                #{item.companySid},
+                #{item.plantSid},
+                #{item.processSids},
+                #{item.processCodes},
+                #{item.director},
+                #{item.useableType},
+                #{item.output},
+                #{item.depositArea},
+                #{item.timeUnit},
+                #{item.unit},
+                #{item.phone},
+                #{item.address},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+                #{item.departmentSid},
+                #{item.departmentCode},
+                #{item.vendorSid},
+                #{item.vendorCode},
+                #{item.workCenterType},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_work_center
+        <trim prefix="SET" suffixOverrides=",">
+            work_center_code = #{workCenterCode},
+            work_center_name = #{workCenterName},
+            work_center_category = #{workCenterCategory},
+            company_sid = #{companySid},
+            plant_sid = #{plantSid},
+            process_sids = #{processSids},
+            process_codes = #{processCodes},
+            director = #{director},
+            useable_type = #{useableType},
+            output = #{output},
+            deposit_area = #{depositArea},
+            time_unit = #{timeUnit},
+            unit = #{unit},
+            phone = #{phone},
+            address = #{address},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            department_sid = #{departmentSid},
+            department_code = #{departmentCode},
+            work_center_type = #{workCenterType},
+            vendor_sid = #{vendorSid},
+            vendor_code = #{vendorCode},
+        </trim>
+        where work_center_sid = #{workCenterSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_work_center
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                work_center_code = #{workCenterCode},
+                work_center_name = #{workCenterName},
+                work_center_category = #{workCenterCategory},
+                company_sid = #{companySid},
+                plant_sid = #{plantSid},
+                process_sids = #{processSids},
+                process_codes = #{processCodes},
+                director = #{director},
+                useable_type = #{useableType},
+                output = #{output},
+                deposit_area = #{depositArea},
+                time_unit = #{timeUnit},
+                unit = #{unit},
+                phone = #{phone},
+                address = #{address},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+                department_sid = #{departmentSid},
+            </trim>
+            where work_center_sid = #{workCenterSid}
+        </foreach>
+    </update>
+
+    <select id="getWorkCenterList" resultType="com.platform.ems.domain.ManWorkCenter">
+        select
+        t.work_center_sid,
+        t.work_center_code,
+        t.work_center_name,
+        t.creator_account,
+        t.create_date,
+        t.handle_status,
+        t.department_code,
+        t.department_sid,
+        t.status,
+        t.director,
+        t1.staff_name as director_name,
+        t2.name as department_name
+        from s_man_work_center t
+        left join s_bas_staff t1 on t.director = t1.staff_code
+        left join  s_con_manufacture_department t2 on t2.sid=t.department_sid
+        <where>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="departmentSid != null">
+                and t.department_sid = #{departmentSid}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="plantSid != null">
+                and t.plant_sid = #{plantSid}
+            </if>
+        </where>
+        order by t.work_center_name asc
+    </select>
+
+    <select id="selectManWorkCenterProcessNameList" parameterType="com.platform.ems.domain.ManWorkCenter"
+            resultMap="ManWorkCenterResult">
+        SELECT group_concat(t2.process_name SEPARATOR ';') AS process_names , t.work_center_sid FROM s_man_work_center t
+        LEFT JOIN s_man_process t2 ON t.process_sids LIKE CONCAT('%',t2.process_sid,"%")
+        GROUP BY t.work_center_sid
+        <if test="workCenterSidList != null and workCenterSidList.length > 0">
+            HAVING t.work_center_sid IN (<foreach collection="workCenterSidList" item="workCenterSid" separator=",">#{workCenterSid}</foreach>)
+        </if>
+        ORDER BY t.work_center_code DESC, t.create_date DESC
+    </select>
+
+</mapper>

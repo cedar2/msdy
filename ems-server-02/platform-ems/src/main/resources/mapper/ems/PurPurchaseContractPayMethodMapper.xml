@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurPurchaseContractPayMethodMapper">
+
+    <resultMap type="com.platform.ems.domain.PurPurchaseContractPayMethod" id="PurPurchaseContractPayMethodResult">
+        <result property="clientId" column="client_id"/>
+        <result property="contractPayMethodSid" column="contract_pay_method_sid"/>
+        <result property="purchaseContractSid" column="purchase_contract_sid"/>
+        <result property="accountCategory" column="account_category"/>
+        <result property="payMethod" column="pay_method"/>
+        <result property="rate" column="rate"/>
+        <result property="accountValidDays" column="account_valid_days"/>
+        <result property="zhangqiType" column="zhangqi_type"/>
+        <result property="dayType" column="day_type"/>
+        <result property="itemSort" column="item_sort"/>
+        <result property="sort" column="sort"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectPurPurchaseContractPayMethodVo">
+        select t.client_id,
+               t.contract_pay_method_sid,
+               t.purchase_contract_sid,
+               t.account_category,
+               t.pay_method,
+               t.rate,
+               t.account_valid_days,
+               t.zhangqi_type,
+               t.day_type,
+               t.item_sort,
+               t.sort,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.name as pay_method_name
+        from s_pur_purchase_contract_pay_method t
+                 LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+                 LEFT JOIN sys_user t3 ON t3.user_name = t.updater_account
+                 LEFT JOIN s_con_payment_method t4 ON t.pay_method = t4.code
+    </sql>
+
+    <select id="selectPurPurchaseContractPayMethodById" parameterType="Long"
+            resultMap="PurPurchaseContractPayMethodResult">
+        <include refid="selectPurPurchaseContractPayMethodVo"/>
+        where t.contract_pay_method_sid = #{contractPayMethodSid}
+    </select>
+
+
+    <select id="selectPurPurchaseContractPayMethodList"
+            parameterType="com.platform.ems.domain.PurPurchaseContractPayMethod"
+            resultMap="PurPurchaseContractPayMethodResult">
+        <include refid="selectPurPurchaseContractPayMethodVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id = #{item}</foreach>)
+            </if>
+            <if test="purchaseContractSid != null ">
+                and t.purchase_contract_sid =#{purchaseContractSid}
+            </if>
+            <if test="accountCategory != null  and accountCategory != ''">
+                and (<foreach collection="accountCategory.split(';')" item="item" separator="or">t.account_category = #{item}</foreach>)
+            </if>
+            <if test="payMethod != null  and payMethod != ''">
+                and (<foreach collection="payMethod.split(';')" item="item" separator="or">t.pay_method = #{item}</foreach>)
+            </if>
+            <if test="rate != null ">
+                and t.rate = #{rate}
+            </if>
+            <if test="accountValidDays != null ">
+                and t.account_valid_days =#{accountValidDays}
+            </if>
+            <if test="zhangqiType != null  and zhangqiType != ''">
+                and (<foreach collection="zhangqiType.split(';')" item="item" separator="or">t.zhangqi_type = #{item}</foreach>)
+            </if>
+            <if test="dayType != null  and dayType != ''">
+                and (<foreach collection="dayType.split(';')" item="item" separator="or">t.day_type = #{item}</foreach>)
+            </if>
+            <if test="itemSort != null ">
+                and t.item_sort =#{itemSort}
+            </if>
+            <if test="sort != null ">
+                and t.sort =#{sort}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_purchase_contract_pay_method
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            contract_pay_method_sid,
+            purchase_contract_sid,
+            account_category,
+            pay_method,
+            rate,
+            account_valid_days,
+            zhangqi_type,
+            day_type,
+            item_sort,
+            sort,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.contractPayMethodSid},
+                #{item.purchaseContractSid},
+                #{item.accountCategory},
+                #{item.payMethod},
+                #{item.rate},
+                #{item.accountValidDays},
+                #{item.zhangqiType},
+                #{item.dayType},
+                #{item.itemSort},
+                #{item.sort},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_purchase_contract_pay_method
+        <trim prefix="SET" suffixOverrides=",">
+            purchase_contract_sid = #{purchaseContractSid},
+            account_category = #{accountCategory},
+            pay_method = #{payMethod},
+            rate = #{rate},
+            account_valid_days = #{accountValidDays},
+            zhangqi_type = #{zhangqiType},
+            day_type = #{dayType},
+            item_sort = #{itemSort},
+            sort = #{sort},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where contract_pay_method_sid = #{contractPayMethodSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_purchase_contract_pay_method
+            <trim prefix="SET" suffixOverrides=",">
+                purchase_contract_sid = #{purchaseContractSid},
+                account_category = #{accountCategory},
+                pay_method = #{payMethod},
+                rate = #{rate},
+                account_valid_days = #{accountValidDays},
+                zhangqi_type = #{zhangqiType},
+                day_type = #{dayType},
+                item_sort = #{itemSort},
+                sort = #{sort},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where contract_pay_method_sid = #{contractPayMethodSid}
+        </foreach>
+    </update>
+
+</mapper>

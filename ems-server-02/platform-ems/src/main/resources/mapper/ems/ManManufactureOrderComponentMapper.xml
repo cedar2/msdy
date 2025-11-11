@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.ManManufactureOrderComponentMapper">
+  <resultMap type="com.platform.ems.domain.ManManufactureOrderComponent" id="ManManufactureOrderComponentResult">
+    <result property="clientId" column="client_id"/>
+    <result property="manufactureOrderComponentSid" column="manufacture_order_component_sid"/>
+    <result property="manufactureOrderSid" column="manufacture_order_sid"/>
+    <result property="materialSid" column="material_sid"/>
+    <result property="sku1Sid" column="sku1_sid"/>
+    <result property="sku2Sid" column="sku2_sid"/>
+    <result property="barcodeSid" column="barcode_sid"/>
+    <result property="position" column="position"/>
+    <result property="materialName" column="material_name"/>
+    <result property="quantity" column="quantity"/>
+    <result property="lossRate" column="loss_rate"/>
+    <result property="unitBase" column="unit_base"/>
+    <result property="remark" column="remark"/>
+    <result property="creatorAccount" column="creator_account"/>
+    <result property="createDate" column="create_date"/>
+    <result property="updaterAccount" column="updater_account"/>
+    <result property="updateDate" column="update_date"/>
+    <result property="confirmerAccount" column="confirmer_account"/>
+    <result property="confirmDate" column="confirm_date"/>
+    <result property="dataSourceSys" column="data_source_sys"/>
+    <result property="sku1Name" column="sku1_name"/>
+    <result property="sku2Name" column="sku2_name"/>
+  </resultMap>
+  <select id="selectManManufactureOrderComponentById" parameterType="String" resultMap="ManManufactureOrderComponentResult">
+    <include refid="selectManManufactureOrderComponentVo"/> where t.manufacture_order_component_sid = #{manufactureOrderComponentSid}
+  </select>
+  <select id="selectManManufactureOrderComponentList" parameterType="com.platform.ems.domain.ManManufactureOrderComponent" resultMap="ManManufactureOrderComponentResult">
+    <include refid="selectManManufactureOrderComponentVo"/>
+    <where>
+      <if test="clientId != null  and clientId != ''">and (
+        <foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="manufactureOrderSid != null  and manufactureOrderSid != ''">
+          and t.manufacture_order_sid =#{manufactureOrderSid}
+      </if>
+      <if test="materialSid != null  and materialSid != ''">and (
+        <foreach collection="materialSid.split(';')" item="item" separator="or">t.material_sid like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="sku1Sid != null  and sku1Sid != ''">and (
+        <foreach collection="sku1Sid.split(';')" item="item" separator="or">t.sku1_sid like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="sku2Sid != null  and sku2Sid != ''">and (
+        <foreach collection="sku2Sid.split(';')" item="item" separator="or">t.sku2_sid like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="barcodeSid != null  and barcodeSid != ''">and (
+        <foreach collection="barcodeSid.split(';')" item="item" separator="or">t.barcode_sid like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="position != null  and position != ''">and (
+        <foreach collection="position.split(';')" item="item" separator="or">t.position like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="materialName != null  and materialName != ''">and t.material_name like concat('%', #{materialName}, '%')</if>
+      <if test="quantity != null ">and t.quantity in (
+        <foreach collection="quantity" item="item" separator=",">#{item}</foreach>)
+      </if>
+      <if test="lossRate != null ">and t.loss_rate = #{lossRate}</if>
+      <if test="unitBase != null  and unitBase != ''">and (
+        <foreach collection="unitBase.split(';')" item="item" separator="or">t.unit_base like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="creatorAccount != null  and creatorAccount != ''">and (
+        <foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')</if>
+      <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')</if>
+      <if test="updaterAccount != null  and updaterAccount != ''">and (
+        <foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+      <if test="confirmerAccount != null  and confirmerAccount != ''">and (
+        <foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="confirmDate != null ">and t.confirm_date = #{confirmDate}</if>
+      <if test="dataSourceSys != null  and dataSourceSys != ''">and (
+        <foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like concat('%', #{item}, '%')</foreach>)
+      </if>
+    </where>
+  </select>
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_manufacture_order_component
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            manufacture_order_component_sid,
+            manufacture_order_sid,
+            material_sid,
+            sku1_sid,
+            sku2_sid,
+            barcode_sid,
+            position,
+            material_name,
+            quantity,
+            loss_rate,
+            unit_base,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.manufactureOrderComponentSid},
+                #{item.manufactureOrderSid},
+                #{item.materialSid},
+                #{item.sku1Sid},
+                #{item.sku2Sid},
+                #{item.barcodeSid},
+                #{item.position},
+                #{item.materialName},
+                #{item.quantity},
+                #{item.lossRate},
+                #{item.unitBase},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_manufacture_order_component
+        <trim prefix="SET" suffixOverrides=",">
+            manufacture_order_sid = #{manufactureOrderSid},
+            material_sid = #{materialSid},
+            sku1_sid = #{sku1Sid},
+            sku2_sid = #{sku2Sid},
+            barcode_sid = #{barcodeSid},
+            position = #{position},
+            material_name = #{materialName},
+            quantity = #{quantity},
+            loss_rate = #{lossRate},
+            unit_base = #{unitBase},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where manufacture_order_component_sid = #{manufactureOrderComponentSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_manufacture_order_component
+            <trim prefix="SET" suffixOverrides=",">
+                manufacture_order_sid = #{manufactureOrderSid},
+                material_sid = #{materialSid},
+                sku1_sid = #{sku1Sid},
+                sku2_sid = #{sku2Sid},
+                barcode_sid = #{barcodeSid},
+                position = #{position},
+                material_name = #{materialName},
+                quantity = #{quantity},
+                loss_rate = #{lossRate},
+                unit_base = #{unitBase},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where manufacture_order_component_sid = #{manufactureOrderComponentSid}
+        </foreach>
+    </update>
+
+  <sql id="selectManManufactureOrderComponentVo">
+	  SELECT
+		t.client_id,
+		t.manufacture_order_component_sid,
+		t.manufacture_order_sid,
+		t.material_sid,
+		t.sku1_sid,
+		t.sku2_sid,
+		t.barcode_sid,
+		t.position,
+		t.material_name,
+		t.quantity,
+		t.loss_rate,
+		t.unit_base,
+		t.remark,
+		t.creator_account,
+		t.create_date,
+		t.updater_account,
+		t.update_date,
+		t.confirmer_account,
+		t.confirm_date,
+		t.data_source_sys,
+		t2.material_code,
+		t3.sku_name AS sku1_name,
+		t4.sku_name AS sku2_name
+	FROM
+		s_man_manufacture_order_component t
+	LEFT JOIN s_bas_material t2 ON t.material_sid = t2.material_sid
+	LEFT JOIN s_bas_sku t3 ON t.sku1_sid = t3.sku_sid
+	LEFT JOIN s_bas_sku t4 ON t.sku2_sid = t4.sku_sid
+  </sql>
+
+</mapper>

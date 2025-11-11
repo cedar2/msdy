@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.plug.mapper.ConLaborTypeItemMapper">
+
+    <resultMap type="com.platform.ems.plug.domain.ConLaborTypeItem" id="ConLaborTypeItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="laborTypeItemSid" column="labor_type_item_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="itemCode" column="item_code"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="processSid" column="process_sid"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="itemName" column="item_name"/>
+        <result property="laborTypeSid" column="labor_type_sid"/>
+        <result property="itemSort" column="item_sort"/>
+        <result property="laborTypeName" column="labor_type_name"/>
+        <result property="laborTypeCode" column="labor_type_code"/>
+        <result property="processName" column="process_name"/>
+        <result property="processCode" column="process_code"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="sort" column="sort"/>
+    </resultMap>
+
+    <sql id="selectConLaborTypeItemVo">
+        SELECT
+	t.client_id,
+	t.labor_type_item_sid,
+	t.remark,
+	t.item_code,
+	t.STATUS,
+	t.handle_status,
+	t.creator_account,
+	t.create_date,
+	t.process_sid,
+	t.updater_account,
+	t.update_date,
+	t.confirmer_account,
+	t.confirm_date,
+	t.data_source_sys,
+	t.item_name,
+	t.labor_type_sid,
+	t.item_sort,
+	t.sort,
+	t1.labor_type_name,
+	t1.labor_type_code,
+	t2.process_name,
+	t2.process_code,
+	t3.nick_name AS creator_account_name,
+	t4.nick_name AS updater_account_name,
+	t5.nick_name AS confirmer_account_name
+FROM
+	s_con_labor_type_item t
+	LEFT JOIN s_con_labor_type t1 ON t1.labor_type_sid = t.labor_type_sid
+	LEFT JOIN s_man_process t2 ON t2.process_sid = t.process_sid
+    LEFT JOIN sys_user t3 ON t.creator_account = t3.user_name
+    LEFT JOIN sys_user t4 ON t.updater_account = t4.user_name
+    LEFT JOIN sys_user t5 ON t.confirmer_account = t5.user_name
+    </sql>
+
+    <select id="selectConLaborTypeItemById" parameterType="Long" resultMap="ConLaborTypeItemResult">
+        <include refid="selectConLaborTypeItemVo"/>
+        where t.labor_type_item_sid = #{laborTypeItemSid}
+    </select>
+
+
+    <select id="selectConLaborTypeItemList" parameterType="com.platform.ems.plug.domain.ConLaborTypeItem"
+            resultMap="ConLaborTypeItemResult">
+        <include refid="selectConLaborTypeItemVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="laborTypeItemSidList != null and laborTypeItemSidList.length >0 ">
+                and t.labor_type_item_sid in
+                (<foreach collection="laborTypeItemSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="laborTypeItemSid != null">
+                and t.labor_type_item_sid= #{laborTypeItemSid}
+            </if>
+            <if test="itemCode != null  and itemCode != ''">
+                and (<foreach collection="itemCode.split(';')" item="item" separator="or">t.item_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="itemName != null  and itemName != ''">
+                and (<foreach collection="itemName.split(';')" item="item" separator="or">t.item_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="status != null  and status != ''">
+                and (<foreach collection="status.split(';')" item="item" separator="or">t.status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t3.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="processSid != null ">
+                and t.process_sid =#{processSid}
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="laborTypeSidList != null and laborTypeSidList.length >0 ">
+                and t.labor_type_sid in
+                (<foreach collection="laborTypeSidList" item="laborTypeSid" separator=",">#{laborTypeSid}</foreach>)
+            </if>
+            <if test="laborTypeSid != null ">
+                and t.labor_type_sid =#{laborTypeSid}
+            </if>
+            <if test="itemSort != null ">
+                and t.item_sort = #{itemSort}
+            </if>
+            <if test="sort != null ">
+                and t.sort =#{sort}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.sort asc, t.item_name asc
+    </select>
+
+    <select id="selectTypeItemList" parameterType="com.platform.ems.plug.domain.ConLaborTypeItem"
+            resultMap="ConLaborTypeItemResult">
+        <include refid="selectConLaborTypeItemVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="laborTypeItemSidList != null and laborTypeItemSidList.length >0 ">
+                and t.labor_type_item_sid in
+                (<foreach collection="laborTypeItemSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="laborTypeItemSid != null">
+                and t.labor_type_item_sid= #{laborTypeItemSid}
+            </if>
+            <if test="itemCode != null  and itemCode != ''">
+                and (<foreach collection="itemCode.split(';')" item="item" separator="or">t.item_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="itemName != null  and itemName != ''">
+                and (<foreach collection="itemName.split(';')" item="item" separator="or">t.item_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="status != null  and status != ''">
+                and (<foreach collection="status.split(';')" item="item" separator="or">t.status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t3.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="processSid != null ">
+                and t.process_sid =#{processSid}
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="laborTypeSidList != null and laborTypeSidList.length >0 ">
+                and t.labor_type_sid in
+                (<foreach collection="laborTypeSidList" item="laborTypeSid" separator=",">#{laborTypeSid}</foreach>)
+            </if>
+            <if test="laborTypeSid != null ">
+                and t.labor_type_sid =#{laborTypeSid}
+            </if>
+            <if test="itemSort != null ">
+                and t.item_sort = #{itemSort}
+            </if>
+            <if test="sort != null ">
+                and t.sort =#{sort}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        ORDER BY t1.labor_type_name ASC, t.item_code ASC
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_labor_type_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            item_code,
+            item_name,
+            labor_type_sid,
+            labor_type_code,
+            process_sid,
+            item_sort,
+            sort,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.itemCode},
+                #{item.itemName},
+                #{item.laborTypeSid},
+                #{item.laborTypeCode},
+                #{item.processSid},
+                #{item.itemSort},
+                #{item.sort},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_labor_type_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            item_code = #{itemCode},
+            item_name = #{itemName},
+            labor_type_sid = #{laborTypeSid},
+            labor_type_code = #{laborTypeCode},
+            process_sid = #{processSid},
+            item_sort = #{itemSort},
+            sort = #{sort},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where labor_type_item_sid = #{laborTypeItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_labor_type_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                item_code = #{itemCode},
+                item_name = #{itemName},
+                labor_type_sid = #{laborTypeSid},
+                labor_type_code = #{laborTypeCode},
+                process_sid = #{processSid},
+                item_sort = #{itemSort},
+                sort = #{sort},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where labor_type_item_sid = #{laborTypeItemSid}
+        </foreach>
+    </update>
+
+    <select id="getConLaborTypeItemList" resultType="com.platform.ems.plug.domain.ConLaborTypeItem">
+        select labor_type_item_sid,item_code,item_name,process_sid,status,handle_status,create_date,sort from s_con_labor_type_item order by sort asc, item_name asc
+    </select>
+
+</mapper>

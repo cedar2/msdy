@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.plug.mapper.ConBuTypeAccountCategoryMapper">
+
+    <resultMap type="com.platform.ems.plug.domain.ConBuTypeAccountCategory" id="ConBuTypeAccountCategoryResult">
+        <result property="clientId" column="client_id"/>
+        <result property="sid" column="sid"/>
+        <result property="finShoufukuanTypeCode" column="fin_shoufukuan_type_code"/>
+        <result property="buTypeCode" column="bu_type_code"/>
+        <result property="accountCategoryCode" column="account_category_code"/>
+        <result property="sort" column="sort"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="buTypeName" column="bu_type_name"/>
+        <result property="accountCategoryName" column="account_category_name"/>
+        <result property="bookTypeCode" column="book_type_code"/>
+        <result property="bookTypeName" column="book_type_name"/>
+        <result property="bookSourceCategory" column="book_source_category"/>
+        <result property="bookSourceCategoryName" column="book_source_category_name"/>
+    </resultMap>
+
+    <sql id="selectConBuTypeAccountCategoryVo">
+        select t.client_id,
+               t.sid,
+               t.fin_shoufukuan_type_code,
+               t.bu_type_code,
+               t.account_category_code,
+               t.book_type_code,
+               t.book_source_category,
+               t.sort,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS     creator_account_name,
+               t3.nick_name AS     updater_account_name,
+               t4.nick_name AS     confirmer_account_name,
+               if(t.fin_shoufukuan_type_code = 'SK',t5.name,t6.name) as bu_type_name,
+               t7.name as account_category_name,
+               t8.name as book_type_name,
+               t9.name as book_source_category_name
+        from s_con_bu_type_account_category t
+                 LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+                 LEFT JOIN sys_user t3 ON t3.user_name = t.updater_account
+                 LEFT JOIN sys_user t4 ON t4.user_name = t.confirmer_account
+                 LEFT JOIN s_con_bu_type_receivable_bill t5 ON t.bu_type_code = t5.code AND t.fin_shoufukuan_type_code = 'SK'
+                 LEFT JOIN s_con_bu_type_pay_bill t6 ON t.bu_type_code = t6.code AND t.fin_shoufukuan_type_code = 'FK'
+                 LEFT JOIN s_con_account_category t7 ON t.account_category_code = t7.code
+                 LEFT JOIN s_con_book_type t8 ON t.book_type_code = t8.code
+                 LEFT JOIN s_con_book_source_category t9 ON t.book_source_category = t9.code
+    </sql>
+
+    <select id="selectConBuTypeAccountCategoryById" parameterType="Long" resultMap="ConBuTypeAccountCategoryResult">
+        <include refid="selectConBuTypeAccountCategoryVo"/>
+        where t.sid = #{sid}
+    </select>
+
+
+    <select id="selectConBuTypeAccountCategoryList"
+            parameterType="com.platform.ems.plug.domain.ConBuTypeAccountCategory"
+            resultMap="ConBuTypeAccountCategoryResult">
+        <include refid="selectConBuTypeAccountCategoryVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+               and t.client_id = #{clientId}
+            </if>
+            <if test="finShoufukuanTypeCode != null and finShoufukuanTypeCode != ''">
+               and t.fin_shoufukuan_type_code = #{finShoufukuanTypeCode}
+            </if>
+            <if test="buTypeCode != null and buTypeCode != ''">
+               and t.bu_type_code = #{buTypeCode}
+            </if>
+            <if test="buTypeCodeList != null and buTypeCodeList.length >0 ">
+                and t.bu_type_code in
+                (<foreach collection="buTypeCodeList" item="buTypeCode" separator=",">#{buTypeCode}</foreach>)
+            </if>
+            <if test="accountCategoryCode != null and accountCategoryCode != ''">
+              and t.account_category_code = #{accountCategoryCode}
+            </if>
+            <if test="accountCategoryCodeList != null and accountCategoryCodeList.length >0 ">
+                and t.account_category_code in
+                (<foreach collection="accountCategoryCodeList" item="accountCategoryCode" separator=",">#{accountCategoryCode}</foreach>)
+            </if>
+            <if test="bookTypeCode != null and bookTypeCode != ''">
+                and t.book_type_code = #{bookTypeCode}
+            </if>
+            <if test="bookTypeCodeList != null and bookTypeCodeList.length >0 ">
+                and t.book_type_code in
+                (<foreach collection="bookTypeCodeList" item="bookTypeCode" separator=",">#{bookTypeCode}</foreach>)
+            </if>
+            <if test="bookSourceCategory != null and bookSourceCategory != ''">
+                and t.book_source_category = #{bookTypeCode}
+            </if>
+            <if test="bookSourceCategoryList != null and bookSourceCategoryList.length >0 ">
+                and t.book_source_category in
+                (<foreach collection="bookSourceCategoryList" item="bookSourceCategory" separator=",">#{bookSourceCategory}</foreach>)
+            </if>
+            <if test="sort != null ">
+              and t.sort =#{sort}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+              and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+              and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+              and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+              and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+              and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+              and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+              and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+               and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+               and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_bu_type_account_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sid,
+            fin_shoufukuan_type_code,
+            bu_type_code,
+            account_category_code,
+            book_type_code,
+            book_source_category,
+            sort,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.sid},
+                #{item.finShoufukuanTypeCode},
+                #{item.buTypeCode},
+                #{item.accountCategoryCode},
+                #{item.bookTypeCode},
+                #{item.bookSourceCategory},
+                #{item.sort},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_bu_type_account_category
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            fin_shoufukuan_type_code = #{finShoufukuanTypeCode},
+            bu_type_code = #{buTypeCode},
+            account_category_code = #{accountCategoryCode},
+            book_type_code = #{bookTypeCode},
+            book_source_category = #{bookSourceCategory},
+            sort = #{sort},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where sid = #{sid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_bu_type_account_category
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                fin_shoufukuan_type_code = #{finShoufukuanTypeCode},
+                bu_type_code = #{buTypeCode},
+                account_category_code = #{accountCategoryCode},
+                book_type_code = #{bookTypeCode},
+                book_source_category = #{bookSourceCategory},
+                sort = #{sort},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where sid = #{sid}
+        </foreach>
+    </update>
+
+    <select id="getConBuTypeAccountCategoryList"
+            parameterType="com.platform.ems.plug.domain.ConBuTypeAccountCategory"
+            resultMap="ConBuTypeAccountCategoryResult">
+        select t.client_id,
+               t.sid,
+               t.fin_shoufukuan_type_code,
+               t.bu_type_code,
+               t.account_category_code,
+               t.book_type_code,
+               t.book_source_category,
+               t.sort,
+               t.data_source_sys,
+               if(t.fin_shoufukuan_type_code = 'SK',t5.name,t6.name) as bu_type_name,
+               t7.name as account_category_name,
+               t8.name as book_type_name,
+               t9.name as book_source_category_name
+        from s_con_bu_type_account_category t
+         LEFT JOIN s_con_bu_type_receivable_bill t5 ON t.bu_type_code = t5.code AND t.fin_shoufukuan_type_code = 'SK'
+         LEFT JOIN s_con_bu_type_pay_bill t6 ON t.bu_type_code = t6.code AND t.fin_shoufukuan_type_code = 'FK'
+         LEFT JOIN s_con_account_category t7 ON t.account_category_code = t7.code
+        LEFT JOIN s_con_book_type t8 ON t.book_type_code = t8.code
+        LEFT JOIN s_con_book_source_category t9 ON t.book_source_category = t9.code
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="finShoufukuanTypeCode != null and finShoufukuanTypeCode != ''">
+                and t.fin_shoufukuan_type_code = #{finShoufukuanTypeCode}
+            </if>
+            <if test="buTypeCode != null and buTypeCode != ''">
+                and t.bu_type_code = #{buTypeCode}
+            </if>
+            <if test="buTypeCodeList != null and buTypeCodeList.length >0 ">
+                and t.bu_type_code in
+                (<foreach collection="buTypeCodeList" item="buTypeCode" separator=",">#{buTypeCode}</foreach>)
+            </if>
+            <if test="accountCategoryCode != null and accountCategoryCode != ''">
+                and t.account_category_code = #{accountCategoryCode}
+            </if>
+            <if test="accountCategoryCodeList != null and accountCategoryCodeList.length >0 ">
+                and t.account_category_code in
+                (<foreach collection="accountCategoryCodeList" item="accountCategoryCode" separator=",">#{accountCategoryCode}</foreach>)
+            </if>
+            <if test="bookTypeCode != null and bookTypeCode != ''">
+                and t.book_type_code = #{bookTypeCode}
+            </if>
+            <if test="bookTypeCodeList != null and bookTypeCodeList.length >0 ">
+                and t.book_type_code in
+                (<foreach collection="bookTypeCodeList" item="bookTypeCode" separator=",">#{bookTypeCode}</foreach>)
+            </if>
+            <if test="bookSourceCategory != null and bookSourceCategory != ''">
+                and t.book_source_category = #{bookTypeCode}
+            </if>
+            <if test="bookSourceCategoryList != null and bookSourceCategoryList.length >0 ">
+                and t.book_source_category in
+                (<foreach collection="bookSourceCategoryList" item="bookSourceCategory" separator=",">#{bookSourceCategory}</foreach>)
+            </if>
+            <if test="sort != null ">
+                and t.sort =#{sort}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+        </where>
+    </select>
+
+    <select id="getAccountCategoryList"
+            parameterType="com.platform.ems.plug.domain.ConBuTypeAccountCategory"
+            resultMap="ConBuTypeAccountCategoryResult">
+        select t.client_id, t.sid,
+               t.code as account_category_code,
+               t.name as account_category_name,
+               t.status, t.handle_status
+        from s_con_account_category t
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+        </where>
+    </select>
+
+    <select id="getBookTypeList"
+            parameterType="com.platform.ems.plug.domain.ConBuTypeAccountCategory"
+            resultMap="ConBuTypeAccountCategoryResult">
+        select t.fin_shoufukuan_type_code,
+        t.bu_type_code,
+        t.account_category_code,
+        t.book_type_code,
+        if(t.fin_shoufukuan_type_code = 'SK',t5.name,t6.name) as bu_type_name,
+        t7.name as account_category_name,
+        t8.name as book_type_name
+        from s_con_bu_type_account_category t
+        LEFT JOIN s_con_bu_type_receivable_bill t5 ON t.bu_type_code = t5.code AND t.fin_shoufukuan_type_code = 'SK'
+        LEFT JOIN s_con_bu_type_pay_bill t6 ON t.bu_type_code = t6.code AND t.fin_shoufukuan_type_code = 'FK'
+        LEFT JOIN s_con_account_category t7 ON t.account_category_code = t7.code
+        LEFT JOIN s_con_book_type t8 ON t.book_type_code = t8.code
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="finShoufukuanTypeCode != null and finShoufukuanTypeCode != ''">
+                and t.fin_shoufukuan_type_code = #{finShoufukuanTypeCode}
+            </if>
+            <if test="buTypeCode != null and buTypeCode != ''">
+                and t.bu_type_code = #{buTypeCode}
+            </if>
+            <if test="buTypeCodeList != null and buTypeCodeList.length >0 ">
+                and t.bu_type_code in
+                (<foreach collection="buTypeCodeList" item="buTypeCode" separator=",">#{buTypeCode}</foreach>)
+            </if>
+            <if test="accountCategoryCode != null and accountCategoryCode != ''">
+                and t.account_category_code = #{accountCategoryCode}
+            </if>
+            <if test="accountCategoryCodeList != null and accountCategoryCodeList.length >0 ">
+                and t.account_category_code in
+                (<foreach collection="accountCategoryCodeList" item="accountCategoryCode" separator=",">#{accountCategoryCode}</foreach>)
+            </if>
+            <if test="bookTypeCode != null and bookTypeCode != ''">
+                and t.book_type_code = #{bookTypeCode}
+            </if>
+            <if test="bookTypeCodeList != null and bookTypeCodeList.length >0 ">
+                and t.book_type_code in
+                (<foreach collection="bookTypeCodeList" item="bookTypeCode" separator=",">#{bookTypeCode}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+        </where>
+        group by t.book_type_code
+        order by t8.name asc
+    </select>
+</mapper>

@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.SalSalesIntentOrderMapper">
+
+    <resultMap type="com.platform.ems.domain.SalSalesIntentOrder" id="SalSalesIntentOrderResult">
+        <result property="clientId" column="client_id"/>
+        <result property="salesIntentOrderSid" column="sales_intent_order_sid"/>
+        <result property="salesIntentOrderCode" column="sales_intent_order_code"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="businessType" column="business_type"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="businessChannel" column="business_channel"/>
+        <result property="salePerson" column="sale_person"/>
+        <result property="saleGroup" column="sale_group"/>
+        <result property="saleDepartment" column="sale_department"/>
+        <result property="saleMode" column="sale_mode"/>
+        <result property="rawMaterialMode" column="raw_material_mode"/>
+        <result property="customerBusinessman" column="customer_businessman"/>
+        <result property="materialType" column="material_type"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="saleIntentContractSid" column="sale_intent_contract_sid"/>
+        <result property="cancelType" column="cancel_type"/>
+        <result property="cancelRemark" column="cancel_remark"/>
+        <result property="saleIntentContractCode" column="sale_intent_contract_code"/>
+        <result property="paperSaleIntentContractCode" column="paper_sale_intent_contract_code"/>
+        <result property="uploadStatus" column="upload_status"/>
+        <result property="signInStatus" column="sign_in_status"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectSalSalesIntentOrderVo">
+        select t.client_id,
+               t.sales_intent_order_sid,
+               t.sales_intent_order_code,
+               t.customer_sid,
+               t.customer_code,
+               t.company_sid,
+               t.company_code,
+               t.product_season_sid,
+               t.product_season_code,
+               t.document_date,
+               t.business_type,
+               t.business_channel,
+               t.sale_person,
+               t.sale_group,
+               t.sale_department,
+               t.sale_mode,
+               t.raw_material_mode,
+               t.customer_businessman,
+               t.material_type,
+               t.currency,
+               t.currency_unit,
+               t.sale_intent_contract_sid,
+               t.sale_intent_contract_code,
+               t.paper_sale_intent_contract_code,
+               t.upload_status,
+               t.sign_in_status,
+               t.cancel_type,
+               t.cancel_remark,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t5.company_name,
+               ifnull(t5.short_name, t5.company_name) as company_short_name,
+               t6.customer_name,
+               ifnull(t6.short_name, t6.customer_name) as customer_short_name,
+               t7.product_season_name,
+               t8.name as business_type_name,
+               t9.name as business_channel_name,
+               t10.nick_name as sale_person_name,
+               t11.name as sale_group_name,
+               t12.department_name as sale_department_name,
+               t13.nick_name as customer_businessman_name,
+               t14.name as material_type_name,
+               t24.file_name as sale_order_intent_contract_gzb_name,
+               t24.file_path as sale_order_intent_contract_gzb_path
+        from s_sal_sales_intent_order t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t4.client_id
+         LEFT JOIN s_bas_company t5 ON t.company_sid = t5.company_sid
+         LEFT JOIN s_bas_customer t6 ON t.customer_sid = t6.customer_sid
+         LEFT JOIN s_bas_product_season t7 ON t.product_season_sid = t7.product_season_sid
+         LEFT JOIN s_con_bu_type_sales_order t8 ON t.business_type = t8.code
+         LEFT JOIN s_con_business_channel t9 ON t.business_channel = t9.code
+         LEFT JOIN sys_user t10 ON t.sale_person = t10.user_name AND t.client_id = t10.client_id
+         LEFT JOIN s_con_sale_group t11 ON t.sale_group = t11.code
+         LEFT JOIN s_bas_department t12 ON t.sale_department = t12.department_sid
+         LEFT JOIN sys_user t13 ON t.customer_businessman = t13.user_name AND t.client_id = t13.client_id
+         LEFT JOIN s_con_material_type t14 ON t.material_type = t14.code
+         LEFT JOIN s_sal_sales_intent_order_attach t24 ON t.sales_intent_order_sid = t24.sales_intent_order_sid
+            and t24.sales_intent_order_attach_sid = (select a.sales_intent_order_attach_sid from s_sal_sales_intent_order_attach a
+                                                  where t.sales_intent_order_sid = a.sales_intent_order_sid and a.file_type = 'XSYXDDHT' limit 1)
+    </sql>
+
+    <select id="selectSalSalesIntentOrderById" parameterType="Long" resultMap="SalSalesIntentOrderResult">
+        <include refid="selectSalSalesIntentOrderVo"/>
+        where t.sales_intent_order_sid = #{salesIntentOrderSid}
+    </select>
+
+    <select id="selectSalSalesIntentOrderList" parameterType="com.platform.ems.domain.SalSalesIntentOrder"
+            resultMap="SalSalesIntentOrderResult">
+        <include refid="selectSalSalesIntentOrderVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="salesIntentOrderSid != null ">
+                and t.sales_intent_order_sid = #{salesIntentOrderSid}
+            </if>
+            <if test="salesIntentOrderSidList != null and materialSidList.length > 0">
+                and t.sales_intent_order_sid in
+                (<foreach collection="salesIntentOrderSidList" item="salesIntentOrderSid" separator=",">#{salesIntentOrderSid}</foreach>)
+            </if>
+            <if test="salesIntentOrderCode != null and salesIntentOrderCode != ''">
+                and t.sales_intent_order_code like concat('%', #{salesIntentOrderCode}, '%')
+            </if>
+            <if test="customerSid != null ">
+                and t.customer_sid = #{customerSid}
+            </if>
+            <if test="customerSidList != null and customerSidList.length > 0">
+                and t.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="customerCode != null and customerCode != ''">
+                and t.customer_code = #{customerCode}
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length > 0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="companyCode != null and companyCode != ''">
+                and t.company_code = #{companyCode}
+            </if>
+            <if test="productSeasonSid != null ">
+                and t.product_season_sid = #{productSeasonSid}
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length > 0">
+                and t.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">#{productSeasonSid}</foreach>)
+            </if>
+            <if test="documentDate != null ">
+                and t.document_date = #{documentDate}
+            </if>
+            <if test="businessType != null and businessType != ''">
+                and t.business_type = #{businessType}
+            </if>
+            <if test="businessTypeList != null and businessTypeList.length > 0">
+                and t.business_type in
+                (<foreach collection="businessTypeList" item="businessType" separator=",">#{businessType}</foreach>)
+            </if>
+            <if test="productSeasonCode != null and productSeasonCode != ''">
+                and t.product_season_code = #{productSeasonCode}
+            </if>
+            <if test="businessChannel != null and businessChannel != ''">
+                and t.business_channel = #{businessChannel}
+            </if>
+            <if test="businessChannelList != null and businessChannelList.length > 0">
+                and t.business_channel in
+                (<foreach collection="businessChannelList" item="businessChannel" separator=",">#{businessChannel}</foreach>)
+            </if>
+            <if test="salePerson != null and salePerson != ''">
+                and t.sale_person = #{salePerson}
+            </if>
+            <if test="salePersonList != null and salePersonList.length > 0">
+                and t.sale_person in
+                (<foreach collection="salePersonList" item="salePerson" separator=",">#{salePerson}</foreach>)
+            </if>
+            <if test="salePersonName != null and salePersonName != ''">
+                and t10.nick_name like concat('%', #{salePersonName}, '%')
+            </if>
+            <if test="saleGroup != null and saleGroup != ''">
+                and t.sale_group = #{saleGroup}
+            </if>
+            <if test="saleGroupList != null and saleGroupList.length > 0">
+                and t.sale_group in
+                (<foreach collection="saleGroupList" item="saleGroup" separator=",">#{saleGroup}</foreach>)
+            </if>
+            <if test="saleDepartment != null ">
+                and t.sale_department = #{saleDepartment}
+            </if>
+            <if test="saleDepartmentList != null and saleDepartmentList.length > 0">
+                and t.sale_department in
+                (<foreach collection="saleDepartmentList" item="saleDepartment" separator=",">#{saleDepartment}</foreach>)
+            </if>
+            <if test="saleMode != null and saleMode != ''">
+                and t.sale_mode = #{saleMode}
+            </if>
+            <if test="saleModeList != null and saleModeList.length > 0">
+                and t.sale_mode in
+                (<foreach collection="saleModeList" item="saleMode" separator=",">#{saleMode}</foreach>)
+            </if>
+            <if test="rawMaterialMode != null and rawMaterialMode != ''">
+                and t.raw_material_mode = #{rawMaterialMode}
+            </if>
+            <if test="rawMaterialModeList != null and rawMaterialModeList.length > 0">
+                and t.raw_material_mode in
+                (<foreach collection="rawMaterialModeList" item="rawMaterialMode" separator=",">#{rawMaterialMode}</foreach>)
+            </if>
+            <if test="customerBusinessman != null and customerBusinessman != ''">
+                and t.customer_businessman = #{customerBusinessman}
+            </if>
+            <if test="materialType != null and materialType != ''">
+                and t.material_type = #{materialType}
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length > 0">
+                and t.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=",">#{materialType}</foreach>)
+            </if>
+            <if test="currency != null and currency != ''">
+                and t.currency = #{currency}
+            </if>
+            <if test="currencyUnit != null and currencyUnit != ''">
+                and t.currency_unit = #{currencyUnit}
+            </if>
+            <if test="saleIntentContractSid != null ">
+                and t.sale_intent_contract_sid = #{saleIntentContractSid}
+            </if>
+            <if test="cancelType != null and cancelType != ''">
+                and t.cancel_type = #{cancelType}
+            </if>
+            <if test="cancelRemark != null and cancelRemark != ''">
+                and t.cancel_remark = #{cancelRemark}
+            </if>
+            <if test="saleIntentContractCode != null and saleIntentContractCode != ''">
+                and t.sale_intent_contract_code like concat('%', #{saleIntentContractCode}, '%')
+            </if>
+            <if test="paperSaleIntentContractCode != null and paperSaleIntentContractCode != ''">
+                and t.paper_sale_intent_contract_code like concat('%', #{paperSaleIntentContractCode}, '%')
+            </if>
+            <if test="paperSaleIntentContractCodeIsNull != null and paperSaleIntentContractCodeIsNull == 'Y'.toString()">
+                and (t.paper_sale_intent_contract_code is null or t.paper_sale_intent_contract_code = '')
+            </if>
+            <if test="paperSaleIntentContractCodeIsNull != null and paperSaleIntentContractCodeIsNull == 'N'.toString()">
+                and (t.paper_sale_intent_contract_code is not null and t.paper_sale_intent_contract_code != '')
+            </if>
+            <if test="uploadStatus != null and uploadStatus != ''">
+                and t.upload_status = #{uploadStatus}
+            </if>
+            <if test="signInStatus != null and signInStatus != ''">
+                and t.sign_in_status = #{signInStatus}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length > 0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length > 0">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">#{creatorAccount}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        ORDER BY t.sales_intent_order_code DESC
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_sal_sales_intent_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sales_intent_order_sid,
+            sales_intent_order_code,
+            customer_sid,
+            customer_code,
+            company_sid,
+            company_code,
+            product_season_sid,
+            product_season_code,
+            document_date,
+            business_type,
+            business_channel,
+            sale_person,
+            sale_group,
+            sale_department,
+            sale_mode,
+            raw_material_mode,
+            customer_businessman,
+            material_type,
+            currency,
+            currency_unit,
+            sale_intent_contract_sid,
+            sale_intent_contract_code,
+            paper_sale_intent_contract_code,
+            upload_status,
+            sign_in_status,
+            cancel_type,
+            cancel_remark,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.salesIntentOrderSid},
+                #{item.salesIntentOrderCode},
+                #{item.customerSid},
+                #{item.customerCode},
+                #{item.companySid},
+                #{item.companyCode},
+                #{item.productSeasonSid},
+                #{item.productSeasonCode},
+                #{item.documentDate},
+                #{item.businessType},
+                #{item.businessChannel},
+                #{item.salePerson},
+                #{item.saleGroup},
+                #{item.saleDepartment},
+                #{item.saleMode},
+                #{item.rawMaterialMode},
+                #{item.customerBusinessman},
+                #{item.materialType},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.saleIntentContractSid},
+                #{item.saleIntentContractCode},
+                #{item.paperSaleIntentContractCode},
+                #{item.uploadStatus},
+                #{item.signInStatus},
+                #{item.cancelType},
+                #{item.cancelRemark},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_sal_sales_intent_order
+        <trim prefix="SET" suffixOverrides=",">
+            sales_intent_order_code = #{salesIntentOrderCode},
+            customer_sid = #{customerSid},
+            customer_code = #{customerCode},
+            company_sid = #{companySid},
+            company_code = #{companyCode},
+            product_season_sid = #{productSeasonSid},
+            product_season_code = #{productSeasonCode},
+            document_date = #{documentDate},
+            business_type = #{businessType},
+            business_channel = #{businessChannel},
+            sale_person = #{salePerson},
+            sale_group = #{saleGroup},
+            sale_department = #{saleDepartment},
+            sale_mode = #{saleMode},
+            raw_material_mode = #{rawMaterialMode},
+            customer_businessman = #{customerBusinessman},
+            material_type = #{materialType},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            sale_intent_contract_sid = #{saleIntentContractSid},
+            sale_intent_contract_code = #{saleIntentContractCode},
+            paper_sale_intent_contract_code = #{paperSaleIntentContractCode},
+            upload_status = #{uploadStatus},
+            sign_in_status = #{signInStatus},
+            cancel_type = #{cancelType},
+            cancel_remark = #{cancelRemark},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where sales_intent_order_sid = #{salesIntentOrderSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_sal_sales_intent_order
+            <trim prefix="SET" suffixOverrides=",">
+                sales_intent_order_code = #{o.salesIntentOrderCode},
+                customer_sid = #{o.customerSid},
+                customer_code = #{o.customerCode},
+                company_sid = #{o.companySid},
+                company_code = #{o.companyCode},
+                product_season_sid = #{o.productSeasonSid},
+                product_season_code = #{o.productSeasonCode},
+                document_date = #{o.documentDate},
+                business_type = #{o.businessType},
+                business_channel = #{o.businessChannel},
+                sale_person = #{o.salePerson},
+                sale_group = #{o.saleGroup},
+                sale_department = #{o.saleDepartment},
+                sale_mode = #{o.saleMode},
+                raw_material_mode = #{o.rawMaterialMode},
+                customer_businessman = #{o.customerBusinessman},
+                material_type = #{o.materialType},
+                currency = #{o.currency},
+                currency_unit = #{o.currencyUnit},
+                sale_intent_contract_sid = #{o.saleIntentContractSid},
+                sale_intent_contract_code = #{o.saleIntentContractCode},
+                paper_sale_intent_contract_code = #{o.paperSaleIntentContractCode},
+                upload_status = #{o.uploadStatus},
+                sign_in_status = #{o.signInStatus},
+                cancel_type = #{o.cancelType},
+                cancel_remark = #{o.cancelRemark},
+                remark = #{o.remark},
+                handle_status = #{o.handleStatus},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+            </trim>
+            where sales_intent_order_sid = #{o.salesIntentOrderSid}
+        </foreach>
+    </update>
+
+    <select id="selectSalesIntentOrderList" parameterType="com.platform.ems.domain.SalSalesIntentOrder"
+            resultType="com.platform.ems.domain.SalSalesIntentOrder">
+        SELECT t.client_id,
+        t.sales_intent_order_sid,
+        t.sales_intent_order_code,
+        t.sale_person,
+        t2.user_id as sale_person_id,
+        t2.nick_name as sale_person_name,
+        t3.sale_finance_account_id
+        FROM s_sal_sales_intent_order t
+        LEFT JOIN sys_user t2 ON t.sale_person = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN (
+        SELECT ta.client_id,
+        GROUP_CONCAT(tb.user_id ORDER BY tb.user_id ASC SEPARATOR ';') as sale_finance_account_id
+        FROM s_sys_default_setting_client ta
+        LEFT JOIN sys_user tb ON
+        ta.sale_finance_account like concat('%;', tb.user_name, ';%') or
+        ta.sale_finance_account like concat(tb.user_name, ';%') or ta.sale_finance_account like concat('%;', tb.user_name)
+        GROUP BY ta.client_id
+        ) t3 ON t.client_id = t3.client_id
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="signInStatus != null and signInStatus != ''">
+                and t.sign_in_status = #{signInStatus}
+            </if>
+            <if test="uploadStatus != null and uploadStatus != ''">
+                and t.upload_status = #{uploadStatus}
+            </if>
+        </where>
+    </select>
+</mapper>

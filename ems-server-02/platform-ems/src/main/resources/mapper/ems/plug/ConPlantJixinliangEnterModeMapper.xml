@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.plug.mapper.ConPlantJixinliangEnterModeMapper">
+
+    <resultMap type="com.platform.ems.plug.domain.ConPlantJixinliangEnterMode" id="ConPlantJixinliangEnterModeResult">
+        <result property="clientId" column="client_id"/>
+        <result property="sid" column="sid"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="productPriceType" column="product_price_type"/>
+        <result property="jixinWangongType" column="jixin_wangong_type"/>
+        <result property="enterMode" column="enter_mode"/>
+        <result property="checkType" column="check_type"/>
+        <result property="jiesuanshuEnterSequence" column="jiesuanshu_enter_sequence"/>
+        <result property="paichanBatchNullRemindMode" column="paichan_batch_null_remind_mode"/>
+        <result property="sort" column="sort"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="plantShortName" column="plant_short_name"/>
+    </resultMap>
+
+    <sql id="selectConPlantJixinliangEnterModeVo">
+        select t.client_id, t.sid, t.plant_sid, t.plant_code, t.product_price_type, t.jixin_wangong_type,
+               t.enter_mode, t.check_type, t.jiesuanshu_enter_sequence, t.paichan_batch_null_remind_mode,
+               t.sort, t.remark, t.status, t.handle_status, t.creator_account, t.create_date, t.updater_account,
+               t.update_date, t.confirmer_account, t.confirm_date, t.data_source_sys ,t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,t4.nick_name AS confirmer_account_name , p.short_name as plant_short_name
+        from s_con_plant_jixinliang_enter_mode t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+        LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t3.client_id
+        LEFT JOIN s_bas_plant p ON t.plant_sid = p.plant_sid
+    </sql>
+
+    <select id="selectConPlantJixinliangEnterModeById" parameterType="Long"
+            resultMap="ConPlantJixinliangEnterModeResult">
+        <include refid="selectConPlantJixinliangEnterModeVo"/>
+        where t.sid = #{sid}
+    </select>
+
+    <select id="selectConPlantJixinliangEnterModeList"
+            parameterType="com.platform.ems.plug.domain.ConPlantJixinliangEnterMode"
+            resultMap="ConPlantJixinliangEnterModeResult">
+        <include refid="selectConPlantJixinliangEnterModeVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid = #{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.size > 0">
+                and t.plant_sid in (
+                    <foreach collection="plantSidList" item="plantSid" separator=",">
+                        #{plantSid}
+                    </foreach>
+                )
+            </if>
+            <if test="checkTypeList != null and checkTypeList.size > 0">
+                and t.check_type in (
+                    <foreach collection="checkTypeList" separator="," item="checkType">
+                        #{checkType}
+                    </foreach>
+                )
+            </if>
+            <if test="plantCode != null and plantCode != ''">
+                and t.plant_code like concat('%', #{plantCode}, '%')
+            </if>
+            <if test="productPriceType != null and productPriceType != ''">
+                and t.product_price_type = #{productPriceType}
+            </if>
+            <if test="jixinWangongType != null and jixinWangongType != ''">
+                and t.jixin_wangong_type = #{jixinWangongType}
+            </if>
+            <if test="enterMode != null and enterMode != ''">
+                and t.enter_mode = #{enterMode}
+            </if>
+            <if test="checkType != null and checkType != ''">
+                and t.check_type = #{checkType}
+            </if>
+            <if test="jiesuanshuEnterSequence != null and jiesuanshuEnterSequence != ''">
+                and t.jiesuanshu_enter_sequence = #{jiesuanshuEnterSequence}
+            </if>
+            <if test="paichanBatchNullRemindMode != null and paichanBatchNullRemindMode != ''">
+                and t.paichan_batch_null_remind_mode = #{paichanBatchNullRemindMode}
+            </if>
+            <if test="sort != null ">
+                and t.sort = #{sort}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat("%" , #{creatorAccountName} , "%")
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.create_date desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_plant_jixinliang_enter_mode
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sid,
+            plant_sid,
+            plant_code,
+            product_price_type,
+            jixin_wangong_type,
+            enter_mode,
+            check_type,
+            jiesuanshu_enter_sequence,
+            paichan_batch_null_remind_mode,
+            sort,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{sid},
+                #{item.plantSid},
+                #{item.plantCode},
+                #{item.productPriceType},
+                #{item.jixinWangongType},
+                #{item.enterMode},
+                #{item.checkType},
+                #{item.jiesuanshuEnterSequence},
+                #{item.paichanBatchNullRemindMode},
+                #{item.sort},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_plant_jixinliang_enter_mode
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            plant_sid = #{plantSid},
+            plant_code = #{plantCode},
+            product_price_type = #{productPriceType},
+            jixin_wangong_type = #{jixinWangongType},
+            enter_mode = #{enterMode},
+            check_type = #{checkType},
+            jiesuanshu_enter_sequence = #{jiesuanshuEnterSequence},
+            paichan_batch_null_remind_mode = #{paichanBatchNullRemindMode},
+            sort = #{sort},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where sid = #{sid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_plant_jixinliang_enter_mode
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                plant_sid = #{plantSid},
+                plant_code = #{plantCode},
+                product_price_type = #{productPriceType},
+                jixin_wangong_type = #{jixinWangongType},
+                enter_mode = #{enterMode},
+                check_type = #{checkType},
+                jiesuanshu_enter_sequence = #{jiesuanshuEnterSequence},
+                paichan_batch_null_remind_mode = #{paichanBatchNullRemindMode},
+                sort = #{sort},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+            </trim>
+            where sid = #{sid}
+        </foreach>
+    </update>
+
+</mapper>

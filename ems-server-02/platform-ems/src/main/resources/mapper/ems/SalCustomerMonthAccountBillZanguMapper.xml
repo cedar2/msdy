@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.SalCustomerMonthAccountBillZanguMapper">
+
+    <resultMap type="com.platform.ems.domain.SalCustomerMonthAccountBillZangu"
+               id="SalCustomerMonthAccountBillZanguResult">
+        <result property="clientId" column="client_id"/>
+        <result property="customerMonthAccountBillZanguSid" column="customer_month_account_bill_zangu_sid"/>
+        <result property="customerMonthAccountBillSid" column="customer_month_account_bill_sid"/>
+        <result property="bookReceiptEstimationItemSid" column="book_receipt_estimation_item_sid"/>
+        <result property="bookReceiptEstimationCode" column="book_receipt_estimation_code"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="bookTypeName" column="book_type_name"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="unitPriceName" column="unit_price_name"/>
+        <result property="quantity" column="quantity"/>
+        <result property="isBusinessVerify" column="is_business_verify"/>
+        <result property="taxRate" column="tax_rate"/>
+        <result property="saleContractCode" column="sale_contract_code"/>
+        <result property="salesOrderCode" column="sales_order_code"/>
+        <result property="deliveryNoteCode" column="delivery_note_code"/>
+        <result property="storehouseOperatorName" column="storehouse_operator_name"/>
+        <result property="accountDate" column="account_date"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="remark" column="remark"/>
+        <result property="inventoryDocumentCode" column="inventory_document_code"/>
+        <result property="bookSourceCategoryName" column="book_source_category_name"/>
+        <result property="businessChannelName" column="business_channel_name"/>
+    </resultMap>
+
+    <sql id="selectSalCustomerMonthAccountBillZanguVo">
+        select t.client_id,
+               t.customer_month_account_bill_zangu_sid,
+               t.customer_month_account_bill_sid,
+               t.book_receipt_estimation_item_sid,
+               t.book_receipt_estimation_code,
+               t.creator_account,
+               t.create_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name
+        from s_sal_customer_month_account_bill_zangu t
+        left join sys_user t2 on t.creator_account = t2.user_name
+    </sql>
+
+    <select id="selectSalCustomerMonthAccountBillZanguById" parameterType="Long"
+            resultMap="SalCustomerMonthAccountBillZanguResult">
+        <include refid="selectSalCustomerMonthAccountBillZanguVo"/>
+        where t.customer_month_account_bill_zangu_sid = #{customerMonthAccountBillZanguSid}
+    </select>
+
+
+    <select id="selectSalCustomerMonthAccountBillZanguList"
+            parameterType="com.platform.ems.domain.SalCustomerMonthAccountBillZangu"
+            resultMap="SalCustomerMonthAccountBillZanguResult">
+        <include refid="selectSalCustomerMonthAccountBillZanguVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="customerMonthAccountBillSid != null ">
+                and t.customer_month_account_bill_sid =#{customerMonthAccountBillSid}
+            </if>
+            <if test="fileType != null  and fileType != ''">
+                and (<foreach collection="fileType.split(';')" item="item" separator="or">t.file_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="fileName != null  and fileName != ''">and
+                t.file_name like concat('%', #{fileName}, '%')
+            </if>
+            <if test="filePath != null  and filePath != ''">
+                and (<foreach collection="filePath.split(';')" item="item" separator="or">t.file_path like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_sal_customer_month_account_bill_zangu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            customer_month_account_bill_zangu_sid,
+            customer_month_account_bill_sid,
+            book_receipt_estimation_item_sid,
+            book_receipt_estimation_code,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.customerMonthAccountBillZanguSid},
+                #{item.customerMonthAccountBillSid},
+                #{item.bookReceiptEstimationItemSid},
+                #{item.bookReceiptEstimationCode},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_sal_customer_month_account_bill_zangu
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            customer_month_account_bill_zangu_sid = #{customerMonthAccountBillZanguSid},
+            customer_month_account_bill_sid = #{customerMonthAccountBillSid},
+            book_receipt_estimation_item_sid = #{bookReceiptEstimationItemSid},
+            book_receipt_estimation_code = #{bookReceiptEstimationCode},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where customer_month_account_bill_zangu_sid = #{customerMonthAccountBillZanguSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_sal_customer_month_account_bill_zangu
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                customer_month_account_bill_zangu_sid = #{customerMonthAccountBillZanguSid},
+                customer_month_account_bill_sid = #{customerMonthAccountBillSid},
+                book_receipt_estimation_item_sid = #{bookReceiptEstimationItemSid},
+                book_receipt_estimation_code = #{bookReceiptEstimationCode},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where customer_month_account_bill_zangu_sid = #{customerMonthAccountBillZanguSid}
+        </foreach>
+    </update>
+
+    <!-- 查报表 -->
+    <select id="getReportForm" parameterType="com.platform.ems.domain.FinBookReceiptEstimation"
+            resultMap="SalCustomerMonthAccountBillZanguResult">
+        SELECT
+        t.client_id,
+        t.book_receipt_estimation_sid,
+        t2.book_receipt_estimation_item_sid,
+        t.book_receipt_estimation_code,
+        t.book_type,
+        t.book_source_category,
+        t.customer_sid,
+        t.customer_code,
+        t.company_sid,
+        t.company_code,
+        t.is_tuihuo,
+        t.document_date,
+        t.payment_year,
+        t.payment_month,
+        t.company_brand_sid,
+        t.business_channel,
+        t.currency,
+        t.currency_unit,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t2.material_sid,
+        t3.material_code,
+        t3.material_name,
+        t3.material_type,
+        t2.unit_base,
+        t2.unit_price,
+        t7.name AS unit_base_name,
+        t19.name AS unit_price_name,
+        t2.price_tax,
+        t2.price,
+        t2.currency_amount_tax_sk_yhx,
+        t2.currency_amount_tax_sk_hxz,
+        t2.currency_amount_tax_dp_yhx,
+        t2.currency_amount_tax_dp_hxz,
+        t2.currency_amount_tax,
+        t2.currency_amount_tax_yhx,
+        ifnull(t22.currency_amount_tax_log, 0) as currency_amount_tax_hxz,
+        (t2.currency_amount_tax - t2.currency_amount_tax_yhx - ifnull(t22.currency_amount_tax_log, 0)) AS currency_amount_tax_dhx,
+        t17.sale_contract_sid,
+        t17.sale_contract_code,
+        t2.sales_order_sid,
+        t16.sales_order_code,
+        t18.delivery_note_code,
+        t2.tax_rate,
+        t2.quantity,
+        t2.quantity_yhx,
+        t2.quantity_hxz,
+        (t2.quantity - t2.quantity_yhx - t2.quantity_hxz) AS quantity_dhx,
+        t2.clear_status,
+        t2.clear_status_money,
+        t2.clear_status_quantity,
+        t2.account_valid_date,
+        t2.is_business_verify,
+        t2.is_finance_verify,
+        t2.business_verify_period,
+        t2.item_num,
+        t4.customer_name,
+        ifnull(t4.short_name,t4.customer_name) as customer_short_name,
+        t5.company_name,
+        ifnull(t5.short_name,t5.company_name) as company_short_name,
+        t6.brand_code,
+        t6.brand_name,
+        t8.storehouse_operator,
+        t8.account_date,
+        t8.inventory_document_code AS inventory_document_code,
+        t8a.inventory_document_item_sid,
+        if(t8.refer_doc_category = 'SO' or t8.refer_doc_category = 'RSO', t8b.quantity, t8d.quantity) as order_quantity,
+        if(t8.refer_doc_category = 'SO' or t8.refer_doc_category = 'RSO', t8b.contract_date, t8d.contract_date) as contract_date,
+        t16.product_season_sid,
+        t10.product_season_name,
+        t11.tax_rate_name,
+        t12.name AS book_source_category_name,
+        t13.nick_name AS storehouse_operator_name,
+        t14.name AS book_type_name,
+        t.book_feature,
+        t20.sku_name as sku1_name,
+        t21.sku_name as sku2_name,
+        t23.name as business_channel_name,
+        t24.name as material_type_name
+        FROM s_fin_book_receipt_estimation t
+        LEFT JOIN s_fin_book_receipt_estimation_item t2 on t.book_receipt_estimation_sid =
+        t2.book_receipt_estimation_sid
+        LEFT JOIN s_bas_material t3 on t2.material_sid = t3.material_sid
+        LEFT JOIN s_bas_customer t4 on t.customer_sid = t4.customer_sid
+        LEFT JOIN s_bas_company t5 on t.company_sid = t5.company_sid
+        LEFT JOIN s_bas_company_brand t6 on t.company_brand_sid = t6.company_brand_sid
+        LEFT JOIN s_con_measure_unit t7 ON t7.code = t2.unit_base
+        LEFT JOIN s_inv_inventory_document t8 ON t2.refer_doc_sid = t8.inventory_document_sid
+        LEFT JOIN s_inv_inventory_document_item t8a ON t2.refer_doc_item_sid = t8a.inventory_document_item_sid
+        LEFT JOIN s_sal_sales_order_item t8b ON t8a.refer_document_item_sid = t8b.sales_order_item_sid
+        LEFT JOIN s_del_delivery_note_item t8c ON t8a.refer_document_item_sid = t8c.delivery_note_item_sid
+        LEFT JOIN s_sal_sales_order_item t8d ON t8c.sales_order_item_sid = t8d.sales_order_item_sid
+        LEFT JOIN sys_user t9 ON t.creator_account = t9.user_name
+        LEFT JOIN s_con_tax_rate t11 ON t11.tax_rate_code = t2.tax_rate
+        LEFT JOIN s_con_book_source_category t12 ON t12.code = t.book_source_category
+        LEFT JOIN sys_user t13 ON t8.storehouse_operator = t13.user_name
+        LEFT JOIN s_con_book_type t14 ON t.book_type = t14.code
+        LEFT JOIN s_sal_sales_order t16 ON t2.sales_order_sid = t16.sales_order_sid
+        LEFT JOIN s_sal_sale_contract t17 ON t16.sale_contract_sid = t17.sale_contract_sid
+        LEFT JOIN s_del_delivery_note t18 ON t2.delivery_note_sid = t18.delivery_note_sid
+        LEFT JOIN sys_user t15 ON t16.sale_person = t15.user_name
+        LEFT JOIN s_bas_product_season t10 ON t10.product_season_sid = t16.product_season_sid
+        LEFT JOIN s_con_measure_unit t19 ON t19.code = t2.unit_price
+        LEFT JOIN s_bas_sku t20 ON t2.sku1_sid = t20.sku_sid
+        LEFT JOIN s_bas_sku t21 ON t2.sku2_sid = t21.sku_sid
+        LEFT JOIN (
+        SELECT log.book_receipt_estimation_item_sid, SUM(log.currency_amount_tax) as currency_amount_tax_log
+        FROM s_fin_clear_log_receipt_estimation log
+        WHERE log.shengxiao_status = 'WSX'
+        GROUP BY log.book_receipt_estimation_item_sid
+        ) t22 ON t22.book_receipt_estimation_item_sid = t2.book_receipt_estimation_item_sid
+        LEFT JOIN s_con_business_channel t23 ON t16.business_channel = t23.code
+        LEFT JOIN s_con_material_type t24 ON t3.material_type = t24.code
+        LEFT JOIN s_sal_customer_month_account_bill_zangu t25 ON t2.book_receipt_estimation_item_sid = t25.book_receipt_estimation_item_sid
+        <where>
+            <if test="clientId != null and clientId != ''">and t.client_id = #{clientId}</if>
+            <if test="customerMonthAccountBillSid != null and customerMonthAccountBillSid != ''">and t25.customer_month_account_bill_sid = #{customerMonthAccountBillSid}</if>
+        </where>
+        order by t.book_receipt_estimation_code desc
+    </select>
+</mapper>

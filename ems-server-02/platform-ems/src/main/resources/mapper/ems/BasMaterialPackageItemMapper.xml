@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.BasMaterialPackageItemMapper">
+    <resultMap type="com.platform.ems.domain.BasMaterialPackageItem" id="BasMaterialPackageItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="materialPackItemSid" column="material_pack_item_sid"/>
+        <result property="materialPackageSid" column="material_package_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="quantity" column="quantity"/>
+        <result property="unit" column="unit"/>
+        <result property="sort" column="sort"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="skuName" column="sku_name"/>
+        <result property="sku1Name" column="sku1_name"/>
+        <result property="sku2Name" column="sku2_name"/>
+        <result property="unitQuantity" column="unit_quantity"/>
+        <result property="unitQuantityName" column="unit_quantity_name"/>
+        <result property="unitPriceName" column="unit_price_name"/>
+        <result property="unitBaseName" column="unit_base_name"/>
+        <result property="materialSkuSid" column="material_sku_sid"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="touseProduceStage" column="touse_produce_stage"/>
+        <result property="materialClassSid" column="material_class_sid"/>
+        <result property="materialClassName" column="material_class_name"/>
+        <result property="unitName" column="unit_name"/>
+        <result property="packageName" column="package_name"/>
+        <result property="packageCode" column="package_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="materialCode" column="material_code"/>
+    </resultMap>
+    <select id="selectBasMaterialPackageItemById" parameterType="String" resultMap="BasMaterialPackageItemResult">
+        <include refid="selectBasMaterialPackageItemVo"/>
+        where t.material_pack_item_sid = #{materialPackItemSid}
+    </select>
+    <select id="selectBasMaterialPackageItemList" parameterType="com.platform.ems.domain.BasMaterialPackageItem"
+            resultMap="BasMaterialPackageItemResult">
+        <include refid="selectBasMaterialPackageItemVo"/>
+        <where>
+            <if test="packageCode != null and packageCode != ''">
+                and (<foreach collection="packageCode.split(';')" item="item" separator=" or ">t1.package_code like concat('%', #{item}, '%') </foreach>)
+            </if>
+            <if test="packageName != null and packageName != ''">
+                and (<foreach collection="packageName.split(';')" item="item" separator=" or ">t1.package_name like concat('%', #{item}, '%') </foreach>)
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator=" or ">t2.material_code like concat('%', #{item}, '%') </foreach>)
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="item" separator=" or ">t2.material_name like concat('%', #{item}, '%') </foreach>)
+            </if>
+            <if test="barcodeStatus != null and barcodeStatus != ''">
+                and t13.status = #{barcodeStatus}
+            </if>
+            <if test="materialStatus != null and materialStatus != ''">
+                and t2.status = #{materialStatus}
+            </if>
+            <if test="materialHandleStatus != null and materialHandleStatus != ''">
+                and t2.handle_status = #{materialHandleStatus}
+            </if>
+            <if test="status != null and status != ''">
+                and t1.status = #{status}
+            </if>
+            <if test="statusList != null and statusList.length > 0">
+                and t1.status in
+                (<foreach collection="statusList" item="status" separator=",">#{status}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t1.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length > 0">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="materialPackItemSid != null  and materialPackItemSid != ''">and t.material_pack_item_sid in (
+                <foreach collection="materialPackItemSid.split(';')" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="quantity != null ">and t.quantity = #{quantity}</if>
+            <if test="unit != null  and unit != ''">and t.unit in (
+                <foreach collection="unit.split(';')" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and (<foreach collection="creatorAccountName.split(';')" item="item" separator=" or ">t4.nick_name like concat('%', #{item}, '%') </foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">t4.nick_name like concat('%', #{item}, '%') </foreach>)
+            </if>
+            <if test="createDate != null ">and t.create_date = #{createDate}</if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator=" or ">t2.updater_account like concat('%', #{item}, '%') </foreach>)
+            </if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and t.data_source_sys in (
+                <foreach collection="dataSourceSys.split(';')" item="item" separator=",">#{item}</foreach>
+                )
+            </if>
+        </where> order by t.material_package_sid desc,t.create_date desc
+        <!--报表用降序-->
+    </select>
+    <!--添加多个-->
+    <insert id="inserts">insert into s_bas_material_package_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">client_id, material_pack_item_sid, material_package_sid,
+            material_sid, sku1_sid, sku2_sid, quantity, unit, sort, remark, creator_account, create_date, updater_account,
+            update_date, data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">#{clientId}, #{materialPackItemSid},
+                #{materialPackageSid}, #{materialSid}, #{sku1Sid}, #{sku2Sid}, #{quantity}, #{unit}, #{sort}, #{remark},
+                #{creatorAccount}, #{createDate}, #{updaterAccount}, #{updateDate}, #{dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+    <!--更新-->
+    <update id="updateAllById">update s_bas_material_package_item
+        <trim prefix="SET" suffixOverrides=",">material_pack_item_sid = #{materialPackItemSid}, material_package_sid =
+            #{materialPackageSid}, material_sid = #{materialSid}, sku1_sid = #{sku1Sid}, sku2_sid = #{sku2Sid}, quantity
+            = #{quantity}, unit = #{unit}, sort = #{sort}, remark = #{remark}, creator_account = #{creatorAccount}, create_date
+            = #{createDate}, updater_account = #{updaterAccount}, update_date = #{updateDate}, data_source_sys =
+            #{dataSourceSys},
+        </trim>
+        where material_pack_item_sid = #{materialPackItemSid}
+    </update>
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">update s_bas_material_package_item
+            <trim prefix="SET" suffixOverrides=",">material_pack_item_sid = #{materialPackItemSid}, material_package_sid
+                = #{materialPackageSid}, material_sid = #{materialSid}, sku1_sid = #{sku1Sid}, sku2_sid = #{sku2Sid},
+                quantity = #{quantity}, unit = #{unit}, sort = #{sort}, remark = #{remark}, creator_account = #{creatorAccount},
+                create_date = #{createDate}, updater_account = #{updaterAccount}, update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where material_pack_item_sid = #{materialPackItemSid}
+        </foreach>
+    </update>
+
+<!--    添加SKU2_NAME查询-->
+    <sql id="selectBasMaterialPackageItemVo">
+        select t.client_id,
+               t.material_pack_item_sid,
+               t.material_package_sid,
+               t.material_sid,
+               t.sku1_sid,
+               t5.sku_name AS sku1_name,
+               t.sku2_sid,
+               t6.sku_name AS sku2_name,
+               t.quantity,
+               t.unit,
+               t.unit as unit_base,
+               t.sort,
+               t3.name AS unit_name,
+               t3.name AS unit_base_name,
+               ifnull(t3.rounding_type, 'SSWR') as rounding_type,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t4.nick_name AS creator_account_name,
+               t.update_date,
+               t.data_source_sys,
+               t1.handle_status,
+               t1.status,
+               t1.package_code,
+               t1.package_name,
+               t2.material_code,
+               t2.material_name,
+               t2.specification_size,
+               t2.handle_status as material_handle_status,
+               t2.status as material_status,
+               t2.supplier_product_code,
+               t2.picture_path,
+               t2.unit_quantity,
+               t2.purchase_type,
+               t2.material_type,
+               t2.material_class_sid,
+               t2.touse_produce_stage,
+               t2.vendor_sid,
+               t2.width,
+               t2.gram_weight,
+               t2.yarn_count,
+               t2.density,
+               t2.composition,
+               t2.specification_size,
+               t7.name AS purchase_type_name,
+               t11.name as material_type_name,
+               t13.barcode,
+               t13.barcode_sid,
+               t13.status as barcode_status,
+               t14.name as unit_quantity_name,
+               t15.node_name AS material_class_name,
+               t16.name AS touse_produce_stage_name,
+               t17.vendor_name,
+               ifnull(t17.short_name, t17.vendor_name) as vendor_short_name
+        from s_bas_material_package_item t
+        left join s_bas_material_package t1 on t.material_package_sid = t1.material_package_sid
+        left join s_bas_material t2 on t.material_sid = t2.material_sid
+        left join s_con_measure_unit t3 on t.unit = t3.code
+        left join sys_user t4 on t.creator_account = t4.user_name
+        left join s_bas_sku t5 on t.sku1_sid = t5.sku_sid
+        LEFT JOIN s_bas_sku t6 on t.sku2_sid = t6.sku_sid
+        LEFT JOIN s_con_purchase_type t7 ON t7.code = t2.purchase_type
+        LEFT JOIN s_con_material_type t11 ON t2.material_type = t11.code
+        LEFT JOIN s_bas_material_barcode t13 on t.material_sid = t13.material_sid and
+                    ((t.sku1_sid is null and t13.sku1_sid is null) or t.sku1_sid = t13.sku1_sid) and
+                    ((t.sku2_sid is null and t13.sku2_sid is null) or t.sku2_sid = t13.sku2_sid)
+        left join s_con_measure_unit t14 on t2.unit_quantity = t14.code
+        LEFT JOIN s_con_material_class t15 ON t2.material_class_sid = t15.material_class_sid
+        LEFT JOIN s_con_produce_stage t16 ON t2.touse_produce_stage = t16.code
+        LEFT JOIN s_bas_vendor t17 ON t2.vendor_sid = t17.vendor_sid
+    </sql>
+
+    <select id="getMaterialPackageItemList" parameterType="com.platform.ems.domain.BasMaterialPackageItem" resultMap="BasMaterialPackageItemResult">
+        SELECT t.client_id,
+               t.material_pack_item_sid,
+               t.material_package_sid,
+               t.material_sid,
+               t.sku1_sid,
+               t.sku2_sid,
+               t.quantity,
+               t.unit,
+               t.sort,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t1.unit_quantity,
+               t1.supplier_product_code,
+               t1.width,
+               t1.gram_weight,
+               t1.yarn_count,
+               t1.density,
+               t1.composition,
+               t1.status,
+               t1.specification_size,
+               t1.material_composition,
+               t1.purchase_type,
+               t1.material_code,
+               t1.material_name,
+               t1.vendor_sid,
+               t2.vendor_name,
+               t3.nick_name AS creator_account_name,
+               t4.sku_name  AS sku_name,
+               t4.sku_name  AS sku1_name,
+               t5.sku_name  AS sku2_name,
+               t6.name      AS unit_quantity_name,
+               t8.name      AS unit_base_name,
+               t8.code as unit_base,
+               ifnull(t8.rounding_type, 'SSWR') as rounding_type,
+               t9.material_sku_sid,
+               t1.picture_path,
+               t1.touse_produce_stage,
+               t1.material_class_sid,
+               t10.node_name AS material_class_name,
+               t11.name as material_type_name,
+               t12.name as purchase_type_name,
+               t13.barcode,
+               t13.barcode_sid
+        FROM s_bas_material_package_item t
+         left join s_bas_material t1 on t1.material_sid = t.material_sid
+         LEFT JOIN s_bas_vendor t2 on t2.vendor_sid = t1.vendor_sid
+         LEFT JOIN sys_user t3 on t.creator_account = t3.user_name
+         LEFT JOIN s_bas_sku t4 on t.sku1_sid = t4.sku_sid
+         LEFT JOIN s_bas_sku t5 on t.sku2_sid = t5.sku_sid
+         LEFT JOIN s_con_measure_unit t6 on t1.unit_quantity = t6.code
+         LEFT JOIN s_con_measure_unit t8 on t1.unit_base = t8.code
+         LEFT JOIN s_bas_material_sku t9 on t.material_sid = t9.material_sid and t.sku1_sid = t9.sku_sid
+         LEFT JOIN s_con_material_class t10 ON t1.material_class_sid = t10.material_class_sid
+         LEFT JOIN s_con_material_type t11 ON t11.code = t1.material_type
+         LEFT JOIN s_con_purchase_type t12 on t12.code = t1.purchase_type
+         LEFT JOIN s_bas_material_barcode t13 on t.material_sid = t13.material_sid and
+                        ((t.sku1_sid is null and t13.sku1_sid is null) or t.sku1_sid = t13.sku1_sid) and
+                            ((t.sku2_sid is null and t13.sku2_sid is null) or t.sku2_sid = t13.sku2_sid)
+        <where>
+            <if test="materialPackageSid != null ">
+                and t.material_package_sid = #{materialPackageSid}
+            </if>
+            <if test="materialPackageSidList != null and materialPackageSidList.length >0 ">
+                and t.material_package_sid in
+                (<foreach collection="materialPackageSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+        </where>
+        order by t.material_package_sid,t.sort,t1.material_code
+    </select>
+</mapper>

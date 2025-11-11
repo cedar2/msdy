@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.InvInventoryAdjustMapper">
+
+    <resultMap type="com.platform.ems.domain.InvInventoryAdjust" id="InvInventoryAdjustResult">
+        <result property="clientId" column="client_id"/>
+        <result property="inventoryAdjustSid" column="inventory_adjust_sid"/>
+        <result property="inventoryAdjustCode" column="inventory_adjust_code"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="movementType" column="movement_type"/>
+        <result property="documentType" column="document_type"/>
+        <result property="businessType" column="business_type"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="companyName" column="company_name"/>
+        <result property="companyCode" column="company_code"/>
+    </resultMap>
+
+    <sql id="selectInvInventoryAdjustVo">
+        select t.client_id,
+        t.inventory_adjust_sid,
+        t.special_stock,
+        t.inventory_adjust_code,
+        t.document_date,
+        t.movement_type,
+        t.document_type,
+        t.business_type,
+        t.refer_document,
+        t.vendor_sid,
+        t.customer_sid,
+        t.company_sid,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.storehouse_sid,
+        t.storehouse_location_sid,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t.accountor,
+        t.account_date,
+        t1.storehouse_name,
+        t2.location_name,
+        t3.company_name,
+        t7.vendor_name,
+        t8.customer_name,
+        t9.nick_name as creator_account_name,
+        t10.nick_name as updater_account_name,
+        t11.inventory_document_code,
+        t12.name as special_stock_name,
+        t13.name as movement_type_name,
+        t14.nick_name as accountor_name
+        from s_inv_inventory_adjust t
+        LEFT JOIN s_bas_storehouse t1 ON t1.storehouse_sid = t.storehouse_sid
+        LEFT JOIN s_bas_storehouse_location t2 ON t2.storehouse_location_sid = t.storehouse_location_sid
+        LEFT JOIN s_bas_company t3 ON t3.company_sid = t.company_sid
+        LEFT JOIN s_bas_vendor t7 on t7.vendor_sid=t.vendor_sid
+        LEFT JOIN s_bas_customer t8 on t8.customer_sid=t.customer_sid
+        lEFT JOIN sys_user t9 ON t9.user_name = t.creator_account AND t9.client_id = t.client_id
+        lEFT JOIN sys_user t10 ON t10.user_name = t.updater_account AND t10.client_id = t.client_id
+        left join s_inv_inventory_document  t11 on t11.refer_document_sid=t.inventory_adjust_sid
+        left join s_con_special_stock t12 on t12.code =t.special_stock
+        LEFT JOIN s_con_movement_type t13 on t13.code=t.movement_type
+        LEFT JOIN sys_user t14 ON t14.user_name = t.accountor AND t14.client_id = t.client_id
+    </sql>
+
+    <select id="selectInvInventoryAdjustById" parameterType="Long" resultMap="InvInventoryAdjustResult">
+        <include refid="selectInvInventoryAdjustVo"/>
+        where t.inventory_adjust_sid = #{inventoryAdjustSid}
+    </select>
+
+
+    <select id="selectInvInventoryAdjustList" parameterType="com.platform.ems.domain.InvInventoryAdjust"
+            resultMap="InvInventoryAdjustResult">
+        <include refid="selectInvInventoryAdjustVo"/>
+        <where>
+            <if test="itemSidList != null  and itemSidList.size> 0">and t.inventory_adjust_sid in
+                <foreach collection="itemSidList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="storehouseSid != null and storehouseSid != '' ">
+                and t.storehouse_sid =#{storehouseSid}
+            </if>
+            <if test="storehouseLocationSidList != null and storehouseLocationSidList.length >0">
+                and t.storehouse_location_sid in
+                (<foreach collection="storehouseLocationSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="inventoryAdjustCode != null ">
+                and t.inventory_adjust_code like concat('%',#{inventoryAdjustCode}, '%')
+            </if>
+            <if test="referDocument != null ">
+                and t.refer_document like concat('%',#{referDocument}, '%')
+            </if>
+            <if test="movementTypeList != null and movementTypeList.length >0">
+                and t.movement_type in
+                (<foreach collection="movementTypeList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="inventoryDocumentCode != null  and inventoryDocumentCode != ''">
+                and (<foreach collection="inventoryDocumentCode.split(';')" item="item" separator="or">t11.inventory_document_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="customerSidList != null  and customerSidList.length >0 ">
+                and t.customer_sid in
+                (<foreach collection="customerSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="documentType != null  and documentType != ''">
+                and t.document_type=#{documentType}
+            </if>
+            <if test="creatorAccountName != null  and creatorAccountName != ''">
+                and (<foreach collection="creatorAccountName.split(';')" item="item" separator="or">t9.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="accountDateBeginTime != null and accountDateBeginTime!=''">
+                and date_format(t.account_date,'%y%m%d') &gt;= date_format(#{accountDateBeginTime},'%y%m%d')
+            </if>
+            <if test="accountDateEndTime != null and accountDateEndTime!=''">
+                and date_format(t.account_date,'%y%m%d') &lt;= date_format(#{accountDateEndTime},'%y%m%d')
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+        </where>
+        order by t.inventory_adjust_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_inv_inventory_adjust
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            inventory_adjust_sid,
+            inventory_adjust_code,
+            document_date,
+            movement_type,
+            document_type,
+            business_type,
+            reference_document,
+            company_sid,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{clientId},
+                #{inventoryAdjustSid},
+                #{inventoryAdjustCode},
+                #{documentDate},
+                #{movementType},
+                #{documentType},
+                #{businessType},
+                #{referenceDocument},
+                #{companySid},
+                #{remark},
+                #{handleStatus},
+                #{creatorAccount},
+                #{createDate},
+                #{updaterAccount},
+                #{updateDate},
+                #{confirmerAccount},
+                #{confirmDate},
+                #{dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <!--更新-->
+    <update id="updateAllById">
+        update s_inv_inventory_adjust
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            inventory_adjust_sid = #{inventoryAdjustSid},
+            inventory_adjust_code = #{inventoryAdjustCode},
+            document_date = #{documentDate},
+            movement_type = #{movementType},
+            document_type = #{documentType},
+            business_type = #{businessType},
+            refer_document = #{referDocument},
+            company_sid = #{companySid},
+            storehouse_sid = #{storehouseSid},
+            storehouse_location_sid = #{storehouseLocationSid},
+            accountor = #{accountor},
+            account_date = #{accountDate},
+            special_stock = #{specialStock},
+            stock_type = #{stockType},
+            vendor_sid = #{vendorSid},
+            customer_sid = #{customerSid},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where inventory_adjust_sid = #{inventoryAdjustSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_inv_inventory_adjust
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                inventory_adjust_code = #{inventoryAdjustCode},
+                document_date = #{documentDate},
+                movement_type = #{movementType},
+                document_type = #{documentType},
+                business_type = #{businessType},
+                reference_document = #{referenceDocument},
+                company_sid = #{companySid},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where inventory_adjust_sid = #{inventoryAdjustSid}
+        </foreach>
+    </update>
+
+    <select id="countByDomain" resultType="java.lang.Integer">
+        select count(1) from s_inv_inventory_adjust
+        <where>
+            <if test="inventoryAdjustSids != null  and inventoryAdjustSids.length > 0">
+                and inventory_adjust_sid in (
+                <foreach collection="inventoryAdjustSids" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and handle_status in (
+                <foreach collection="handleStatus.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteInvInventoryAdjustByIds" parameterType="long">
+        delete from s_inv_inventory_adjust where inventory_adjust_sid in
+        <foreach item="inventoryAdjustSid" collection="array" open="(" separator="," close=")">
+            #{inventoryAdjustSid}
+        </foreach>
+    </delete>
+
+    <update id="confirm" parameterType="com.platform.ems.domain.InvInventoryAdjust">
+        update s_inv_inventory_adjust
+        <set>
+            <if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmDate != null">confirm_date = #{confirmDate},</if>
+        </set>
+        where inventory_adjust_sid in
+        (<foreach collection="inventoryAdjustSids" item="inventoryAdjustSid" separator=",">
+        #{inventoryAdjustSid}</foreach>)
+    </update>
+</mapper>

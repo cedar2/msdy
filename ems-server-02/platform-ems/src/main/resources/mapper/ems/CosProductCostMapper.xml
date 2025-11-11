@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.CosProductCostMapper"> 
+  <resultMap type="com.platform.ems.domain.CosProductCost" id="CosProductCostResult"> 
+    <result property="clientId" column="client_id"/>  
+    <result property="productCostSid" column="product_cost_sid"/>  
+    <result property="materialSid" column="material_sid"/>  
+    <result property="sku1Sid" column="sku1_sid"/>  
+    <result property="sku2Sid" column="sku2_sid"/>  
+    <result property="businessType" column="business_type"/>  
+    <result property="vendorSid" column="vendor_sid"/>  
+    <result property="priceDimension" column="price_dimension"/>  
+    <result property="rawMaterialMode" column="raw_material_mode"/>  
+    <result property="customerSid" column="customer_sid"/>  
+    <result property="specialCraftPriceEnterMode" column="special_craft_price_enter_mode"/>  
+    <result property="businessMode" column="business_mode"/>  
+    <result property="productPriceEnterMode" column="product_price_enter_mode"/>  
+    <result property="otherPriceEnterMode" column="other_price_enter_mode"/>  
+    <result property="productSeasonSid" column="product_season_sid"/>  
+    <result property="contractPriceEnterMode" column="contract_price_enter_mode"/>  
+    <result property="priceEnterMode" column="price_enter_mode"/>  
+    <result property="innerPriceTax" column="inner_price_tax"/>
+    <result property="innerPrice" column="inner_price"/>
+    <result property="quotePriceTax" column="quote_price_tax"/>
+    <result property="quotePrice" column="quote_price"/>
+    <result property="checkPriceTax" column="check_price_tax"/>
+    <result property="checkPrice" column="check_price"/>
+    <result property="confirmPriceTax" column="confirm_price_tax"/>
+    <result property="confirmPrice" column="confirm_price"/>
+    <result property="materialName" column="material_name"/>  
+    <result property="priceTax" column="price_tax"/>
+    <result property="price" column="price"/>
+    <result property="standardCostTax" column="standard_cost_tax"/>  
+    <result property="standardCost" column="standard_cost"/>  
+    <result property="unitPrice" column="unit_price"/>  
+    <result property="currency" column="currency"/>  
+    <result property="currencyUnit" column="currency_unit"/>  
+    <result property="taxRate" column="tax_rate"/>  
+    <result property="unitConversionRate" column="unit_conversion_rate"/>  
+    <result property="costVersionId" column="cost_version_id"/>  
+    <result property="costVersionIdPre" column="cost_version_id_pre"/>  
+    <result property="bomSid" column="bom_sid"/>  
+    <result property="remarkInner" column="remark_inner"/>  
+    <result property="remarkQuote" column="remark_quote"/>  
+    <result property="remarkCheck" column="remark_check"/>  
+    <result property="remarkConfirm" column="remark_confirm"/>  
+    <result property="remark" column="remark"/>  
+    <result property="status" column="status"/>  
+    <result property="remarkAgree" column="remark_agree"/>  
+    <result property="handleStatus" column="handle_status"/>  
+    <result property="creatorAccount" column="creator_account"/>  
+    <result property="createDate" column="create_date"/>  
+    <result property="updaterAccount" column="updater_account"/>  
+    <result property="updateDate" column="update_date"/>  
+    <result property="confirmerAccount" column="confirmer_account"/>  
+    <result property="confirmDate" column="confirm_date"/>  
+    <result property="dataSourceSys" column="data_source_sys"/>  
+    <result property="processType" column="process_type"/>  
+    <result property="instanceId" column="instance_id"/> 
+  </resultMap>  
+  <sql id="selectCosProductCostVo">select
+         t.client_id,
+         t.product_cost_sid,
+         t.material_sid,
+         t.sku1_sid,
+         t.sku2_sid,
+         t.business_type,
+         t.vendor_sid,
+         t.price_dimension,
+         t.raw_material_mode,
+         t.customer_sid,
+         t.special_craft_price_enter_mode,
+         t.business_mode,
+         t.product_price_enter_mode,
+         t.other_price_enter_mode,
+         t.product_season_sid,
+         t.contract_price_enter_mode,
+         t.price_enter_mode,
+         t.inner_price_tax,
+         t.inner_price,
+         t.quote_price_tax,
+         t.quote_price,
+         t.check_price_tax,
+         t.check_price,
+         t.confirm_price_tax,
+         t.confirm_price,
+         t.price_tax,
+         t.price,
+         t.material_name,
+         t.price_tax,
+         t.price,
+         t.standard_cost_tax,
+         t.standard_cost,
+         t.unit_price,
+         t.currency,
+         t.currency_unit,
+         t.tax_rate,
+         t.unit_conversion_rate,
+         t.cost_version_id,
+         t.cost_version_id_pre,
+         t.bom_sid,
+         t.remark_inner,
+         t.remark_quote,
+         t.remark_check,
+         t.remark_confirm,
+         t.remark,
+         t.status,
+         t.remark_agree,
+         t.handle_status,
+         t.creator_account,
+         t.create_date,
+         t.updater_account,
+         t.update_date,
+         t.confirmer_account,
+         t.confirm_date,
+         t.data_source_sys,
+         t.process_type,
+         t.instance_id,
+         t2.sample_code_self,
+         t2.sample_code_vendor,
+         t2.style,
+         t2.picture_path,
+         t2.up_down_suit,
+         t2.sample_code_customer,
+         t2.simple_code,
+         t2.material_code,
+         t2.unit_base,
+         t.company_sid,
+         t2.customer_product_code,
+         t2.material_category,
+         t2.designer_account,
+         t3.name as material_type_name,
+         t4.product_season_name,
+         t5.brand_name AS company_brand_name,
+         t6.model_name,
+         t7.name as product_technique_type_name,
+         t8.customer_name,
+         t9.sku_name as sku1_name,
+         t10.company_name,
+         t11.nick_name as creator_account_name,
+         t12.nick_name as updater_account_name,
+         t13.name as unit_base_name,
+         t14.vendor_name,
+        t19.approval_node,
+	    t19.approval_user_id,
+	    t19.approval_user_name,
+	    t19.create_date AS submit_date,
+	    t20.nick_name AS submit_user_name,
+	    t21.nick_name as designer_account_name,
+        t23.sku_name as bom_head_sku_name,
+        t24.node_name as material_class_name
+         from s_cos_product_cost t
+         left join s_bas_material t2 on t2.material_sid=t.material_sid
+         LEFT JOIN s_con_material_type t3 ON t3.code = t2.material_type
+         LEFT JOIN s_bas_product_season t4 ON t4.product_season_sid = t.product_season_sid
+         LEFT JOIN s_bas_company_brand t5 ON t5.company_brand_sid = t2.company_brand_sid
+         LEFT JOIN s_tec_model t6 ON t6.model_sid = t2.model_sid
+         LEFT JOIN s_con_product_technique_type t7 ON t7.code = t2.product_technique_type
+         LEFT JOIN s_bas_customer t8 ON t8.customer_sid = t.customer_sid
+         left join s_bas_sku t9 on t9.sku_sid=t.sku1_sid
+         left join s_bas_company t10 on t10.company_sid=t.company_sid
+         LEFT JOIN sys_user t11 ON t11.user_name = t.creator_account
+         LEFT JOIN sys_user t12 ON t12.user_name = t.updater_account
+         LEFT JOIN s_con_measure_unit t13 ON t13.code = t2.unit_base
+         left join s_bas_vendor t14 on t14.vendor_sid=t.vendor_sid
+         left join s_sys_form_process t19 on t19.form_id=t.product_cost_sid
+         LEFT JOIN sys_user t20 ON t19.creator_account = t20.user_name
+         LEFT JOIN sys_user t21 ON t2.designer_account = t21.user_name
+         left join s_cos_product_cost_bom t22 on t22.product_cost_sid=t.product_cost_sid
+         left join s_bas_sku t23 on t23.sku_sid=t22.sku1_sid
+         LEFT JOIN s_con_material_class t24 ON t24.material_class_sid = t2.material_class_sid
+         </sql>
+  <select id="selectCosProductCostById" parameterType="Long" resultMap="CosProductCostResult"> 
+    <include refid="selectCosProductCostVo"/> where t.product_cost_sid = #{productCostSid}
+  </select>  
+  <select id="selectCosProductCostList" parameterType="com.platform.ems.domain.CosProductCost" resultType="com.platform.ems.domain.CosProductCost">
+    <include refid="selectCosProductCostVo"/>  
+    <where>
+        <if test="approvalUserId != null and approvalUserId != ''">
+            and t19.approval_user_id = #{approvalUserId}
+        </if>
+        <if test="creatorAccountList != null and creatorAccountList.length >0">
+            and t.creator_account in
+             (<foreach collection="creatorAccountList" item="item" separator=",">
+            #{item}</foreach>)
+        </if>
+      <if test="materialCode != null and materialCode !=''">
+        and t2.material_code like concat('%',#{materialCode}, '%')
+      </if>
+        <if test="sampleCodeCustomer != null and sampleCodeCustomer !=''">
+            and t2.sample_code_customer like concat('%',#{sampleCodeCustomer}, '%')
+        </if>
+        <if test="simpleCode !=null and simpleCode !=''">
+            and t2.simple_code like concat('%',
+            #{simpleCode}, '%')
+        </if>
+        <if test="sampleCodeVendor !=null and sampleCodeVendor !=''">
+            and t2.sample_code_vendor like concat('%',
+            #{sampleCodeVendor}, '%')
+        </if>
+      <if test="upDownSuitList != null and upDownSuitList.length >0">
+        and t2.up_down_suit in
+        (<foreach collection="upDownSuitList" item="item" separator=",">
+        #{item}</foreach>)
+      </if>
+        <if test="vendorSidList != null and vendorSidList.length >0">
+            and t.vendor_sid in
+            (<foreach collection="vendorSidList" item="item" separator=",">
+            #{item}</foreach>)
+        </if>
+        <if test="handleStatusList != null and handleStatusList.length >0">
+            and t.handle_status in
+            (<foreach collection="handleStatusList" item="item" separator=",">
+            #{item}</foreach>)
+        </if>
+        <if test="companySidList != null and companySidList.length >0">
+            and t.company_sid in
+            (<foreach collection="companySidList" item="item" separator=",">
+            #{item}</foreach>)
+        </if>
+        <if test="productSeasonSidList != null and productSeasonSidList.length >0">
+            and t.product_season_sid in
+            (<foreach collection="productSeasonSidList" item="item" separator=",">
+            #{item}</foreach>)
+        </if>
+        <if test="customerSidList != null and customerSidList.length >0">
+            and t.customer_sid in
+            (<foreach collection="customerSidList" item="item" separator=",">
+            #{item}</foreach>)
+        </if>
+      <if test="designerAccountList != null and designerAccountList.length>0">
+            and t2.designer_account in
+          (<foreach collection="designerAccountList" item="item" separator=",">
+          #{item}</foreach>)
+      </if>
+        <if test="customerProductCode != null and customerProductCode !=''">
+            and (<foreach collection="customerProductCode.split(';')" item="item" separator="or">t2.customer_product_code like
+            concat('%',
+            #{item}, '%')
+        </foreach>)
+        </if>
+      <if test="materialTypeList != null and materialTypeList.length >0">
+        and t2.material_type in
+        (<foreach collection="materialTypeList" item="item" separator=",">
+        #{item}</foreach>)
+      </if>
+      <if test="sampleCodeSelf != null and sampleCodeSelf !=''">
+        and (<foreach collection="sampleCodeSelf.split(';')" item="item" separator="or">t2.sample_code_self like
+        concat('%',
+        #{item}, '%')
+      </foreach>)
+      </if>
+      <if test="materialSid != null ">and t.material_sid =#{materialSid}</if>  
+      <if test="sku1Sid != null ">and t.sku1_sid =#{sku1Sid}</if>  
+      <if test="sku2Sid != null ">and t.sku2_sid =#{sku2Sid}</if>  
+      <if test="businessType != null  and businessType != ''">
+      and t.business_type =#{businessType}
+      </if>  
+      <if test="vendorSid != null ">and t.vendor_sid =#{vendorSid}</if>  
+      <if test="priceDimension != null  and priceDimension != ''">and (
+        <foreach collection="priceDimension.split(';')" item="item" separator="or">t.price_dimension like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="rawMaterialMode != null  and rawMaterialMode != ''">and (
+        <foreach collection="rawMaterialMode.split(';')" item="item" separator="or">t.raw_material_mode like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="customerSid != null ">and t.customer_sid =#{customerSid}</if>  
+      <if test="specialCraftPriceEnterMode != null  and specialCraftPriceEnterMode != ''">and (
+        <foreach collection="specialCraftPriceEnterMode.split(';')" item="item" separator="or">t.special_craft_price_enter_mode like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="businessMode != null  and businessMode != ''">and (
+        <foreach collection="businessMode.split(';')" item="item" separator="or">t.business_mode like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="productPriceEnterMode != null  and productPriceEnterMode != ''">and (
+        <foreach collection="productPriceEnterMode.split(';')" item="item" separator="or">t.product_price_enter_mode like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="otherPriceEnterMode != null  and otherPriceEnterMode != ''">and (
+        <foreach collection="otherPriceEnterMode.split(';')" item="item" separator="or">t.other_price_enter_mode like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="productSeasonSid != null ">and t.product_season_sid =#{productSeasonSid}</if>  
+      <if test="contractPriceEnterMode != null  and contractPriceEnterMode != ''">and (
+        <foreach collection="contractPriceEnterMode.split(';')" item="item" separator="or">t.contract_price_enter_mode like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="priceEnterMode != null  and priceEnterMode != ''">and (
+        <foreach collection="priceEnterMode.split(';')" item="item" separator="or">t.price_enter_mode like concat('%', #{item}, '%')</foreach>)
+      </if>
+      <if test="materialName != null  and materialName != ''">and t.material_name like concat('%', #{materialName}, '%')</if>
+      <if test="unitPrice != null  and unitPrice != ''">and (
+        <foreach collection="unitPrice.split(';')" item="item" separator="or">t.unit_price like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="currency != null  and currency != ''">and (
+        <foreach collection="currency.split(';')" item="item" separator="or">t.currency like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="currencyUnit != null  and currencyUnit != ''">and (
+        <foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="taxRate != null ">and t.tax_rate = #{taxRate}</if>  
+      <if test="unitConversionRate != null ">and t.unit_conversion_rate = #{unitConversionRate}</if>  
+      <if test="costVersionId != null ">and t.cost_version_id =#{costVersionId}</if>  
+      <if test="costVersionIdPre != null ">and t.cost_version_id_pre =#{costVersionIdPre}</if>  
+      <if test="bomSid != null ">and t.bom_sid =#{bomSid}</if>  
+      <if test="remarkInner != null  and remarkInner != ''">and (
+        <foreach collection="remarkInner.split(';')" item="item" separator="or">t.remark_inner like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="remarkQuote != null  and remarkQuote != ''">and (
+        <foreach collection="remarkQuote.split(';')" item="item" separator="or">t.remark_quote like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="remarkCheck != null  and remarkCheck != ''">and (
+        <foreach collection="remarkCheck.split(';')" item="item" separator="or">t.remark_check like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="remarkConfirm != null  and remarkConfirm != ''">and (
+        <foreach collection="remarkConfirm.split(';')" item="item" separator="or">t.remark_confirm like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="status != null  and status != ''">and (
+        <foreach collection="status.split(';')" item="item" separator="or">t.status like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="remarkAgree != null  and remarkAgree != ''">and (
+        <foreach collection="remarkAgree.split(';')" item="item" separator="or">t.remark_agree like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="handleStatus != null  and handleStatus != ''">and (
+        <foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="creatorAccountName != null  and creatorAccountName != ''">
+          and  t11.nick_name like concat('%', #{creatorAccountName}, '%')
+      </if>  
+      <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')</if>  
+      <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')</if>  
+      <if test="updaterAccount != null  and updaterAccount != ''">and (
+        <foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="updateDate != null ">and t.update_date = #{updateDate}</if>  
+      <if test="confirmerAccount != null  and confirmerAccount != ''">and (
+        <foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="confirmDate != null ">and t.confirm_date = #{confirmDate}</if>  
+      <if test="dataSourceSys != null  and dataSourceSys != ''">and (
+        <foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="processType != null  and processType != ''">and (
+        <foreach collection="processType.split(';')" item="item" separator="or">t.process_type like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="instanceId != null  and instanceId != ''">and (
+        <foreach collection="instanceId.split(';')" item="item" separator="or">t.instance_id like concat('%', #{item}, '%')</foreach>)
+      </if>  
+      <if test="params.dataScope != null and params.dataScope!=''">${params.dataScope}</if> 
+    </where>
+      order by t.create_date desc
+  </select>  
+  <!--添加多个-->  
+  <insert id="inserts">insert into s_cos_product_cost 
+    <trim prefix="(" suffix=")" suffixOverrides=",">client_id, product_cost_sid, material_sid, sku1_sid, sku2_sid, business_type, vendor_sid, price_dimension, raw_material_mode, customer_sid, special_craft_price_enter_mode, business_mode, product_price_enter_mode, other_price_enter_mode, product_season_sid, contract_price_enter_mode, price_enter_mode, inner_price_tax_standard, inner_price_standard, inner_price_tax_subcontract, inner_price_subcontract, quote_price_tax_standard, quote_price_standard, quote_price_tax_subcontract, quote_price_subcontract, check_price_tax_standard, check_price_standard, check_price_tax_subcontract, check_price_subcontract, confirm_price_tax_standard, confirm_price_standard, confirm_price_tax_subcontract, confirm_price_subcontract, price_tax_standard, price_standard, material_name, price_tax_subcontract, price_subcontract, standard_cost_tax, standard_cost, unit_price, currency, currency_unit, tax_rate, unit_conversion_rate, cost_version_id, cost_version_id_pre, bom_sid, remark_inner, remark_quote, remark_check, remark_confirm, remark, status, remark_agree, handle_status, creator_account, create_date, updater_account, update_date, confirmer_account, confirm_date, data_source_sys, process_type, instance_id,</trim> values 
+    <foreach collection="list" item="item" separator=","> 
+      <trim prefix=" (" suffix=")" suffixOverrides=",">#{item.clientId}, #{item.productCostSid}, #{item.materialSid}, #{item.sku1Sid}, #{item.sku2Sid}, #{item.businessType}, #{item.vendorSid}, #{item.priceDimension}, #{item.rawMaterialMode}, #{item.customerSid}, #{item.specialCraftPriceEnterMode}, #{item.businessMode}, #{item.productPriceEnterMode}, #{item.otherPriceEnterMode}, #{item.productSeasonSid}, #{item.contractPriceEnterMode}, #{item.priceEnterMode}, #{item.innerPriceTaxStandard}, #{item.innerPriceStandard}, #{item.innerPriceTaxSubcontract}, #{item.innerPriceSubcontract}, #{item.quotePriceTaxStandard}, #{item.quotePriceStandard}, #{item.quotePriceTaxSubcontract}, #{item.quotePriceSubcontract}, #{item.checkPriceTaxStandard}, #{item.checkPriceStandard}, #{item.checkPriceTaxSubcontract}, #{item.checkPriceSubcontract}, #{item.confirmPriceTaxStandard}, #{item.confirmPriceStandard}, #{item.confirmPriceTaxSubcontract}, #{item.confirmPriceSubcontract}, #{item.priceTaxStandard}, #{item.priceStandard}, #{item.materialName}, #{item.priceTaxSubcontract}, #{item.priceSubcontract}, #{item.standardCostTax}, #{item.standardCost}, #{item.unitPrice}, #{item.currency}, #{item.currencyUnit}, #{item.taxRate}, #{item.unitConversionRate}, #{item.costVersionId}, #{item.costVersionIdPre}, #{item.bomSid}, #{item.remarkInner}, #{item.remarkQuote}, #{item.remarkCheck}, #{item.remarkConfirm}, #{item.remark}, #{item.status}, #{item.remarkAgree}, #{item.handleStatus}, #{item.creatorAccount}, #{item.createDate}, #{item.updaterAccount}, #{item.updateDate}, #{item.confirmerAccount}, #{item.confirmDate}, #{item.dataSourceSys}, #{item.processType}, #{item.instanceId},</trim> 
+    </foreach> 
+  </insert>  
+  <!--更新-->
+    <!--更新-->
+
+    <update id="updateAllById">
+
+        update s_cos_product_cost
+
+        <trim prefix="SET" suffixOverrides=",">
+
+            client_id = #{clientId},
+
+            product_cost_sid = #{productCostSid},
+
+            material_sid = #{materialSid},
+
+            material_name = #{materialName},
+
+            sku1_sid = #{sku1Sid},
+
+            sku2_sid = #{sku2Sid},
+
+            business_type = #{businessType},
+
+            raw_material_mode = #{rawMaterialMode},
+
+            price_dimension = #{priceDimension},
+
+            vendor_sid = #{vendorSid},
+
+            customer_sid = #{customerSid},
+
+            business_mode = #{businessMode},
+
+            product_season_sid = #{productSeasonSid},
+
+            contract_price_enter_mode = #{contractPriceEnterMode},
+
+            special_craft_price_enter_mode = #{specialCraftPriceEnterMode},
+
+            product_price_enter_mode = #{productPriceEnterMode},
+
+            other_price_enter_mode = #{otherPriceEnterMode},
+
+            price_enter_mode = #{priceEnterMode},
+
+            inner_price_tax = #{innerPriceTax},
+
+            inner_price = #{innerPrice},
+
+            quote_price_tax = #{quotePriceTax},
+
+            quote_price = #{quotePrice},
+
+            check_price_tax = #{checkPriceTax},
+
+            check_price = #{checkPrice},
+
+            confirm_price_tax = #{confirmPriceTax},
+
+            confirm_price = #{confirmPrice},
+
+            price_tax = #{priceTax},
+
+            price = #{price},
+
+            standard_cost_tax = #{standardCostTax},
+
+            standard_cost = #{standardCost},
+
+            unit_price = #{unitPrice},
+
+            unit_conversion_rate = #{unitConversionRate},
+
+            currency = #{currency},
+
+            currency_unit = #{currencyUnit},
+
+            tax_rate = #{taxRate},
+
+            cost_version_id = #{costVersionId},
+
+            cost_version_id_pre = #{costVersionIdPre},
+
+            bom_sid = #{bomSid},
+
+            remark_inner = #{remarkInner},
+
+            remark_quote = #{remarkQuote},
+
+            remark_check = #{remarkCheck},
+
+            remark_confirm = #{remarkConfirm},
+
+            remark_agree = #{remarkAgree},
+
+            remark = #{remark},
+
+            status = #{status},
+
+            handle_status = #{handleStatus},
+
+            creator_account = #{creatorAccount},
+
+            create_date = #{createDate},
+
+            updater_account = #{updaterAccount},
+
+            update_date = #{updateDate},
+
+            confirmer_account = #{confirmerAccount},
+
+            confirm_date = #{confirmDate},
+
+            data_source_sys = #{dataSourceSys},
+
+            process_type = #{processType},
+
+            instance_id = #{instanceId},
+
+            company_sid = #{companySid},
+
+        </trim>
+
+        where product_cost_sid = #{productCostSid}
+
+    </update>
+
+  <!--更新多个-->  
+  <update id="updatesAllById"> 
+    <foreach collection="list" item="o" separator=";">update s_cos_product_cost 
+      <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, material_sid = #{materialSid}, sku1_sid = #{sku1Sid}, sku2_sid = #{sku2Sid}, business_type = #{businessType}, vendor_sid = #{vendorSid}, price_dimension = #{priceDimension}, raw_material_mode = #{rawMaterialMode}, customer_sid = #{customerSid}, special_craft_price_enter_mode = #{specialCraftPriceEnterMode}, business_mode = #{businessMode}, product_price_enter_mode = #{productPriceEnterMode}, other_price_enter_mode = #{otherPriceEnterMode}, product_season_sid = #{productSeasonSid}, contract_price_enter_mode = #{contractPriceEnterMode}, price_enter_mode = #{priceEnterMode}, inner_price_tax_standard = #{innerPriceTaxStandard}, inner_price_standard = #{innerPriceStandard}, inner_price_tax_subcontract = #{innerPriceTaxSubcontract}, inner_price_subcontract = #{innerPriceSubcontract}, quote_price_tax_standard = #{quotePriceTaxStandard}, quote_price_standard = #{quotePriceStandard}, quote_price_tax_subcontract = #{quotePriceTaxSubcontract}, quote_price_subcontract = #{quotePriceSubcontract}, check_price_tax_standard = #{checkPriceTaxStandard}, check_price_standard = #{checkPriceStandard}, check_price_tax_subcontract = #{checkPriceTaxSubcontract}, check_price_subcontract = #{checkPriceSubcontract}, confirm_price_tax_standard = #{confirmPriceTaxStandard}, confirm_price_standard = #{confirmPriceStandard}, confirm_price_tax_subcontract = #{confirmPriceTaxSubcontract}, confirm_price_subcontract = #{confirmPriceSubcontract}, price_tax_standard = #{priceTaxStandard}, price_standard = #{priceStandard}, material_name = #{materialName}, price_tax_subcontract = #{priceTaxSubcontract}, price_subcontract = #{priceSubcontract}, standard_cost_tax = #{standardCostTax}, standard_cost = #{standardCost}, unit_price = #{unitPrice}, currency = #{currency}, currency_unit = #{currencyUnit}, tax_rate = #{taxRate}, unit_conversion_rate = #{unitConversionRate}, cost_version_id = #{costVersionId}, cost_version_id_pre = #{costVersionIdPre}, bom_sid = #{bomSid}, remark_inner = #{remarkInner}, remark_quote = #{remarkQuote}, remark_check = #{remarkCheck}, remark_confirm = #{remarkConfirm}, remark = #{remark}, status = #{status}, remark_agree = #{remarkAgree}, handle_status = #{handleStatus}, creator_account = #{creatorAccount}, create_date = #{createDate}, updater_account = #{updaterAccount}, update_date = #{updateDate}, confirmer_account = #{confirmerAccount}, confirm_date = #{confirmDate}, data_source_sys = #{dataSourceSys}, process_type = #{processType}, instance_id = #{instanceId},</trim> where product_cost_sid = #{productCostSid}
+    </foreach> 
+  </update>  
+  <!-- 修改流程参数 -->  
+  <update id="updateProcessValue" parameterType="com.platform.ems.domain.CosProductCost">UPDATE s_cos_product_cost SET process_type = #{processType}, instance_id = #{instanceId} WHERE product_cost_sid = #{productCostSid}</update> 
+</mapper>

@@ -1,0 +1,1498 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PrjProjectTaskMapper">
+
+    <resultMap type="com.platform.ems.domain.PrjProjectTask" id="PrjProjectTaskResult">
+        <result property="clientId" column="client_id"/>
+        <result property="projectTaskSid" column="project_task_sid"/>
+        <result property="projectSid" column="project_sid"/>
+        <result property="projectCode" column="project_code"/>
+        <result property="taskSid" column="task_sid"/>
+        <result property="taskCode" column="task_code"/>
+        <result property="sort" column="sort"/>
+        <result property="taskStatus" column="task_status"/>
+        <result property="planStartDate" column="plan_start_date"/>
+        <result property="planEndDate" column="plan_end_date"/>
+        <result property="actualEndDate" column="actual_end_date"/>
+        <result property="toexpireDaysTask" column="toexpire_days_task"/>
+        <result property="handlerTask" column="handler_task"/>
+        <result property="startPositionSid" column="start_position_sid"/>
+        <result property="startPositionCode" column="start_position_code"/>
+        <result property="chargePositionSid" column="charge_position_sid"/>
+        <result property="chargePositionCode" column="charge_position_code"/>
+        <result property="noticePositionSid" column="notice_position_sid"/>
+        <result property="noticePositionCode" column="notice_position_code"/>
+        <result property="taskPhase" column="task_phase"/>
+        <result property="businessSection" column="business_section"/>
+        <result property="overdueWarnRate" column="overdue_warn_rate"/>
+        <result property="calendarType" column="calendar_type"/>
+        <result property="relateBusinessFormSid" column="relate_business_form_sid"/>
+        <result property="relateBusinessFormCode" column="relate_business_form_code"/>
+        <result property="preTask" column="pre_task"/>
+        <result property="preSort" column="pre_sort"/>
+        <result property="priorityTask" column="priority_task"/>
+        <result property="handleSortTask" column="handle_sort_task"/>
+        <result property="isMonitor" column="is_monitor"/>
+        <result property="toexecuteNoticeDaysPrjTask" column="toexecute_notice_days_prj_task"/>
+        <result property="templateTime" column="template_time"/>
+        <result property="completeStandard" column="complete_standard"/>
+        <result property="progressDescription" column="progress_description"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectPrjProjectTaskVo">
+        select t.client_id,
+               t.project_task_sid,
+               t.project_sid,
+               t.project_code,
+               t.task_sid,
+               t.task_code,
+               t.sort,
+               t.task_status,
+               t.plan_start_date,
+               t.plan_end_date,
+               t.actual_end_date,
+               t.toexpire_days_task,
+               t.handler_task,
+               t.start_position_sid,
+               t.start_position_code,
+               t.charge_position_sid,
+               t.charge_position_code,
+               t.notice_position_sid,
+               t.notice_position_code,
+               t.task_phase,
+               t.business_section,
+               t.overdue_warn_rate,
+               t.calendar_type,
+               t.relate_business_form_sid,
+               t.relate_business_form_code,
+               t.pre_task,
+               t.pre_sort,
+               t.priority_task,
+               t.handle_sort_task,
+               t.is_monitor,
+               t.toexecute_notice_days_prj_task,
+               t.template_time,
+               t.complete_standard,
+               t.progress_description,
+               t.picture_path,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t1.project_leader_sid,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.task_name,
+               t5.position_name AS start_position_name,
+               t6.position_name AS charge_position_name,
+               t7.position_name AS notice_position_name,
+               t8.pre_task_name,
+               t9.sale_station_name,
+               if(t11.erp_material_sku_enter_mode_project = 'XZ', t10.erp_material_sku_barcode, t1.erp_material_sku_barcode) AS erp_material_sku_barcode,
+               t12.handler_task_id,
+               t12.handler_task_name
+        from s_prj_project_task t
+         LEFT JOIN s_prj_project t1 ON t.project_sid = t1.project_sid
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN s_prj_task t4 ON t.task_sid = t4.task_sid
+         LEFT JOIN s_bas_position t5 ON t.start_position_sid = t5.position_sid
+         LEFT JOIN s_bas_position t6 ON t.charge_position_sid = t6.position_sid
+         LEFT JOIN s_bas_position t7 ON t.notice_position_sid = t7.position_sid
+         LEFT JOIN (
+            SELECT ta.project_task_sid, GROUP_CONCAT(tb.task_name  ORDER BY tb.task_name ASC SEPARATOR ';') as pre_task_name
+            FROM s_prj_project_task ta
+            LEFT JOIN s_prj_task tb ON
+                ta.pre_task like concat('%;', tb.task_code, ';%') or ta.pre_task like concat(tb.task_code, ';%') or ta.pre_task like concat('%;', tb.task_code)
+            GROUP BY ta.project_task_sid
+        ) t8 ON t.project_task_sid = t8.project_task_sid
+        LEFT JOIN (
+            SELECT ta.project_sid, GROUP_CONCAT(tb.name ORDER BY tb.name ASC SEPARATOR ';') as sale_station_name
+            FROM s_prj_project ta
+                     LEFT JOIN s_con_sale_station tb ON
+                        ta.sale_station_code = tb.code or ta.sale_station_code like concat(tb.code, ';%')
+                    or ta.sale_station_code like concat('%;', tb.code, ';%') or ta.sale_station_code like concat('%;', tb.code)
+            GROUP BY ta.project_sid
+        ) t9 ON t.project_sid = t9.project_sid
+         LEFT JOIN s_bas_material_barcode t10 ON t1.material_barcode_sid = t10.barcode_sid
+         LEFT JOIN s_sys_default_setting_client t11 ON t.client_id = t11.client_id
+         LEFT JOIN (
+            SELECT ta.project_task_sid,
+                   GROUP_CONCAT(tb.user_id ORDER BY tb.user_name ASC SEPARATOR ';') as handler_task_id,
+                   GROUP_CONCAT(tb.nick_name ORDER BY tb.user_name ASC SEPARATOR ';') as handler_task_name
+            FROM s_prj_project_task ta
+                     LEFT JOIN sys_user tb ON ta.client_id = tb.client_id AND (ta.handler_task = tb.user_name
+                or ta.handler_task like concat('%;', tb.user_name, ';%') or ta.handler_task like concat(tb.user_name, ';%') or ta.handler_task like concat('%;', tb.user_name))
+            GROUP BY ta.project_task_sid
+        ) t12 ON t.project_task_sid = t12.project_task_sid
+    </sql>
+
+    <select id="selectPrjProjectTaskById" parameterType="Long" resultMap="PrjProjectTaskResult">
+        <include refid="selectPrjProjectTaskVo"/>
+        where t.project_task_sid = #{projectTaskSid}
+    </select>
+
+    <select id="selectPrjProjectTaskList" parameterType="com.platform.ems.domain.PrjProjectTask"
+            resultMap="PrjProjectTaskResult">
+        <include refid="selectPrjProjectTaskVo"/>
+        <include refid="whereVo"/>
+    </select>
+
+    <select id="selectPrjProjectTaskListAll" parameterType="com.platform.ems.domain.PrjProjectTask"
+            resultMap="PrjProjectTaskResult">
+        <include refid="selectPrjProjectTaskVo"/>
+        <include refid="whereVo"/>
+    </select>
+
+    <sql id="whereVo">
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="projectTaskSid != null ">
+                and t.project_task_sid = #{projectSid}
+            </if>
+            <if test="projectTaskSidList != null and projectTaskSidList.length >0 ">
+                and t.project_task_sid in
+                (<foreach collection="projectTaskSidList" item="projectTaskSid" separator=",">#{projectTaskSid}</foreach>)
+            </if>
+            <if test="projectSid != null ">
+                and t.project_sid = #{projectSid}
+            </if>
+            <if test="projectSidList != null and projectSidList.length >0 ">
+                and t.project_sid in
+                (<foreach collection="projectSidList" item="projectSid" separator=",">#{projectSid}</foreach>)
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                and t.project_code = #{projectCode}
+            </if>
+            <if test="taskSid != null ">
+                and t.task_sid = #{taskSid}
+            </if>
+            <if test="taskCode != null and taskCode != ''">
+                and t.task_code = #{taskCode}
+            </if>
+            <if test="sort != null ">
+                and t.sort = #{sort}
+            </if>
+            <if test="taskStatus != null and taskStatus != ''">
+                and t.task_status = #{taskStatus}
+            </if>
+            <if test="planStartDate != null ">
+                and t.plan_start_date = #{planStartDate}
+            </if>
+            <if test="planEndDate != null ">
+                and t.plan_end_date = #{planEndDate}
+            </if>
+            <if test="actualEndDate != null ">
+                and t.actual_end_date = #{actualEndDate}
+            </if>
+            <if test="toexpireDaysTask != null ">
+                and t.toexpire_days_task = #{toexpireDaysTask}
+            </if>
+            <if test="handlerTask != null ">
+                and (t.handler_task = #{handlerTask}
+                or t.handler_task like concat('%;', #{handlerTask}, ';%') or t.handler_task like concat(#{handlerTask}, ';%') or t.handler_task like concat('%;', #{handlerTask}))
+            </if>
+            <if test="handlerTaskList != null and handlerTaskList.length >0 ">
+                and (<foreach collection="handlerTaskList" item="handlerTask" separator=" or ">
+                (t.handler_task = #{handlerTask}
+                or t.handler_task like concat('%;', #{handlerTask}, ';%') or t.handler_task like concat(#{handlerTask}, ';%') or t.handler_task like concat('%;', #{handlerTask}))
+            </foreach>)
+            </if>
+            <if test="startPositionSid != null ">
+                and t.start_position_sid = #{startPositionSid}
+            </if>
+            <if test="startPositionCode != null and startPositionCode != ''">and
+                t.start_position_code like concat('%', #{startPositionCode}, '%')
+            </if>
+            <if test="startPositionCodeList != null and startPositionCodeList.length >0 ">
+                and (<foreach collection="startPositionCodeList" item="startPositionCode" separator=" or ">
+                t.start_position_code like concat('%', #{startPositionCode}, ';%')
+            </foreach>)
+            </if>
+            <if test="chargePositionSid != null ">
+                and t.charge_position_sid = #{chargePositionSid}
+            </if>
+            <if test="chargePositionCode != null and chargePositionCode != ''">and
+                t.charge_position_code like concat('%', #{chargePositionCode}, '%')
+            </if>
+            <if test="chargePositionCodeList != null and chargePositionCodeList.length >0 ">
+                and (<foreach collection="chargePositionCodeList" item="chargePositionCode" separator=" or ">
+                t.charge_position_code like concat('%', #{chargePositionCode}, ';%')
+            </foreach>)
+            </if>
+            <if test="noticePositionSid != null ">
+                and t.notice_position_sid = #{noticePositionSid}
+            </if>
+            <if test="noticePositionCode != null and noticePositionCode != ''">and
+                t.notice_position_code like concat('%', #{noticePositionCode}, '%')
+            </if>
+            <if test="noticePositionCodeList != null and noticePositionCodeList.length >0 ">
+                and (<foreach collection="noticePositionCodeList" item="noticePositionCode" separator=" or ">
+                t.notice_position_code like concat('%', #{noticePositionCode}, ';%')
+            </foreach>)
+            </if>
+            <if test="taskPhase != null and taskPhase != ''">
+                and t.task_phase = #{taskPhase}
+            </if>
+            <if test="businessSection != null and businessSection != ''">
+                and t.business_section = #{businessSection}
+            </if>
+            <if test="overdueWarnRate != null ">
+                and t.overdue_warn_rate = #{overdueWarnRate}
+            </if>
+            <if test="calendarType != null and calendarType != ''">
+                and t.calendar_type = #{calendarType}
+            </if>
+            <if test="relateBusinessFormSid != null ">
+                and t.relate_business_form_sid = #{relateBusinessFormSid}
+            </if>
+            <if test="relateBusinessFormCode != null and relateBusinessFormCode != ''">
+                and t.relate_business_form_code = #{relateBusinessFormCode}
+            </if>
+            <if test="preTask != null and preTask != ''">
+                and t.pre_task = #{preTask}
+            </if>
+            <if test="preSort != null and preSort != ''">
+                and t.pre_sort = #{preSort}
+            </if>
+            <if test="isMonitor != null and isMonitor != ''">
+                and t.is_monitor = #{isMonitor}
+            </if>
+            <if test="templateTime != null ">
+                and t.template_time = #{templateTime}
+            </if>
+            <if test="completeStandard != null and completeStandard != ''">
+                and t.complete_standard = #{completeStandard}
+            </if>
+            <if test="progressDescription != null and progressDescription != ''">
+                and t.progress_description = #{progressDescription}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="projectType != null and projectType != ''">
+                and t1.project_type = #{projectType}
+            </if>
+            <if test="projectStatus != null and projectStatus != ''">
+                and t1.project_status = #{projectStatus}
+            </if>
+            <if test="projectPhase != null and projectPhase != ''">
+                and t1.project_phase = #{projectPhase}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t1.handle_status = #{handleStatus}
+            </if>
+            <if test="firstPurchaseFlag != null and firstPurchaseFlag != ''">
+                <if test="firstPurchaseFlag == 'N'.toString()">
+                    and (t1.first_purchase_flag = #{firstPurchaseFlag} or t1.first_purchase_flag is null)
+                </if>
+                <if test="firstPurchaseFlag != 'N'.toString()">
+                    and (t1.first_purchase_flag = #{firstPurchaseFlag})
+                </if>
+            </if>
+            <if test="secondPurchaseFlag != null and secondPurchaseFlag != ''">
+                <if test="secondPurchaseFlag == 'N'.toString()">
+                    and (t1.second_purchase_flag = #{secondPurchaseFlag} or t1.second_purchase_flag is null)
+                </if>
+                <if test="secondPurchaseFlag != 'N'.toString()">
+                    and (t1.second_purchase_flag = #{secondPurchaseFlag})
+                </if>
+            </if>
+            <if test="arrivalNoticeFlagFirstPurchase != null and arrivalNoticeFlagFirstPurchase != ''">
+                <if test="arrivalNoticeFlagFirstPurchase == 'N'.toString()">
+                    and (t1.arrival_notice_flag_first_purchase = #{arrivalNoticeFlagFirstPurchase} or t1.arrival_notice_flag_first_purchase is null)
+                </if>
+                <if test="arrivalNoticeFlagFirstPurchase != 'N'.toString()">
+                    and (t1.arrival_notice_flag_first_purchase = #{arrivalNoticeFlagFirstPurchase})
+                </if>
+            </if>
+            <if test="createDate != null ">
+                and date_format(t.create_date,'%y%m%d') = date_format(#{createDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </sql>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_prj_project_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            project_task_sid,
+            project_sid,
+            project_code,
+            task_sid,
+            task_code,
+            sort,
+            task_status,
+            plan_start_date,
+            plan_end_date,
+            actual_end_date,
+            toexpire_days_task,
+            handler_task,
+            start_position_sid,
+            start_position_code,
+            charge_position_sid,
+            charge_position_code,
+            notice_position_sid,
+            notice_position_code,
+            task_phase,
+            business_section,
+            overdue_warn_rate,
+            calendar_type,
+            relate_business_form_sid,
+            relate_business_form_code,
+            pre_task,
+            pre_sort,
+            priority_task,
+            handle_sort_task,
+            is_monitor,
+            toexecute_notice_days_prj_task,
+            template_time,
+            complete_standard,
+            progress_description,
+            picture_path,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.projectSid},
+                #{item.projectCode},
+                #{item.taskSid},
+                #{item.taskCode},
+                #{item.sort},
+                #{item.taskStatus},
+                #{item.planStartDate},
+                #{item.planEndDate},
+                #{item.actualEndDate},
+                #{item.toexpireDaysTask},
+                #{item.handlerTask},
+                #{item.startPositionSid},
+                #{item.startPositionCode},
+                #{item.chargePositionSid},
+                #{item.chargePositionCode},
+                #{item.noticePositionSid},
+                #{item.noticePositionCode},
+                #{item.taskPhase},
+                #{item.businessSection},
+                #{item.overdueWarnRate},
+                #{item.calendarType},
+                #{item.relateBusinessFormSid},
+                #{item.relateBusinessFormCode},
+                #{item.preTask},
+                #{item.preSort},
+                #{item.priorityTask},
+                #{item.handleSortTask},
+                #{item.isMonitor},
+                #{item.toexecuteNoticeDaysPrjTask},
+                #{item.templateTime},
+                #{item.completeStandard},
+                #{item.progressDescription},
+                #{item.picturePath},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_prj_project_task
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            project_sid = #{projectSid},
+            project_code = #{projectCode},
+            task_sid = #{taskSid},
+            task_code = #{taskCode},
+            sort = #{sort},
+            task_status = #{taskStatus},
+            plan_start_date = #{planStartDate},
+            plan_end_date = #{planEndDate},
+            actual_end_date = #{actualEndDate},
+            toexpire_days_task = #{toexpireDaysTask},
+            handler_task = #{handlerTask},
+            start_position_sid = #{startPositionSid},
+            start_position_code = #{startPositionCode},
+            charge_position_sid = #{chargePositionSid},
+            charge_position_code = #{chargePositionCode},
+            notice_position_sid = #{noticePositionSid},
+            notice_position_code = #{noticePositionCode},
+            task_phase = #{taskPhase},
+            business_section = #{businessSection},
+            overdue_warn_rate = #{overdueWarnRate},
+            calendar_type = #{calendarType},
+            relate_business_form_sid = #{relateBusinessFormSid},
+            relate_business_form_code = #{relateBusinessFormCode},
+            pre_task = #{preTask},
+            pre_sort = #{preSort},
+            priority_task = #{priorityTask},
+            handle_sort_task = #{handleSortTask},
+            is_monitor = #{isMonitor},
+            toexecute_notice_days_prj_task = #{toexecuteNoticeDaysPrjTask},
+            template_time = #{templateTime},
+            complete_standard = #{completeStandard},
+            progress_description = #{progressDescription},
+            picture_path = #{picturePath},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where project_task_sid = #{projectTaskSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_prj_project_task
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{o.clientId},
+                project_sid = #{o.projectSid},
+                project_code = #{o.projectCode},
+                task_sid = #{o.taskSid},
+                task_code = #{o.taskCode},
+                sort = #{o.sort},
+                task_status = #{o.taskStatus},
+                plan_start_date = #{o.planStartDate},
+                plan_end_date = #{o.planEndDate},
+                actual_end_date = #{o.actualEndDate},
+                toexpire_days_task = #{o.toexpireDaysTask},
+                handler_task = #{o.handlerTask},
+                start_position_sid = #{o.startPositionSid},
+                start_position_code = #{o.startPositionCode},
+                charge_position_sid = #{o.chargePositionSid},
+                charge_position_code = #{o.chargePositionCode},
+                notice_position_sid = #{o.noticePositionSid},
+                notice_position_code = #{o.noticePositionCode},
+                task_phase = #{o.taskPhase},
+                business_section = #{o.businessSection},
+                overdue_warn_rate = #{o.overdueWarnRate},
+                calendar_type = #{o.calendarType},
+                relate_business_form_sid = #{o.relateBusinessFormSid},
+                relate_business_form_code = #{o.relateBusinessFormCode},
+                pre_task = #{o.preTask},
+                pre_sort = #{o.preSort},
+                priority_task = #{o.priorityTask},
+                handle_sort_task = #{o.handleSortTask},
+                is_monitor = #{o.isMonitor},
+                toexecute_notice_days_prj_task = #{o.toexecuteNoticeDaysPrjTask},
+                template_time = #{o.templateTime},
+                complete_standard = #{o.completeStandard},
+                progress_description = #{o.progressDescription},
+                picture_path = #{o.picturePath},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where project_task_sid = #{projectTaskSid}
+        </foreach>
+    </update>
+
+    <select id="selectPrjProjectTaskForm" parameterType="com.platform.ems.domain.dto.request.form.PrjProjectTaskFormRequest"
+            resultType="com.platform.ems.domain.dto.response.form.PrjProjectTaskFormResponse">
+        select t.client_id,
+        t.project_task_sid,
+        t.project_sid,
+        t.project_code,
+        t.task_sid,
+        t.task_code,
+        t.sort,
+        t.task_status,
+        t.plan_start_date,
+        t.plan_end_date,
+        t.actual_end_date,
+        t.toexpire_days_task,
+        t.handler_task,
+        t.start_position_sid,
+        t.start_position_code,
+        t.charge_position_sid,
+        t.charge_position_code,
+        t.notice_position_sid,
+        t.notice_position_code,
+        t.task_phase,
+        t.business_section,
+        t.overdue_warn_rate,
+        t.calendar_type,
+        t.relate_business_form_sid,
+        t.relate_business_form_code,
+        t.pre_task,
+        t.pre_sort,
+        t.priority_task,
+        t.handle_sort_task,
+        t.is_monitor,
+        t.toexecute_notice_days_prj_task,
+        t.template_time,
+        t.complete_standard,
+        t.progress_description,
+        t.picture_path,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+        t1.project_name,
+        t1.product_sid,
+        t1.product_code,
+        t1.material_barcode_code,
+        t1.develop_plan_sid,
+        t1.develop_plan_code,
+        t1.sample_sid,
+        t1.sample_code,
+        t1.handle_status,
+        t1.year,
+        t1.project_type,
+        t1.project_status,
+        t1.project_phase,
+        t1.trialsale_type,
+        t1.plan_type,
+        t1.market_region,
+        t1.yearmonth_project,
+        t1.plan_start_date as project_plan_start_date,
+        t1.plan_end_date as project_plan_end_date,
+        t1.category_plan_sid,
+        t1.category_plan_code,
+        t2.nick_name AS creator_account_name,
+        t3.nick_name AS updater_account_name,
+        t4.task_name,
+        t8.develop_plan_name,
+        t8.develop_type,
+        t9.staff_name as project_leader_name,
+        t10.product_season_name,
+        if(t14.erp_material_sku_enter_mode_project = 'XZ', t11.erp_material_sku_barcode, t1.erp_material_sku_barcode) AS erp_material_sku_barcode,
+        t12.pre_task_name,
+        t13.market_region_name,
+        t15.group_type,
+        t15.big_class_sid,
+        t15.big_class_code,
+        t15.middle_class_sid,
+        t15.middle_class_code,
+        t15.small_class_sid,
+        t15.small_class_code,
+        t16.node_name as big_class_name,
+        t17.node_name as middle_class_name,
+        t18.node_name as small_class_name,
+        t19.handler_task_id,
+        t19.handler_task_name,
+        t20.sale_station_name,
+        t21.start_position_name,
+        t22.charge_position_name,
+        t23.notice_position_name,
+        if((t.task_status = 'WKS' OR t.task_status = 'ZT' OR t.task_status = 'QX'), -1,
+            if((t.task_status = 'YWC' OR t.task_status = 'ZZ') , 3,
+                if((t.task_status = 'JXZ' AND t1.handle_status = '5' AND t.plan_end_date &lt; DATE_FORMAT(NOW(), '%Y-%m-%d')), 0,
+                    if((t.task_status = 'JXZ' AND t1.handle_status = '5' AND t.plan_end_date &gt;= DATE_FORMAT(NOW(), '%Y-%m-%d')
+                    AND t.plan_end_date &lt;= DATE_FORMAT(date_add(now(), interval t.toexpire_days_task day), '%Y-%m-%d')), 2, 1)
+                )
+            )
+        ) as light
+        from s_prj_project_task t
+        LEFT JOIN s_prj_project t1 ON t.project_sid = t1.project_sid
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+        LEFT JOIN s_prj_task t4 ON t.task_sid = t4.task_sid
+        LEFT JOIN s_dev_develop_plan t8 ON t1.develop_plan_sid = t8.develop_plan_sid
+        LEFT JOIN s_bas_staff t9 ON t1.project_leader_sid = t9.staff_sid
+        LEFT JOIN s_bas_product_season t10 ON t1.product_season_sid = t10.product_season_sid
+        LEFT JOIN s_bas_material_barcode t11 ON t1.material_barcode_sid = t11.barcode_sid
+        LEFT JOIN (
+            SELECT ta.project_task_sid, GROUP_CONCAT(tb.task_name  ORDER BY tb.task_name ASC SEPARATOR ';') as pre_task_name
+            FROM s_prj_project_task ta
+            LEFT JOIN s_prj_task tb ON
+                ta.pre_task like concat('%;', tb.task_code, ';%') or ta.pre_task like concat(tb.task_code, ';%') or ta.pre_task like concat('%;', tb.task_code)
+            GROUP BY ta.project_task_sid
+        ) t12 ON t.project_task_sid = t12.project_task_sid
+        LEFT JOIN (
+            SELECT ta.project_sid, GROUP_CONCAT(tb.dict_label  ORDER BY tb.dict_label ASC SEPARATOR ';') as market_region_name
+            FROM s_prj_project ta
+            LEFT JOIN sys_dict_data tb ON tb.dict_type = 's_market_region' AND
+                (ta.market_region = tb.dict_value or ta.market_region like concat(tb.dict_value, ';%')
+                    or ta.market_region like concat('%;', tb.dict_value, ';%') or ta.market_region like concat('%;', tb.dict_value))
+            GROUP BY ta.project_sid
+        ) t13 ON t.project_sid = t13.project_sid
+        LEFT JOIN s_sys_default_setting_client t14 ON t.client_id = t14.client_id
+        LEFT JOIN s_dev_category_plan_item t15 ON t8.category_plan_item_sid = t15.category_plan_item_sid
+        LEFT JOIN s_con_material_class t16 ON t15.big_class_sid = t16.material_class_sid
+        LEFT JOIN s_con_material_class t17 ON t15.middle_class_sid = t17.material_class_sid
+        LEFT JOIN s_con_material_class t18 ON t15.small_class_sid = t18.material_class_sid
+        LEFT JOIN (
+            SELECT ta.project_task_sid,
+                   GROUP_CONCAT(tb.user_id ORDER BY tb.user_name ASC SEPARATOR ';') as handler_task_id,
+                   GROUP_CONCAT(tb.nick_name ORDER BY tb.user_name ASC SEPARATOR ';') as handler_task_name
+            FROM s_prj_project_task ta
+            LEFT JOIN sys_user tb ON ta.client_id = tb.client_id AND (ta.handler_task = tb.user_name
+                or ta.handler_task like concat('%;', tb.user_name, ';%') or ta.handler_task like concat(tb.user_name, ';%') or ta.handler_task like concat('%;', tb.user_name))
+            GROUP BY ta.project_task_sid
+        ) t19 ON t.project_task_sid = t19.project_task_sid
+        LEFT JOIN (
+            SELECT t.project_sid, GROUP_CONCAT(t1.name ORDER BY t1.code ASC SEPARATOR ';') as sale_station_name
+            FROM s_prj_project t
+            LEFT JOIN s_con_sale_station t1 ON t.sale_station_code like concat('%;', t1.code, ';%') or t.sale_station_code like concat(t1.code, ';%')
+                or t.sale_station_code like concat('%;', t1.code) or t.sale_station_code = t1.code
+            WHERE t.sale_station_code IS NOT NULL
+            GROUP BY t.project_sid
+        ) t20 ON t.project_sid = t20.project_sid
+        LEFT JOIN (
+            SELECT ta.project_task_sid, GROUP_CONCAT(tb.position_name ORDER BY tb.position_name ASC SEPARATOR ';') as start_position_name
+            FROM s_prj_project_task ta
+            LEFT JOIN s_bas_position tb ON
+                ta.start_position_code like concat('%;', tb.position_code, ';%') or ta.start_position_code like concat(tb.position_code, ';%')
+                    or ta.start_position_code like concat('%;', tb.position_code) or ta.start_position_code = tb.position_code
+            GROUP BY ta.project_task_sid
+        ) t21 ON t.project_task_sid = t21.project_task_sid
+        LEFT JOIN (
+            SELECT ta.project_task_sid, GROUP_CONCAT(tb.position_name ORDER BY tb.position_name ASC SEPARATOR ';') as charge_position_name
+            FROM s_prj_project_task ta
+            LEFT JOIN s_bas_position tb ON
+                ta.charge_position_code like concat('%;', tb.position_code, ';%') or ta.charge_position_code like concat(tb.position_code, ';%')
+                    or ta.charge_position_code like concat('%;', tb.position_code) or ta.charge_position_code = tb.position_code
+            GROUP BY ta.project_task_sid
+        ) t22 ON t.project_task_sid = t22.project_task_sid
+        LEFT JOIN (
+            SELECT ta.project_task_sid, GROUP_CONCAT(tb.position_name ORDER BY tb.position_name ASC SEPARATOR ';') as notice_position_name
+            FROM s_prj_project_task ta
+            LEFT JOIN s_bas_position tb ON
+                ta.notice_position_code like concat('%;', tb.position_code, ';%') or ta.notice_position_code like concat(tb.position_code, ';%')
+                    or ta.notice_position_code like concat('%;', tb.position_code) or ta.notice_position_code = tb.position_code
+            GROUP BY ta.project_task_sid
+        ) t23 ON t.project_task_sid = t23.project_task_sid
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="projectTaskSid != null ">
+                and t.project_task_sid = #{projectSid}
+            </if>
+            <if test="projectTaskSidList != null and projectTaskSidList.length >0 ">
+                and t.project_task_sid in
+                (<foreach collection="projectTaskSidList" item="projectTaskSid" separator=",">#{projectTaskSid}</foreach>)
+            </if>
+            <if test="taskSid != null ">
+                and t.task_sid = #{taskSid}
+            </if>
+            <if test="taskSidList != null and taskSidList.length >0 ">
+                and t.task_sid in
+                (<foreach collection="taskSidList" item="taskSid" separator=",">#{taskSid}</foreach>)
+            </if>
+            <if test="handlerTaskIsNull != null and handlerTaskIsNull == 'Y'.toString()">
+                and t.handler_task is null
+            </if>
+            <if test="handlerTaskIsNull != null and handlerTaskIsNull == 'N'.toString()">
+                and t.handler_task is not null
+            </if>
+            <if test="handlerTask != null and handlerTask != ''">
+                and (t.handler_task = #{handlerTask}
+                or t.handler_task like concat('%;', #{handlerTask}, ';%') or t.handler_task like concat(#{handlerTask}, ';%') or t.handler_task like concat('%;', #{handlerTask}))
+            </if>
+            <if test="handlerTaskList != null and handlerTaskList.length >0 ">
+                and (<foreach collection="handlerTaskList" item="handlerTask" separator=" or ">
+                (t.handler_task = #{handlerTask}
+                or t.handler_task like concat('%;', #{handlerTask}, ';%') or t.handler_task like concat(#{handlerTask}, ';%') or t.handler_task like concat('%;', #{handlerTask}))
+            </foreach>)
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and t1.product_code like concat('%', #{productCode}, '%')
+            </if>
+            <if test="yearmonthProjectBegin != null and yearmonthProjectBegin != ''">
+                and t1.yearmonth_project &gt;= #{yearmonthProjectBegin}
+            </if>
+            <if test="yearmonthProjectEnd != null and yearmonthProjectEnd != ''">
+                and t1.yearmonth_project &lt;= #{yearmonthProjectEnd}
+            </if>
+            <if test="materialBarcodeCode != null and materialBarcodeCode != ''">
+                and t1.material_barcode_code like concat('%', #{materialBarcodeCode}, '%')
+            </if>
+            <if test="erpMaterialSkuBarcode != null and erpMaterialSkuBarcode != ''">
+                and if(t14.erp_material_sku_enter_mode_project = 'XZ', t11.erp_material_sku_barcode like concat('%', #{erpMaterialSkuBarcode}, '%'),
+                    t1.erp_material_sku_barcode like concat('%', #{erpMaterialSkuBarcode}, '%'))
+            </if>
+            <if test="trialsaleType != null and trialsaleType != ''">
+                and t1.trialsale_type = #{trialsaleType}
+            </if>
+            <if test="trialsaleTypeList != null and trialsaleTypeList.length >0 ">
+                and t1.trialsale_type in
+                (<foreach collection="trialsaleTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="projectPhase != null and projectPhase != ''">
+                and t1.project_phase = #{projectPhase}
+            </if>
+            <if test="projectPhaseList != null and projectPhaseList.length >0 ">
+                and t1.project_phase in
+                (<foreach collection="projectPhaseList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="saleStationCodeList != null and saleStationCodeList.length >0 ">
+                and (<foreach collection="saleStationCodeList" item="item" separator=" or ">
+                    t1.sale_station_code = #{item} or t1.sale_station_code like concat(#{item}, ';%')
+                    or t1.sale_station_code like concat('%;', #{item}, ';%') or t1.sale_station_code like concat('%;', #{item})
+                </foreach>)
+            </if>
+            <if test="chargePositionCode != null and chargePositionCode != ''">
+                and t.charge_position_code like concat('%', #{chargePositionCode}, '%')
+            </if>
+            <if test="projectSid != null ">
+                and t.project_sid = #{projectSid}
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                and t.project_code like concat('%', #{projectCode},'%')
+            </if>
+            <if test="taskStatus != null and taskStatus != ''">
+                and t.task_status = #{taskStatus}
+            </if>
+            <if test="taskStatusList != null and taskStatusList.length >0 ">
+                and t.task_status in
+                (<foreach collection="taskStatusList" item="taskStatus" separator=",">#{taskStatus}</foreach>)
+            </if>
+            <if test="projectName != null and projectName != ''">
+                and t1.project_name like concat('%', #{projectName},'%')
+            </if>
+            <if test="projectType != null and projectType != ''">
+                and t1.project_type = #{projectType}
+            </if>
+            <if test="projectTypeList != null and projectTypeList.length >0 ">
+                and t1.project_type in
+                (<foreach collection="projectTypeList" item="projectType" separator=",">#{projectType}</foreach>)
+            </if>
+            <if test="year != null and year != ''">
+                and t1.year = #{year}
+            </if>
+            <if test="yearList != null and yearList.length >0 ">
+                and t1.year in
+                (<foreach collection="yearList" item="year" separator=",">#{year}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="planType != null and planType != ''">
+                and t1.plan_type = #{planType}
+            </if>
+            <if test="planTypeList != null and planTypeList.length >0 ">
+                and t1.plan_type in
+                (<foreach collection="planTypeList" item="planType" separator=",">#{planType}</foreach>)
+            </if>
+            <if test="projectStatus != null and projectStatus != ''">
+                and t1.project_status = #{projectStatus}
+            </if>
+            <if test="projectStatusList != null and projectStatusList.length >0 ">
+                and t1.project_status in
+                (<foreach collection="projectStatusList" item="projectStatus" separator=",">#{projectStatus}</foreach>)
+            </if>
+            <if test="developPlanCode != null and developPlanCode != ''">
+                and t1.develop_plan_code like concat('%', #{developPlanCode}, '%')
+            </if>
+            <if test="sampleCode != null and sampleCode != ''">
+                and t1.sample_code like concat('%', #{sampleCode}, '%')
+            </if>
+            <if test="projectLeaderSid != null ">
+                and t1.project_leader_sid = #{projectLeaderSid}
+            </if>
+            <if test="projectLeaderSidList != null and projectLeaderSidList.length >0 ">
+                and t1.project_leader_sid in
+                (<foreach collection="projectLeaderSidList" item="projectLeaderSid" separator=",">#{projectLeaderSid}</foreach>)
+            </if>
+            <if test="categoryPlanCode != null and categoryPlanCode != ''">
+                and t1.category_plan_code like concat('%', #{categoryPlanCode}, '%')
+            </if>
+            <if test="marketRegion != null and marketRegion != ''">
+                and t1.market_region = #{marketRegion}
+            </if>
+            <if test="marketRegionList != null and marketRegionList.length >0 ">
+                and (<foreach collection="marketRegionList" item="item" separator=" or ">
+                    t1.market_region = #{item} or t1.market_region like concat(#{item}, ';%')
+                        or t1.market_region like concat('%;', #{item}, ';%') or t1.market_region like concat('%;', #{item})
+                </foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (t1.creator_account = #{creatorAccount}
+                <if test="currentUserIsLeaderSid != null">
+                    or t1.project_leader_sid = #{currentUserIsLeaderSid}
+                    or EXISTS (
+                        SELECT a.* FROM s_bas_staff a
+                        LEFT JOIN s_bas_position b ON a.default_position = b.position_sid
+                        WHERE a.staff_sid = #{currentUserIsLeaderSid} AND (
+                            t.start_position_code = CONCAT(b.position_code,';') or t.start_position_code like CONCAT(';',b.position_code,';')
+                            or t.charge_position_code = CONCAT(b.position_code,';') or t.charge_position_code like CONCAT(';',b.position_code,';')
+                            or t.notice_position_code = CONCAT(b.position_code,';') or t.notice_position_code like CONCAT(';',b.position_code,';')
+                        )
+                    )
+                </if>)
+            </if>
+            <if test="groupType != null and groupType != ''">
+                and t15.group_type = #{groupType}
+            </if>
+            <if test="groupTypeList != null and groupTypeList.length >0 ">
+                and t15.group_type in
+                (<foreach collection="groupTypeList" item="groupType" separator=",">
+                #{groupType}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="createDate != null ">
+                and date_format(t.create_date,'%y%m%d') = date_format(#{createDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="planStartDateBegin != null and planStartDateBegin!=''">
+                and date_format(t.plan_start_date,'%y%m%d') &gt;= date_format(#{planStartDateBegin},'%y%m%d')
+            </if>
+            <if test="planStartDateEnd != null and planStartDateEnd!=''">
+                and date_format(t.plan_start_date,'%y%m%d') &lt;= date_format(#{planStartDateEnd},'%y%m%d')
+            </if>
+            <if test="planEndDateBegin != null and planEndDateBegin!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(#{planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="planEndDateEnd != null and planEndDateEnd!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &lt;= date_format(#{planEndDateEnd},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+        </where>
+        order by t.project_code desc
+    </select>
+
+    <select id="selectPrjProjectTaskPreCondition" parameterType="com.platform.ems.domain.dto.response.form.PrjProjectTaskPreCondition"
+            resultType="com.platform.ems.domain.dto.response.form.PrjProjectTaskPreCondition">
+        SELECT t.project_task_sid, t.project_sid, t.task_sid, t.task_code, t.task_status, t.plan_start_date, t.plan_end_date,
+               t.actual_end_date, t.pre_task, t.priority_task,
+               t0.task_name,
+               t1.project_code, t1.project_name, t1.project_status, t1.develop_plan_sid, t1.develop_plan_code, t1.yearmonth_project,
+               t2.develop_plan_name,
+               t3.task_code as pre_task_code, t3.task_status as pre_task_status, t3.plan_start_date as pre_plan_start_date, t3.plan_end_date as pre_plan_end_date,
+               t3.actual_end_date as pre_actual_end_date, t3.start_position_code as pre_start_position_code,
+               t3.charge_position_code as pre_charge_position_code, t3.notice_position_code as pre_notice_position_code,
+               t4.task_name as pre_task_name, t5.group_type,
+               t6.handler_task_name
+        FROM s_prj_project_task t
+        LEFT JOIN s_prj_task t0 ON t.task_sid = t0.task_sid
+        LEFT JOIN s_prj_project t1 ON t.project_sid = t1.project_sid
+        LEFT JOIN s_dev_develop_plan t2 ON t1.develop_plan_sid = t2.develop_plan_sid
+        LEFT JOIN s_prj_project_task t3 ON t.project_sid = t3.project_sid and (t.pre_task like concat('%;', t3.task_code, ';%') or t.pre_task like concat(t3.task_code, ';%'))
+        LEFT JOIN s_prj_task t4 ON t3.task_sid = t4.task_sid
+        LEFT JOIN s_dev_category_plan_item t5 ON t2.category_plan_item_sid = t5.category_plan_item_sid
+        LEFT JOIN (
+            SELECT ta.project_task_sid,
+            GROUP_CONCAT(tb.user_id ORDER BY tb.user_name ASC SEPARATOR ';') as handler_task_id,
+            GROUP_CONCAT(tb.nick_name ORDER BY tb.user_name ASC SEPARATOR ';') as handler_task_name
+            FROM s_prj_project_task ta
+            LEFT JOIN sys_user tb ON ta.client_id = tb.client_id AND (ta.handler_task = tb.user_name
+                or ta.handler_task like concat('%;', tb.user_name, ';%') or ta.handler_task like concat(tb.user_name, ';%') or ta.handler_task like concat('%;', tb.user_name))
+            GROUP BY ta.project_task_sid
+        ) t6 ON t.project_task_sid = t6.project_task_sid
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="projectSid != null">
+                and t.project_sid = #{projectSid}
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                and t.project_code like concat('%', #{projectCode},'%')
+            </if>
+            <if test="handlerTask != null ">
+                and (t.handler_task = #{handlerTask}
+                or t.handler_task like concat('%;', #{handlerTask}, ';%') or t.handler_task like concat(#{handlerTask}, ';%') or t.handler_task like concat('%;', #{handlerTask}))
+            </if>
+            <if test="handlerTaskList != null and handlerTaskList.length >0 ">
+                and (<foreach collection="handlerTaskList" item="handlerTask" separator=" or ">
+                (t.handler_task = #{handlerTask}
+                or t.handler_task like concat('%;', #{handlerTask}, ';%') or t.handler_task like concat(#{handlerTask}, ';%') or t.handler_task like concat('%;', #{handlerTask}))
+            </foreach>)
+            </if>
+            <if test="projectName != null and projectName != ''">
+                and t1.project_name like concat('%', #{projectName},'%')
+            </if>
+            <if test="yearmonthProjectBegin != null and yearmonthProjectBegin != ''">
+                and t1.yearmonth_project &gt;= #{yearmonthProjectBegin}
+            </if>
+            <if test="yearmonthProjectEnd != null and yearmonthProjectEnd != ''">
+                and t1.yearmonth_project &lt;= #{yearmonthProjectEnd}
+            </if>
+            <if test="taskSid != null">
+                and t.task_sid = #{taskSid}
+            </if>
+            <if test="taskSidList != null and taskSidList.length >0 ">
+                and t.task_sid in
+                (<foreach collection="taskSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="taskCode != null and taskCode != ''">
+                and t.task_code = #{taskCode}
+            </if>
+            <if test="taskCodeList != null and taskCodeList.length >0 ">
+                and t.task_code in
+                (<foreach collection="taskCodeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="taskStatus != null and taskStatus != ''">
+                and t.task_status = #{taskStatus}
+            </if>
+            <if test="taskStatusList != null and taskStatusList.length >0 ">
+                and t.task_status in
+                (<foreach collection="taskStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="projectStatus != null and projectStatus != ''">
+                and t1.project_status = #{projectStatus}
+            </if>
+            <if test="projectStatusList != null and projectStatusList.length >0 ">
+                and t1.project_status in
+                (<foreach collection="projectStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="planStartDateBegin != null and planStartDateBegin!=''">
+                and date_format(t.plan_start_date,'%y%m%d') &gt;= date_format(#{planStartDateBegin},'%y%m%d')
+            </if>
+            <if test="planStartDateEnd != null and planStartDateEnd!=''">
+                and date_format(t.plan_start_date,'%y%m%d') &lt;= date_format(#{planStartDateEnd},'%y%m%d')
+            </if>
+            <if test="planEndDateBegin != null and planEndDateBegin!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(#{planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="planEndDateEnd != null and planEndDateEnd!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &lt;= date_format(#{planEndDateEnd},'%y%m%d')
+            </if>
+            <if test="isTaskTimeout != null and isTaskTimeout == 'Y'.toString()">
+                and t.plan_start_date &lt; DATE_FORMAT(NOW(), '%Y-%m-%d')
+            </if>
+            <if test="isTaskTimeout != null and isTaskTimeout == 'N'.toString()">
+                and t.plan_start_date &gt;=  DATE_FORMAT(NOW(), '%Y-%m-%d')
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (t1.creator_account = #{creatorAccount}
+                <if test="currentUserIsLeaderSid != null">
+                    or t1.project_leader_sid = #{currentUserIsLeaderSid}
+                    or EXISTS (
+                        SELECT a.* FROM s_bas_staff a
+                        LEFT JOIN s_bas_position b ON a.default_position = b.position_sid
+                        WHERE a.staff_sid = #{currentUserIsLeaderSid} AND (
+                            t.start_position_code = CONCAT(b.position_code,';') or t.start_position_code like CONCAT(';',b.position_code,';')
+                            or t.charge_position_code = CONCAT(b.position_code,';') or t.charge_position_code like CONCAT(';',b.position_code,';')
+                            or t.notice_position_code = CONCAT(b.position_code,';') or t.notice_position_code like CONCAT(';',b.position_code,';')
+                        )
+                    )
+                </if>)
+            </if>
+            <if test="groupType != null and groupType != ''">
+                and t5.group_type = #{groupType}
+            </if>
+            <if test="groupTypeList != null and groupTypeList.length >0 ">
+                and t5.group_type in
+                (<foreach collection="groupTypeList" item="groupType" separator=",">
+                #{groupType}</foreach>)
+            </if>
+        </where>
+    </select>
+
+    <select id="getToexpireBusiness" resultType="com.platform.ems.domain.PrjProjectTask">
+        select t.client_id,
+               t.project_task_sid,
+               t.project_sid,
+               t.project_code,
+               t.task_sid,
+               t.task_code,
+               t.sort,
+               t.task_status,
+               t.plan_start_date,
+               t.plan_end_date,
+               t.actual_end_date,
+               t.toexpire_days_task,
+               t.handler_task,
+               t.start_position_sid,
+               t.start_position_code,
+               t.charge_position_sid,
+               t.charge_position_code,
+               t.notice_position_sid,
+               t.notice_position_code,
+               t.task_phase,
+               t.business_section,
+               t.overdue_warn_rate,
+               t.calendar_type,
+               t.relate_business_form_sid,
+               t.relate_business_form_code,
+               t.pre_task,
+               t.pre_sort,
+               t.priority_task,
+               t.handle_sort_task,
+               t.is_monitor,
+               t.toexecute_notice_days_prj_task,
+               t.template_time,
+               t.complete_standard,
+               t.progress_description,
+               t.picture_path,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.project_name,
+               t2.product_code,
+               t2.material_barcode_code,
+                t2.erp_material_msku_code,
+               t2.sample_code,
+                t2.yearmonth_project,
+               t3.task_name,
+               t4.develop_plan_code,
+               t4.develop_plan_name,
+               t4.develop_type,
+               if(t6.erp_material_sku_enter_mode_project = 'XZ', t5.erp_material_sku_barcode, t2.erp_material_sku_barcode) AS erp_material_sku_barcode,
+               t7.handler_task_id,
+               t7.handler_task_name,
+               t10.group_type
+        from s_prj_project_task t
+         LEFT JOIN s_prj_project t2 ON t.project_sid = t2.project_sid
+         LEFT JOIN s_prj_task t3 ON t.task_sid = t3.task_sid
+         LEFT JOIN s_dev_develop_plan t4 ON t2.develop_plan_sid = t4.develop_plan_sid
+         LEFT JOIN s_bas_material_barcode t5 ON t2.material_barcode_sid = t5.barcode_sid
+         LEFT JOIN s_sys_default_setting_client t6 ON t.client_id = t6.client_id
+         LEFT JOIN (
+            SELECT ta.project_task_sid,
+            GROUP_CONCAT(tb.user_id ORDER BY tb.user_name ASC SEPARATOR ';') as handler_task_id,
+            GROUP_CONCAT(tb.nick_name ORDER BY tb.user_name ASC SEPARATOR ';') as handler_task_name
+            FROM s_prj_project_task ta
+            LEFT JOIN sys_user tb ON ta.client_id = tb.client_id AND (ta.handler_task = tb.user_name
+                or ta.handler_task like concat('%;', tb.user_name, ';%') or ta.handler_task like concat(tb.user_name, ';%') or ta.handler_task like concat('%;', tb.user_name))
+            GROUP BY ta.project_task_sid
+        ) t7 ON t.project_task_sid = t7.project_task_sid
+        LEFT JOIN s_dev_category_plan_item t10 ON t4.category_plan_item_sid = t10.category_plan_item_sid
+        <where>
+            (t.task_status = 'JXZ' AND t2.handle_status = '5' AND t.plan_end_date &gt;= DATE_FORMAT(NOW(), '%Y-%m-%d')
+                AND t.plan_end_date &lt;= DATE_FORMAT(date_add(now(), interval t.toexpire_days_task day), '%Y-%m-%d'))
+            <if test="entity.clientId != null and entity.clientId != ''">
+                and t.client_id = #{entity.clientId}
+            </if>
+            <if test="entity.creatorAccount != null and entity.creatorAccount != ''">
+                and (t2.creator_account = #{entity.creatorAccount}
+                <if test="entity.currentUserIsLeaderSid != null">
+                    or t2.project_leader_sid = #{entity.currentUserIsLeaderSid}
+                </if>)
+            </if>
+            <if test="entity.taskSid != null ">
+                and t.task_sid = #{entity.taskSid}
+            </if>
+            <if test="entity.taskSidList != null and entity.taskSidList.length >0 ">
+                and t.task_sid in
+                (<foreach collection="entity.taskSidList" item="taskSid" separator=",">#{taskSid}</foreach>)
+            </if>
+            <if test="entity.taskStatus != null and entity.taskStatus != ''">
+                and t.task_status = #{entity.taskStatus}
+            </if>
+            <if test="entity.taskStatusList != null and entity.taskStatusList.length >0 ">
+                and t.task_status in
+                (<foreach collection="entity.taskStatusList" item="taskStatus" separator=",">#{taskStatus}</foreach>)
+            </if>
+            <if test="entity.handlerTask != null ">
+                and (t.handler_task = #{entity.handlerTask}
+                or t.handler_task like concat('%;', #{entity.handlerTask}, ';%') or t.handler_task like concat(#{entity.handlerTask}, ';%') or t.handler_task like concat('%;', #{entity.handlerTask}))
+            </if>
+            <if test="entity.handlerTaskList != null and entity.handlerTaskList.length >0 ">
+                and (<foreach collection="entity.handlerTaskList" item="handlerTask" separator=" or ">
+                (t.handler_task = #{handlerTask}
+                or t.handler_task like concat('%;', #{handlerTask}, ';%') or t.handler_task like concat(#{handlerTask}, ';%') or t.handler_task like concat('%;', #{handlerTask}))
+            </foreach>)
+            </if>
+            <if test="entity.yearmonthProjectBegin != null and entity.yearmonthProjectBegin != ''">
+                and t2.yearmonth_project &gt;= #{entity.yearmonthProjectBegin}
+            </if>
+            <if test="entity.yearmonthProjectEnd != null and entity.yearmonthProjectEnd != ''">
+                and t2.yearmonth_project &lt;= #{entity.yearmonthProjectEnd}
+            </if>
+            <if test="entity.projectCode != null and entity.projectCode != ''">
+                and t2.project_code like concat('%', #{entity.projectCode}, '%')
+            </if>
+            <if test="entity.projectName != null and entity.projectName != ''">
+                and t2.project_name like concat('%', #{entity.projectName}, '%')
+            </if>
+            <if test="entity.productCode != null and entity.productCode != ''">
+                and t2.product_code like concat('%', #{entity.productCode}, '%')
+            </if>
+            <if test="entity.materialBarcodeCode != null and entity.materialBarcodeCode != ''">
+                and t2.material_barcode_code like concat('%', #{entity.materialBarcodeCode}, '%')
+            </if>
+            <if test="entity.erpMaterialSkuBarcode != null and entity.erpMaterialSkuBarcode != ''">
+                and if(t6.erp_material_sku_enter_mode_project = 'XZ', t5.erp_material_sku_barcode like concat('%', #{entity.erpMaterialSkuBarcode}, '%'),
+                    t2.erp_material_sku_barcode like concat('%', #{entity.erpMaterialSkuBarcode}, '%'))
+            </if>
+            <if test="entity.developPlanCode != null and entity.developPlanCode != ''">
+                and t4.develop_plan_code like concat('%', #{entity.developPlanCode}, '%')
+            </if>
+            <if test="entity.developPlanName != null and entity.developPlanName != ''">
+                and t4.develop_plan_name like concat('%', #{entity.developPlanName}, '%')
+            </if>
+            <if test="entity.sampleCode != null and entity.sampleCode != ''">
+                and t2.sample_code like concat('%', #{entity.sampleCode}, '%')
+            </if>
+            <if test="entity.planStartDate != null ">
+                and t.plan_start_date = #{entity.planStartDate}
+            </if>
+            <if test="entity.planEndDateBegin != null and entity.planEndDateBegin!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(#{entity.planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="entity.planEndDateEnd != null and entity.planEndDateEnd!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &lt;= date_format(#{entity.planEndDateEnd},'%y%m%d')
+            </if>
+            <if test="entity.groupType != null and entity.groupType != ''">
+                and t10.group_type = #{entity.groupType}
+            </if>
+            <if test="entity.groupTypeList != null and entity.groupTypeList.length >0 ">
+                and t10.group_type in
+                (<foreach collection="entity.groupTypeList" item="groupType" separator=",">
+                #{groupType}</foreach>)
+            </if>
+        </where>
+        <if test="entity.pageNum != null and entity.pageSize != null">LIMIT ${entity.pageBegin},${entity.pageSize}</if>
+    </select>
+
+    <select id="getOverdueBusiness" parameterType="com.platform.ems.domain.PrjProjectTask" resultType="com.platform.ems.domain.PrjProjectTask">
+        select t.client_id,
+               t.project_task_sid,
+               t.project_sid,
+               t.project_code,
+               t.task_sid,
+               t.task_code,
+               t.sort,
+               t.task_status,
+               t.plan_start_date,
+               t.plan_end_date,
+               t.actual_end_date,
+               t.toexpire_days_task,
+               t.handler_task,
+               t.start_position_sid,
+               t.start_position_code,
+               t.charge_position_sid,
+               t.charge_position_code,
+               t.notice_position_sid,
+               t.notice_position_code,
+               t.task_phase,
+               t.business_section,
+               t.overdue_warn_rate,
+               t.calendar_type,
+               t.relate_business_form_sid,
+               t.relate_business_form_code,
+               t.pre_task,
+               t.pre_sort,
+               t.priority_task,
+               t.handle_sort_task,
+               t.is_monitor,
+               t.toexecute_notice_days_prj_task,
+               t.template_time,
+               t.complete_standard,
+               t.progress_description,
+               t.picture_path,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.project_name,
+               t2.product_code,
+               t2.material_barcode_code,
+               t2.erp_material_msku_code,
+               t2.sample_code,
+                t2.yearmonth_project,
+               t3.task_name,
+               t4.develop_plan_code,
+               t4.develop_plan_name,
+               t4.develop_type,
+               if(t6.erp_material_sku_enter_mode_project = 'XZ', t5.erp_material_sku_barcode, t2.erp_material_sku_barcode) AS erp_material_sku_barcode,
+               t7.handler_task_id,
+               t7.handler_task_name,
+                t10.group_type
+        from s_prj_project_task t
+         LEFT JOIN s_prj_project t2 ON t.project_sid = t2.project_sid
+         LEFT JOIN s_prj_task t3 ON t.task_sid = t3.task_sid
+         LEFT JOIN s_dev_develop_plan t4 ON t2.develop_plan_sid = t4.develop_plan_sid
+         LEFT JOIN s_bas_material_barcode t5 ON t2.material_barcode_sid = t5.barcode_sid
+         LEFT JOIN s_sys_default_setting_client t6 ON t.client_id = t6.client_id
+         LEFT JOIN (
+            SELECT ta.project_task_sid,
+            GROUP_CONCAT(tb.user_id ORDER BY tb.user_name ASC SEPARATOR ';') as handler_task_id,
+            GROUP_CONCAT(tb.nick_name ORDER BY tb.user_name ASC SEPARATOR ';') as handler_task_name
+            FROM s_prj_project_task ta
+            LEFT JOIN sys_user tb ON ta.client_id = tb.client_id AND (ta.handler_task = tb.user_name
+                or ta.handler_task like concat('%;', tb.user_name, ';%') or ta.handler_task like concat(tb.user_name, ';%') or ta.handler_task like concat('%;', tb.user_name))
+            GROUP BY ta.project_task_sid
+         ) t7 ON t.project_task_sid = t7.project_task_sid
+        LEFT JOIN s_dev_category_plan_item t10 ON t4.category_plan_item_sid = t10.category_plan_item_sid
+        <where>
+            (t.task_status = 'JXZ' AND t2.handle_status = '5' AND t.plan_end_date &lt; DATE_FORMAT(NOW(), '%Y-%m-%d'))
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (t2.creator_account = #{creatorAccount}
+                <if test="currentUserIsLeaderSid != null">
+                    or t2.project_leader_sid = #{currentUserIsLeaderSid}
+                </if>)
+            </if>
+            <if test="taskSid != null ">
+                and t.task_sid = #{taskSid}
+            </if>
+            <if test="taskSidList != null and taskSidList.length >0 ">
+                and t.task_sid in
+                (<foreach collection="taskSidList" item="taskSid" separator=",">#{taskSid}</foreach>)
+            </if>
+            <if test="taskStatus != null and taskStatus != ''">
+                and t.task_status = #{taskStatus}
+            </if>
+            <if test="taskStatusList != null and taskStatusList.length >0 ">
+                and t.task_status in
+                (<foreach collection="taskStatusList" item="taskStatus" separator=",">#{taskStatus}</foreach>)
+            </if>
+            <if test="handlerTask != null ">
+                and (t.handler_task = #{handlerTask}
+                or t.handler_task like concat('%;', #{handlerTask}, ';%') or t.handler_task like concat(#{handlerTask}, ';%') or t.handler_task like concat('%;', #{handlerTask}))
+            </if>
+            <if test="handlerTaskList != null and handlerTaskList.length >0 ">
+                and (<foreach collection="handlerTaskList" item="handlerTask" separator=" or ">
+                (t.handler_task = #{handlerTask}
+                or t.handler_task like concat('%;', #{handlerTask}, ';%') or t.handler_task like concat(#{handlerTask}, ';%') or t.handler_task like concat('%;', #{handlerTask}))
+            </foreach>)
+            </if>
+            <if test="yearmonthProjectBegin != null and yearmonthProjectBegin != ''">
+                and t2.yearmonth_project &gt;= #{yearmonthProjectBegin}
+            </if>
+            <if test="yearmonthProjectEnd != null and yearmonthProjectEnd != ''">
+                and t2.yearmonth_project &lt;= #{yearmonthProjectEnd}
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                and t2.project_code like concat('%', #{projectCode}, '%')
+            </if>
+            <if test="projectName != null and projectName != ''">
+                and t2.project_name like concat('%', #{projectName}, '%')
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and t2.product_code like concat('%', #{productCode}, '%')
+            </if>
+            <if test="materialBarcodeCode != null and materialBarcodeCode != ''">
+                and t2.material_barcode_code like concat('%', #{materialBarcodeCode}, '%')
+            </if>
+            <if test="erpMaterialSkuBarcode != null and erpMaterialSkuBarcode != ''">
+                and if(t6.erp_material_sku_enter_mode_project = 'XZ', t5.erp_material_sku_barcode like concat('%', #{erpMaterialSkuBarcode}, '%'),
+                    t2.erp_material_sku_barcode like concat('%', #{erpMaterialSkuBarcode}, '%'))
+            </if>
+            <if test="developPlanCode != null and developPlanCode != ''">
+                and t4.develop_plan_code like concat('%', #{developPlanCode}, '%')
+            </if>
+            <if test="developPlanName != null and developPlanName != ''">
+                and t4.develop_plan_name like concat('%', #{developPlanName}, '%')
+            </if>
+            <if test="sampleCode != null and sampleCode != ''">
+                and t2.sample_code like concat('%', #{sampleCode}, '%')
+            </if>
+            <if test="planStartDate != null ">
+                and t.plan_start_date = #{planStartDate}
+            </if>
+            <if test="planEndDateBegin != null and planEndDateBegin!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(#{planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="planEndDateEnd != null and planEndDateEnd!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &lt;= date_format(#{planEndDateEnd},'%y%m%d')
+            </if>
+            <if test="groupType != null and groupType != ''">
+                and t10.group_type = #{groupType}
+            </if>
+            <if test="groupTypeList != null and groupTypeList.length >0 ">
+                and t10.group_type in
+                (<foreach collection="groupTypeList" item="groupType" separator=",">
+                #{groupType}</foreach>)
+            </if>
+        </where>
+        <if test="pageNum != null and pageSize != null">LIMIT ${pageBegin},${pageSize}</if>
+    </select>
+
+    <select id="getNotYetStartTaskList" resultType="com.platform.ems.domain.PrjProjectTask">
+        select t.client_id,
+        t.project_task_sid,
+        t.project_sid,
+        t.project_code,
+        t.task_sid,
+        t.task_code,
+        t.sort,
+        t.task_status,
+        t.plan_start_date,
+        t.plan_end_date,
+        t.actual_end_date,
+        t.toexpire_days_task,
+        t.handler_task,
+        t.start_position_sid,
+        t.start_position_code,
+        t.charge_position_sid,
+        t.charge_position_code,
+        t.notice_position_sid,
+        t.notice_position_code,
+        t.task_phase,
+        t.business_section,
+        t.overdue_warn_rate,
+        t.calendar_type,
+        t.relate_business_form_sid,
+        t.relate_business_form_code,
+        t.pre_task,
+        t.pre_sort,
+        t.priority_task,
+        t.handle_sort_task,
+        t.is_monitor,
+        t.toexecute_notice_days_prj_task,
+        t.template_time,
+        t.complete_standard,
+        t.progress_description,
+        t.picture_path,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+        t2.project_name,
+        t2.product_code,
+        t2.material_barcode_code,
+        t2.sample_code,
+        t2.project_leader_sid,
+        t3.task_name,
+        t4.develop_plan_code,
+        t4.develop_plan_name,
+        t4.develop_type,
+        if(t6.erp_material_sku_enter_mode_project = 'XZ', t5.erp_material_sku_barcode, t2.erp_material_sku_barcode) AS erp_material_sku_barcode,
+        t7.handler_task_id,
+        t7.handler_task_name
+        from s_prj_project_task t
+        LEFT JOIN s_prj_project t2 ON t.project_sid = t2.project_sid
+        LEFT JOIN s_prj_task t3 ON t.task_sid = t3.task_sid
+        LEFT JOIN s_dev_develop_plan t4 ON t2.develop_plan_sid = t4.develop_plan_sid
+        LEFT JOIN s_bas_material_barcode t5 ON t2.material_barcode_sid = t5.barcode_sid
+        LEFT JOIN s_sys_default_setting_client t6 ON t.client_id = t6.client_id
+        LEFT JOIN (
+            SELECT ta.project_task_sid,
+                    GROUP_CONCAT(tb.user_id ORDER BY tb.user_name ASC SEPARATOR ';') as handler_task_id,
+                    GROUP_CONCAT(tb.nick_name ORDER BY tb.user_name ASC SEPARATOR ';') as handler_task_name
+            FROM s_prj_project_task ta
+            LEFT JOIN sys_user tb ON ta.client_id = tb.client_id AND (ta.handler_task = tb.user_name
+                or ta.handler_task like concat('%;', tb.user_name, ';%') or ta.handler_task like concat(tb.user_name, ';%') or ta.handler_task like concat('%;', tb.user_name))
+            GROUP BY ta.project_task_sid
+        ) t7 ON t.project_task_sid = t7.project_task_sid
+        <where>
+            (t.task_status = 'WKS' AND t2.project_status = 'JXZ' AND t2.handle_status = '5'
+            AND t.plan_start_date &lt;= DATE_FORMAT(date_add(now(), interval t.toexecute_notice_days_prj_task day), '%Y-%m-%d'))
+            <if test="entity.clientId != null and entity.clientId != ''">
+                and t.client_id = #{entity.clientId}
+            </if>
+            <if test="entity.creatorAccount != null and entity.creatorAccount != ''">
+                and (t2.creator_account = #{entity.creatorAccount}
+                <if test="entity.currentUserIsLeaderSid != null">
+                    or t2.project_leader_sid = #{entity.currentUserIsLeaderSid}
+                </if>)
+            </if>
+            <if test="entity.taskSid != null ">
+                and t.task_sid = #{entity.taskSid}
+            </if>
+            <if test="entity.taskSidList != null and entity.taskSidList.length >0 ">
+                and t.task_sid in
+                (<foreach collection="entity.taskSidList" item="taskSid" separator=",">#{taskSid}</foreach>)
+            </if>
+            <if test="entity.taskStatus != null and entity.taskStatus != ''">
+                and t.task_status = #{entity.taskStatus}
+            </if>
+            <if test="entity.taskStatusList != null and entity.taskStatusList.length >0 ">
+                and t.task_status in
+                (<foreach collection="entity.taskStatusList" item="taskStatus" separator=",">#{taskStatus}</foreach>)
+            </if>
+            <if test="entity.projectSid != null">
+                and t2.project_sid = #{entity.projectSid}
+            </if>
+            <if test="entity.projectCode != null and entity.projectCode != ''">
+                and t2.project_code like concat('%', #{entity.projectCode}, '%')
+            </if>
+            <if test="entity.projectName != null and entity.projectName != ''">
+                and t2.project_name like concat('%', #{entity.projectName}, '%')
+            </if>
+            <if test="entity.developPlanCode != null and entity.developPlanCode != ''">
+                and t4.develop_plan_code like concat('%', #{entity.developPlanCode}, '%')
+            </if>
+            <if test="entity.developPlanName != null and entity.developPlanName != ''">
+                and t4.develop_plan_name like concat('%', #{entity.developPlanName}, '%')
+            </if>
+            <if test="entity.erpMaterialSkuBarcode != null and entity.erpMaterialSkuBarcode != ''">
+                and if(t6.erp_material_sku_enter_mode_project = 'XZ', t5.erp_material_sku_barcode like concat('%', #{entity.erpMaterialSkuBarcode}, '%'),
+                    t2.erp_material_sku_barcode like concat('%', #{entity.erpMaterialSkuBarcode}, '%'))
+            </if>
+            <if test="entity.sampleCode != null and entity.sampleCode != ''">
+                and t2.sample_code like concat('%', #{entity.sampleCode}, '%')
+            </if>
+            <if test="entity.planStartDate != null ">
+                and t.plan_start_date = #{entity.planStartDate}
+            </if>
+            <if test="entity.planEndDateBegin != null and entity.planEndDateBegin!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &gt;= date_format(#{entity.planEndDateBegin},'%y%m%d')
+            </if>
+            <if test="entity.planEndDateEnd != null and entity.planEndDateEnd!=''">
+                and date_format(t.plan_end_date,'%y%m%d') &lt;= date_format(#{entity.planEndDateEnd},'%y%m%d')
+            </if>
+        </where>
+        <if test="entity.pageNum != null and entity.pageSize != null">LIMIT ${entity.pageBegin},${entity.pageSize}</if>
+    </select>
+
+    <resultMap type="com.platform.ems.domain.PrjProject" id="selectTaskCountGroupByProjectSidResult">
+        <result property="projectSid" column="project_sid"/>
+        <result property="itemCount" column="item_count"/>
+    </resultMap>
+
+    <select id="selectTaskCountGroupByProjectSid" resultMap="selectTaskCountGroupByProjectSidResult">
+        SELECT t.project_sid, COUNT(t.project_sid) AS item_count
+        FROM s_prj_project_task t
+        <where>
+            <if test="projectSidList != null and projecSidList.length >0 ">
+                and t.project_sid in
+                (<foreach collection="projectSidList" item="projectSid" separator=",">#{projectSid}</foreach>)
+            </if>
+        </where>
+        GROUP BY t.project_sid
+    </select>
+</mapper>

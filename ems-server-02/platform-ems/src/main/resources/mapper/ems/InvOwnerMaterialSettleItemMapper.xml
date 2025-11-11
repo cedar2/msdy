@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.InvOwnerMaterialSettleItemMapper">
+
+    <resultMap type="com.platform.ems.domain.InvOwnerMaterialSettleItem" id="InvOwnerMaterialSettleItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="settleItemSid" column="settle_item_sid"/>
+        <result property="settleSid" column="settle_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="barcodeSid" column="barcode_sid"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="quantity" column="quantity"/>
+        <result property="storehouseSid" column="storehouse_sid"/>
+        <result property="storehouseLocationSid" column="storehouse_location_sid"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectInvOwnerMaterialSettleItemVo">
+        select t.client_id,
+               t.settle_item_sid,
+               t.settle_sid,
+               t.material_sid,
+               t.sku1_sid,
+               t.sku2_sid,
+               t.barcode_sid,
+               t.unit_base,
+               t.quantity,
+               t.storehouse_sid,
+               ifnull(t.storehouse_code,t8.storehouse_code) as storehouse_code,
+               t.storehouse_location_sid,
+               ifnull(t.storehouse_location_code,t9.location_code) as storehouse_location_code,
+               ifnull(t.storehouse_location_code,t9.location_code) as location_code,
+               t.item_num,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t1.material_name,
+               t1.material_code,
+               t2.sku_code  AS sku1_code,
+               t2.sku_name  AS sku1_name,
+               t3.sku_code  AS sku2_code,
+               t3.sku_name  AS sku2_name,
+               t4.name      as unit_base_name,
+               t5.nick_name as creator_account_name,
+               t6.barcode,
+               t8.storehouse_name,
+               t9.location_name,
+               t9.location_name as storehouse_location_name
+        from s_inv_owner_material_settle_item t
+         LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+         LEFT JOIN s_bas_sku t2 ON t2.sku_sid = t.sku1_sid
+         LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t.sku2_sid
+         left join s_con_measure_unit t4 on t4.code = t.unit_base
+         LEFT JOIN sys_user t5 ON t5.user_name = t.creator_account
+         left join s_bas_material_barcode t6 on t6.barcode_sid = t.barcode_sid
+         LEFT JOIN s_bas_storehouse t8 on t8.storehouse_sid = t.storehouse_sid
+         LEFT JOIN s_bas_storehouse_location t9 on t9.storehouse_location_sid = t.storehouse_location_sid
+    </sql>
+
+    <sql id="selectReportVo">
+        select t.client_id,
+               t.settle_item_sid,
+               t.settle_sid,
+               t.material_sid,
+               t.sku1_sid,
+               t.sku2_sid,
+               t.barcode_sid,
+               t.unit_base,
+               t.quantity,
+               t.storehouse_sid,
+               t.storehouse_code,
+               t.storehouse_location_sid,
+               t.storehouse_location_code,
+               t.item_num,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t1.material_name,
+               t1.material_code,
+               t2.sku_code  AS sku1_code,
+               t2.sku_name  AS sku1_name,
+               t3.sku_code  AS sku2_code,
+               t3.sku_name  AS sku2_name,
+               t4.name      as unit_base_name,
+               t7.document_date,
+               t7.account_date,
+               t5.nick_name as creator_account_name,
+               t6.barcode,
+               t7.settle_code,
+               t7.handle_status,
+               t7.settle_sid,
+               t8.vendor_name,
+               t9.name      as movement_type_name,
+               t10.name     as special_stock_name,
+               t11.storehouse_name,
+               t12.location_name,
+               t15.inventory_document_code
+        from s_inv_owner_material_settle_item t
+         LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+         LEFT JOIN s_bas_sku t2 ON t2.sku_sid = t.sku1_sid
+         LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t.sku2_sid
+         left join s_con_measure_unit t4 on t4.code = t.unit_base
+         LEFT JOIN sys_user t5 ON t5.user_name = t.creator_account
+         left join s_bas_material_barcode t6 on t6.barcode_sid = t.barcode_sid
+         left join s_inv_owner_material_settle t7 on t7.settle_sid = t.settle_sid
+         LEFT JOIN s_bas_vendor t8 on t8.vendor_sid = t7.vendor_sid
+         LEFT JOIN s_con_movement_type t9 on t9.code = t7.movement_type
+         left join s_con_special_stock t10 on t10.code = t7.special_stock
+         LEFT JOIN s_bas_storehouse t11 on t11.storehouse_sid = t.storehouse_sid
+         LEFT JOIN s_bas_storehouse_location t12 on t12.storehouse_location_sid = t.storehouse_location_sid
+         LEFT JOIN sys_user t13 ON t13.user_name = t.creator_account
+         left join s_inv_inventory_document t15 on t15.refer_document_sid = t.settle_sid and t15.document_type = 'CG' and t15.handle_status = 'B'
+    </sql>
+
+    <select id="selectInvOwnerMaterialSettleItemById" parameterType="Long" resultMap="InvOwnerMaterialSettleItemResult">
+        <include refid="selectInvOwnerMaterialSettleItemVo"/>
+        where t.settle_sid = #{settleSid}
+    </select>
+
+    <select id="getReport" parameterType="com.platform.ems.domain.dto.request.InvOwnerMaterialSettleRequest"
+            resultType="com.platform.ems.domain.dto.response.InvOwnerMaterialSettleReportResponse">
+        <include refid="selectReportVo"/>
+        <where>
+            <if test="settleCode != null and settleCode != '' ">
+                and t7.settle_code like concat('%',#{settleCode}, '%')
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="materialName != null and materialName != '' ">
+                and t1.material_name like concat('%',#{materialName}, '%')
+            </if>
+            <if test="materialCode != null and materialCode != '' ">
+                and t1.material_code like concat('%',#{materialCode}, '%')
+            </if>
+            <if test="storehouseSid != null and storehouseSid != '' ">
+                and t.storehouse_sid =#{storehouseSid}
+            </if>
+            <if test="storehouseLocationSidList != null and storehouseLocationSidList.length >0">
+                and t.storehouse_location_sid in
+                (<foreach collection="storehouseLocationSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="movementTypeList != null and movementTypeList.length >0">
+                and t7.movement_type in
+                (<foreach collection="movementTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="specialStockList != null and specialStockList.length >0">
+                and t7.special_stock in
+                (<foreach collection="specialStockList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t7.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t7.vendor_sid in
+                (<foreach collection="vendorSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">
+                    t13.nick_name like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+        </where>
+        order by t7.settle_code desc
+    </select>
+
+    <select id="selectInvOwnerMaterialSettleItemList" parameterType="com.platform.ems.domain.InvOwnerMaterialSettleItem"
+            resultMap="InvOwnerMaterialSettleItemResult">
+        <include refid="selectInvOwnerMaterialSettleItemVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="settleSid != null ">
+                and t.settle_sid =#{settleSid}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid =#{materialSid}
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid =#{sku1Sid}
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid =#{sku2Sid}
+            </if>
+            <if test="barcodeSid != null ">
+                and t.barcode_sid =#{barcodeSid}
+            </if>
+            <if test="unitBase != null and unitBase != ''">
+                and t.unit_base = #{unitBase}
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="storehouseSid != null ">
+                and t.storehouse_sid =#{storehouseSid}
+            </if>
+            <if test="storehouseLocationSid != null ">
+                and t.storehouse_location_sid =#{storehouseLocationSid}
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num =#{itemNum}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">
+                    t.creator_account like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator=" or ">
+                    t.updater_account like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_inv_owner_material_settle_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            settle_item_sid,
+            settle_sid,
+            material_sid,
+            sku1_sid,
+            sku2_sid,
+            barcode_sid,
+            unit_base,
+            quantity,
+            storehouse_sid,
+            storehouse_code,
+            storehouse_location_sid,
+            storehouse_location_code,
+            item_num,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.settleItemSid},
+                #{item.settleSid},
+                #{item.materialSid},
+                #{item.sku1Sid},
+                #{item.sku2Sid},
+                #{item.barcodeSid},
+                #{item.unitBase},
+                #{item.quantity},
+                #{item.storehouseSid},
+                #{item.storehouseCode},
+                #{item.storehouseLocationSid},
+                #{item.storehouseLocationCode},
+                #{item.itemNum},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_inv_owner_material_settle_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            settle_item_sid = #{settleItemSid},
+            settle_sid = #{settleSid},
+            material_sid = #{materialSid},
+            sku1_sid = #{sku1Sid},
+            sku2_sid = #{sku2Sid},
+            barcode_sid = #{barcodeSid},
+            unit_base = #{unitBase},
+            quantity = #{quantity},
+            storehouse_sid = #{storehouseSid},
+            storehouse_code = #{storehouseCode},
+            storehouse_location_sid = #{storehouseLocationSid},
+            storehouse_location_code = #{storehouseLocationCode},
+            item_num = #{itemNum},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where settle_item_sid = #{settleItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_inv_owner_material_settle_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                settle_item_sid = #{settleItemSid},
+                settle_sid = #{settleSid},
+                material_sid = #{materialSid},
+                sku1_sid = #{sku1Sid},
+                sku2_sid = #{sku2Sid},
+                barcode_sid = #{barcodeSid},
+                unit_base = #{unitBase},
+                quantity = #{quantity},
+                storehouse_sid = #{storehouseSid},
+                storehouse_code = #{storehouseCode},
+                storehouse_location_sid = #{storehouseLocationSid},
+                storehouse_location_code = #{storehouseLocationCode},
+                item_num = #{itemNum},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where settle_item_sid = #{settleItemSid}
+        </foreach>
+    </update>
+
+</mapper>

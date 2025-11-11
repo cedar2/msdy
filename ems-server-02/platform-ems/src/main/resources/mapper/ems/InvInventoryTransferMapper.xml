@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.InvInventoryTransferMapper">
+
+    <resultMap type="com.platform.ems.domain.InvInventoryTransfer" id="InvInventoryTransferResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="inventoryTransferSid" column="inventory_transfer_sid"/>
+                    <result property="inventoryTransferCode" column="inventory_transfer_code"/>
+                    <result property="documentDate" column="document_date"/>
+                    <result property="movementType" column="movement_type"/>
+                    <result property="documentType" column="document_type"/>
+                    <result property="businessType" column="business_type"/>
+                    <result property="companySid" column="company_sid"/>
+                    <result property="storehouseSid" column="storehouse_sid"/>
+                    <result property="storehouseLocationSid" column="storehouse_location_sid"/>
+                    <result property="destStorehouseSid" column="dest_storehouse_sid"/>
+                    <result property="destStorehouseLocationSid" column="dest_storehouse_location_sid"/>
+                    <result property="stockType" column="stock_type"/>
+                    <result property="specialStock" column="special_stock"/>
+                    <result property="vendorSid" column="vendor_sid"/>
+                    <result property="customerSid" column="customer_sid"/>
+                    <result property="accountor" column="accountor"/>
+                    <result property="accountDate" column="account_date"/>
+                    <result property="remark" column="remark"/>
+                    <result property="handleStatus" column="handle_status"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="confirmerAccount" column="confirmer_account"/>
+                    <result property="confirmDate" column="confirm_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+            </resultMap>
+
+    <sql id="selectInvInventoryTransferVo">
+        select t.client_id,
+         t.inventory_transfer_sid,
+         t.inventory_transfer_code,
+         t.document_date,
+         t.movement_type,
+         t.document_type,
+         t.business_type,
+         t.refer_document,
+         t.company_sid,
+         t.storehouse_sid,
+         t.out_stock_status,
+         t.in_stock_status,
+         t.storehouse_location_sid,
+         t.dest_storehouse_sid,
+         t.dest_storehouse_location_sid,
+         t.stock_type,
+         t.special_stock,
+         t.vendor_sid,
+         t.customer_sid,
+         t.accountor,
+         t.account_date,
+         t.remark,
+         t.handle_status,
+         t.creator_account,
+         t.create_date,
+         t.updater_account,
+         t.update_date,
+         t.confirmer_account,
+         t.confirm_date,
+         t.data_source_sys,
+         t1.company_name,
+        t1.company_code,
+        t2.vendor_name as vendorName,
+        t2.vendor_code as vendorCode,
+        t3.storehouse_name,
+        t3.storehouse_code,
+        t4.location_name,
+        t4.location_code,
+        t5.customer_code,
+        t5.customer_name,
+        t6.name as movement_type_name,
+        t7.storehouse_name as dest_storehouse_name,
+	    t7.storehouse_code as dest_storehouse_code,
+	    t8.location_name as dest_location_name,
+	    t8.location_code as dest_location_code,
+	    t9.name as special_stock_name,
+	    t10.name as business_type_name ,
+        if(t6.is_transfer_onestep LIKE'Y',t14.inventory_document_code,t11.inventory_document_code) AS inventory_document_code_ru,
+	    if(t6.is_transfer_onestep LIKE'Y',t14.account_date,t11.account_date) AS account_date_ru,
+	    t12.name as document_type_name,
+	    t13.name as stock_type_name,
+	    t14.inventory_document_code as inventory_document_code_chk,
+	    t14.account_date as account_date_chk,
+	    t15.nick_name as creator_account_name,
+	    t16.nick_name as updater_account_name,
+	    t17.nick_name as accountor_name,
+	    t19.approval_node,
+      	t19.approval_user_id,
+	    t19.approval_user_name,
+	    t19.create_date AS submit_date,
+	    t20.nick_name AS submit_user_name
+        from s_inv_inventory_transfer t
+        LEFT JOIN s_bas_company t1 ON t1.company_sid = t.company_sid
+	    LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t.vendor_sid
+        LEFT JOIN s_bas_storehouse t3 on t3.storehouse_sid=t.storehouse_sid
+        LEFT JOIN s_bas_storehouse_location t4 on t4.storehouse_location_sid=t.storehouse_location_sid
+        LEFT JOIN s_bas_customer t5 on t5.customer_sid=t.customer_sid
+        LEFT JOIN s_con_movement_type t6 on t6.code=t.movement_type
+        LEFT JOIN s_bas_storehouse t7 on t7.storehouse_sid=t.dest_storehouse_sid
+        LEFT JOIN s_bas_storehouse_location t8 on t8.storehouse_location_sid=t.dest_storehouse_location_sid
+        left join s_con_special_stock t9 on t9.code =t.special_stock
+        left join s_con_bu_type_inventory_transfer t10 on t10.code=t.business_type
+        left join s_inv_inventory_document  t11 on t11.refer_document_sid=t.inventory_transfer_sid and t11.document_category='RK'
+        left join s_con_doc_type_inventory_transfer t12 on t12.code =t.document_type
+        left join s_con_stock_type t13 on t13.code=t.stock_type
+        left join s_inv_inventory_document  t14 on t14.refer_document_sid=t.inventory_transfer_sid and t14.document_category='CK'
+        LEFT JOIN sys_user t15 ON t15.user_name = t.creator_account AND t15.client_id = t.client_id
+        LEFT JOIN sys_user t16 ON t16.user_name = t.updater_account AND t16.client_id = t.client_id
+        LEFT JOIN sys_user t17 ON t17.user_name = t.accountor AND t17.client_id = t.client_id
+        left join s_sys_form_process t19 on t19.form_id=t.inventory_transfer_sid
+        LEFT JOIN sys_user t20 ON t19.creator_account = t20.user_name AND t19.client_id = t20.client_id
+    </sql>
+
+    <select id="selectInvInventoryTransferById" parameterType="Long" resultType="com.platform.ems.domain.InvInventoryTransfer">
+        <include refid="selectInvInventoryTransferVo"/>
+        where t.inventory_transfer_sid = #{inventoryTransferSid}
+        limit 1
+    </select>
+
+
+    <select id="selectInvInventoryTransferList" parameterType="com.platform.ems.domain.InvInventoryTransfer"
+            resultType="com.platform.ems.domain.InvInventoryTransfer">
+        <include refid="selectInvInventoryTransferVo"/>
+        <where>
+            <if test="(destStorehouseLocationSidList != null and destStorehouseLocationSidList.length >0) or
+                    (storehouseLocationSidList != null and storehouseLocationSidList.length >0)">
+                and t.inventory_transfer_sid in (
+                select distinct a.inventory_transfer_sid
+                from s_inv_inventory_transfer_item a
+                <where>
+                    <if test="storehouseLocationSidList != null and storehouseLocationSidList.length >0">
+                        and a.storehouse_location_sid in
+                        (<foreach collection="storehouseLocationSidList" item="item" separator=",">
+                        #{item}</foreach>)
+                    </if>
+                    <if test="destStorehouseLocationSidList != null and destStorehouseLocationSidList.length >0">
+                        and a.dest_storehouse_location_sid in
+                        (<foreach collection="destStorehouseLocationSidList" item="item" separator=",">
+                        #{item}</foreach>)
+                    </if>
+                </where>
+                )
+            </if>
+            <if test="approvalUserId != null and approvalUserId != ''">
+                and t19.approval_user_id = #{approvalUserId}
+            </if>
+            <if test="itemSidList != null  and itemSidList.size> 0">and t.inventory_transfer_sid in
+                <foreach collection="itemSidList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="inventoryTransferCode != null and inventoryTransferCode !=''">
+                and  t.inventory_transfer_code like concat('%',
+                #{inventoryTransferCode}, '%')
+            </if>
+            <if test="inventoryDocumentCodeRu != null and inventoryDocumentCodeRu !=''">
+                and  t11.inventory_document_code like concat('%',#{inventoryDocumentCodeRu}, '%')
+
+            </if>
+            <if test="inventoryDocumentCodeChk != null and inventoryDocumentCodeChk !=''">
+                and  t14.inventory_document_code like concat('%',#{inventoryDocumentCodeChk}, '%')
+            </if>
+            <if test="inStockStatusList != null and inStockStatusList.length >0">
+                and t.in_stock_status in
+                (<foreach collection="inStockStatusList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="OutStockStatusList != null and OutStockStatusList.length >0">
+                and t.out_stock_status in
+                (<foreach collection="OutStockStatusList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="specialStockList != null and specialStockList.length >0">
+                and t.special_stock in
+                (<foreach collection="specialStockList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and t.customer_sid in
+                (<foreach collection="customerSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="storehouseSid != null and storehouseSid != '' ">
+                and t.storehouse_sid =#{storehouseSid}
+            </if>
+            <if test="documentBeginTime != null and documentBeginTime!=''">
+                and date_format(t.document_date,'%y%m%d') &gt;= date_format(#{documentBeginTime},'%y%m%d')
+            </if>
+            <if test="documentEndTime != null and documentEndTime!=''">
+                and date_format(t.document_date,'%y%m%d') &lt;= date_format(#{documentEndTime},'%y%m%d')
+            </if>
+            <if test="movementTypeList != null and movementTypeList.length >0">
+                and t.movement_type in
+                (<foreach collection="movementTypeList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0" >
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="destStorehouseSid != null and destStorehouseSid != '' ">
+                and t.dest_storehouse_sid =#{destStorehouseSid}
+            </if>
+        </where>
+        order by t.inventory_transfer_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_inv_inventory_transfer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                inventory_transfer_sid,
+                                                                inventory_transfer_code,
+                                                                document_date,
+                                                                movement_type,
+                                                                document_type,
+                                                                business_type,
+                                                                reference_document,
+                                                                company_sid,
+                                                                storehouse_sid,
+                                                                storehouse_location_sid,
+                                                                dest_storehouse_sid,
+                                                                dest_storehouse_location_sid,
+                                                                stock_type,
+                                                                special_stock,
+                                                                vendor_sid,
+                                                                customer_sid,
+                                                                accountor,
+                                                                account_date,
+                                                                remark,
+                                                                handle_status,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                confirmer_account,
+                                                                confirm_date,
+                                                                data_source_sys,
+                                    </trim>
+        values
+            <foreach collection="list" item="item" separator=",">
+                <trim prefix=" (" suffix=")" suffixOverrides=",">
+                                                            #{item.clientId},
+                                                                                #{item.inventoryTransferSid},
+                                                                                #{item.inventoryTransferCode},
+                                                                                #{item.documentDate},
+                                                                                #{item.movementType},
+                                                                                #{item.documentType},
+                                                                                #{item.businessType},
+                                                                                #{item.referenceDocument},
+                                                                                #{item.companySid},
+                                                                                #{item.storehouseSid},
+                                                                                #{item.storehouseLocationSid},
+                                                                                #{item.destStorehouseSid},
+                                                                                #{item.destStorehouseLocationSid},
+                                                                                #{item.stockType},
+                                                                                #{item.specialStock},
+                                                                                #{item.vendorSid},
+                                                                                #{item.customerSid},
+                                                                                #{item.accountor},
+                                                                                #{item.accountDate},
+                                                                                #{item.remark},
+                                                                                #{item.handleStatus},
+                                                                                #{item.creatorAccount},
+                                                                                #{item.createDate},
+                                                                                #{item.updaterAccount},
+                                                                                #{item.updateDate},
+                                                                                #{item.confirmerAccount},
+                                                                                #{item.confirmDate},
+                                                                                #{item.dataSourceSys},
+                                                    </trim>
+            </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_inv_inventory_transfer
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                                            inventory_transfer_code = #{inventoryTransferCode},
+                                                                document_date = #{documentDate},
+                                                                movement_type = #{movementType},
+                                                                document_type = #{documentType},
+                                                                business_type = #{businessType},
+                                                                reference_document = #{referenceDocument},
+                                                                company_sid = #{companySid},
+                                                                storehouse_sid = #{storehouseSid},
+                                                                storehouse_location_sid = #{storehouseLocationSid},
+                                                                dest_storehouse_sid = #{destStorehouseSid},
+                                                                dest_storehouse_location_sid = #{destStorehouseLocationSid},
+                                                                stock_type = #{stockType},
+                                                                special_stock = #{specialStock},
+                                                                vendor_sid = #{vendorSid},
+                                                                customer_sid = #{customerSid},
+                                                                accountor = #{accountor},
+                                                                account_date = #{accountDate},
+                                                                remark = #{remark},
+                                                                handle_status = #{handleStatus},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                confirmer_account = #{confirmerAccount},
+                                                                confirm_date = #{confirmDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where inventory_transfer_sid = #{inventoryTransferSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_inv_inventory_transfer
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    inventory_transfer_code = #{inventoryTransferCode},
+                                                                                document_date = #{documentDate},
+                                                                                movement_type = #{movementType},
+                                                                                document_type = #{documentType},
+                                                                                business_type = #{businessType},
+                                                                                reference_document = #{referenceDocument},
+                                                                                company_sid = #{companySid},
+                                                                                storehouse_sid = #{storehouseSid},
+                                                                                storehouse_location_sid = #{storehouseLocationSid},
+                                                                                dest_storehouse_sid = #{destStorehouseSid},
+                                                                                dest_storehouse_location_sid = #{destStorehouseLocationSid},
+                                                                                stock_type = #{stockType},
+                                                                                special_stock = #{specialStock},
+                                                                                vendor_sid = #{vendorSid},
+                                                                                customer_sid = #{customerSid},
+                                                                                accountor = #{accountor},
+                                                                                account_date = #{accountDate},
+                                                                                remark = #{remark},
+                                                                                handle_status = #{handleStatus},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                confirmer_account = #{confirmerAccount},
+                                                                                confirm_date = #{confirmDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where inventory_transfer_sid = #{inventoryTransferSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurOutsourcePurchaseOrderItemMapper">
+
+    <resultMap type="com.platform.ems.domain.PurOutsourcePurchaseOrderItem" id="PurOutsourcePurchaseOrderItemResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="outsourcePurchaseOrderItemSid" column="outsource_purchase_order_item_sid"/>
+                    <result property="outsourcePurchaseOrderSid" column="outsource_purchase_order_sid"/>
+                    <result property="materialSid" column="material_sid"/>
+                    <result property="manufactureOrderSid" column="manufacture_order_sid"/>
+                    <result property="manufactureOrderCode" column="manufacture_order_code"/>
+                    <result property="manufactureOrderProcessSid" column="manufacture_order_process_sid"/>
+                    <result property="quantity" column="quantity"/>
+                    <result property="unitBase" column="unit_base"/>
+                    <result property="purchaseUnit" column="purchase_unit"/>
+                    <result property="unitConversionRate" column="unit_conversion_rate"/>
+                    <result property="purchasePrice" column="purchase_price"/>
+                    <result property="purchasePriceTax" column="purchase_price_tax"/>
+                    <result property="taxRate" column="tax_rate"/>
+                    <result property="freeFlag" column="free_flag"/>
+                    <result property="contractDate" column="contract_date"/>
+                    <result property="demandDate" column="demand_date"/>
+                    <result property="deliveryStatus" column="delivery_status"/>
+                    <result property="materialIssueStatus" column="material_issue_status"/>
+                    <result property="itemNum" column="item_num"/>
+                    <result property="remark" column="remark"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="confirmerAccount" column="confirmer_account"/>
+                    <result property="confirmDate" column="confirm_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+                    <result property="materialCode" column="material_code"/>
+                    <result property="sku1Code" column="sku1_code"/>
+                    <result property="sku1Name" column="sku1_name"/>
+                    <result property="sku2Code" column="sku2_code"/>
+                    <result property="sku2Name" column="sku2_name"/>
+                    <result property="itemName" column="item_name"/>
+                    <result property="itemCode" column="item_code"/>
+                    <result property="outsourcePurchaseOrderCode" column="outsource_purchase_order_code"/>
+                    <result property="vendorSid" column="vendor_sid"/>
+                    <result property="vendorCode" column="vendor_code"/>
+                    <result property="vendorName" column="vendor_name"/>
+                    <result property="plantSid" column="plant_sid"/>
+                    <result property="plantCode" column="plant_code"/>
+                    <result property="plantName" column="plant_name"/>
+                    <result property="materialIssueStatus" column="material_issue_status"/>
+                    <result property="deliveryStatus" column="delivery_status"/>
+                    <result property="materialCode" column="material_code"/>
+                    <result property="sku1Name" column="sku1_name"/>
+                    <result property="sku2Name" column="sku2_name"/>
+                    <result property="processCode" column="process_code"/>
+                    <result property="processName" column="process_name" />
+                    <result property="documentType" column="document_type"/>
+                    <result property="businessType" column="business_type"/>
+                    <result property="buyer" column="buyer"/>
+                    <result property="productSeasonSid" column="product_season_sid"/>
+                    <result property="productSeasonCode" column="product_season_code"/>
+                    <result property="productSeasonName" column="product_season_name"/>
+                    <result property="documentDate" column="document_date"/>
+                    <result property="purchaseContractSid" column="purchase_contract_sid"/>
+                    <result property="purchaseContractCode" column="purchase_contract_code"/>
+    </resultMap>
+
+    <sql id="selectPurOutsourcePurchaseOrderItemVo">
+        select
+        t.client_id,
+        t.outsource_purchase_order_item_sid,
+        t.outsource_purchase_order_sid,
+        t.material_sid,
+        t.manufacture_order_sid,
+        t.manufacture_order_code,
+        t.manufacture_order_process_sid,
+        t.quantity,
+        t.unit_base,
+        t.purchase_unit,
+        t.unit_conversion_rate,
+        t.purchase_price,
+        t.purchase_price_tax,
+        t.tax_rate,
+        t.free_flag,
+        t.contract_date,
+        t.demand_date,
+        t.delivery_status,
+        t.material_issue_status,
+        t.item_num,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.material_code
+  from s_pur_outsource_purchase_order_item t
+      LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+    </sql>
+
+    <select id="selectPurOutsourcePurchaseOrderItemById" parameterType="Long" resultMap="PurOutsourcePurchaseOrderItemResult">
+        <include refid="selectPurOutsourcePurchaseOrderItemVo"/>
+        where t.outsource_purchase_order_item_sid = #{outsourcePurchaseOrderItemSid}
+    </select>
+
+
+    <select id="selectPurOutsourcePurchaseOrderItemList" parameterType="com.platform.ems.domain.PurOutsourcePurchaseOrderItem"
+            resultMap="PurOutsourcePurchaseOrderItemResult">
+        <include refid="selectPurOutsourcePurchaseOrderItemVo"/>
+        <where>
+                                                                                                    <if test="clientId != null  and clientId != ''">
+                               and (<foreach collection="clientId.split(';')" item="item" separator="or"> t.client_id like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+            <if test="outsourcePurchaseOrderItemSid != null ">
+                and t.outsource_purchase_order_item_sid =#{outsourcePurchaseOrderItemSid}
+            </if>
+                                                                                                                                                                                            <if test="outsourcePurchaseOrderSid != null ">
+                                and t.outsource_purchase_order_sid =#{outsourcePurchaseOrderSid}
+                            </if>
+                                                                                                                                                                <if test="materialSid != null ">
+                                and t.material_sid =#{materialSid}
+                            </if>
+                                                                                                                                                                <if test="manufactureOrderSid != null ">
+                                and t.manufacture_order_sid =#{manufactureOrderSid}
+                            </if>
+                                                                                                                                                                <if test="manufactureOrderCode != null ">
+                                and t.manufacture_order_code =#{manufactureOrderCode}
+                            </if>
+                                                                                                                                                                                                <if test="quantity != null ">
+                                    and t.quantity = #{quantity}
+                                </if>
+                                                                                                                                                                                            <if test="unitBase != null  and unitBase != ''">
+                               and (<foreach collection="unitBase.split(';')" item="item" separator="or"> t.unit_base like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="purchaseUnit != null  and purchaseUnit != ''">
+                               and (<foreach collection="purchaseUnit.split(';')" item="item" separator="or"> t.purchase_unit like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="unitConversionRate != null ">
+                                    and t.unit_conversion_rate = #{unitConversionRate}
+                                </if>
+                                                                                                                                                                                                                            <if test="purchasePrice != null ">
+                                    and t.purchase_price = #{purchasePrice}
+                                </if>
+                                                                                                                                                                                                                            <if test="purchasePriceTax != null ">
+                                    and t.purchase_price_tax = #{purchasePriceTax}
+                                </if>
+                                                                                                                                                                                                                            <if test="taxRate != null ">
+                                    and t.tax_rate = #{taxRate}
+                                </if>
+                                                                                                                                                                                            <if test="freeFlag != null  and freeFlag != ''">
+                               and (<foreach collection="freeFlag.split(';')" item="item" separator="or"> t.free_flag like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="contractDate != null ">
+                                    and t.contract_date = #{contractDate}
+                                </if>
+            <if test="demandDate != null ">
+                and t.demand_date = #{demandDate}
+            </if>
+                                                                                                                                                                                            <if test="deliveryStatus != null  and deliveryStatus != ''">
+                               and (<foreach collection="deliveryStatus.split(';')" item="item" separator="or"> t.delivery_status like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="materialIssueStatus != null  and materialIssueStatus != ''">
+                               and (<foreach collection="materialIssueStatus.split(';')" item="item" separator="or"> t.material_issue_status like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="itemNum != null ">
+                                and t.item_num =#{itemNum}
+                            </if>
+                                                                                                                                                                <if test="creatorAccount != null  and creatorAccount != ''">
+                               and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t.creator_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="beginTime != null and beginTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                                </if>
+                                <if test="endTime != null and endTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                                </if>
+                                                                                                                                                                                            <if test="updaterAccount != null  and updaterAccount != ''">
+                               and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="updateDate != null ">
+                                    and t.update_date = #{updateDate}
+                                </if>
+                                                                                                                                                                                            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                               and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or"> t.confirmer_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="confirmDate != null ">
+                                    and t.confirm_date = #{confirmDate}
+                                </if>
+                                                                                                                                                                                            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                               and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or"> t.data_source_sys like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                    <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_outsource_purchase_order_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                outsource_purchase_order_item_sid,
+                                                                outsource_purchase_order_sid,
+                                                                material_sid,
+                                                                manufacture_order_sid,
+                                                                manufacture_order_code,
+                                                                quantity,
+                                                                unit_base,
+                                                                purchase_unit,
+                                                                unit_conversion_rate,
+                                                                purchase_price,
+                                                                purchase_price_tax,
+                                                                tax_rate,
+                                                                free_flag,
+                                                                contract_date,
+                                                                delivery_status,
+                                                                material_issue_status,
+                                                                item_num,
+                                                                remark,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                confirmer_account,
+                                                                confirm_date,
+                                                                data_source_sys,
+                                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                                                            #{clientId},
+                                                                                #{outsourcePurchaseOrderItemSid},
+                                                                                #{outsourcePurchaseOrderSid},
+                                                                                #{materialSid},
+                                                                                #{materialName},
+                                                                                #{manufactureOrderSid},
+                                                                                #{manufactureOrderCode},
+                                                                                #{quantity},
+                                                                                #{unitBase},
+                                                                                #{purchaseUnit},
+                                                                                #{unitConversionRate},
+                                                                                #{purchasePrice},
+                                                                                #{purchasePriceTax},
+                                                                                #{taxRate},
+                                                                                #{freeFlag},
+                                                                                #{contractDate},
+                                                                                #{deliveryStatus},
+                                                                                #{materialIssueStatus},
+                                                                                #{itemNum},
+                                                                                #{remark},
+                                                                                #{handleStatus},
+                                                                                #{creatorAccount},
+                                                                                #{createDate},
+                                                                                #{updaterAccount},
+                                                                                #{updateDate},
+                                                                                #{confirmerAccount},
+                                                                                #{confirmDate},
+                                                                                #{dataSourceSys},
+                                                </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_outsource_purchase_order_item
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                                            outsource_purchase_order_sid = #{outsourcePurchaseOrderSid},
+                                                                material_sid = #{materialSid},
+                                                                manufacture_order_sid = #{manufactureOrderSid},
+                                                                manufacture_order_code = #{manufactureOrderCode},
+                                                                quantity = #{quantity},
+                                                                unit_base = #{unitBase},
+                                                                purchase_unit = #{purchaseUnit},
+                                                                unit_conversion_rate = #{unitConversionRate},
+                                                                purchase_price = #{purchasePrice},
+                                                                purchase_price_tax = #{purchasePriceTax},
+                                                                tax_rate = #{taxRate},
+                                                                free_flag = #{freeFlag},
+                                                                contract_date = #{contractDate},
+                                                                delivery_status = #{deliveryStatus},
+                                                                material_issue_status = #{materialIssueStatus},
+                                                                item_num = #{itemNum},
+                                                                remark = #{remark},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                confirmer_account = #{confirmerAccount},
+                                                                confirm_date = #{confirmDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where outsource_purchase_order_item_sid = #{outsourcePurchaseOrderItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_outsource_purchase_order_item
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    outsource_purchase_order_sid = #{outsourcePurchaseOrderSid},
+                                                                                material_sid = #{materialSid},
+                                                                                manufacture_order_sid = #{manufactureOrderSid},
+                                                                                manufacture_order_code = #{manufactureOrderCode},
+                                                                                quantity = #{quantity},
+                                                                                unit_base = #{unitBase},
+                                                                                purchase_unit = #{purchaseUnit},
+                                                                                unit_conversion_rate = #{unitConversionRate},
+                                                                                purchase_price = #{purchasePrice},
+                                                                                purchase_price_tax = #{purchasePriceTax},
+                                                                                tax_rate = #{taxRate},
+                                                                                free_flag = #{freeFlag},
+                                                                                contract_date = #{contractDate},
+                                                                                delivery_status = #{deliveryStatus},
+                                                                                material_issue_status = #{materialIssueStatus},
+                                                                                item_num = #{itemNum},
+                                                                                remark = #{remark},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                confirmer_account = #{confirmerAccount},
+                                                                                confirm_date = #{confirmDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where outsource_purchase_order_item_sid = #{outsourcePurchaseOrderItemSid}
+        </foreach>
+    </update>
+
+    <delete id="deleteOutsourcePurchaseOrderItemByIds" parameterType="long">
+        delete from s_pur_outsource_purchase_order_item where outsource_purchase_order_sid in
+        <foreach item="outsourcePurchaseOrderSid" collection="list" open="(" separator="," close=")">
+            #{outsourcePurchaseOrderSid}
+        </foreach>
+    </delete>
+
+    <sql id="getItemListVo">
+        SELECT
+	    t.client_id,
+        t.outsource_purchase_order_item_sid,
+        t.outsource_purchase_order_sid,
+        t.material_sid,
+        t.manufacture_order_sid,
+        t.manufacture_order_code,
+        t.manufacture_order_process_sid,
+        t.quantity,
+        t.unit_base,
+        t.purchase_unit,
+        t.unit_conversion_rate,
+        t.purchase_price,
+        t.purchase_price_tax,
+        t.tax_rate,
+        t.free_flag,
+        t.contract_date,
+        t.demand_date,
+        t.delivery_status,
+        t.material_issue_status,
+        t.item_num,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.outsource_purchase_order_code,
+        t1.vendor_sid,
+        t2.vendor_code,
+	    t2.vendor_name,
+	    t3.plant_sid,
+		t4.plant_code,
+		t4.plant_name,
+		t1.material_issue_status,
+		t5.material_code,
+		t1.document_type,
+        t1.business_type,
+        t1.buyer,
+        t1.product_season_sid,
+        t9.product_season_code,
+        t9.product_season_name,
+        t1.document_date,
+        t1.purchase_contract_sid,
+        t10.purchase_contract_code
+  FROM s_pur_outsource_purchase_order_item t
+        LEFT JOIN s_bas_material t5 ON t5.material_sid = t.material_sid
+        LEFT JOIN s_pur_outsource_purchase_order t1 ON t1.outsource_purchase_order_sid = t.outsource_purchase_order_sid
+        LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t1.vendor_sid
+        LEFT JOIN s_bas_product_season t9 ON t9.product_season_sid = t1.product_season_sid
+        LEFT JOIN s_pur_purchase_contract t10 ON t10.purchase_contract_sid = t1.purchase_contract_sid
+        LEFT JOIN s_man_manufacture_order t3 ON t3.manufacture_order_sid = t.manufacture_order_sid
+        LEFT JOIN s_bas_plant t4 ON t4.plant_sid = t3.plant_sid
+    </sql>
+
+    <select id="getItemList" parameterType="com.platform.ems.domain.PurOutsourcePurchaseOrderItem"
+            resultMap="PurOutsourcePurchaseOrderItemResult">
+        <include refid="getItemListVo"/>
+        <where>
+            <if test="outsourcePurchaseOrderCode != null and outsourcePurchaseOrderCode != ''">
+                and (<foreach collection="outsourcePurchaseOrderCode.split(';')" item="item" separator="or"> t1.outsource_purchase_order_code like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0 ">
+                and t1.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length >0 ">
+                and t1.document_type in
+                (<foreach collection="documentTypeList" item="documentType" separator=",">#{documentType}</foreach>)
+            </if>
+            <if test="businessTypeList != null and businessTypeList.length >0 ">
+                and t1.business_type in
+                (<foreach collection="businessTypeList" item="businessType" separator=",">#{businessType}</foreach>)
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="materialCode" separator="or">t5.material_code like concat('%', #{materialCode}, '%')</foreach>)
+            </if>
+            <if test="purchaseContractCode != null and purchaseContractCode != ''">
+                and (<foreach collection="purchaseContractCode.split(';')" item="item" separator="or"> t10.purchase_contract_code like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="manufactureOrderCode != null and manufactureOrderCode != ''">
+                and (<foreach collection="manufactureOrderCode.split(';')" item="item" separator="or"> t3.manufacture_order_code like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t3.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="materialIssueStatusList != null and materialIssueStatusList.length >0 ">
+                and t.material_issue_status in
+                (<foreach collection="materialIssueStatusList" item="materialIssueStatus" separator=",">#{materialIssueStatus}</foreach>)
+            </if>
+            <if test="deliveryStatusList != null and deliveryStatusList.length >0 ">
+                and t.delivery_status in
+                (<foreach collection="deliveryStatusList" item="deliveryStatus" separator=",">#{deliveryStatus}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0 ">
+                and t1.product_seasonSid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">#{productSeasonSid}</foreach>)
+            </if>
+            <if test="salesOrderCode != null and salesOrderCode != ''">
+                and (<foreach collection="salesOrderCode.split(';')" item="salesOrderCode" separator="or">t3.sales_order_code like concat('%', #{salesOrderCode}, '%')</foreach>)
+            </if>
+            <if test="contractBeginDate != null and contractBeginDate != ''">
+                and date_format(t.contractDate,'%y%m%d') &gt;= date_format(#{contractBeginDate},'%y%m%d')
+            </if>
+            <if test="contractEndDate != null and contractEndDate != ''">
+                and date_format(t.contractDate,'%y%m%d') &lt;= date_format(#{contractEndDate},'%y%m%d')
+            </if>
+            <if test="demandBeginDate != null and demandBeginDate != ''">
+                and date_format(t.demand_date,'%y%m%d') &gt;= date_format(#{demandBeginDate},'%y%m%d')
+            </if>
+            <if test="demandEndDate != null and demandEndDate != ''">
+                and date_format(t.demand_date,'%y%m%d') &lt;= date_format(#{demandEndDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+        </where>
+    </select>
+</mapper>

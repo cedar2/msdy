@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManDayManufacturePlanMapper">
+
+    <resultMap type="com.platform.ems.domain.ManDayManufacturePlan" id="ManDayManufacturePlanResult">
+        <result property="clientId" column="client_id"/>
+        <result property="dayManufacturePlanSid" column="day_manufacture_plan_sid"/>
+        <result property="dayManufacturePlanCode" column="day_manufacture_plan_code"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="workCenterSid" column="work_center_sid"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="documentType" column="document_type"/>
+        <result property="businessType" column="business_type"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="referDocCategory" column="refer_doc_category"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="plantName" column="plant_name"/>
+        <result property="shortName" column="short_name"/>
+        <result property="workCenterCode" column="work_center_code"/>
+        <result property="workCenterName" column="work_center_name"/>
+    </resultMap>
+
+    <sql id="selectManDayManufacturePlanVo">
+        select
+        t.client_id,
+        t.day_manufacture_plan_sid,
+        t.day_manufacture_plan_code,
+        t.plant_sid,
+        t.work_center_sid,
+        t.document_date,
+        t.document_type,
+        t.business_type,
+        t.company_sid,
+        t.refer_doc_category,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.plant_code,
+        t1.plant_name,
+        t1.short_name,
+        t2.work_center_code,
+        t2.work_center_name,
+        t3.nick_name as creator_account_name
+  from s_man_day_manufacture_plan t
+        LEFT JOIN s_bas_plant t1 ON t1.plant_sid = t.plant_sid
+        LEFT JOIN s_man_work_center t2 ON t2.work_center_sid = t.work_center_sid
+        LEFT JOIN sys_user t3 ON t3.user_name = t.creator_account
+    </sql>
+
+    <select id="selectManDayManufacturePlanById" parameterType="Long" resultMap="ManDayManufacturePlanResult">
+        <include refid="selectManDayManufacturePlanVo"/>
+        where t.day_manufacture_plan_sid = #{dayManufacturePlanSid}
+    </select>
+
+
+    <select id="selectManDayManufacturePlanList" parameterType="com.platform.ems.domain.ManDayManufacturePlan"
+            resultMap="ManDayManufacturePlanResult">
+        <include refid="selectManDayManufacturePlanVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <!--<if test="manufactureOrderCode != null  and manufactureOrderCode != ''">-->
+                <!--and (<foreach collection="manufactureOrderCode.split(';')" item="item" separator="or">t.manufacture_order_code like concat('%',-->
+                <!--#{item}, '%')-->
+            <!--</foreach>)-->
+            <!--</if>-->
+            <if test="plantSid != null ">
+                and t.plant_sid =#{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid =#{workCenterSid}
+            </if>
+            <if test="workCenterSidList != null and workCenterSidList.length >0 ">
+                and t.work_center_sid in
+                (<foreach collection="workCenterSidList" item="workCenterSid" separator=",">#{workCenterSid}</foreach>)
+            </if>
+            <if test="documentDate != null ">
+                and t.document_date = #{documentDate}
+            </if>
+            <if test="documentBeginDate != null and documentBeginDate!=''">
+                and date_format(t.document_date,'%y%m%d') &gt;= date_format(#{documentBeginDate},'%y%m%d')
+            </if>
+            <if test="documentEndDate != null and documentEndDate!=''">
+                and date_format(t.document_date,'%y%m%d') &lt;= date_format(#{documentEndDate},'%y%m%d')
+            </if>
+            <if test="documentType != null  and documentType != ''">
+                and (<foreach collection="documentType.split(';')" item="item" separator="or">t.document_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="businessType != null  and businessType != ''">
+                and (<foreach collection="businessType.split(';')" item="item" separator="or">t.business_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companySid != null  and companySid != ''">
+                and (<foreach collection="companySid.split(';')" item="item" separator="or">t.company_sid like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="referDocCategory != null  and referDocCategory != ''">
+                and (<foreach collection="referDocCategory.split(';')" item="item" separator="or">t.refer_doc_category
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccountList != null  and creatorAccountList.size >0 ">
+                and (<foreach collection="creatorAccountList" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.day_manufacture_plan_code desc, t.create_date desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_day_manufacture_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            day_manufacture_plan_sid,
+            day_manufacture_plan_code,
+            plant_sid,
+            work_center_sid,
+            document_date,
+            document_type,
+            business_type,
+            company_sid,
+            refer_doc_category,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.dayManufacturePlanSid},
+                #{item.dayManufacturePlanCode},
+                #{item.plantSid},
+                #{item.workCenterSid},
+                #{item.documentDate},
+                #{item.documentType},
+                #{item.businessType},
+                #{item.companySid},
+                #{item.referDocCategory},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_day_manufacture_plan
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            day_manufacture_plan_code = #{dayManufacturePlanCode},
+            plant_sid = #{plantSid},
+            work_center_sid = #{workCenterSid},
+            document_date = #{documentDate},
+            document_type = #{documentType},
+            business_type = #{businessType},
+            company_sid = #{companySid},
+            refer_doc_category = #{referDocCategory},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where day_manufacture_plan_sid = #{dayManufacturePlanSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_day_manufacture_plan
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                day_manufacture_plan_code = #{dayManufacturePlanCode},
+                plant_sid = #{plantSid},
+                work_center_sid = #{workCenterSid},
+                document_date = #{documentDate},
+                document_type = #{documentType},
+                business_type = #{businessType},
+                company_sid = #{companySid},
+                refer_doc_category = #{referDocCategory},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where day_manufacture_plan_sid = #{dayManufacturePlanSid}
+        </foreach>
+    </update>
+
+    <select id="countByDomain" resultType="java.lang.Integer">
+        select count(1) from s_man_day_manufacture_plan
+        <where>
+            <if test="dayManufacturePlanSids != null and dayManufacturePlanSids.size > 0">
+                and day_manufacture_plan_sid in (<foreach collection="dayManufacturePlanSids" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">handle_status like
+                concat('%',#{item}, '%')</foreach>)
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FrmTrialsalePlanKeyWordMapper">
+
+    <resultMap type="com.platform.ems.domain.FrmTrialsalePlanKeyWord" id="FrmTrialsalePlanKeyWordResult">
+        <result property="clientId" column="client_id"/>
+        <result property="trialsalePlanKeyWordSid" column="trialsale_plan_key_word_sid"/>
+        <result property="newproductTrialsalePlanSid" column="newproduct_trialsale_plan_sid"/>
+        <result property="coreWord" column="core_word"/>
+        <result property="searchNumCoreWord" column="search_num_core_word"/>
+        <result property="longtailWord" column="longtail_word"/>
+        <result property="searchNumLongtailWord" column="search_num_longtail_word"/>
+        <result property="negativeWord" column="negative_word"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectFrmTrialsalePlanKeyWordVo">
+        select t.client_id,
+               t.trialsale_plan_key_word_sid,
+               t.newproduct_trialsale_plan_sid,
+               t.core_word,
+               t.search_num_core_word,
+               t.longtail_word,
+               t.search_num_longtail_word,
+               t.negative_word,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name
+        from s_frm_trialsale_plan_key_word t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+    </sql>
+
+    <select id="selectFrmTrialsalePlanKeyWordById" parameterType="Long" resultMap="FrmTrialsalePlanKeyWordResult">
+        <include refid="selectFrmTrialsalePlanKeyWordVo"/>
+        where t.trialsale_plan_key_word_sid = #{trialsalePlanKeyWordSid}
+    </select>
+
+    <select id="selectFrmTrialsalePlanKeyWordList" parameterType="com.platform.ems.domain.FrmTrialsalePlanKeyWord"
+            resultMap="FrmTrialsalePlanKeyWordResult">
+        <include refid="selectFrmTrialsalePlanKeyWordVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="trialsalePlanKeyWordSid != null ">
+                and t.trialsale_plan_key_word_sid = #{trialsalePlanKeyWordSid}
+            </if>
+            <if test="trialsalePlanKeyWordSidList != null and trialsalePlanKeyWordSidList.length >0 ">
+                and t.trialsale_plan_key_word_sid in
+                (<foreach collection="trialsalePlanKeyWordSidList" item="trialsalePlanKeyWordSid" separator=",">#{trialsalePlanKeyWordSid}</foreach>)
+            </if>
+            <if test="newproductTrialsalePlanSid != null ">
+                and t.newproduct_trialsale_plan_sid = #{newproductTrialsalePlanSid}
+            </if>
+            <if test="coreWord != null and coreWord != ''">
+                and t.core_word = #{coreWord}
+            </if>
+            <if test="searchNumCoreWord != null ">
+                and t.search_num_core_word = #{searchNumCoreWord}
+            </if>
+            <if test="longtailWord != null and longtailWord != ''">
+                and t.longtail_word = #{longtailWord}
+            </if>
+            <if test="searchNumLongtailWord != null ">
+                and t.search_num_longtail_word = #{searchNumLongtailWord}
+            </if>
+            <if test="negativeWord != null and negativeWord != ''">
+                and t.negative_word = #{negativeWord}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="createDate != null ">
+                and date_format(t.create_date,'%y%m%d') = date_format(#{createDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_frm_trialsale_plan_key_word
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            trialsale_plan_key_word_sid,
+            newproduct_trialsale_plan_sid,
+            core_word,
+            search_num_core_word,
+            longtail_word,
+            search_num_longtail_word,
+            negative_word,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.trialsalePlanKeyWordSid},
+                #{item.newproductTrialsalePlanSid},
+                #{item.coreWord},
+                #{item.searchNumCoreWord},
+                #{item.longtailWord},
+                #{item.searchNumLongtailWord},
+                #{item.negativeWord},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_frm_trialsale_plan_key_word
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            newproduct_trialsale_plan_sid = #{newproductTrialsalePlanSid},
+            core_word = #{coreWord},
+            search_num_core_word = #{searchNumCoreWord},
+            longtail_word = #{longtailWord},
+            search_num_longtail_word = #{searchNumLongtailWord},
+            negative_word = #{negativeWord},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where trialsale_plan_key_word_sid = #{trialsalePlanKeyWordSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_frm_trialsale_plan_key_word
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                newproduct_trialsale_plan_sid = #{newproductTrialsalePlanSid},
+                core_word = #{coreWord},
+                search_num_core_word = #{searchNumCoreWord},
+                longtail_word = #{longtailWord},
+                search_num_longtail_word = #{searchNumLongtailWord},
+                negative_word = #{negativeWord},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+            </trim>
+            where trialsale_plan_key_word_sid = #{trialsalePlanKeyWordSid}
+        </foreach>
+    </update>
+
+</mapper>

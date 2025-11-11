@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurOutsourcePurchasePriceItemMapper">
+
+    <resultMap type="com.platform.ems.domain.PurOutsourcePurchasePriceItem" id="PurOutsourcePurchasePriceItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="outsourcePurchasePriceItemSid" column="outsource_purchase_price_item_sid"/>
+        <result property="outsourcePurchasePriceSid" column="outsource_purchase_price_sid"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="priceEnterMode" column="price_enter_mode"/>
+        <result property="cascadeType" column="cascade_type"/>
+        <result property="purchasePriceTax" column="purchase_price_tax"/>
+        <result property="purchasePrice" column="purchase_price"/>
+        <result property="innerCheckPriceTax" column="inner_check_price_tax"/>
+        <result property="innerCheckPrice" column="inner_check_price"/>
+        <result property="quotePriceTax" column="quote_price_tax"/>
+        <result property="priceRemark" column="price_remark"/>
+        <result property="taxRate" column="tax_rate"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="unitConversionRate" column="unit_conversion_rate"/>
+        <result property="contractCode" column="contract_code"/>
+        <result property="positionDesc" column="position_desc"/>
+        <result property="processDesc" column="process_desc"/>
+        <result property="processPicture" column="process_picture"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectPurOutsourcePurchasePriceItemVo">
+        select t.client_id,
+               t.outsource_purchase_price_item_sid,
+               t.outsource_purchase_price_sid,
+               t.start_date,
+               t.end_date,
+               t.price_enter_mode,
+               t.cascade_type,
+               t.purchase_price_tax,
+               t.purchase_price,
+               t.inner_check_price_tax,
+               t.inner_check_price,
+               t.quote_price_tax,
+               t.price_remark,
+               t.tax_rate,
+               t.currency,
+               t.currency_unit,
+               t.unit_base,
+               t.item_num,
+               t.position_desc,
+               t.process_desc,
+               t.process_picture,
+               t.unit_price,
+               t.unit_conversion_rate,
+               t.contract_code,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t1.vendor_sid,
+               t1.material_sid,
+               t1.sku1_sid,
+               t1.process_sid,
+               t2.name as unit_base_name,
+               t3.name as unit_price_name,
+               t4.tax_rate_name,
+               t5.nick_name as creator_account_name,
+               t6.approval_node,
+               t6.approval_user_name,
+               t6.create_date as submit_date,
+               t6.approval_user_id,
+               t7.nick_name as submit_user_name
+        from s_pur_outsource_purchase_price_item t
+         left join s_pur_outsource_purchase_price t1 on t.outsource_purchase_price_sid = t1.outsource_purchase_price_sid
+         left join s_con_measure_unit t2 on t2.code = t.unit_base
+         left join s_con_measure_unit t3 on t3.code = t.unit_price
+         left join s_con_tax_rate t4 on t4.tax_rate_name = t.tax_rate
+         LEFT JOIN sys_user t5 ON t5.user_name = t.creator_account and t5.client_id = t.client_id
+         LEFT JOIN s_sys_form_process t6 ON t6.form_id = t.outsource_purchase_price_item_sid
+         LEFT JOIN sys_user t7 ON t7.user_id = t6.create_by_id and t7.client_id = t6.client_id
+    </sql>
+
+    <sql id="reportPurOutsourcePurchasePriceVo">
+        select t.outsource_purchase_price_item_sid,
+               t.outsource_purchase_price_sid,
+               t.start_date,
+               t.end_date,
+               t.price_enter_mode,
+               t.cascade_type,
+               t.purchase_price_tax,
+               t.purchase_price,
+               t.inner_check_price_tax,
+               t.inner_check_price,
+               t.quote_price_tax,
+               t.price_remark,
+               t.tax_rate,
+               t.currency,
+               t.currency_unit,
+               t.unit_base,
+               t.unit_price,
+               t.position_desc,
+               t.process_desc,
+               t.process_picture,
+               t.handle_status,
+               t.item_num,
+               t.unit_conversion_rate,
+               t.contract_code,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.name as unit_base_name,
+               t3.name as unit_price_name,
+               t4.tax_rate_value as tax_rate_name,
+               t5.price_dimension,
+               t5.material_sid,
+               t5.outsource_purchase_price_code,
+               t5.handle_status as head_handle_status,
+               t6.company_name,
+               t7.material_code,
+               t7.material_name,
+               t7.picture_path,
+               t7.product_season_sid as material_product_season_sid,
+               t17.product_season_name AS material_product_season_name,
+               t7.customer_sid as material_customer_sid,
+               t16.short_name as material_short_name,
+               t16.customer_name as material_customer_name,
+               t8.sku_name AS sku1_name,
+               t9.vendor_name,
+               t10.nick_name as creator_account_name,
+               t11.process_name,
+               t12.nick_name as updater_account_name,
+               t13.nick_name as confirmer_account_name,
+               t14.approval_node,
+               t14.approval_user_name,
+               t14.create_date as submit_date,
+               t14.approval_user_id,
+               t15.nick_name as submit_user_name
+        from s_pur_outsource_purchase_price_item t
+                 left join s_con_measure_unit t2 on t2.code = t.unit_base
+                 left join s_con_measure_unit t3 on t3.code = t.unit_price
+                 left join s_con_tax_rate t4 on t4.tax_rate_name = t.tax_rate
+                 left join s_pur_outsource_purchase_price t5 on t5.outsource_purchase_price_sid = t.outsource_purchase_price_sid
+                 left join s_bas_company t6 on t6.company_sid = t5.company_sid
+                 LEFT JOIN s_bas_material t7 ON t7.material_sid = t5.material_sid
+                 LEFT JOIN s_bas_sku t8 ON t8.sku_sid = t5.sku1_sid
+                 LEFT JOIN s_bas_vendor t9 ON t9.vendor_sid = t5.vendor_sid
+                 LEFT JOIN sys_user t10 ON t10.user_name = t.creator_account and t10.client_id = t.client_id
+                 left join s_man_process t11 on t11.process_sid = t5.process_sid
+                 LEFT JOIN sys_user t12 ON t12.user_name = t.updater_account and t12.client_id = t.client_id
+                 LEFT JOIN sys_user t13 ON t13.user_name = t.confirmer_account and t13.client_id = t.client_id
+                 LEFT JOIN s_sys_form_process t14 ON t14.form_id = t.outsource_purchase_price_item_sid
+                 LEFT JOIN sys_user t15 ON t15.user_id = t14.create_by_id and t15.client_id=t14.client_id
+                 LEFT JOIN s_bas_customer t16 ON t7.customer_sid = t16.customer_sid
+                 LEFT JOIN s_bas_product_season t17 ON t7.product_season_sid = t17.product_season_sid
+    </sql>
+
+    <select id="selectPurOutsourcePurchasePriceItemById" parameterType="Long"
+            resultMap="PurOutsourcePurchasePriceItemResult">
+        <include refid="selectPurOutsourcePurchasePriceItemVo"/>
+        where t.outsource_purchase_price_item_sid = #{outsourcePurchasePriceItemSid}
+    </select>
+
+    <select id="reportPurOutsourcePurchasePrice"
+            resultType="com.platform.ems.domain.dto.response.PurOutsourceReportResponse"
+            parameterType="com.platform.ems.domain.dto.response.PurOutsourceReportResponse">
+        <include refid="reportPurOutsourcePurchasePriceVo"/>
+        <where>
+            <if test="approvalUserId != null and approvalUserId != '' ">
+                and (t14.approval_user_id = #{approvalUserId} or t14.approval_user_id like concat(#{approvalUserId}, ',%')
+                or t14.approval_user_id like concat('%,', #{approvalUserId}, ',%') or t14.approval_user_id like concat('%,', #{approvalUserId})
+                or t14.approval_user_id like concat('%, ', #{approvalUserId}, ',%') or t14.approval_user_id like concat('%, ', #{approvalUserId}))
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and  t7.material_code like concat('%',#{materialCode}, '%')
+            </if>
+            <if test="processSidList != null and processSidList.length >0 ">
+                and t5.process_sid in
+                (<foreach collection="processSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="itemSidList != null and itemSidList.size >0 ">
+                and t.outsource_purchase_price_item_sid in
+                (<foreach collection="itemSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and t7.material_name like concat('%',#{materialName}, '%')
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t10.nick_name like concat('%', #{creatorAccount}, '%')
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t10.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="outsourcePurchasePriceCode != null and outsourcePurchasePriceCode != ''">
+                and t5.outsource_purchase_price_code like concat('%', #{outsourcePurchasePriceCode}, '%')
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0 ">
+                and t5.vendor_sid in
+                (<foreach collection="vendorSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t5.company_sid in
+                (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="materialProductSeasonSidList != null and materialProductSeasonSidList.length >0 ">
+                and t7.product_season_sid in
+                (<foreach collection="materialProductSeasonSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="materialCustomerSidList != null and materialCustomerSidList.length >0 ">
+                and t7.customer_sid in
+                (<foreach collection="materialCustomerSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="beginTime != null">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null ">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+        </where>
+        order by t5.outsource_purchase_price_code desc,t.start_date desc
+    </select>
+
+    <select id="selectPurOutsourcePurchasePriceItemList"
+            parameterType="com.platform.ems.domain.PurOutsourcePurchasePriceItem"
+            resultMap="PurOutsourcePurchasePriceItemResult">
+        <include refid="selectPurOutsourcePurchasePriceItemVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="outsourcePurchasePriceSid != null ">
+                and t.outsource_purchase_price_sid = #{outsourcePurchasePriceSid}
+            </if>
+            <if test="startDate != null ">
+                and t.start_date = #{startDate}
+            </if>
+            <if test="endDate != null ">
+                and t.end_date = #{endDate}
+            </if>
+            <if test="nowDate != null and nowDate != ''">
+                and date_format(t.start_date,'%y%m%d') &lt;=date_format(#{nowDate},'%y%m%d')
+                and date_format(t.end_date,'%y%m%d') &gt;= date_format(#{nowDate},'%y%m%d')
+            </if>
+            <if test="priceEnterMode != null and priceEnterMode != ''">
+                and t.price_enter_mode = #{priceEnterMode}
+            </if>
+            <if test="cascadeType != null and cascadeType != ''">
+                and t.cascade_type = #{cascadeType}
+            </if>
+            <if test="purchasePriceTax != null ">
+                and t.purchase_price_tax = #{purchasePriceTax}
+            </if>
+            <if test="purchasePrice != null ">
+                and t.purchase_price = #{purchasePrice}
+            </if>
+            <if test="taxRate != null ">
+                and t.tax_rate = #{taxRate}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="currency != null and currency != ''">
+                and t.currency = #{currency}
+            </if>
+            <if test="currencyUnit != null and currencyUnit != ''">
+                and t.currency_unit = #{currencyUnit}
+            </if>
+            <if test="unitBase != null and unitBase != ''">
+                and t.unit_base = {unitBase}
+            </if>
+            <if test="unitPrice != null and unitPrice != ''">
+                and t.unit_price = #{unitPrice}
+            </if>
+            <if test="unitConversionRate != null ">
+                and t.unit_conversion_rate = #{unitConversionRate}
+            </if>
+            <if test="contractCode != null ">
+                and t.contract_code =#{contractCode}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t5.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="itemSidList != null and itemSidList.size> 0">and t.outsource_purchase_price_item_sid in
+                <foreach collection="itemSidList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="processSid != null ">
+                and t1.process_sid = #{processSid}
+            </if>
+            <if test="processSidList != null and processSidList.length >0 ">
+                and t1.process_sid in
+                (<foreach collection="processSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="vendorSid != null ">
+                and t1.vendor_sid = #{vendorSid}
+            </if>
+            <if test="materialSidList != null and materialSidList.length > 0">
+                and t1.material_sid in
+                (<foreach collection="materialSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_outsource_purchase_price_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            outsource_purchase_price_item_sid,
+            outsource_purchase_price_sid,
+            start_date,
+            end_date,
+            price_enter_mode,
+            cascade_type,
+            purchase_price_tax,
+            purchase_price,
+            inner_check_price_tax,
+            inner_check_price,
+            quote_price_tax,
+            price_remark,
+            tax_rate,
+            currency,
+            currency_unit,
+            unit_base,
+            unit_price,
+            unit_conversion_rate,
+            contract_code,
+            position_desc,
+            process_desc,
+            process_picture,
+            item_num,
+            handle_status,
+            remark,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.outsourcePurchasePriceItemSid},
+                #{item.outsourcePurchasePriceSid},
+                #{item.startDate},
+                #{item.endDate},
+                #{item.priceEnterMode},
+                #{item.cascadeType},
+                #{item.purchasePriceTax},
+                #{item.purchasePrice},
+                #{item.innerCheckPriceTax},
+                #{item.innerCheckPrice},
+                #{item.quotePriceTax},
+                #{item.priceRemark},
+                #{item.taxRate},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.unitBase},
+                #{item.unitPrice},
+                #{item.unitConversionRate},
+                #{item.contractCode},
+                #{item.positionDesc},
+                #{item.processDesc},
+                #{item.processPicture},
+                #{item.itemNum},
+                #{item.handleStatus},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_outsource_purchase_price_item
+        <trim prefix="SET" suffixOverrides=",">
+            start_date = #{startDate},
+            end_date = #{endDate},
+            price_enter_mode = #{priceEnterMode},
+            cascade_type = #{cascadeType},
+            purchase_price_tax = #{purchasePriceTax},
+            purchase_price = #{purchasePrice},
+            inner_check_price_tax = #{innerCheckPriceTax},
+            inner_check_price = #{innerCheckPrice},
+            quote_price_tax = #{quotePriceTax},
+            price_remark = #{priceRemark},
+            tax_rate = #{taxRate},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            unit_base = #{unitBase},
+            unit_price = #{unitPrice},
+            unit_conversion_rate = #{unitConversionRate},
+            contract_code = #{contractCode},
+            position_desc = #{positionDesc},
+            process_desc = #{processDesc},
+            process_picture = #{processPicture},
+            item_num = #{itemNum},
+            handle_status = #{handleStatus},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where outsource_purchase_price_item_sid = #{outsourcePurchasePriceItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_outsource_purchase_price_item
+            <trim prefix="SET" suffixOverrides=",">
+                start_date = #{o.startDate},
+                end_date = #{o.endDate},
+                price_enter_mode = #{o.priceEnterMode},
+                cascade_type = #{o.cascadeType},
+                purchase_price_tax = #{o.purchasePriceTax},
+                purchase_price = #{o.purchasePrice},
+                inner_check_price_tax = #{o.innerCheckPriceTax},
+                inner_check_price = #{o.innerCheckPrice},
+                quote_price_tax = #{o.quotePriceTax},
+                price_remark = #{o.priceRemark},
+                tax_rate = #{o.taxRate},
+                currency = #{o.currency},
+                currency_unit = #{o.currencyUnit},
+                unit_base = #{o.unitBase},
+                unit_price = #{o.unitPrice},
+                unit_conversion_rate = #{o.unitConversionRate},
+                contract_code = #{o.contractCode},
+                position_desc = #{o.positionDesc},
+                process_desc = #{o.processDesc},
+                process_picture = #{o.processPicture},
+                item_num = #{o.itemNum},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+                data_source_sys = #{o.dataSourceSys},
+            </trim>
+            where outsource_purchase_price_item_sid = #{o.outsourcePurchasePriceItemSid}
+        </foreach>
+    </update>
+
+</mapper>

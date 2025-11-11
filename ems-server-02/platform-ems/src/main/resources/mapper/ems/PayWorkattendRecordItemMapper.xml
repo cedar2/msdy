@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PayWorkattendRecordItemMapper">
+
+    <resultMap type="com.platform.ems.domain.PayWorkattendRecordItem" id="PayWorkattendRecordItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="recordItemSid" column="record_item_sid"/>
+        <result property="workattendRecordSid" column="workattend_record_sid"/>
+        <result property="staffSid" column="staff_sid"/>
+        <result property="yingcq" column="yingcq"/>
+        <result property="daix" column="daix"/>
+        <result property="shicq" column="shicq"/>
+        <result property="rcbtjb" column="rcbtjb"/>
+        <result property="rcywjb" column="rcywjb"/>
+        <result property="jrbtjb" column="jrbtjb"/>
+        <result property="jrywjb" column="jrywjb"/>
+        <result property="tiaoxj" column="tiaoxj"/>
+        <result property="nianj" column="nianj"/>
+        <result property="bingjWx" column="bingj_wx"/>
+        <result property="bingjDx" column="bingj_dx"/>
+        <result property="dailjDx" column="dailj_dx"/>
+        <result property="shijWx" column="shij_wx"/>
+        <result property="shijDx" column="shij_dx"/>
+        <result property="chidCs" column="chid_cs"/>
+        <result property="chidFs" column="chid_fs"/>
+        <result property="kuangg" column="kuangg"/>
+        <result property="hunj" column="hunj"/>
+        <result property="chanj" column="chanj"/>
+        <result property="peicj" column="peicj"/>
+        <result property="chailjDx" column="chailj_dx"/>
+        <result property="shangj" column="shangj"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="staffCode" column="staff_code"/>
+        <result property="staffName" column="staff_name"/>
+        <result property="positionSid" column="position_sid"/>
+        <result property="positionName" column="position_name"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="departmentSid" column="department_sid"/>
+        <result property="yearmonth" column="yearmonth"/>
+        <result property="handleStatus" column="handle_status"/>
+    </resultMap>
+
+    <sql id="selectPayWorkattendRecordItemVo">
+        select
+        t.client_id,
+        t.record_item_sid,
+        t.workattend_record_sid,
+        t.staff_sid,
+        t.yingcq,
+        t.daix,
+        t.shicq,
+        t.rcbtjb,
+        t.rcywjb,
+        t.jrbtjb,
+        t.jrywjb,
+        t.tiaoxj,
+        t.nianj,
+        t.bingj_wx,
+        t.bingj_dx,
+        t.dailj_dx,
+        t.shij_wx,
+        t.shij_dx,
+        t.chid_cs,
+        t.chid_fs,
+        t.kuangg,
+        t.hunj,
+        t.chanj,
+        t.peicj,
+        t.chailj_dx,
+        t.shangj,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+        t.quek_cs,
+        t.zaot_cs,
+        t.pingsjb,
+        t.zhoumjb,
+        t.jiejrjb,
+        t.shenyjb,
+        t.qitjb,
+        t.wancbt_cs,
+        t.qitj,
+        t1.staff_code,
+		t1.staff_name,
+		t1.check_in_date,
+		t2.position_name,
+		t3.company_sid,
+		t3.department_sid,
+		t3.workattend_record_code,
+		t3.handle_status,
+		t3.yearmonth,
+		t4.work_center_name,
+        t5.department_name
+  from s_pay_workattend_record_item t
+        LEFT JOIN s_bas_staff t1 ON t1.staff_sid = t.staff_sid
+        LEFT JOIN s_bas_position t2 ON t2.position_sid = t1.default_position
+        LEFT JOIN s_pay_workattend_record t3 ON t3.workattend_record_sid = t.workattend_record_sid
+        left join s_man_work_center t4 on t4.work_center_sid=t1.work_center_sid
+        LEFT JOIN s_bas_department t5 ON t1.default_department_sid = t5.department_sid
+    </sql>
+
+    <sql id="getReportVo">
+        select
+        t.client_id,
+        t.record_item_sid,
+        t.workattend_record_sid,
+        t.staff_sid,
+        t.yingcq,
+        t.daix,
+        t.shicq,
+        t.rcbtjb,
+        t.rcywjb,
+        t.jrbtjb,
+        t.jrywjb,
+        t.tiaoxj,
+        t.nianj,
+        t.bingj_wx,
+        t.bingj_dx,
+        t.dailj_dx,
+        t.shij_wx,
+        t.shij_dx,
+        t.chid_cs,
+        t.chid_fs,
+        t.kuangg,
+        t.hunj,
+        t.chanj,
+        t.peicj,
+        t.chailj_dx,
+        t.shangj,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+        t.quek_cs,
+        t.zaot_cs,
+        t.pingsjb,
+        t.zhoumjb,
+        t.jiejrjb,
+        t.shenyjb,
+        t.qitjb,
+        t.wancbt_cs,
+        t.qitj,
+        t1.staff_code,
+		t1.staff_name,
+		t1.check_in_date,
+		t2.position_name,
+		t3.company_sid,
+		t3.department_sid,
+		t3.workattend_record_code,
+		t3.handle_status,
+		t3.yearmonth,
+		t4.work_center_name,
+        t5.department_name,
+        t7.company_name,
+        t6.handle_status,
+        t6.yearmonth,
+        t8.plant_name,
+        t9.nick_name as creator_account_name
+  from s_pay_workattend_record_item t
+        LEFT JOIN s_bas_staff t1 ON t1.staff_sid = t.staff_sid
+        LEFT JOIN s_bas_position t2 ON t2.position_sid = t1.default_position
+        LEFT JOIN s_pay_workattend_record t3 ON t3.workattend_record_sid = t.workattend_record_sid
+        left join s_man_work_center t4 on t4.work_center_sid=t1.work_center_sid
+        LEFT JOIN s_bas_department t5 ON t1.default_department_sid = t5.department_sid
+        left join s_pay_workattend_record t6 on t6.workattend_record_sid=t.workattend_record_sid
+        LEFT JOIN s_bas_company t7 ON t7.company_sid = t6.company_sid
+        LEFT JOIN s_bas_plant t8 ON t6.plant_sid = t8.plant_sid
+        LEFT JOIN sys_user t9 on t.creator_account = t9.user_name
+    </sql>
+    <select id="selectPayWorkattendRecordItemById" parameterType="Long" resultMap="PayWorkattendRecordItemResult">
+        <include refid="selectPayWorkattendRecordItemVo"/>
+        where t.record_item_sid = #{recordItemSid}
+    </select>
+    <select id="getreport" parameterType="com.platform.ems.domain.PayWorkattendRecord"
+            resultType="com.platform.ems.domain.dto.response.PayWorkattendRecordItemResponse">
+        <include refid="getReportVo"/>
+        <where>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t6.creator_account in
+                (<foreach collection="creatorAccountList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t6.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t6.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t6.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="departmentSidList != null and departmentSidList.length >0 ">
+                and t.department_sid in
+                (<foreach collection="departmentSidList" item="departmentSid" separator=",">#{departmentSid}</foreach>)
+            </if>
+            <if test="workattendRecordCode != null  and workattendRecordCode != ''">
+                and (<foreach collection="workattendRecordCode.split(';')" item="item" separator="or">
+                t6.workattend_record_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="yearmonth != null  and yearmonth != ''">
+                and (<foreach collection="yearmonth.split(';')" item="item" separator="or">t6.yearmonth like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="staffName != null  and staffName != ''">
+                 and    t1.staff_name like concat('%',
+                #{staffName}, '%')
+            </if>
+            <if test="staffCode != null  and staffCode != ''">
+                and    t1.staff_code like concat('%',
+                #{staffCode}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="plantSid != null">
+                and t6.plant_sid = #{plantSid}
+            </if>
+        </where>
+        order by t3.yearmonth desc,
+                 t6.company_sid desc,
+                 t6.plant_sid desc,
+                 t4.work_center_name desc,
+                 t5.department_sid desc,
+                 t1.staff_code desc
+    </select>
+
+    <select id="selectPayWorkattendRecordItemList" parameterType="com.platform.ems.domain.PayWorkattendRecordItem"
+            resultMap="PayWorkattendRecordItemResult">
+        <include refid="selectPayWorkattendRecordItemVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="recordItemSid != null ">
+                and t.record_item_sid =#{recordItemSid}
+            </if>
+            <if test="workattendRecordSid != null ">
+                and t.workattend_record_sid =#{workattendRecordSid}
+            </if>
+            <if test="staffSid != null ">
+                and t.staff_sid =#{staffSid}
+            </if>
+            <if test="yingcq != null ">
+                and t.yingcq = #{yingcq}
+            </if>
+            <if test="daix != null ">
+                and t.daix = #{daix}
+            </if>
+            <if test="shicq != null ">
+                and t.shicq = #{shicq}
+            </if>
+            <if test="rcbtjb != null ">
+                and t.rcbtjb = #{rcbtjb}
+            </if>
+            <if test="rcywjb != null ">
+                and t.rcywjb = #{rcywjb}
+            </if>
+            <if test="jrbtjb != null ">
+                and t.jrbtjb = #{jrbtjb}
+            </if>
+            <if test="jrywjb != null ">
+                and t.jrywjb = #{jrywjb}
+            </if>
+            <if test="tiaoxj != null ">
+                and t.tiaoxj = #{tiaoxj}
+            </if>
+            <if test="nianj != null ">
+                and t.nianj = #{nianj}
+            </if>
+            <if test="bingjWx != null ">
+                and t.bingj_wx = #{bingjWx}
+            </if>
+            <if test="bingjDx != null ">
+                and t.bingj_dx = #{bingjDx}
+            </if>
+            <if test="dailjDx != null ">
+                and t.dailj_dx = #{dailjDx}
+            </if>
+            <if test="shijWx != null ">
+                and t.shij_wx = #{shijWx}
+            </if>
+            <if test="shijDx != null ">
+                and t.shij_dx = #{shijDx}
+            </if>
+            <if test="chidCs != null ">
+                and t.chid_cs =#{chidCs}
+            </if>
+            <if test="chidFs != null ">
+                and t.chid_fs =#{chidFs}
+            </if>
+            <if test="kuangg != null ">
+                and t.kuangg = #{kuangg}
+            </if>
+            <if test="hunj != null ">
+                and t.hunj = #{hunj}
+            </if>
+            <if test="chanj != null ">
+                and t.chanj = #{chanj}
+            </if>
+            <if test="peicj != null ">
+                and t.peicj = #{peicj}
+            </if>
+            <if test="chailjDx != null ">
+                and t.chailj_dx = #{chailjDx}
+            </if>
+            <if test="shangj != null ">
+                and t.shangj = #{shangj}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t3.company_sid =#{companySid}
+            </if>
+            <if test="departmentSid != null ">
+                and t3.department_sid =#{departmentSid}
+            </if>
+            <if test="yearmonth != null  and yearmonth != ''">
+                and t3.yearmonth = #{yearmonth}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t3.handle_status = #{handleStatus}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t1.staff_code asc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pay_workattend_record_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            record_item_sid,
+            workattend_record_sid,
+            staff_sid,
+            yingcq,
+            daix,
+            shicq,
+            rcbtjb,
+            rcywjb,
+            jrbtjb,
+            jrywjb,
+            tiaoxj,
+            nianj,
+            bingj_wx,
+            bingj_dx,
+            dailj_dx,
+            shij_wx,
+            shij_dx,
+            chid_cs,
+            chid_fs,
+            kuangg,
+            hunj,
+            chanj,
+            peicj,
+            chailj_dx,
+            shangj,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+            staff_code,
+            quek_cs,
+            zaot_cs,
+            pingsjb,
+            zhoumjb,
+            jiejrjb,
+            shenyjb,
+            qitjb,
+            wancbt_cs,
+            qitj,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.recordItemSid},
+                #{item.workattendRecordSid},
+                #{item.staffSid},
+                #{item.yingcq},
+                #{item.daix},
+                #{item.shicq},
+                #{item.rcbtjb},
+                #{item.rcywjb},
+                #{item.jrbtjb},
+                #{item.jrywjb},
+                #{item.tiaoxj},
+                #{item.nianj},
+                #{item.bingjWx},
+                #{item.bingjDx},
+                #{item.dailjDx},
+                #{item.shijWx},
+                #{item.shijDx},
+                #{item.chidCs},
+                #{item.chidFs},
+                #{item.kuangg},
+                #{item.hunj},
+                #{item.chanj},
+                #{item.peicj},
+                #{item.chailjDx},
+                #{item.shangj},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+                #{item.staffCode},
+                #{item.quekCs},
+                #{item.zaotCs},
+                #{item.pingsjb},
+                #{item.zhoumjb},
+                #{item.jiejrjb},
+                #{item.shenyjb},
+                #{item.qitjb},
+                #{item.wancbtCs},
+                #{item.qitj},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pay_workattend_record_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            record_item_sid = #{recordItemSid},
+            workattend_record_sid = #{workattendRecordSid},
+            staff_sid = #{staffSid},
+            yingcq = #{yingcq},
+            daix = #{daix},
+            shicq = #{shicq},
+            rcbtjb = #{rcbtjb},
+            rcywjb = #{rcywjb},
+            jrbtjb = #{jrbtjb},
+            jrywjb = #{jrywjb},
+            tiaoxj = #{tiaoxj},
+            nianj = #{nianj},
+            bingj_wx = #{bingjWx},
+            bingj_dx = #{bingjDx},
+            dailj_dx = #{dailjDx},
+            shij_wx = #{shijWx},
+            shij_dx = #{shijDx},
+            chid_cs = #{chidCs},
+            chid_fs = #{chidFs},
+            kuangg = #{kuangg},
+            hunj = #{hunj},
+            chanj = #{chanj},
+            peicj = #{peicj},
+            chailj_dx = #{chailjDx},
+            shangj = #{shangj},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+            staff_code = #{staffCode},
+            quek_cs = #{quekCs},
+            zaot_cs = #{zaotCs},
+            pingsjb = #{pingsjb},
+            zhoumjb = #{zhoumjb},
+            jiejrjb = #{jiejrjb},
+            shenyjb = #{shenyjb},
+            qitjb = #{qitjb},
+            wancbt_cs = #{wancbtCs},
+            qitj = #{qitj},
+        </trim>
+        where record_item_sid = #{recordItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pay_workattend_record_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                record_item_sid = #{recordItemSid},
+                workattend_record_sid = #{workattendRecordSid},
+                staff_sid = #{staffSid},
+                yingcq = #{yingcq},
+                daix = #{daix},
+                shicq = #{shicq},
+                rcbtjb = #{rcbtjb},
+                rcywjb = #{rcywjb},
+                jrbtjb = #{jrbtjb},
+                jrywjb = #{jrywjb},
+                tiaoxj = #{tiaoxj},
+                nianj = #{nianj},
+                bingj_wx = #{bingjWx},
+                bingj_dx = #{bingjDx},
+                dailj_dx = #{dailjDx},
+                shij_wx = #{shijWx},
+                shij_dx = #{shijDx},
+                chid_cs = #{chidCs},
+                chid_fs = #{chidFs},
+                kuangg = #{kuangg},
+                hunj = #{hunj},
+                chanj = #{chanj},
+                peicj = #{peicj},
+                chailj_dx = #{chailjDx},
+                shangj = #{shangj},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where record_item_sid = #{recordItemSid}
+        </foreach>
+    </update>
+
+</mapper>

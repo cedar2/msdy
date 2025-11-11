@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManProductProduceBatchInforMapper">
+
+    <resultMap type="com.platform.ems.domain.ManProductProduceBatchInfor" id="ManProductProduceBatchInforResult">
+        <result property="clientId" column="client_id"/>
+        <result property="produceBatchInforSid" column="produce_batch_infor_sid"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="productSid" column="product_sid"/>
+        <result property="productCode" column="product_code"/>
+        <result property="paichanBatch" column="paichan_batch"/>
+        <result property="shicaiQuantity" column="shicai_quantity"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectManProductProduceBatchInforVo">
+        select t.client_id,
+               t.produce_batch_infor_sid,
+               t.plant_sid,
+               t.plant_code,
+               t.product_sid,
+               t.product_code,
+               t.paichan_batch,
+               t.shicai_quantity,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name
+        from s_man_product_produce_batch_infor t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t3.client_id
+    </sql>
+
+    <select id="selectManProductProduceBatchInforById" parameterType="Long"
+            resultMap="ManProductProduceBatchInforResult">
+        <include refid="selectManProductProduceBatchInforVo"/>
+        where t.produce_batch_infor_sid = #{produceBatchInforSid}
+    </select>
+
+    <select id="selectManProductProduceBatchInforList"
+            parameterType="com.platform.ems.domain.ManProductProduceBatchInfor"
+            resultMap="ManProductProduceBatchInforResult">
+        <include refid="selectManProductProduceBatchInforVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid = #{plantSid}
+            </if>
+            <if test="plantCode != null and plantCode != ''">
+                and t.plant_code = #{plantCode}
+            </if>
+            <if test="productSid != null ">
+                and t.product_sid = #{productSid}
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and t.product_code = #{productCode}
+            </if>
+            <if test="paichanBatch != null ">
+                and t.paichan_batch = #{paichanBatch}
+            </if>
+            <if test="shicaiQuantity != null ">
+                and t.shicai_quantity = #{shicaiQuantity}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_product_produce_batch_infor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            produce_batch_infor_sid,
+            plant_sid,
+            plant_code,
+            product_sid,
+            product_code,
+            paichan_batch,
+            shicai_quantity,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.plantSid},
+                #{item.plantCode},
+                #{item.productSid},
+                #{item.productCode},
+                #{item.paichanBatch},
+                #{item.shicaiQuantity},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_product_produce_batch_infor
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            plant_sid = #{plantSid},
+            plant_code = #{plantCode},
+            product_sid = #{productSid},
+            product_code = #{productCode},
+            paichan_batch = #{paichanBatch},
+            shicai_quantity = #{shicaiQuantity},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where produce_batch_infor_sid = #{produceBatchInforSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_product_produce_batch_infor
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                plant_sid = #{plantSid},
+                plant_code = #{plantCode},
+                product_sid = #{productSid},
+                product_code = #{productCode},
+                paichan_batch = #{paichanBatch},
+                shicai_quantity = #{shicaiQuantity},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+            </trim>
+            where produce_batch_infor_sid = #{produceBatchInforSid}
+        </foreach>
+    </update>
+
+</mapper>

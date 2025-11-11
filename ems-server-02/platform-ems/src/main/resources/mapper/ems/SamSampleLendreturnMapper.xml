@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.SamSampleLendreturnMapper">
+
+    <resultMap type="com.platform.ems.domain.SamSampleLendreturn" id="SamSampleLendreturnResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="lendreturnSid" column="lendreturn_sid"/>
+                    <result property="lendreturnCode" column="lendreturn_code"/>
+                    <result property="documentDate" column="document_date"/>
+                    <result property="documentType" column="document_type"/>
+                    <result property="storehouseSid" column="storehouse_sid"/>
+                    <result property="storehouseLocationSid" column="storehouse_location_sid"/>
+                    <result property="lender" column="lender"/>
+                    <result property="returner" column="returner"/>
+                    <result property="remark" column="remark"/>
+                    <result property="handleStatus" column="handle_status"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="confirmerAccount" column="confirmer_account"/>
+                    <result property="confirmDate" column="confirm_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+            </resultMap>
+
+    <sql id="selectSamSampleLendreturnVo">
+        select t.client_id,
+        t.lendreturn_sid,
+        t.lendreturn_code,
+        t.document_date,
+        t.document_type,
+        t.storehouse_sid,
+        t.storehouse_location_sid,
+        t.lender,
+        t.returner,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.storehouse_name,
+        t2.location_name,
+        t3.nick_name as lender_name,
+        t4.nick_name as returner_name,
+        t5.nick_name as creator_account_name,
+        t6.name as  document_type_name,
+        t19.approval_node,
+	    t19.approval_user_id,
+	    t19.approval_user_name,
+	    t19.create_date AS submit_date,
+	    t20.nick_name AS submit_user_name,
+	    t21.nick_name as updater_account_name
+        from s_sam_sample_lendreturn t
+        LEFT JOIN s_bas_storehouse t1 ON t1.storehouse_sid = t.storehouse_sid
+        LEFT JOIN s_bas_storehouse_location t2 ON t2.storehouse_location_sid = t.storehouse_location_sid
+        LEFT JOIN sys_user t3 ON t3.user_name = t.lender
+        LEFT JOIN sys_user t4 ON t4.user_name = t.returner
+        LEFT JOIN sys_user t5 ON t5.user_name = t.creator_account
+        left join s_con_doc_type_sample_lendreturn t6 on t6.code =t.document_type
+        left join s_sys_form_process t19 on t19.form_id=t.lendreturn_sid
+        LEFT JOIN sys_user t20 ON t19.creator_account = t20.user_name
+        LEFT JOIN sys_user t21 ON t21.user_name = t.updater_account
+    </sql>
+
+    <select id="selectSamSampleLendreturnById" parameterType="Long" resultMap="SamSampleLendreturnResult">
+        <include refid="selectSamSampleLendreturnVo"/>
+        where t.lendreturn_sid = #{lendreturnSid}
+    </select>
+
+
+    <select id="selectSamSampleLendreturnList" parameterType="com.platform.ems.domain.SamSampleLendreturn"
+            resultMap="SamSampleLendreturnResult">
+        <include refid="selectSamSampleLendreturnVo"/>
+        <where>
+            <if test="lendreturnCode != null and lendreturnCode !=''">
+                and t.lendreturn_code like
+                concat('%',
+                #{lendreturnCode}, '%')
+            </if>
+            <if test="storehouseSid != null and storehouseSid != '' ">
+                and t.storehouse_sid =#{storehouseSid}
+            </if>
+            <if test="storehouseLocationSidList != null and storehouseLocationSidList.length >0">
+                and t.storehouse_location_sid in
+                (<foreach collection="storehouseLocationSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length >0">
+                and t.document_type in
+                (<foreach collection="documentTypeList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+            <if test="lenderName != null and lenderName !=''">
+                and t3.nick_name like
+                concat('%',
+                #{lenderName}, '%')
+            </if>
+            <if test="returnerName != null and returnerName !=''">
+                and t4.nick_name like
+                concat('%',
+                #{returnerName}, '%')
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName !=''">
+                and t5.nick_name like
+                concat('%',
+                #{creatorAccountName}, '%')
+            </if>
+            <if test="documentDateBegin != null and documentDateBegin!=''">
+                and date_format(t.document_date,'%y%m%d') &gt;= date_format(#{documentDateBegin},'%y%m%d')
+            </if>
+            <if test="documentDateEnd != null and documentDateEnd!=''">
+                and date_format(t.document_date,'%y%m%d') &lt;= date_format(#{documentDateEnd},'%y%m%d')
+            </if>
+        </where>
+        order by t.lendreturn_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_sam_sample_lendreturn
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                lendreturn_sid,
+                                                                lendreturn_code,
+                                                                document_date,
+                                                                document_type,
+                                                                storehouse_sid,
+                                                                storehouse_location_sid,
+                                                                lender,
+                                                                returner,
+                                                                remark,
+                                                                handle_status,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                confirmer_account,
+                                                                confirm_date,
+                                                                data_source_sys,
+                                    </trim>
+        values
+            <foreach collection="list" item="item" separator=",">
+                <trim prefix=" (" suffix=")" suffixOverrides=",">
+                                                            #{item.clientId},
+                                                                                                                    #{item.lendreturnCode},
+                                                                                #{item.documentDate},
+                                                                                #{item.documentType},
+                                                                                #{item.storehouseSid},
+                                                                                #{item.storehouseLocationSid},
+                                                                                #{item.lender},
+                                                                                #{item.returner},
+                                                                                #{item.remark},
+                                                                                #{item.handleStatus},
+                                                                                #{item.creatorAccount},
+                                                                                #{item.createDate},
+                                                                                #{item.updaterAccount},
+                                                                                #{item.updateDate},
+                                                                                #{item.confirmerAccount},
+                                                                                #{item.confirmDate},
+                                                                                #{item.dataSourceSys},
+                                                    </trim>
+            </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_sam_sample_lendreturn
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                lendreturn_sid = #{lendreturnSid},
+                                                                lendreturn_code = #{lendreturnCode},
+                                                                document_date = #{documentDate},
+                                                                document_type = #{documentType},
+                                                                storehouse_sid = #{storehouseSid},
+                                                                storehouse_location_sid = #{storehouseLocationSid},
+                                                                lender = #{lender},
+                                                                returner = #{returner},
+                                                                remark = #{remark},
+                                                                handle_status = #{handleStatus},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                confirmer_account = #{confirmerAccount},
+                                                                confirm_date = #{confirmDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where lendreturn_sid = #{lendreturnSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_sam_sample_lendreturn
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                lendreturn_sid = #{lendreturnSid},
+                                                                                lendreturn_code = #{lendreturnCode},
+                                                                                document_date = #{documentDate},
+                                                                                document_type = #{documentType},
+                                                                                storehouse_sid = #{storehouseSid},
+                                                                                storehouse_location_sid = #{storehouseLocationSid},
+                                                                                lender = #{lender},
+                                                                                returner = #{returner},
+                                                                                remark = #{remark},
+                                                                                handle_status = #{handleStatus},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                confirmer_account = #{confirmerAccount},
+                                                                                confirm_date = #{confirmDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where lendreturn_sid = #{lendreturnSid}
+        </foreach>
+    </update>
+
+</mapper>

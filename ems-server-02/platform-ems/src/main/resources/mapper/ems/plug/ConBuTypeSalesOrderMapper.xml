@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.plug.mapper.ConBuTypeSalesOrderMapper">
+
+    <resultMap type="com.platform.ems.plug.domain.ConBuTypeSalesOrder" id="ConBuTypeSalesOrderResult">
+        <result property="clientId" column="client_id"/>
+        <result property="sid" column="sid"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="deliveryType" column="delivery_type"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="isClientDefine" column="is_client_define"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="sort" column="sort"/>
+        <result property="inventoryControlMode" column="inventory_control_mode"/>
+        <result property="isEditPrice" column="is_edit_price"/>
+        <result property="isReserveStock" column="is_reserve_stock"/>
+        <result property="isOnceSale" column="is_once_sale"/>
+        <result property="isVendorTransport" column="is_vendor_transport"/>
+        <result property="toexpireDays" column="toexpire_days"/>
+    </resultMap>
+
+    <sql id="selectConBuTypeSalesOrderVo">
+        select
+        t2.nick_name AS creator_account_name,
+        t.client_id,
+        t.sid,
+        t.code,
+        t.name,
+        t.delivery_type,
+        t.toexpire_days,
+        t.remark,
+        t.status,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t.sort,
+        t.inventory_control_mode,
+        t.is_edit_price,
+        t.is_reserve_stock,
+        t.is_vendor_transport,
+        t.is_once_sale ,
+        t.is_client_define
+  from s_con_bu_type_sales_order t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name
+    </sql>
+
+    <select id="selectConBuTypeSalesOrderById" parameterType="Long" resultMap="ConBuTypeSalesOrderResult">
+        <include refid="selectConBuTypeSalesOrderVo"/>
+        where t.sid = #{sid}
+    </select>
+
+
+    <select id="selectConBuTypeSalesOrderList" parameterType="com.platform.ems.plug.domain.ConBuTypeSalesOrder"
+            resultMap="ConBuTypeSalesOrderResult">
+        <include refid="selectConBuTypeSalesOrderVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sidList != null and sidList.length >0 ">
+                and t.sid in
+                (<foreach collection="sidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="sid != null">
+                and t.sid= #{sid}
+            </if>
+            <if test="code != null  and code != ''">
+                and (<foreach collection="code.split(';')" item="item" separator="or">t.code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="name != null  and name != ''">and
+                t.name like concat('%', #{name}, '%')
+            </if>
+            <if test="deliveryType != null  and deliveryType != ''">
+                and t.delivery_type = #{deliveryType}
+            </if>
+            <if test="status != null  and status != ''">
+                and (<foreach collection="status.split(';')" item="item" separator="or">t.status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t2.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isClientDefine != null  and isClientDefine != ''">
+                and (<foreach collection="isClientDefine.split(';')" item="item" separator="or">t.is_client_define like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sort != null ">
+                and t.sort =#{sort}
+            </if>
+            <if test="inventoryControlMode != null  and inventoryControlMode != ''">
+                and t.inventory_control_mode = #{inventoryControlMode}
+            </if>
+            <if test="isEditPrice != null  and isEditPrice != ''">
+                and t.is_edit_price = #{isEditPrice}
+            </if>
+            <if test="isReserveStock != null  and isReserveStock != ''">
+                and t.is_reserve_stock = #{isReserveStock}
+            </if>
+            <if test="isOnceSale != null and isOnceSale != ''">
+                and t.is_once_sale = #{isOnceSale}
+            </if>
+            <if test="isVendorTransport != null and isVendorTransport != ''">
+                and t.is_vendor_transport = #{isVendorTransport}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.sort asc, t.name asc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_bu_type_sales_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sid,
+            code,
+            name,
+            delivery_type,
+            toexpire_days,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+            is_client_define,
+            sort,
+            inventory_control_mode,
+            is_edit_price,
+            is_reserve_stock,
+            is_vendor_transport,
+            is_once_sale,
+        </trim>
+        values
+        <foreach collection="list" item="o" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{o.clientId},
+                #{o.sid},
+                #{o.code},
+                #{o.name},
+                #{o.deliveryType},
+                #{o.toexpireDays},
+                #{o.remark},
+                #{o.status},
+                #{o.handleStatus},
+                #{o.creatorAccount},
+                #{o.createDate},
+                #{o.updaterAccount},
+                #{o.updateDate},
+                #{o.confirmerAccount},
+                #{o.confirmDate},
+                #{o.dataSourceSys},
+                #{o.isClientDefine},
+                #{o.sort},
+                #{o.inventoryControlMode},
+                #{o.isEditPrice},
+                #{o.isReserveStock},
+                #{o.isVendorTransport},
+                #{o.isOnceSale},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_bu_type_sales_order
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            code = #{code},
+            name = #{name},
+            delivery_type = #{deliveryType},
+            toexpire_days = #{toexpireDays},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            is_client_define = #{isClientDefine},
+            sort = #{sort},
+            inventory_control_mode = #{inventoryControlMode},
+            is_edit_price = #{isEditPrice},
+            is_reserve_stock = #{isReserveStock},
+            is_vendor_transport = #{isVendorTransport},
+            is_once_sale = #{isOnceSale},
+        </trim>
+        where sid = #{sid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_bu_type_sales_order
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                code = #{code},
+                name = #{name},
+                delivery_type = #{deliveryType},
+                toexpire_days = #{toexpireDays},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+                is_client_define = #{isClientDefine},
+                sort = #{sort},
+                inventory_control_mode = #{inventoryControlMode},
+                is_edit_price = #{isEditPrice},
+                is_reserve_stock = #{isReserveStock},
+                is_vendor_transport = #{isVendorTransport},
+                is_once_sale = #{isOnceSale},
+            </trim>
+            where sid = #{sid}
+        </foreach>
+    </update>
+
+    <select id="getConBuTypeSalesOrderList" resultType="com.platform.ems.plug.domain.ConBuTypeSalesOrder">
+        select sid,code,name,status,handle_status,inventory_control_mode,is_edit_price,is_reserve_stock,is_vendor_transport,sort,is_once_sale from s_con_bu_type_sales_order
+        where status = '1' and handle_status = '5'
+        order by sort asc, name asc
+    </select>
+
+    <select id="getList" resultType="com.platform.ems.plug.domain.ConBuTypeSalesOrder">
+        select
+        client_id,
+        sid,
+        code,
+        name,
+        status,
+        handle_status,
+        creator_account,
+        create_date,
+        inventory_control_mode,
+        is_edit_price,
+        is_reserve_stock,
+        is_vendor_transport,
+        is_once_sale,
+        sort
+  from s_con_bu_type_sales_order
+        <where>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="isOnceSale != null and isOnceSale != ''">
+                and is_once_sale = #{isOnceSale}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and handle_status = #{handleStatus}
+            </if>
+            <if test="buTypeCodeList != null and buTypeCodeList.size() >0 ">
+                and code in
+                (<foreach collection="buTypeCodeList" item="code" separator=",">#{code}</foreach>)
+            </if>
+        </where>
+        order by sort asc, name asc
+    </select>
+</mapper>

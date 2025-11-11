@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurMaterialSkuVencodeMapper">
+
+    <resultMap type="com.platform.ems.domain.PurMaterialSkuVencode" id="PurMaterialSkuVencodeResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="materialVendorSkuSid" column="material_vendor_sku_sid"/>
+                    <result property="purchaseSourceSid" column="purchase_source_sid"/>
+                    <result property="skuType" column="sku_type"/>
+                    <result property="skuSid" column="sku_sid"/>
+                    <result property="vendorSkuCode" column="vendor_sku_code"/>
+                    <result property="remark" column="remark"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+                    <result property="skuCode" column="sku_code"/>
+                    <result property="skuName" column="sku_name"/>
+            </resultMap>
+
+    <sql id="selectPurMaterialSkuVencodeVo">
+        select t.client_id, t.material_vendor_sku_sid, t.purchase_source_sid, t.sku_type, t.sku_sid, t.vendor_sku_code, t.remark,
+        t.creator_account, t.create_date, t.updater_account, t.update_date, t.data_source_sys , t1.sku_code , t1.sku_name
+        from s_pur_material_sku_vencode t
+        LEFT JOIN s_bas_sku t1 ON t1.sku_sid = t.sku_sid
+    </sql>
+
+    <select id="selectPurMaterialSkuVencodeById" parameterType="Long" resultMap="PurMaterialSkuVencodeResult">
+        <include refid="selectPurMaterialSkuVencodeVo"/>
+        where t.material_vendor_sku_sid = #{materialVendorSkuSid}
+    </select>
+
+
+    <select id="selectPurMaterialSkuVencodeList" parameterType="com.platform.ems.domain.PurMaterialSkuVencode"
+            resultMap="PurMaterialSkuVencodeResult">
+        <include refid="selectPurMaterialSkuVencodeVo"/>
+        <where>
+                                                                                                    <if test="clientId != null  and clientId != ''">
+                                <foreach collection="clientId.split(';')" item="item">or t.client_id like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                                            <if test="purchaseSourceSid != null ">
+                                and t.purchase_source_sid = #{purchaseSourceSid}
+                            </if>
+                                                                                                                                                                <if test="skuType != null  and skuType != ''">
+                                <foreach collection="skuType.split(';')" item="item">or t.sku_type like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                <if test="skuSid != null ">
+                                and t.sku_sid in
+                                (<foreach collection="skuSid" item="skuSid" separator=",">
+                                #{companySid}</foreach>)
+                            </if>
+                                                                                                                                                                <if test="vendorSkuCode != null  and vendorSkuCode != ''">
+                                <foreach collection="vendorSkuCode.split(';')" item="item">or t.vendor_sku_code like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                <if test="creatorAccount != null  and creatorAccount != ''">
+                                <foreach collection="creatorAccount.split(';')" item="item">or t.creator_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                                                <if test="beginTime != null and beginTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                                </if>
+                                <if test="endTime != null and endTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                                </if>
+                                                                                                                                                                                            <if test="updaterAccount != null  and updaterAccount != ''">
+                                <foreach collection="updaterAccount.split(';')" item="item">or t.updater_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                                                <if test="updateDate != null ">
+                                    and t.update_date = #{updateDate}
+                                </if>
+                                                                                                                                                                                            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                                <foreach collection="dataSourceSys.split(';')" item="item">or t.data_source_sys like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_material_sku_vencode
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                material_vendor_sku_sid,
+                                                                purchase_source_sid,
+                                                                sku_type,
+                                                                sku_sid,
+                                                                vendor_sku_code,
+                                                                remark,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                data_source_sys,
+                                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                                                            #{clientId},
+                                                                                #{materialVendorSkuSid},
+                                                                                #{purchaseSourceSid},
+                                                                                #{skuType},
+                                                                                #{skuSid},
+                                                                                #{vendorSkuCode},
+                                                                                #{remark},
+                                                                                #{creatorAccount},
+                                                                                #{createDate},
+                                                                                #{updaterAccount},
+                                                                                #{updateDate},
+                                                                                #{dataSourceSys},
+                                                </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_material_sku_vencode
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                                            purchase_source_sid = #{purchaseSourceSid},
+                                                                sku_type = #{skuType},
+                                                                sku_sid = #{skuSid},
+                                                                vendor_sku_code = #{vendorSkuCode},
+                                                                remark = #{remark},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where material_vendor_sku_sid = #{materialVendorSkuSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_material_sku_vencode
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    purchase_source_sid = #{purchaseSourceSid},
+                                                                                sku_type = #{skuType},
+                                                                                sku_sid = #{skuSid},
+                                                                                vendor_sku_code = #{vendorSkuCode},
+                                                                                remark = #{remark},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where material_vendor_sku_sid = #{materialVendorSkuSid}
+        </foreach>
+    </update>
+
+    <delete id="deletePurMaterialSkuVencodeByIds" parameterType="long">
+        delete from s_pur_material_sku_vencode where purchase_source_sid in
+        <foreach item="purchaseSourceSid" collection="array" open="(" separator="," close=")">
+            #{purchaseSourceSid}
+        </foreach>
+    </delete>
+
+</mapper>

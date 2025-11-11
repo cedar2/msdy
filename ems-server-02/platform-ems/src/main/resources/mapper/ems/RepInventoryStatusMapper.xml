@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.RepInventoryStatusMapper">
+
+    <resultMap type="com.platform.ems.domain.RepInventoryStatus" id="RepInventoryStatusResult">
+        <result property="clientId" column="client_id"/>
+        <result property="dataRecordSid" column="data_record_sid"/>
+        <result property="materialTypeCode" column="material_type_code"/>
+        <result property="materialTypeName" column="material_type_name"/>
+        <result property="materialClassCode" column="material_class_code"/>
+        <result property="materialClassName" column="material_class_name"/>
+        <result property="storehouseCode" column="storehouse_code"/>
+        <result property="storehouseShortName" column="storehouse_short_name"/>
+        <result property="locationCode" column="location_code"/>
+        <result property="locationShortName" column="location_short_name"/>
+        <result property="quantity" column="quantity"/>
+        <result property="moneyAmount" column="money_amount"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="createDate" column="create_date"/>
+    </resultMap>
+
+    <sql id="selectRepInventoryStatusVo">
+        select t.client_id,
+               t.data_record_sid,
+               t.material_type_code,
+               t.material_type_name,
+               t.material_class_code,
+               t.material_class_name,
+               t.storehouse_code,
+               t.storehouse_short_name,
+               t.location_code,
+               t.location_short_name,
+               t.quantity,
+               t.money_amount,
+               t.currency,
+               t.currency_unit,
+               t.create_date
+        from s_rep_inventory_status t
+    </sql>
+
+    <select id="selectRepInventoryStatusById" parameterType="Long" resultMap="RepInventoryStatusResult">
+        <include refid="selectRepInventoryStatusVo"/>
+        where t.data_record_sid = #{dataRecordSid}
+    </select>
+
+
+    <select id="selectRepInventoryStatusList" parameterType="com.platform.ems.domain.RepInventoryStatus"
+            resultMap="RepInventoryStatusResult">
+        <include refid="selectRepInventoryStatusVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id =
+                #{item}</foreach>)
+            </if>
+            <if test="materialTypeCode != null  and materialTypeCode != ''">
+                and (<foreach collection="materialTypeCode.split(';')" item="item" separator="or">t.material_type_code
+                = #{item}</foreach>)
+            </if>
+            <if test="materialTypeName != null  and materialTypeName != ''">and
+                t.material_type_name like concat('%', #{materialTypeName}, '%')
+            </if>
+            <if test="materialClassCode != null  and materialClassCode != ''">
+                and (<foreach collection="materialClassCode.split(';')" item="item" separator="or">t.material_class_code
+                = #{item}</foreach>)
+            </if>
+            <if test="materialClassName != null  and materialClassName != ''">and
+                t.material_class_name like concat('%', #{materialClassName}, '%')
+            </if>
+            <if test="storehouseCode != null  and storehouseCode != ''">
+                and (<foreach collection="storehouseCode.split(';')" item="item" separator="or">t.storehouse_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="storehouseShortName != null  and storehouseShortName != ''">and
+                t.storehouse_short_name like concat('%', #{storehouseShortName}, '%')
+            </if>
+            <if test="locationCode != null  and locationCode != ''">
+                and (<foreach collection="locationCode.split(';')" item="item" separator="or">t.location_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="locationShortName != null  and locationShortName != ''">and
+                t.location_short_name like concat('%', #{locationShortName}, '%')
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="moneyAmount != null ">
+                and t.money_amount = #{moneyAmount}
+            </if>
+            <if test="currency != null  and currency != ''">
+                and (<foreach collection="currency.split(';')" item="item" separator="or">t.currency
+                = #{item}</foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">
+                and (<foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit
+                = #{item}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_rep_inventory_status
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            data_record_sid,
+            material_type_code,
+            material_type_name,
+            material_class_code,
+            material_class_name,
+            storehouse_code,
+            storehouse_short_name,
+            location_code,
+            location_short_name,
+            quantity,
+            money_amount,
+            currency,
+            currency_unit,
+            create_date,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.dataRecordSid},
+                #{item.materialTypeCode},
+                #{item.materialTypeName},
+                #{item.materialClassCode},
+                #{item.materialClassName},
+                #{item.storehouseCode},
+                #{item.storehouseShortName},
+                #{item.locationCode},
+                #{item.locationShortName},
+                #{item.quantity},
+                #{item.moneyAmount},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.createDate},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_rep_inventory_status
+        <trim prefix="SET" suffixOverrides=",">
+            material_type_code = #{materialTypeCode},
+            material_type_name = #{materialTypeName},
+            material_class_code = #{materialClassCode},
+            material_class_name = #{materialClassName},
+            storehouse_code = #{storehouseCode},
+            storehouse_short_name = #{storehouseShortName},
+            location_code = #{locationCode},
+            location_short_name = #{locationShortName},
+            quantity = #{quantity},
+            money_amount = #{moneyAmount},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+        </trim>
+        where data_record_sid = #{dataRecordSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_rep_inventory_status
+            <trim prefix="SET" suffixOverrides=",">
+                material_type_code = #{materialTypeCode},
+                material_type_name = #{materialTypeName},
+                material_class_code = #{materialClassCode},
+                material_class_name = #{materialClassName},
+                storehouse_code = #{storehouseCode},
+                storehouse_short_name = #{storehouseShortName},
+                location_code = #{locationCode},
+                location_short_name = #{locationShortName},
+                quantity = #{quantity},
+                money_amount = #{moneyAmount},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+            </trim>
+            where data_record_sid = #{dataRecordSid}
+        </foreach>
+    </update>
+
+</mapper>

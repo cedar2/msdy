@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.SalCustomerMonthAccountBillMapper">
+
+    <resultMap type="com.platform.ems.domain.SalCustomerMonthAccountBill" id="SalCustomerMonthAccountBillResult">
+        <result property="clientId" column="client_id"/>
+        <result property="customerMonthAccountBillSid" column="customer_month_account_bill_sid"/>
+        <result property="customerMonthAccountBillCode" column="customer_month_account_bill_code"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="yearMonths" column="year_months"/>
+        <result property="materialType" column="material_type"/>
+        <result property="materialTypeName" column="material_type_name"/>
+        <result property="initialBalance" column="initial_balance"/>
+        <result property="fahuo" column="fahuo"/>
+        <result property="kaipiao" column="kaipiao"/>
+        <result property="fukuan" column="fukuan"/>
+        <result property="shoukuan" column="shoukuan"/>
+        <result property="xiaoshoudikou" column="xiaoshoudikou"/>
+        <result property="koukuan" column="koukuan"/>
+        <result property="tiaozhang" column="tiaozhang"/>
+        <result property="endingBalance" column="ending_balance"/>
+        <result property="yajin" column="yajin"/>
+        <result property="zanyakuan" column="zanyakuan"/>
+        <result property="yueShijijieqian" column="yue_shijijieqian"/>
+        <result property="yingfuzangu" column="yingfuzangu"/>
+        <result property="yingshouzangu" column="yingshouzangu"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="companyName" column="company_name"/>
+        <result property="yufukuan" column="yufukuan"/>
+        <result property="yingfukuan" column="yingfukuan"/>
+        <result property="customerShortName" column="customer_short_name"/>
+        <result property="companyShortName" column="company_short_name"/>
+    </resultMap>
+
+    <sql id="selectSalCustomerMonthAccountBillVo">
+        select t.client_id,
+               t.customer_month_account_bill_sid,
+               t.customer_month_account_bill_code,
+               t.customer_sid,
+               t.customer_code,
+               t.company_sid,
+               t.company_code,
+               t.year_months,
+               t.material_type,
+               t.initial_balance,
+               t.fahuo,
+               t.kaipiao,
+               t.fukuan,
+               t.shoukuan,
+               t.xiaoshoudikou,
+               t.koukuan,
+               t.tiaozhang,
+               t.ending_balance,
+               t.yajin,
+               t.zanyakuan,
+               t.yue_shijijieqian,
+               t.yingfuzangu,
+               t.yingshouzangu,
+               t.currency,
+               t.currency_unit,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t5.company_name,
+               t5.short_name as company_short_name,
+               t6.customer_name,
+               t6.short_name as customer_short_name,
+               t7.name as material_type_name
+        from s_sal_customer_month_account_bill t
+        left join sys_user t2 on t.creator_account = t2.user_name
+        left join sys_user t3 on t.updater_account = t3.user_name
+        left join sys_user t4 on t.confirmer_account = t4.user_name
+        left join s_bas_company t5 on t.company_sid = t5.company_sid
+        left join s_bas_customer t6 on t.customer_sid = t6.customer_sid
+        left join s_con_material_type t7 ON t.material_type = t7.code
+    </sql>
+
+    <select id="selectSalCustomerMonthAccountBillById" parameterType="Long" resultMap="SalCustomerMonthAccountBillResult">
+        <include refid="selectSalCustomerMonthAccountBillVo"/>
+        where t.customer_month_account_bill_sid = #{customerMonthAccountBillSid}
+    </select>
+
+    <select id="selectSalCustomerMonthAccountBillList" parameterType="com.platform.ems.domain.SalCustomerMonthAccountBill"
+            resultMap="SalCustomerMonthAccountBillResult">
+        <include refid="selectSalCustomerMonthAccountBillVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="creatorAccountName != null  and creatorAccountName != ''">
+                and t2.nick_name like concat('%',  #{creatorAccountName}, '%')
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and t.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">#{creatorAccount}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="customerSid != null and customerSid != ''">
+                and t.customer_sid = #{customerSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="materialType != null and materialType != ''">
+                and t.material_type = #{materialType}
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length >0">
+                <if test="materialTypeList[0] == null or materialTypeList[0] == ''">
+                    and t.material_type is NULL
+                </if>
+                <if test="materialTypeList[0] != null and materialTypeList[0] != ''">
+                    and t.material_type in
+                    (<foreach collection="materialTypeList" item="item" separator=",">#{item}</foreach>)
+                </if>
+            </if>
+            <if test="yearMonths != null and yearMonths != ''">
+                and t.year_months = #{yearMonths}
+            </if>
+            <if test="initialBalance != null ">
+                and t.initial_balance = #{initialBalance}
+            </if>
+            <if test="fahuo != null ">
+                and t.fahuo = #{fahuo}
+            </if>
+            <if test="kaipiao != null ">
+                and t.kaipiao = #{kaipiao}
+            </if>
+            <if test="fukuan != null ">
+                and t.fukuan = #{fukuan}
+            </if>
+            <if test="shoukuan != null ">
+                and t.shoukuan = #{shoukuan}
+            </if>
+            <if test="xiaoshoudikou != null ">
+                and t.xiaoshoudikou = #{xiaoshoudikou}
+            </if>
+            <if test="koukuan != null ">
+                and t.koukuan = #{koukuan}
+            </if>
+            <if test="tiaozhang != null ">
+                and t.tiaozhang = #{tiaozhang}
+            </if>
+            <if test="endingBalance != null ">
+                and t.ending_balance = #{endingBalance}
+            </if>
+            <if test="yajin != null ">
+                and t.yajin = #{yajin}
+            </if>
+            <if test="zanyakuan != null ">
+                and t.zanyakuan = #{zanyakuan}
+            </if>
+            <if test="yueShijijieqian != null ">
+                and t.yue_shijijieqian = #{yueShijijieqian}
+            </if>
+            <if test="yingfuzangu != null ">
+                and t.yingfuzangu = #{yingfuzangu}
+            </if>
+            <if test="yingshouzangu != null ">
+                and t.yingshouzangu = #{yingshouzangu}
+            </if>
+            <if test="currency != null and currency != ''">
+                and t.currency = #{currency}
+            </if>
+            <if test="currencyUnit != null and currencyUnit != ''">
+                and t.currency_unit = #{currencyUnit}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and t.year_months >= #{beginTime}
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and t.year_months &lt;= #{endTime}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.customer_month_account_bill_sid DESC
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_sal_customer_month_account_bill
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            customer_month_account_bill_sid,
+            customer_month_account_bill_code,
+            customer_sid,
+            customer_code,
+            company_sid,
+            company_code,
+            year_months,
+            material_type,
+            initial_balance,
+            fahuo,
+            kaipiao,
+            fukuan,
+            shoukuan,
+            xiaoshoudikou,
+            koukuan,
+            tiaozhang,
+            ending_balance,
+            yajin,
+            zanyakuan,
+            yue_shijijieqian,
+            yingfuzangu,
+            yingshouzangu,
+            currency,
+            currency_unit,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.customerMonthAccountBillSid},
+                #{item.customerMonthAccountBillCode},
+                #{item.customerSid},
+                #{item.customerCode},
+                #{item.companySid},
+                #{item.companyCode},
+                #{item.yearMonths},
+                #{item.materialType},
+                #{item.initialBalance},
+                #{item.fahuo},
+                #{item.kaipiao},
+                #{item.fukuan},
+                #{item.shoukuan},
+                #{item.xiaoshoudikou},
+                #{item.koukuan},
+                #{item.tiaozhang},
+                #{item.endingBalance},
+                #{item.yajin},
+                #{item.zanyakuan},
+                #{item.yueShijijieqian},
+                #{item.yingfuzangu},
+                #{item.yingshouzangu},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_sal_customer_month_account_bill
+        <trim prefix="SET" suffixOverrides=",">
+            customer_sid = #{customerSid},
+            customer_code =  #{customerCode},
+            company_sid = #{companySid},
+            company_code = #{companyCode},
+            year_months = #{yearMonths},
+            material_type = #{materialType},
+            initial_balance = #{initialBalance},
+            fahuo = #{fahuo},
+            kaipiao = #{kaipiao},
+            fukuan = #{fukuan},
+            shoukuan = #{shoukuan},
+            xiaoshoudikou = #{xiaoshoudikou},
+            koukuan = #{koukuan},
+            tiaozhang = #{tiaozhang},
+            ending_balance = #{endingBalance},
+            yajin = #{yajin},
+            zanyakuan = #{zanyakuan},
+            yue_shijijieqian = #{yueShijijieqian},
+            yingfuzangu = #{yingfuzangu},
+            yingshouzangu = #{yingshouzangu},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where customer_month_account_bill_sid = #{customerMonthAccountBillSid}
+    </update>
+
+</mapper>

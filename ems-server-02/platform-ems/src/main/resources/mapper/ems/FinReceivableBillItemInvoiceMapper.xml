@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinReceivableBillItemInvoiceMapper">
+
+    <resultMap type="com.platform.ems.domain.FinReceivableBillItemInvoice" id="FinReceivableBillItemInvoiceResult">
+        <result property="clientId" column="client_id"/>
+        <result property="receivableBillItemInvoiceSid" column="receivable_bill_item_invoice_sid"/>
+        <result property="receivableBillSid" column="receivable_bill_sid"/>
+        <result property="customerInvoiceRecordSid" column="customer_invoice_record_sid"/>
+        <result property="customerInvoiceRecordCode" column="customer_invoice_record_code"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectFinReceivableBillItemInvoiceVo">
+        select t.client_id,
+               t.receivable_bill_item_invoice_sid,
+               t.receivable_bill_sid,
+               t.customer_invoice_record_sid,
+               t.customer_invoice_record_code,
+               t.currency_amount_tax,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               u1.nick_name AS creator_account_name,
+               u2.nick_name AS updater_account_name,
+               t1.receivable_bill_code,
+               t1.handle_status as bill_handle_status,
+               t1.agent,
+               u3.nick_name AS agent_name,
+               t2.invoice_num,
+               t2.total_currency_amount_tax,
+               t2.tax_rate,
+               t2.total_tax_amount,
+               t2.total_currency_amount,
+               t2.inovice_code,
+               t2.invoice_date,
+               t2.paper_contract_code,
+               t2.invoice_category,
+               t2.invoice_type,
+               t2.shoukuan_status,
+               t2.handle_status,
+               t2.customer_sid,
+               t2.company_sid,
+               t3.customer_name,
+               t3.short_name as customer_short_name,
+               t4.company_name,
+               t4.short_name as company_short_name,
+               t5.name as invoice_category_name,
+               t6.name as invoice_type_name,
+               (t2.total_currency_amount_tax - ifnull(t7.currency_amount_tax, 0) + ifnull(t.currency_amount_tax, 0)) as currency_amount_tax_dai
+        from s_fin_receivable_bill_item_invoice t
+         LEFT JOIN sys_user u1 ON t.creator_account = u1.user_name
+         LEFT JOIN sys_user u2 ON t.updater_account = u2.user_name
+         LEFT JOIN s_fin_receivable_bill t1 ON t.receivable_bill_sid = t1.receivable_bill_sid
+         LEFT JOIN sys_user u3 ON t1.agent = u3.user_name
+         LEFT JOIN s_fin_customer_invoice_record t2 ON t.customer_invoice_record_sid = t2.customer_invoice_record_sid
+         LEFT JOIN s_bas_customer t3 ON t2.customer_sid = t3.customer_sid
+         LEFT JOIN s_bas_company t4 ON t2.company_sid = t4.company_sid
+         LEFT JOIN s_con_invoice_category t5 ON t2.invoice_category = t5.code
+         LEFT JOIN s_con_invoice_type t6 ON t2.invoice_type = t6.code
+         LEFT JOIN (select t7a.customer_invoice_record_sid, sum(t7a.currency_amount_tax) as currency_amount_tax
+                    from s_fin_receivable_bill_item_invoice t7a
+                    left join s_fin_receivable_bill t7b on t7a.receivable_bill_sid = t7b.receivable_bill_sid
+                    group by t7a.customer_invoice_record_sid
+         ) t7 ON t2.customer_invoice_record_sid = t7.customer_invoice_record_sid
+    </sql>
+
+    <select id="selectFinReceivableBillItemInvoiceById" parameterType="Long"
+            resultMap="FinReceivableBillItemInvoiceResult">
+        <include refid="selectFinReceivableBillItemInvoiceVo"/>
+        where t.receivable_bill_item_invoice_sid = #{receivableBillItemInvoiceSid}
+    </select>
+
+    <select id="selectFinReceivableBillItemInvoiceList"
+            parameterType="com.platform.ems.domain.FinReceivableBillItemInvoice"
+            resultMap="FinReceivableBillItemInvoiceResult">
+        <include refid="selectFinReceivableBillItemInvoiceVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="receivableBillItemInvoiceSid != null ">
+                and t.receivable_bill_item_invoice_sid = #{receivableBillItemInvoiceSid}
+            </if>
+            <if test="receivableBillItemInvoiceSidList != null  and receivableBillItemInvoiceSidList.length >0">
+                and t.receivable_bill_item_invoice_sid in (<foreach collection="receivableBillItemInvoiceSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="receivableBillSid != null ">
+                and t.receivable_bill_sid = #{receivableBillSid}
+            </if>
+            <if test="receivableBillSidList != null  and receivableBillSidList.length >0">
+                and t.receivable_bill_sid in (<foreach collection="receivableBillSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="receivableBillCode != null ">
+                and t1.receivable_bill_code like concat('%', #{receivableBillCode}, '%')
+            </if>
+            <if test="customerInvoiceRecordSid != null ">
+                and t.customer_invoice_record_sid = #{customerInvoiceRecordSid}
+            </if>
+            <if test="customerInvoiceRecordSidList != null  and customerInvoiceRecordSidList.length >0">
+                and t.customer_invoice_record_sid in (<foreach collection="customerInvoiceRecordSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="customerInvoiceRecordCode != null ">
+                and t.customer_invoice_record_code like concat('%', #{customerInvoiceRecordCode}, '%')
+            </if>
+            <if test="currencyAmountTax != null ">
+                and t.currency_amount_tax = #{currencyAmountTax}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="billHandleStatus != null and billHandleStatus!=''">
+                and t1.handle_status = #{billHandleStatus}
+            </if>
+            <if test="shoukuanStatus != null and shoukuanStatus != ''">
+                and t2.shoukuan_status = #{shoukuanStatus}
+            </if>
+            <if test="customerSidList != null  and customerSidList.length >0">
+                and t2.customer_sid in (<foreach collection="customerSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companySidList != null  and companySidList.length >0">
+                and t2.company_sid in (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="agentName != null and agentName != ''">
+                and u3.nick_name like concat('%', #{agentName}, '%')
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.create_date desc, t.customer_invoice_record_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_receivable_bill_item_invoice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            receivable_bill_item_invoice_sid,
+            receivable_bill_sid,
+            customer_invoice_record_sid,
+            customer_invoice_record_code,
+            currency_amount_tax,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.receivableBillItemInvoiceSid},
+                #{item.receivableBillSid},
+                #{item.customerInvoiceRecordSid},
+                #{item.customerInvoiceRecordCode},
+                #{item.currencyAmountTax},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_receivable_bill_item_invoice
+        <trim prefix="SET" suffixOverrides=",">
+            receivable_bill_sid = #{receivableBillSid},
+            customer_invoice_record_sid = #{customerInvoiceRecordSid},
+            customer_invoice_record_code = #{customerInvoiceRecordCode},
+            currency_amount_tax = #{currencyAmountTax},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where receivable_bill_item_invoice_sid = #{receivableBillItemInvoiceSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_receivable_bill_item_invoice
+            <trim prefix="SET" suffixOverrides=",">
+                receivable_bill_sid = #{o.receivableBillSid},
+                customer_invoice_record_sid = #{o.customerInvoiceRecordSid},
+                customer_invoice_record_code = #{o.customerInvoiceRecordCode},
+                currency_amount_tax = #{o.currencyAmountTax},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where receivable_bill_item_invoice_sid = #{o.receivableBillItemInvoiceSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.RepFinanceStatusYingsMapper">
+
+    <resultMap type="com.platform.ems.domain.RepFinanceStatusYings" id="RepFinanceStatusYingsResult">
+        <result property="clientId" column="client_id"/>
+        <result property="dataRecordSid" column="data_record_sid"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="customerShortName" column="customer_short_name"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="companyShortName" column="company_short_name"/>
+        <result property="statisticType" column="statistic_type"/>
+        <result property="moneyAmountYings" column="money_amount_yings"/>
+        <result property="dueDate" column="due_date"/>
+        <result property="year" column="year"/>
+        <result property="moth" column="moth"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="createDate" column="create_date"/>
+    </resultMap>
+
+    <sql id="selectRepFinanceStatusYingsVo">
+        select t.client_id,
+               t.data_record_sid,
+               t.product_season_code,
+               t.customer_sid,
+               t.customer_code,
+               t.customer_short_name,
+               t.company_code,
+               t.company_short_name,
+               t.statistic_type,
+               t.money_amount_yings,
+               t.due_date,
+               t.year,
+               t.moth,
+               t.currency,
+               t.currency_unit,
+               t.create_date
+        from s_rep_finance_status_yings t
+    </sql>
+
+    <select id="selectRepFinanceStatusYingsById" parameterType="Long" resultMap="RepFinanceStatusYingsResult">
+        <include refid="selectRepFinanceStatusYingsVo"/>
+        where t.data_record_sid = #{dataRecordSid}
+    </select>
+
+    <select id="getRepFinanceStatusYingsList" parameterType="com.platform.ems.domain.RepFinanceStatusYings"
+            resultType="com.platform.ems.domain.RepFinanceStatusYings">
+        select t.client_id,
+               t4.product_season_code,
+               t4.product_season_name,
+               t1.customer_sid,
+               t3.customer_code,
+               t3.short_name AS customer_short_name,
+               t1.company_sid,
+               m.product_season_sid,
+               t2.company_code,
+               ifnull(t2.short_name,t2.company_name) AS company_short_name,
+               t1.book_source_category AS statistic_type,
+               t5.name AS statistic_type_name,
+               ifnull(t.currency_amount_tax_yings,0) AS money_amount_yings,
+               t1.currency,
+               t1.currency_unit,
+               t.create_date
+        from s_fin_book_account_receivable_item t
+        left join s_fin_sale_invoice m on t.refer_doc_sid = m.sale_invoice_sid
+        left join s_fin_book_account_receivable t1 on t.book_account_receivable_sid = t1.book_account_receivable_sid
+        left join s_bas_company t2 on t1.company_sid = t2.company_sid
+        left join s_bas_customer t3 on t1.customer_sid = t3.customer_sid
+        left join s_bas_product_season t4 on m.product_season_sid = t4.product_season_sid
+        left join s_con_book_source_category t5 on t1.book_source_category = t5.code
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="dueDate != null ">
+                and t.due_date = #{dueDate}
+            </if>
+            <if test="year != null ">
+                and t.year =#{year}
+            </if>
+            <if test="moth != null ">
+                and t.moth =#{moth}
+            </if>
+            <if test="productSeasonSid != null">
+                and m.product_season_sid = #{productSeasonSid}
+            </if>
+            <if test="customerSid != null">
+                and t1.customer_sid = #{customerSid}
+            </if>
+            <if test="companySid != null">
+                and t1.company_sid = #{companySid}
+            </if>
+            <if test="statisticType != null  and statisticType != ''">
+                and t1.book_source_category = #{statisticType}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectRepFinanceStatusYingsList" parameterType="com.platform.ems.domain.RepFinanceStatusYings"
+            resultMap="RepFinanceStatusYingsResult">
+        <include refid="selectRepFinanceStatusYingsVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id = #{item}</foreach>)
+            </if>
+            <if test="productSeasonCode != null  and productSeasonCode != ''">
+                and (<foreach collection="productSeasonCode.split(';')" item="item" separator="or">t.product_season_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="customerSid != null ">
+                and t.customer_sid =#{customerSid}
+            </if>
+            <if test="customerCode != null  and customerCode != ''">
+                and (<foreach collection="customerCode.split(';')" item="item" separator="or">t.customer_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="customerShortName != null  and customerShortName != ''">and
+                t.customer_short_name like concat('%', #{customerShortName}, '%')
+            </if>
+            <if test="companyCode != null  and companyCode != ''">
+                and (<foreach collection="companyCode.split(';')" item="item" separator="or">t.company_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companyShortName != null  and companyShortName != ''">and
+                t.company_short_name like concat('%', #{companyShortName}, '%')
+            </if>
+            <if test="statisticType != null  and statisticType != ''">
+                and (<foreach collection="statisticType.split(';')" item="item" separator="or">t.statistic_type
+                = #{item}</foreach>)
+            </if>
+            <if test="moneyAmountYings != null ">
+                and t.money_amount_yings = #{moneyAmountYings}
+            </if>
+            <if test="dueDate != null ">
+                and t.due_date = #{dueDate}
+            </if>
+            <if test="year != null ">
+                and t.year =#{year}
+            </if>
+            <if test="moth != null ">
+                and t.moth =#{moth}
+            </if>
+            <if test="currency != null  and currency != ''">
+                and (<foreach collection="currency.split(';')" item="item" separator="or">t.currency
+                = #{item}</foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">
+                and (<foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit
+                = #{item}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_rep_finance_status_yings
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            data_record_sid,
+            product_season_code,
+            customer_sid,
+            customer_code,
+            customer_short_name,
+            company_code,
+            company_short_name,
+            statistic_type,
+            money_amount_yings,
+            due_date,
+            year,
+            moth,
+            currency,
+            currency_unit,
+            create_date,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.dataRecordSid},
+                #{item.productSeasonCode},
+                #{item.customerSid},
+                #{item.customerCode},
+                #{item.customerShortName},
+                #{item.companyCode},
+                #{item.companyShortName},
+                #{item.statisticType},
+                #{item.moneyAmountYings},
+                #{item.dueDate},
+                #{item.year},
+                #{item.moth},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.createDate},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_rep_finance_status_yings
+        <trim prefix="SET" suffixOverrides=",">
+            product_season_code = #{productSeasonCode},
+            customer_sid = #{customerSid},
+            customer_code = #{customerCode},
+            customer_short_name = #{customerShortName},
+            company_code = #{companyCode},
+            company_short_name = #{companyShortName},
+            statistic_type = #{statisticType},
+            money_amount_yings = #{moneyAmountYings},
+            due_date = #{dueDate},
+            year = #{year},
+            moth = #{moth},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+        </trim>
+        where data_record_sid = #{dataRecordSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_rep_finance_status_yings
+            <trim prefix="SET" suffixOverrides=",">
+                product_season_code = #{productSeasonCode},
+                customer_sid = #{customerSid},
+                customer_code = #{customerCode},
+                customer_short_name = #{customerShortName},
+                company_code = #{companyCode},
+                company_short_name = #{companyShortName},
+                statistic_type = #{statisticType},
+                money_amount_yings = #{moneyAmountYings},
+                due_date = #{dueDate},
+                year = #{year},
+                moth = #{moth},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+            </trim>
+            where data_record_sid = #{dataRecordSid}
+        </foreach>
+    </update>
+
+</mapper>

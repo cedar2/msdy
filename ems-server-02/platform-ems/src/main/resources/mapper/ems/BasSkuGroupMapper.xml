@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasSkuGroupMapper">
+
+    <resultMap type="com.platform.ems.domain.BasSkuGroup" id="BasSkuGroupResult">
+        <result property="clientId" column="client_id"/>
+        <result property="skuGroupSid" column="sku_group_sid"/>
+        <result property="skuGroupCode" column="sku_group_code"/>
+        <result property="skuGroupName" column="sku_group_name"/>
+        <result property="skuType" column="sku_type"/>
+        <result property="upDownSuit" column="up_down_suit"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="disableRemark" column="disable_remark"/>
+        <result property="customerShortName" column="customer_short_name"/>
+    </resultMap>
+
+    <sql id="selectBasSkuGroupVo">
+          select
+	t.client_id,
+	t.sku_group_sid,
+	t.sku_group_code,
+	t.sku_group_name,
+	t.sku_type,
+	t.up_down_suit,
+	t.customer_sid,
+	t2.customer_name ,
+    t2.short_name AS customer_short_name ,
+	t.remark,
+	t.disable_remark,
+	t.status,
+	t.handle_status,
+	t.creator_account,
+	t.create_date,
+	t.updater_account,
+	t.update_date,
+	t.confirmer_account,
+	t.confirm_date,
+	t.data_source_sys,
+	t3.nick_name AS creator_account_name,
+	t4.nick_name AS updater_account_name,
+	t5.nick_name AS confirmer_account_name
+from
+	s_bas_sku_group t
+	left join s_bas_customer t2 on t2.customer_sid =t.customer_sid
+	LEFT JOIN sys_user t3 ON t.creator_account = t3.user_name
+	LEFT JOIN sys_user t4 ON t.updater_account = t4.user_name
+    LEFT JOIN sys_user t5 ON t.confirmer_account = t5.user_name
+    </sql>
+
+    <select id="selectBasSkuGroupById" parameterType="long" resultMap="BasSkuGroupResult">
+        <include refid="selectBasSkuGroupVo"/>
+        where t.sku_group_sid = #{skuGroupSid}
+    </select>
+
+    <select id="getList" parameterType="com.platform.ems.domain.BasSkuGroup"
+            resultMap="BasSkuGroupResult">
+        select  t.sku_group_sid, t.sku_group_code, t.sku_group_name, t.sku_type, t.status, t.handle_status
+        from s_bas_sku_group t
+        <where>
+            <if test="skuType != null and skuType != ''">
+                and t.sku_type = #{skuType}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+        </where>
+        order by t.sku_group_name asc
+    </select>
+
+
+    <select id="selectBasSkuGroupList" parameterType="com.platform.ems.domain.BasSkuGroup"
+            resultMap="BasSkuGroupResult">
+        <include refid="selectBasSkuGroupVo"/>
+        <where>
+            <if test="upDownSuitList != null and upDownSuitList.length >0 ">
+                and t.up_down_suit in
+                (<foreach collection="upDownSuitList" item="upDownSuit" separator=",">#{upDownSuit}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="skuTypeList != null and skuTypeList.length >0 ">
+                and t.sku_type in
+                (<foreach collection="skuTypeList" item="skuType" separator=",">#{skuType}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0 ">
+                and t.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="skuGroupSid != null">
+                and t.sku_group_sid = #{skuGroupSid}
+            </if>
+            <if test="skuGroupCode != null and skuGroupCode != ''">
+                and ( <foreach collection="skuGroupCode.split(';')" item="item" separator="or"> t.sku_group_code like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="skuGroupName != null  and skuGroupName != ''">
+                and ( <foreach collection="skuGroupName.split(';')" item="item" separator="or"> t.sku_group_name like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="skuType != null  and skuType != ''">
+                and (<foreach collection="skuType.split(';')" item="item" separator="or"> t.sku_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="upDownSuit != null  and upDownSuit != ''">
+                and (<foreach collection="upDownSuit.split(';')" item="item" separator="or"> t.up_down_suit like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="customerSid != null and customerSid!=''">
+                and t.customer_sid =#{customerSid}
+            </if>
+            <if test="status != null  and status != ''">
+                and (<foreach collection="status.split(';')" item="item" separator="or"> t.status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or"> t.handle_status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t3.nick_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or"> t.confirmer_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or"> t.data_source_sys like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.sku_group_code desc, t.create_date desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_sku_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sku_group_sid,
+            sku_group_code,
+            sku_group_name,
+            sku_type,
+            up_down_suit,
+            customer_sid,
+            remark,
+            disable_remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{clientId},
+                #{skuGroupSid},
+                #{skuGroupCode},
+                #{skuGroupName},
+                #{skuType},
+                #{upDownSuit},
+                #{customerSid},
+                #{remark},
+                #{disableRemark},
+                #{status},
+                #{handleStatus},
+                #{creatorAccount},
+                #{createDate},
+                #{updaterAccount},
+                #{updateDate},
+                #{confirmerAccount},
+                #{confirmDate},
+                #{dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_sku_group
+        <trim prefix="SET" suffixOverrides=",">
+            sku_group_code = #{skuGroupCode},
+            sku_group_name = #{skuGroupName},
+            sku_type = #{skuType},
+            up_down_suit = #{upDownSuit},
+            customer_sid = #{customerSid},
+            remark = #{remark},
+            disable_remark = #{disableRemark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where sku_group_sid = #{skuGroupSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_sku_group
+            <trim prefix="SET" suffixOverrides=",">
+                sku_group_code = #{skuGroupCode},
+                sku_group_name = #{skuGroupName},
+                sku_type = #{skuType},
+                up_down_suit = #{upDownSuit},
+                customer_sid = #{customerSid},
+                remark = #{remark},
+                disable_remark = #{disableRemark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where sku_group_sid = #{skuGroupSid}
+        </foreach>
+    </update>
+
+</mapper>

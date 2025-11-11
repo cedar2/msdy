@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinReceivableBillMapper">
+
+    <resultMap type="com.platform.ems.domain.FinReceivableBill" id="FinReceivableBillResult">
+        <result property="clientId" column="client_id"/>
+        <result property="receivableBillSid" column="receivable_bill_sid"/>
+        <result property="receivableBillCode" column="receivable_bill_code"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="businessType" column="business_type"/>
+        <result property="documentType" column="document_type"/>
+        <result property="accountCategory" column="account_category"/>
+        <result property="receivableDimension" column="receivable_dimension"/>
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="businessChannel" column="business_channel"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="isYoupiao" column="is_youpiao"/>
+        <result property="agent" column="agent"/>
+        <result property="departmentSid" column="department_sid"/>
+        <result property="receivableDate" column="receivable_date"/>
+        <result property="monthAccountPeriod" column="month_account_period"/>
+        <result property="bankAccount" column="bank_account"/>
+        <result property="bankName" column="bank_name"/>
+        <result property="bankCity" column="bank_city"/>
+        <result property="receivableCompanySid" column="receivable_company_sid"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="saleDepartment" column="sale_department"/>
+        <result property="saleOrg" column="sale_org"/>
+        <result property="accountsMethodGroup" column="accounts_method_group"/>
+        <result property="payMethod" column="pay_method"/>
+        <result property="receiptPaymentStatus" column="receipt_payment_status"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="isAdvanceManual" column="is_advance_manual"/>
+        <result property="isFinanceVerify" column="is_finance_verify"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectFinReceivableBillVo">
+        select t.client_id,
+               t.receivable_bill_sid,
+               t.receivable_bill_code,
+               t.customer_sid,
+               t.customer_code,
+               t.company_sid,
+               t.company_code,
+               t.document_date,
+               t.business_type,
+               t.document_type,
+               t.account_category,
+               t.receivable_dimension,
+               t.company_brand_sid,
+               t.business_channel,
+               t.currency_amount_tax,
+               t.is_youpiao,
+               t.agent,
+               t.department_sid,
+               t.receivable_date,
+               t.month_account_period,
+               t.bank_account,
+               t.bank_name,
+               t.bank_city,
+               t.receivable_company_sid,
+               t.product_season_sid,
+               t.sale_department,
+               t.sale_org,
+               t.accounts_method_group,
+               t.pay_method,
+               t.receipt_payment_status,
+               t.currency,
+               t.currency_unit,
+               t.is_advance_manual,
+               t.is_finance_verify,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               u1.nick_name AS creator_account_name,
+               u2.nick_name AS updater_account_name,
+               u3.nick_name AS confirmer_account_name,
+               p1.approval_node,
+               p1.approval_user_id,
+               p1.approval_user_name,
+               p1.create_date AS submit_date,
+               u4.nick_name AS submit_user_name,
+               t1.company_name,
+               t1.short_name as company_short_name,
+               t2.customer_name,
+               t2.short_name as customer_short_name,
+               t3.product_season_name,
+               t4.name as business_type_name,
+               t6.name as document_type_name,
+               u5.nick_name as agent_name,
+               t5.name as pay_method_name,
+               t7.payment_method_names,
+               CASE
+                   WHEN NOT EXISTS (SELECT 1 FROM s_fin_receivable_bill_item_invoice inv WHERE t.receivable_bill_sid = inv.receivable_bill_sid) AND t.is_youpiao = 'Y' THEN 'Y'
+                   ELSE 'N'
+                   END AS is_remind_daopiao
+        from s_fin_receivable_bill t
+                 LEFT JOIN sys_user u1 ON t.creator_account = u1.user_name
+                 LEFT JOIN sys_user u2 ON t.updater_account = u2.user_name
+                 LEFT JOIN sys_user u3 ON t.confirmer_account = u3.user_name
+                 LEFT JOIN s_sys_form_process p1 ON t.receivable_bill_sid = p1.form_id
+                 LEFT JOIN sys_user u4 ON p1.creator_account = u4.user_name
+                 left join s_bas_company t1 on t.company_sid = t1.company_sid
+                 left join s_bas_customer t2 on t.customer_sid = t2.customer_sid
+                 left join s_bas_product_season t3 on t.product_season_sid = t3.product_season_sid
+                 LEFT JOIN s_con_bu_type_receivable_bill t4 on t.business_type = t4.code
+                 LEFT JOIN s_con_payment_method t5 on t.pay_method = t5.code
+                 LEFT JOIN s_con_doc_type_receivable_bill t6 on t.document_type = t6.code
+                 LEFT JOIN sys_user u5 ON t.agent = u5.user_name
+                 LEFT JOIN (select it1.receivable_bill_sid, group_concat(DISTINCT it2.name separator ';') as payment_method_names
+                            from s_fin_receivable_bill_item it1
+                            left join s_con_payment_method it2 on it1.payment_method = it2.code
+                            group by it1.receivable_bill_sid
+                 ) t7 on t.receivable_bill_sid = t7.receivable_bill_sid
+    </sql>
+
+    <select id="selectFinReceivableBillById" parameterType="Long" resultMap="FinReceivableBillResult">
+        <include refid="selectFinReceivableBillVo"/>
+        where t.receivable_bill_sid = #{receivableBillSid}
+    </select>
+
+    <select id="selectFinReceivableBillList" parameterType="com.platform.ems.domain.FinReceivableBill"
+            resultMap="FinReceivableBillResult">
+        <include refid="selectFinReceivableBillVo"/>
+        <where>
+            <if test="approvalUserId != null and approvalUserId != '' ">
+                and (p1.approval_user_id = #{approvalUserId}  or p1.approval_user_id like concat('%, ', #{approvalUserId}, ',%')
+                or p1.approval_user_id like concat('%, ', #{approvalUserId}) or p1.approval_user_id like concat(#{approvalUserId}, ',%')
+                or p1.approval_user_id like concat('%,', #{approvalUserId}, ',%') or p1.approval_user_id like concat('%,', #{approvalUserId}))
+            </if>
+            <if test="approvalUserIdList != null and approvalUserIdList.length >0 ">
+                and (<foreach collection="approvalUserIdList" item="approvalUserId" separator=" or ">
+                (p1.approval_user_id = #{approvalUserId} or p1.approval_user_id like concat('%, ', #{approvalUserId}, ',%')
+                or p1.approval_user_id like concat('%, ', #{approvalUserId}) or p1.approval_user_id like concat(#{approvalUserId}, ',%')
+                or p1.approval_user_id like concat('%,', #{approvalUserId}, ',%') or p1.approval_user_id like concat('%,', #{approvalUserId}))</foreach>)
+            </if>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="receivableBillSid != null ">
+                and t.receivable_bill_sid = #{receivableBillSid}
+            </if>
+            <if test="receivableBillSidList != null  and receivableBillSidList.length >0">
+                and t.receivable_bill_sid in (<foreach collection="receivableBillSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="receivableBillCode != null  and receivableBillCode != ''">
+                and t.receivable_bill_code like concat('%', #{receivableBillCode}, '%')
+            </if>
+            <if test="customerSid != null ">
+                and t.customer_sid = #{customerSid}
+            </if>
+            <if test="customerSidList != null  and customerSidList.length >0">
+                and t.customer_sid in (<foreach collection="customerSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="customerCode != null and customerCode != ''">
+                and t.customer_code = #{customerCode}
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null  and companySidList.length >0">
+                and t.company_sid in (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companyCode != null and companyCode != ''">
+                and t.company_code = #{companyCode}
+            </if>
+            <if test="documentDate != null ">
+                and t.document_date = #{documentDate}
+            </if>
+            <if test="documentDateBegin != null and documentDateBegin!=''">
+                and date_format(t.document_date,'%y%m%d') &gt;= date_format(#{documentDateBegin},'%y%m%d')
+            </if>
+            <if test="documentDateEnd != null and documentDateEnd!=''">
+                and date_format(t.document_date,'%y%m%d') &lt;= date_format(#{documentDateEnd},'%y%m%d')
+            </if>
+            <if test="businessType != null and businessType != ''">
+                and t.business_type = #{businessType}
+            </if>
+            <if test="businessTypeList != null  and businessTypeList.length >0">
+                and t.business_type in (<foreach collection="businessTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="documentType != null and documentType != ''">
+                and t.document_type = #{documentType}
+            </if>
+            <if test="documentTypeList != null  and documentTypeList.length >0">
+                and t.document_type in (<foreach collection="documentTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="accountCategory != null and accountCategory != ''">
+                and t.account_category = #{accountCategory}
+            </if>
+            <if test="receivableDimension != null and receivableDimension != ''">
+                and t.receivable_dimension = #{receivableDimension}
+            </if>
+            <if test="companyBrandSid != null ">
+                and t.company_brand_sid = #{companyBrandSid}
+            </if>
+            <if test="businessChannel != null and businessChannel != ''">
+                and t.business_channel = #{businessChannel}
+            </if>
+            <if test="currencyAmountTax != null ">
+                and t.currency_amount_tax = #{currencyAmountTax}
+            </if>
+            <if test="isYoupiao != null and isYoupiao != ''">
+                and t.is_youpiao = #{isYoupiao}
+            </if>
+            <if test="agent != null and agent != ''">
+                and t.agent = #{agent}
+            </if>
+            <if test="agentName != null and agentName != ''">
+                and u5.nick_name like concat('%', #{agentName}, '%')
+            </if>
+            <if test="departmentSid != null ">
+                and t.department_sid = #{departmentSid}
+            </if>
+            <if test="receivableDate != null ">
+                and t.receivable_date = #{receivableDate}
+            </if>
+            <if test="receivableDateBegin != null and receivableDateBegin!=''">
+                and date_format(t.receivable_date,'%y%m%d') &gt;= date_format(#{receivableDateBegin},'%y%m%d')
+            </if>
+            <if test="receivableDateEnd != null and receivableDateEnd!=''">
+                and date_format(t.receivable_date,'%y%m%d') &lt;= date_format(#{receivableDateEnd},'%y%m%d')
+            </if>
+            <if test="monthAccountPeriod != null and monthAccountPeriod != ''">
+                and t.month_account_period = #{monthAccountPeriod}
+            </if>
+            <if test="bankAccount != null and bankAccount != ''">
+                and t.bank_account = #{bankAccount}
+            </if>
+            <if test="bankName != null and bankName != ''">and
+                t.bank_name like concat('%', #{bankName}, '%')
+            </if>
+            <if test="bankCity != null and bankCity != ''">
+                and t.bank_city = #{bankCity}
+            </if>
+            <if test="receivableCompanySid != null ">
+                and t.receivable_company_sid = #{receivableCompanySid}
+            </if>
+            <if test="productSeasonSid != null ">
+                and t.product_season_sid = #{productSeasonSid}
+            </if>
+            <if test="productSeasonSidList != null  and productSeasonSidList.length >0">
+                and t.product_season_sid in (<foreach collection="productSeasonSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="saleDepartment != null ">
+                and t.sale_department = #{saleDepartment}
+            </if>
+            <if test="saleOrg != null and saleOrg != ''">
+                and t.sale_org = #{saleOrg}
+            </if>
+            <if test="accountsMethodGroup != null ">
+                and t.accounts_method_group = #{accountsMethodGroup}
+            </if>
+            <if test="payMethod != null and payMethod != ''">
+                and t.pay_method = #{payMethod}
+            </if>
+            <if test="payMethodList != null  and payMethodList.length >0">
+                and t.pay_method in (<foreach collection="payMethodList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="receiptPaymentStatus != null and receiptPaymentStatus != ''">
+                and t.receipt_payment_status = #{receiptPaymentStatus}
+            </if>
+            <if test="receiptPaymentStatusList != null  and receiptPaymentStatusList.length >0">
+                and t.receipt_payment_status in (<foreach collection="receiptPaymentStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="currency != null and currency != ''">
+                and t.currency = #{currency}
+            </if>
+            <if test="currencyUnit != null and currencyUnit != ''">
+                and t.currency_unit = #{currencyUnit}
+            </if>
+            <if test="isAdvanceManual != null and isAdvanceManual != ''">
+                and t.is_advance_manual = #{isAdvanceManual}
+            </if>
+            <if test="isFinanceVerify != null and isFinanceVerify != ''">
+                and t.is_finance_verify = #{isFinanceVerify}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0">
+                and t.handle_status in (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and u1.nick_name like concat('%', #{creatorAccountName}, "%")
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.receivable_bill_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_receivable_bill
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            receivable_bill_sid,
+            receivable_bill_code,
+            customer_sid,
+            customer_code,
+            company_sid,
+            company_code,
+            document_date,
+            business_type,
+            document_type,
+            account_category,
+            receivable_dimension,
+            company_brand_sid,
+            business_channel,
+            currency_amount_tax,
+            is_youpiao,
+            agent,
+            department_sid,
+            receivable_date,
+            month_account_period,
+            bank_account,
+            bank_name,
+            bank_city,
+            receivable_company_sid,
+            product_season_sid,
+            sale_department,
+            sale_org,
+            accounts_method_group,
+            pay_method,
+            receipt_payment_status,
+            currency,
+            currency_unit,
+            is_advance_manual,
+            is_finance_verify,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.receivableBillSid},
+                #{item.receivableBillCode},
+                #{item.customerSid},
+                #{item.customerCode},
+                #{item.companySid},
+                #{item.companyCode},
+                #{item.documentDate},
+                #{item.businessType},
+                #{item.documentType},
+                #{item.accountCategory},
+                #{item.receivableDimension},
+                #{item.companyBrandSid},
+                #{item.businessChannel},
+                #{item.currencyAmountTax},
+                #{item.isYoupiao},
+                #{item.agent},
+                #{item.departmentSid},
+                #{item.receivableDate},
+                #{item.monthAccountPeriod},
+                #{item.bankAccount},
+                #{item.bankName},
+                #{item.bankCity},
+                #{item.receivableCompanySid},
+                #{item.productSeasonSid},
+                #{item.saleDepartment},
+                #{item.saleOrg},
+                #{item.accountsMethodGroup},
+                #{item.payMethod},
+                #{item.receiptPaymentStatus},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.isAdvanceManual},
+                #{item.isFinanceVerify},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_receivable_bill
+        <trim prefix="SET" suffixOverrides=",">
+            customer_sid = #{customerSid},
+            customer_code = #{customerCode},
+            company_sid = #{companySid},
+            company_code = #{companyCode},
+            document_date = #{documentDate},
+            business_type = #{businessType},
+            document_type = #{documentType},
+            account_category = #{accountCategory},
+            receivable_dimension = #{receivableDimension},
+            company_brand_sid = #{companyBrandSid},
+            business_channel = #{businessChannel},
+            currency_amount_tax = #{currencyAmountTax},
+            is_youpiao = #{isYoupiao},
+            agent = #{agent},
+            department_sid = #{departmentSid},
+            receivable_date = #{receivableDate},
+            month_account_period = #{monthAccountPeriod},
+            bank_account = #{bankAccount},
+            bank_name = #{bankName},
+            bank_city = #{bankCity},
+            receivable_company_sid = #{receivableCompanySid},
+            product_season_sid = #{productSeasonSid},
+            sale_department = #{saleDepartment},
+            sale_org = #{saleOrg},
+            accounts_method_group = #{accountsMethodGroup},
+            pay_method = #{payMethod},
+            receipt_payment_status = #{receiptPaymentStatus},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            is_advance_manual = #{isAdvanceManual},
+            is_finance_verify = #{isFinanceVerify},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where receivable_bill_sid = #{receivableBillSid}
+    </update>
+
+</mapper>

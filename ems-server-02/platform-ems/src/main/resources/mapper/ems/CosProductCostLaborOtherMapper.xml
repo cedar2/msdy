@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.CosProductCostLaborOtherMapper">
+
+    <resultMap type="com.platform.ems.domain.CosProductCostLaborOther" id="CosProductCostLaborOtherResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="productCostLaborOtherSid" column="product_cost_labor_other_sid"/>
+                    <result property="productCostLaborSid" column="product_cost_labor_sid"/>
+                    <result property="otherItemName" column="other_item_name"/>
+                    <result property="innerPriceTax" column="inner_price_tax"/>
+                    <result property="innerPrice" column="inner_price"/>
+                    <result property="quotePriceTax" column="quote_price_tax"/>
+                    <result property="quotePrice" column="quote_price"/>
+                    <result property="checkPriceTax" column="check_price_tax"/>
+                    <result property="checkPrice" column="check_price"/>
+                    <result property="confirmPriceTax" column="confirm_price_tax"/>
+                    <result property="confirmPrice" column="confirm_price"/>
+                    <result property="specialCraftType" column="special_craft_type"/>
+                    <result property="position" column="position"/>
+                    <result property="specification" column="specification"/>
+                    <result property="processVendor" column="process_vendor"/>
+                    <result property="processDesc" column="process_desc"/>
+                    <result property="processSid" column="process_sid"/>
+                    <result property="remarkInner" column="remark_inner"/>
+                    <result property="remarkQuote" column="remark_quote"/>
+                    <result property="remarkCheck" column="remark_check"/>
+                    <result property="remarkConfirm" column="remark_confirm"/>
+                    <result property="serialNum" column="serial_num"/>
+                    <result property="remark" column="remark"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+            </resultMap>
+
+    <sql id="selectCosProductCostLaborOtherVo">
+        select t.client_id,
+        t.product_cost_labor_other_sid,
+        t.product_cost_labor_sid,
+        t.product_cost_sid,
+        t.other_item_name,
+        t.inner_price_tax,
+        t.inner_price,
+        t.quote_price_tax,
+        t.quote_price,
+        t.check_price_tax,
+        t.check_price,
+        t.confirm_price_tax,
+        t.confirm_price,
+        t.special_craft_type,
+        t.position,
+        t.specification,
+        t.confirm_fengxian_rate,
+        t.detail_inner_fengxian_cost_tax,
+        t.detail_quote_fengxian_cost_tax,
+        t.detail_check_fengxian_cost_tax,
+        t.detail_confirm_fengxian_cost_tax,
+        t.detail_inner_fuwu_cost_tax,
+        t.detail_quote_fuwu_cost_tax,
+        t.detail_check_fuwu_cost_tax,
+        t.detail_confirm_fuwu_cost_tax,
+        t.tax_rate,
+        t.quote_fuwu_rate,
+        t.check_fuwu_rate,
+        t.confirm_fuwu_rate,
+        t.fengxian_cost_tax,
+        t.quote_fuwu_cost_tax,
+        t.check_fuwu_cost_tax,
+        t.confirm_fuwu_cost_tax,
+        t.process_vendor,
+        t.process_desc,
+        t.process_sid,
+        t.remark_inner,
+        t.remark_quote,
+        t.remark_check,
+        t.remark_confirm,
+        t.serial_num,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+        t3.labor_type_name,
+		t4.item_name as labor_type_item_name,
+		t5.nick_name as  creator_account_name,
+		t6.nick_name as updater_account_name
+        from s_cos_product_cost_labor_other t
+        left join s_cos_product_cost_labor t2 on t2.product_cost_labor_sid=t.product_cost_labor_sid
+        LEFT JOIN  s_con_labor_type t3 ON t3.labor_type_sid = t2.labor_type_sid
+	    LEFT JOIN  s_con_labor_type_item t4 on t4.labor_type_item_sid=t2.labor_type_item_sid
+	    LEFT JOIN sys_user t5 ON t.creator_account = t5.user_name
+        LEFT JOIN sys_user t6 ON t.updater_account = t6.user_name
+    </sql>
+
+    <select id="selectCosProductCostLaborOtherById" parameterType="int" resultMap="CosProductCostLaborOtherResult">
+        <include refid="selectCosProductCostLaborOtherVo"/>
+        where t.serial_num = #{serialNum}
+    </select>
+    <select id="getByProductCostSid" parameterType="Long" resultType="com.platform.ems.domain.CosProductCostLaborOther">
+        <include refid="selectCosProductCostLaborOtherVo"></include>
+        where t.product_cost_labor_sid=#{productCostLaborSid}
+    </select>
+
+    <select id="selectCosProductCostLaborOtherList" parameterType="com.platform.ems.domain.CosProductCostLaborOther"
+            resultMap="CosProductCostLaborOtherResult">
+        <include refid="selectCosProductCostLaborOtherVo"/>
+        <where>
+                                                                                                    <if test="clientId != null  and clientId != ''">
+                               and (<foreach collection="clientId.split(';')" item="item" separator="or"> t.client_id like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                            <if test="productCostLaborSid != null ">
+                                and t.product_cost_labor_sid =#{productCostLaborSid}
+                            </if>
+                                                                                                                                    <if test="otherItemName != null  and otherItemName != ''">and
+                            t.other_item_name like concat('%', #{otherItemName}, '%')
+                        </if>
+                                                                                                                                                                        <if test="innerPriceTax != null ">
+                                    and t.inner_price_tax = #{innerPriceTax}
+                                </if>
+                                                                                                                                                                                                                            <if test="innerPrice != null ">
+                                    and t.inner_price = #{innerPrice}
+                                </if>
+                                                                                                                                                                                                                            <if test="quotePriceTax != null ">
+                                    and t.quote_price_tax = #{quotePriceTax}
+                                </if>
+                                                                                                                                                                                                                            <if test="quotePrice != null ">
+                                    and t.quote_price = #{quotePrice}
+                                </if>
+                                                                                                                                                                                                                            <if test="checkPriceTax != null ">
+                                    and t.check_price_tax = #{checkPriceTax}
+                                </if>
+                                                                                                                                                                                                                            <if test="checkPrice != null ">
+                                    and t.check_price = #{checkPrice}
+                                </if>
+                                                                                                                                                                                                                            <if test="confirmPriceTax != null ">
+                                    and t.confirm_price_tax = #{confirmPriceTax}
+                                </if>
+                                                                                                                                                                                                                            <if test="confirmPrice != null ">
+                                    and t.confirm_price = #{confirmPrice}
+                                </if>
+                                                                                                                                                                                            <if test="specialCraftType != null ">
+                                and t.special_craft_type =#{specialCraftType}
+                            </if>
+                                                                                                                                                                <if test="position != null  and position != ''">
+                               and (<foreach collection="position.split(';')" item="item" separator="or"> t.position like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="specification != null  and specification != ''">
+                               and (<foreach collection="specification.split(';')" item="item" separator="or"> t.specification like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="processVendor != null  and processVendor != ''">
+                               and (<foreach collection="processVendor.split(';')" item="item" separator="or"> t.process_vendor like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="processDesc != null  and processDesc != ''">
+                               and (<foreach collection="processDesc.split(';')" item="item" separator="or"> t.process_desc like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="processSid != null ">
+                                and t.process_sid =#{processSid}
+                            </if>
+                                                                                                                                                                <if test="remarkInner != null  and remarkInner != ''">
+                               and (<foreach collection="remarkInner.split(';')" item="item" separator="or"> t.remark_inner like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="remarkQuote != null  and remarkQuote != ''">
+                               and (<foreach collection="remarkQuote.split(';')" item="item" separator="or"> t.remark_quote like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="remarkCheck != null  and remarkCheck != ''">
+                               and (<foreach collection="remarkCheck.split(';')" item="item" separator="or"> t.remark_check like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="remarkConfirm != null  and remarkConfirm != ''">
+                               and (<foreach collection="remarkConfirm.split(';')" item="item" separator="or"> t.remark_confirm like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="serialNum != null ">
+                                and t.serial_num =#{serialNum}
+                            </if>
+                                                                                                                                                                                            <if test="creatorAccount != null  and creatorAccount != ''">
+                               and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t.creator_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="beginTime != null and beginTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                                </if>
+                                <if test="endTime != null and endTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                                </if>
+                                                                                                                                                                                            <if test="updaterAccount != null  and updaterAccount != ''">
+                               and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="updateDate != null ">
+                                    and t.update_date = #{updateDate}
+                                </if>
+                                                                                                                                                                                            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                               and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or"> t.data_source_sys like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                    <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_cos_product_cost_labor_other
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            product_cost_labor_other_sid,
+            product_cost_labor_sid,
+            other_item_name,
+            inner_price_tax,
+            inner_price,
+            quote_price_tax,
+            quote_price,
+            check_price_tax,
+            check_price,
+            confirm_price_tax,
+            confirm_price,
+            special_craft_type,
+            position,
+            specification,
+            process_vendor,
+            process_desc,
+            process_sid,
+            remark_inner,
+            remark_quote,
+            remark_check,
+            remark_confirm,
+            serial_num,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+            product_cost_sid,
+            confirm_fengxian_rate,
+            tax_rate,
+            quote_fuwu_rate,
+            check_fuwu_rate,
+            confirm_fuwu_rate,
+            fengxian_cost_tax,
+            quote_fuwu_cost_tax,
+            check_fuwu_cost_tax,
+            confirm_fuwu_cost_tax,
+            detail_inner_fengxian_cost_tax,
+            detail_quote_fengxian_cost_tax,
+            detail_check_fengxian_cost_tax,
+            detail_confirm_fengxian_cost_tax,
+            detail_inner_fuwu_cost_tax,
+            detail_quote_fuwu_cost_tax,
+            detail_check_fuwu_cost_tax,
+            detail_confirm_fuwu_cost_tax,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.productCostLaborOtherSid},
+                #{item.productCostLaborSid},
+                #{item.otherItemName},
+                #{item.innerPriceTax},
+                #{item.innerPrice},
+                #{item.quotePriceTax},
+                #{item.quotePrice},
+                #{item.checkPriceTax},
+                #{item.checkPrice},
+                #{item.confirmPriceTax},
+                #{item.confirmPrice},
+                #{item.specialCraftType},
+                #{item.position},
+                #{item.specification},
+                #{item.processVendor},
+                #{item.processDesc},
+                #{item.processSid},
+                #{item.remarkInner},
+                #{item.remarkQuote},
+                #{item.remarkCheck},
+                #{item.remarkConfirm},
+                #{item.serialNum},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+                #{item.productCostSid},
+                #{item.confirmFengxianRate},
+                #{item.taxRate},
+                #{item.quoteFuwuRate},
+                #{item.checkFuwuRate},
+                #{item.confirmFuwuRate},
+                #{item.fengxianCostTax},
+                #{item.quoteFuwuCostTax},
+                #{item.checkFuwuCostTax},
+                #{item.confirmFuwuCostTax},
+                #{item.detailInnerFengxianCostTax},
+                #{item.detailQuoteFengxianCostTax},
+                #{item.detailCheckFengxianCostTax},
+                #{item.detailConfirmFengxianCostTax},
+                #{item.detailInnerFuwuCostTax},
+                #{item.detailQuoteFuwuCostTax},
+                #{item.detailCheckFuwuCostTax},
+                #{item.detailConfirmFuwuCostTax},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_cos_product_cost_labor_other
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                                            product_cost_labor_sid = #{productCostLaborSid},
+                                                                other_item_name = #{otherItemName},
+                                                                inner_price_tax = #{innerPriceTax},
+                                                                inner_price = #{innerPrice},
+                                                                quote_price_tax = #{quotePriceTax},
+                                                                quote_price = #{quotePrice},
+                                                                check_price_tax = #{checkPriceTax},
+                                                                check_price = #{checkPrice},
+                                                                confirm_price_tax = #{confirmPriceTax},
+                                                                confirm_price = #{confirmPrice},
+                                                                special_craft_type = #{specialCraftType},
+                                                                position = #{position},
+                                                                specification = #{specification},
+                                                                process_vendor = #{processVendor},
+                                                                process_desc = #{processDesc},
+                                                                process_sid = #{processSid},
+                                                                remark_inner = #{remarkInner},
+                                                                remark_quote = #{remarkQuote},
+                                                                remark_check = #{remarkCheck},
+                                                                remark_confirm = #{remarkConfirm},
+                                                                serial_num = #{serialNum},
+                                                                remark = #{remark},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where product_cost_labor_other_sid = #{productCostLaborOtherSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_cos_product_cost_labor_other
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    product_cost_labor_sid = #{productCostLaborSid},
+                                                                                other_item_name = #{otherItemName},
+                                                                                inner_price_tax = #{innerPriceTax},
+                                                                                inner_price = #{innerPrice},
+                                                                                quote_price_tax = #{quotePriceTax},
+                                                                                quote_price = #{quotePrice},
+                                                                                check_price_tax = #{checkPriceTax},
+                                                                                check_price = #{checkPrice},
+                                                                                confirm_price_tax = #{confirmPriceTax},
+                                                                                confirm_price = #{confirmPrice},
+                                                                                special_craft_type = #{specialCraftType},
+                                                                                position = #{position},
+                                                                                specification = #{specification},
+                                                                                process_vendor = #{processVendor},
+                                                                                process_desc = #{processDesc},
+                                                                                process_sid = #{processSid},
+                                                                                remark_inner = #{remarkInner},
+                                                                                remark_quote = #{remarkQuote},
+                                                                                remark_check = #{remarkCheck},
+                                                                                remark_confirm = #{remarkConfirm},
+                                                                                serial_num = #{serialNum},
+                                                                                remark = #{remark},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where product_cost_labor_other_sid = #{productCostLaborOtherSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurOutsourcePriceInforItemMapper">
+
+    <resultMap type="com.platform.ems.domain.PurOutsourcePriceInforItem" id="PurOutsourcePriceInforItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="outsourcePriceInforItemSid" column="outsource_price_infor_item_sid"/>
+        <result property="outsourcePriceInforSid" column="outsource_price_infor_sid"/>
+        <result property="cascadeType" column="cascade_type"/>
+        <result property="priceEnterMode" column="price_enter_mode"/>
+        <result property="quotePriceTax" column="quote_price_tax"/>
+        <result property="quotePrice" column="quote_price"/>
+        <result property="checkPriceTax" column="check_price_tax"/>
+        <result property="checkPrice" column="check_price"/>
+        <result property="confirmPriceTax" column="confirm_price_tax"/>
+        <result property="confirmPrice" column="confirm_price"/>
+        <result property="purchasePriceTax" column="purchase_price_tax"/>
+        <result property="purchasePrice" column="purchase_price"/>
+        <result property="taxRate" column="tax_rate"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="unitConversionRate" column="unit_conversion_rate"/>
+        <result property="isRecursionPrice" column="is_recursion_price"/>
+        <result property="quoteUpdaterAccount" column="quote_updater_account"/>
+        <result property="quoteUpdateDate" column="quote_update_date"/>
+        <result property="checkUpdaterAccount" column="check_updater_account"/>
+        <result property="checkUpdateDate" column="check_update_date"/>
+        <result property="confirmUpdaterAccount" column="confirm_updater_account"/>
+        <result property="confirmUpdateDate" column="confirm_update_date"/>
+        <result property="purchaseUpdaterAccount" column="purchase_updater_account"/>
+        <result property="purchaseUpdateDate" column="purchase_update_date"/>
+        <result property="remarkQuote" column="remark_quote"/>
+        <result property="remarkCheck" column="remark_check"/>
+        <result property="remarkConfirm" column="remark_confirm"/>
+        <result property="remarkPurchase" column="remark_purchase"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="outsourcePriceInforCode" column="outsource_price_infor_code"/>
+    </resultMap>
+
+    <sql id="selectPurOutsourcePriceInforItemVo">
+        select t.client_id,
+               t.outsource_price_infor_item_sid,
+               t.outsource_price_infor_sid,
+               t.cascade_type,
+               t.price_enter_mode,
+               t.quote_price_tax,
+               t.quote_price,
+               t.check_price_tax,
+               t.check_price,
+               t.confirm_price_tax,
+               t.confirm_price,
+               t.purchase_price_tax,
+               t.purchase_price,
+               t.tax_rate,
+               t.currency,
+               t.currency_unit,
+               t.unit_base,
+               t.unit_price,
+               t.unit_conversion_rate,
+               t.is_recursion_price,
+               t.quote_updater_account,
+               t.quote_update_date,
+               t.check_updater_account,
+               t.check_update_date,
+               t.confirm_updater_account,
+               t.confirm_update_date,
+               t.purchase_updater_account,
+               t.purchase_update_date,
+               t.remark_quote,
+               t.remark_check,
+               t.remark_confirm,
+               t.remark_purchase,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t5.outsource_price_infor_code,
+        from s_pur_outsource_price_infor_item t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name
+         LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name
+         LEFT JOIN s_pur_outsource_price_infor t5 ON t.outsource_price_infor_sid = t5.outsource_price_infor_sid
+    </sql>
+
+    <select id="selectPurOutsourcePriceInforItemById" parameterType="Long" resultMap="PurOutsourcePriceInforItemResult">
+        <include refid="selectPurOutsourcePriceInforItemVo"/>
+        where t.outsource_price_infor_item_sid = #{outsourcePriceInforItemSid}
+    </select>
+
+
+    <select id="selectPurOutsourcePriceInforItemList" parameterType="com.platform.ems.domain.PurOutsourcePriceInforItem"
+            resultMap="PurOutsourcePriceInforItemResult">
+        <include refid="selectPurOutsourcePriceInforItemVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id = #{clientId}
+            </foreach>)
+            </if>
+            <if test="outsourcePriceInforSid != null ">
+                and t.outsource_price_infor_sid =#{outsourcePriceInforSid}
+            </if>
+            <if test="cascadeType != null and cascadeType != ''">
+                and (<foreach collection="cascadeType.split(';')" item="item" separator="or">t.cascade_type = #{cascadeType}
+            </foreach>)
+            </if>
+            <if test="priceEnterMode != null and priceEnterMode != ''">
+                and (<foreach collection="priceEnterMode.split(';')" item="item" separator="or">t.price_enter_mode = #{priceEnterMode}
+            </foreach>)
+            </if>
+            <if test="quotePriceTax != null ">
+                and t.quote_price_tax = #{quotePriceTax}
+            </if>
+            <if test="quotePrice != null ">
+                and t.quote_price = #{quotePrice}
+            </if>
+            <if test="checkPriceTax != null ">
+                and t.check_price_tax = #{checkPriceTax}
+            </if>
+            <if test="checkPrice != null ">
+                and t.check_price = #{checkPrice}
+            </if>
+            <if test="confirmPriceTax != null ">
+                and t.confirm_price_tax = #{confirmPriceTax}
+            </if>
+            <if test="confirmPrice != null ">
+                and t.confirm_price = #{confirmPrice}
+            </if>
+            <if test="purchasePriceTax != null ">
+                and t.purchase_price_tax = #{purchasePriceTax}
+            </if>
+            <if test="purchasePrice != null ">
+                and t.purchase_price = #{purchasePrice}
+            </if>
+            <if test="taxRate != null ">
+                and t.tax_rate = #{taxRate}
+            </if>
+            <if test="currency != null and currency != ''">
+                and (<foreach collection="currency.split(';')" item="item" separator="or">t.currency = #{currency}
+            </foreach>)
+            </if>
+            <if test="currencyUnit != null and currencyUnit != ''">
+                and (<foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit = #{currencyUnit}
+            </foreach>)
+            </if>
+            <if test="unitBase != null and unitBase != ''">
+                and (<foreach collection="unitBase.split(';')" item="item" separator="or">t.unit_base = #{unitBase}
+            </foreach>)
+            </if>
+            <if test="unitPrice != null  and unitPrice != ''">
+                and (<foreach collection="unitPrice.split(';')" item="item" separator="or">t.unit_price = #{unitPrice}
+            </foreach>)
+            </if>
+            <if test="unitConversionRate != null ">
+                and t.unit_conversion_rate = #{unitConversionRate}
+            </if>
+            <if test="isRecursionPrice != null and isRecursionPrice != ''">
+                and (<foreach collection="isRecursionPrice.split(';')" item="item" separator="or">t.is_recursion_price = #{isRecursionPrice}
+            </foreach>)
+            </if>
+            <if test="quoteUpdaterAccount != null and quoteUpdaterAccount != ''">
+                and (<foreach collection="quoteUpdaterAccount.split(';')" item="item" separator="or">
+                t.quote_updater_account = #{quoteUpdaterAccount}
+            </foreach>)
+            </if>
+            <if test="quoteUpdateDate != null ">
+                and t.quote_update_date = #{quoteUpdateDate}
+            </if>
+            <if test="checkUpdaterAccount != null  and checkUpdaterAccount != ''">
+                and (<foreach collection="checkUpdaterAccount.split(';')" item="item" separator="or">
+                t.check_updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="checkUpdateDate != null ">
+                and t.check_update_date = #{checkUpdateDate}
+            </if>
+            <if test="confirmUpdaterAccount != null  and confirmUpdaterAccount != ''">
+                and (<foreach collection="confirmUpdaterAccount.split(';')" item="item" separator="or">
+                t.confirm_updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmUpdateDate != null ">
+                and t.confirm_update_date = #{confirmUpdateDate}
+            </if>
+            <if test="purchaseUpdaterAccount != null  and purchaseUpdaterAccount != ''">
+                and (<foreach collection="purchaseUpdaterAccount.split(';')" item="item" separator="or">
+                t.purchase_updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseUpdateDate != null ">
+                and t.purchase_update_date = #{purchaseUpdateDate}
+            </if>
+            <if test="remarkQuote != null  and remarkQuote != ''">
+                and (<foreach collection="remarkQuote.split(';')" item="item" separator="or">t.remark_quote
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="remarkCheck != null  and remarkCheck != ''">
+                and (<foreach collection="remarkCheck.split(';')" item="item" separator="or">t.remark_check
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="remarkConfirm != null  and remarkConfirm != ''">
+                and (<foreach collection="remarkConfirm.split(';')" item="item" separator="or">t.remark_confirm
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="remarkPurchase != null  and remarkPurchase != ''">
+                and (<foreach collection="remarkPurchase.split(';')" item="item" separator="or">t.remark_purchase
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_outsource_price_infor_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            outsource_price_infor_item_sid,
+            outsource_price_infor_sid,
+            cascade_type,
+            price_enter_mode,
+            quote_price_tax,
+            quote_price,
+            check_price_tax,
+            check_price,
+            confirm_price_tax,
+            confirm_price,
+            purchase_price_tax,
+            purchase_price,
+            tax_rate,
+            currency,
+            currency_unit,
+            unit_base,
+            unit_price,
+            unit_conversion_rate,
+            is_recursion_price,
+            quote_updater_account,
+            quote_update_date,
+            check_updater_account,
+            check_update_date,
+            confirm_updater_account,
+            confirm_update_date,
+            purchase_updater_account,
+            purchase_update_date,
+            remark_quote,
+            remark_check,
+            remark_confirm,
+            remark_purchase,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.outsourcePriceInforItemSid},
+                #{item.outsourcePriceInforSid},
+                #{item.cascadeType},
+                #{item.priceEnterMode},
+                #{item.quotePriceTax},
+                #{item.quotePrice},
+                #{item.checkPriceTax},
+                #{item.checkPrice},
+                #{item.confirmPriceTax},
+                #{item.confirmPrice},
+                #{item.purchasePriceTax},
+                #{item.purchasePrice},
+                #{item.taxRate},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.unitBase},
+                #{item.unitPrice},
+                #{item.unitConversionRate},
+                #{item.isRecursionPrice},
+                #{item.quoteUpdaterAccount},
+                #{item.quoteUpdateDate},
+                #{item.checkUpdaterAccount},
+                #{item.checkUpdateDate},
+                #{item.confirmUpdaterAccount},
+                #{item.confirmUpdateDate},
+                #{item.purchaseUpdaterAccount},
+                #{item.purchaseUpdateDate},
+                #{item.remarkQuote},
+                #{item.remarkCheck},
+                #{item.remarkConfirm},
+                #{item.remarkPurchase},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_outsource_price_infor_item
+        <trim prefix="SET" suffixOverrides=",">
+            cascade_type = #{cascadeType},
+            price_enter_mode = #{priceEnterMode},
+            quote_price_tax = #{quotePriceTax},
+            quote_price = #{quotePrice},
+            check_price_tax = #{checkPriceTax},
+            check_price = #{checkPrice},
+            confirm_price_tax = #{confirmPriceTax},
+            confirm_price = #{confirmPrice},
+            purchase_price_tax = #{purchasePriceTax},
+            purchase_price = #{purchasePrice},
+            tax_rate = #{taxRate},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            unit_base = #{unitBase},
+            unit_price = #{unitPrice},
+            unit_conversion_rate = #{unitConversionRate},
+            is_recursion_price = #{isRecursionPrice},
+            quote_updater_account = #{quoteUpdaterAccount},
+            quote_update_date = #{quoteUpdateDate},
+            check_updater_account = #{checkUpdaterAccount},
+            check_update_date = #{checkUpdateDate},
+            confirm_updater_account = #{confirmUpdaterAccount},
+            confirm_update_date = #{confirmUpdateDate},
+            purchase_updater_account = #{purchaseUpdaterAccount},
+            purchase_update_date = #{purchaseUpdateDate},
+            remark_quote = #{remarkQuote},
+            remark_check = #{remarkCheck},
+            remark_confirm = #{remarkConfirm},
+            remark_purchase = #{remarkPurchase},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where outsource_price_infor_item_sid = #{outsourcePriceInforItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_outsource_price_infor_item
+            <trim prefix="SET" suffixOverrides=",">
+                cascade_type = #{cascadeType},
+                price_enter_mode = #{priceEnterMode},
+                quote_price_tax = #{quotePriceTax},
+                quote_price = #{quotePrice},
+                check_price_tax = #{checkPriceTax},
+                check_price = #{checkPrice},
+                confirm_price_tax = #{confirmPriceTax},
+                confirm_price = #{confirmPrice},
+                purchase_price_tax = #{purchasePriceTax},
+                purchase_price = #{purchasePrice},
+                tax_rate = #{taxRate},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+                unit_base = #{unitBase},
+                unit_price = #{unitPrice},
+                unit_conversion_rate = #{unitConversionRate},
+                is_recursion_price = #{isRecursionPrice},
+                quote_updater_account = #{quoteUpdaterAccount},
+                quote_update_date = #{quoteUpdateDate},
+                check_updater_account = #{checkUpdaterAccount},
+                check_update_date = #{checkUpdateDate},
+                confirm_updater_account = #{confirmUpdaterAccount},
+                confirm_update_date = #{confirmUpdateDate},
+                purchase_updater_account = #{purchaseUpdaterAccount},
+                purchase_update_date = #{purchaseUpdateDate},
+                remark_quote = #{remarkQuote},
+                remark_check = #{remarkCheck},
+                remark_confirm = #{remarkConfirm},
+                remark_purchase = #{remarkPurchase},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where outsource_price_infor_item_sid = #{outsourcePriceInforItemSid}
+        </foreach>
+    </update>
+
+</mapper>

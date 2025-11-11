@@ -1,0 +1,1241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurPurchaseContractMapper">
+
+    <resultMap type="com.platform.ems.domain.PurPurchaseContract" id="PurPurchaseContractResult">
+        <result property="clientId" column="client_id"/>
+        <result property="purchaseContractSid" column="purchase_contract_sid"/>
+        <result property="purchaseContractCode" column="purchase_contract_code"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="contractType" column="contract_type"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="buyer" column="buyer"/>
+        <result property="businessChannel" column="business_channel"/>
+        <result property="rawMaterialMode" column="raw_material_mode"/>
+        <result property="purchaseMode" column="purchase_mode"/>
+        <result property="referProject" column="refer_project"/>
+        <result property="purchaseOrg" column="purchase_org"/>
+        <result property="year" column="year"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="businessType" column="business_type"/>
+        <result property="accountsMethodGroup" column="accounts_method_group"/>
+        <result property="accountsMethodGroupCode" column="accounts_method_group_code"/>
+        <result property="materialType" column="material_type"/>
+        <result property="taxRate" column="tax_rate"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="currencyAmount" column="currency_amount"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="settleProject" column="settle_project"/>
+        <result property="purchaseGroup" column="purchase_group"/>
+        <result property="warranty" column="warranty"/>
+        <result property="warrantyUnit" column="warranty_unit"/>
+        <result property="advanceSettleMode" column="advance_settle_mode"/>
+        <result property="remainSettleMode" column="remain_settle_mode"/>
+        <result property="allowableRatioShort" column="allowable_ratio_short"/>
+        <result property="allowableRatioMore" column="allowable_ratio_more"/>
+        <result property="allowableRatioShortPct" column="allowable_ratio_short_pct"/>
+        <result property="allowableRatioMorePct" column="allowable_ratio_more_pct"/>
+        <result property="vendorContractCode" column="vendor_contract_code"/>
+        <result property="exemptionDay" column="exemption_day"/>
+        <result property="uploadStatus" column="upload_status"/>
+        <result property="signInStatus" column="sign_in_status"/>
+        <result property="closeStatus" column="close_status"/>
+        <result property="contractName" column="contract_name"/>
+        <result property="originalPurchaseContractSid" column="original_purchase_contract_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="shortName" column="short_name"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="companyName" column="company_name"/>
+        <result property="companyShortName" column="company_short_name"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="processType" column="process_type"/>
+        <result property="instanceId" column="instance_id"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="advanceSettleModeName" column="advance_settle_mode_name"/>
+        <result property="remainSettleModeName" column="remain_settle_mode_name"/>
+        <result property="accountsMethodGroupName" column="accounts_method_group_name"/>
+        <result property="purchaseOrgName" column="purchase_org_name"/>
+        <result property="materialTypeName" column="material_type_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="purchaseGroupName" column="purchase_group_name"/>
+        <result property="originalPurchaseContractCode" column="original_purchase_contract_code"/>
+        <result property="creatorUserId" column="creator_user_id"/>
+        <result property="yufukuanRemark" column="yufukuan_remark"/>
+        <result property="zhongqikuanRemark" column="zhongqikuan_remark"/>
+        <result property="weikuanRemark" column="weikuan_remark"/>
+        <result property="filePath" column="file_path"/>
+        <result property="contractSigner" column="contract_signer"/>
+        <result property="contractSignDate" column="contract_sign_date"/>
+        <result property="contractSignerName" column="contract_signer_name"/>
+        <result property="frameworkAgreementSid" column="framework_agreement_sid"/>
+        <result property="frameworkAgreementCode" column="framework_agreement_code"/>
+        <result property="contractPurpose" column="contract_purpose"/>
+        <result property="toexpireDays" column="toexpire_days"/>
+        <result property="yfAccountValidDays" column="yf_account_valid_days"/>
+        <result property="zqAccountValidDays" column="zq_account_valid_days"/>
+        <result property="wqAccountValidDays" column="wq_account_valid_days"/>
+        <result property="dayType" column="day_type"/>
+    </resultMap>
+
+    <sql id="selectPurPurchaseContractVo">
+        select t.client_id,
+               t.purchase_contract_sid,
+               t.purchase_contract_code,
+               t.vendor_sid,
+               t.contract_type,
+               t.company_sid,
+               t.company_brand_sid,
+               t.buyer,
+               t.business_channel,
+               t.raw_material_mode,
+               t.purchase_mode,
+               t.refer_project,
+               t.purchase_org,
+               t.year,
+               t.product_season_sid,
+               t.business_type,
+               t.accounts_method_group,
+               t.accounts_method_group_code,
+               t.material_type,
+               t.tax_rate,
+               t.currency_amount_tax,
+               t.currency_amount,
+               t.currency,
+               t.currency_unit,
+               t.start_date,
+               t.end_date,
+               t.settle_project,
+               t.purchase_group,
+               t.warranty,
+               t.warranty_unit,
+               t.advance_settle_mode,
+               t.remain_settle_mode,
+               t.allowable_ratio_short,
+               t.allowable_ratio_more,
+               Round(t.allowable_ratio_short * 100, 2) as allowable_ratio_short_pct,
+               Round(t.allowable_ratio_more * 100, 2) as allowable_ratio_more_pct,
+               t.vendor_contract_code,
+               t.exemption_day,
+               t.toexpire_days,
+               t.contract_purpose,
+               t.upload_status,
+               t.sign_in_status,
+               t.close_status,
+               t.contract_name,
+               t.original_purchase_contract_sid,
+               t.yufukuan_remark,
+               t.zhongqikuan_remark,
+               t.weikuan_remark,
+               t.yf_account_valid_days,
+               t.zq_account_valid_days,
+               t.wq_account_valid_days,
+               t.day_type,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t.contract_tag,
+               t.perform_remark,
+               t1.vendor_code,
+               t1.vendor_name,
+               t1.short_name,
+               t2.company_code,
+               t2.company_name,
+               t2.short_name as company_short_name,
+               t3.product_season_code,
+               t3.product_season_name,
+               t.process_type,
+               t.instance_id,
+               t4.nick_name,
+               t5.name as advance_settle_mode_name,
+               t6.name as remain_settle_mode_name,
+               t7.name as accounts_method_group_name,
+               t8.name as purchase_org_name,
+               t9.name as material_type_name,
+               t10.nick_name as creator_account_name,
+               t10.user_id as creator_user_id,
+               t11.nick_name as updater_account_name,
+               t12.nick_name as confirmer_account_name,
+               t13.name as purchase_group_name,
+               t14.purchase_contract_code as original_purchase_contract_code,
+               t15.file_path,
+               t16.approval_node,
+               t16.approval_user_id,
+               t16.approval_user_name,
+               t16.create_date as submit_date,
+               t17.nick_name as submit_user_name,
+               t.contract_signer,
+               t.contract_sign_date,
+               t18.nick_name as contract_signer_name,
+               t.framework_agreement_sid,
+               t19.purchase_contract_code as framework_agreement_code
+        from s_pur_purchase_contract t
+                 left join s_bas_vendor t1 on t1.vendor_sid = t.vendor_sid
+                 left join s_bas_company t2 on t2.company_sid = t.company_sid
+                 left join s_bas_product_season t3 on t3.product_season_sid = t.product_season_sid
+                 left join sys_user t4 on t4.user_name = t.buyer
+                 left join s_con_advance_settle_mode t5 on t5.code = t.advance_settle_mode
+                 left join s_con_remain_settle_mode t6 on t6.code = t.remain_settle_mode
+                 left join s_con_account_method_group t7 on t7.sid = t.accounts_method_group
+                 left join s_con_purchase_org t8 on t8.code = t.purchase_org
+                 left join s_con_material_type t9 on t9.code = t.material_type
+                 left join sys_user t10 on t10.user_name = t.creator_account
+                 left join sys_user t11 on t11.user_name = t.updater_account
+                 left join sys_user t12 on t12.user_name = t.confirmer_account
+                 left join s_con_purchase_group t13 on t13.code = t.purchase_group
+                 left join s_pur_purchase_contract t14 on t14.purchase_contract_sid = t.original_purchase_contract_sid
+                 left join s_pur_purchase_contract_attachment t15
+                           on t.purchase_contract_sid = t15.purchase_contract_sid and 'CGHT' = t15.file_type
+                 left join s_sys_form_process t16 on t.purchase_contract_sid = t16.form_id
+                 left join sys_user t17 on t16.creator_account = t17.user_name
+                 left join sys_user t18 on t.contract_signer = t18.user_name
+                 left join s_pur_purchase_contract t19 on t.framework_agreement_sid = t19.purchase_contract_sid
+    </sql>
+
+    <select id="selectPurPurchaseContractById" parameterType="Long" resultMap="PurPurchaseContractResult">
+        <include refid="selectPurPurchaseContractVo"/>
+        where t.purchase_contract_sid = #{purchaseContractSid}
+    </select>
+
+    <select id="selectPurPurchaseContractList" parameterType="com.platform.ems.domain.PurPurchaseContract"
+            resultMap="PurPurchaseContractResult">
+        <include refid="selectPurPurchaseContractVo"/>
+        <where>
+            <if test="contractPurposeList != null and contractPurposeList.length >0">
+                and t.contract_purpose in
+                (<foreach collection="contractPurposeList" item="contractPurpose" separator=",">
+                #{contractPurpose}</foreach>)
+            </if>
+            <if test="contractTag != null and contractTag != ''">
+                and t.contract_tag = #{contractTag}
+            </if>
+            <if test="contractCode != null ">
+                and t.purchase_contract_code = #{contractCode}
+            </if>
+            <if test="approvalUserId != null and approvalUserId != '' ">
+                and (t16.approval_user_id = #{approvalUserId}  or t16.approval_user_id like concat('%, ', #{approvalUserId}, ',%')
+                or t16.approval_user_id like concat('%, ', #{approvalUserId}) or t16.approval_user_id like concat(#{approvalUserId}, ',%')
+                or t16.approval_user_id like concat('%,', #{approvalUserId}, ',%') or t16.approval_user_id like concat('%,', #{approvalUserId}))
+            </if>
+            <if test="approvalUserIdList != null and approvalUserIdList.length >0 ">
+                and (<foreach collection="approvalUserIdList" item="approvalUserId" separator=" or ">
+                (t16.approval_user_id = #{approvalUserId} or t16.approval_user_id like concat('%, ', #{approvalUserId}, ',%')
+                or t16.approval_user_id like concat('%, ', #{approvalUserId}) or t16.approval_user_id like concat(#{approvalUserId}, ',%')
+                or t16.approval_user_id like concat('%,', #{approvalUserId}, ',%') or t16.approval_user_id like concat('%,', #{approvalUserId}))</foreach>)
+            </if>
+            <if test="contractSigner != null and contractSigner != '' ">
+                and t18.user_id = #{contractSigner}
+            </if>
+            <if test="contractSignerList != null and contractSignerList.length >0">
+                and t18.user_id in
+                (<foreach collection="contractSignerList" item="contractSigner" separator=",">
+                #{contractSigner}</foreach>)
+            </if>
+            <if test="fileType != null and fileType != ''">
+                and t15.file_type = #{fileType}
+            </if>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="purchaseContractSid != null ">
+                and t.purchase_contract_sid = #{purchaseContractSid}
+            </if>
+            <if test="purchaseContractCode != null and purchaseContractCode != ''">
+                and (<foreach collection="purchaseContractCode.split(';')" item="item" separator=" or ">
+                t.purchase_contract_code like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">
+                #{creatorAccount}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="yearList != null and yearList.length >0">
+                and t.year in
+                (<foreach collection="yearList" item="year" separator=",">#{year}</foreach>)
+            </if>
+            <if test="contractTypeList != null and contractTypeList.length >0">
+                and t.contract_type in
+                (<foreach collection="contractTypeList" item="contractType" separator=",">#{contractType}</foreach>)
+            </if>
+            <if test="purchaseGroupList != null and purchaseGroupList.length >0">
+                and t.purchase_group in
+                (<foreach collection="purchaseGroupList" item="purchaseGroup" separator=",">#{purchaseGroup}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">
+                and t.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">
+                #{productSeasonSid}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="buyerList != null and buyerList.length >0">
+                and t.buyer in
+                (<foreach collection="buyerList" item="buyer" separator=",">#{buyer}</foreach>)
+            </if>
+            <if test="advanceSettleModeList != null and advanceSettleModeList.length >0">
+                and t.advance_settle_mode in
+                (<foreach collection="advanceSettleModeList" item="advanceSettleMode" separator=",">
+                #{advanceSettleMode}</foreach>)
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length >0">
+                and t.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=",">#{materialType}</foreach>)
+            </if>
+            <if test="vendorContractCode != null and vendorContractCode != ''">
+                and (<foreach collection="vendorContractCode.split(';')" item="item" separator=" or ">
+                t.vendor_contract_code like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="uploadStatusList != null and uploadStatusList.length >0">
+                and t.upload_status in
+                (<foreach collection="uploadStatusList" item="uploadStatus" separator=",">#{uploadStatus}</foreach>)
+            </if>
+            <if test="signInStatusList != null and signInStatusList.length >0">
+                and t.sign_in_status in
+                (<foreach collection="signInStatusList" item="signInStatus" separator=",">#{signInStatus}</foreach>)
+            </if>
+            <if test="startDate != null">
+                and date_format(t.start_date,'%y%m%d') &gt;= date_format(#{startDate},'%y%m%d')
+            </if>
+            <if test="endDate != null">
+                and date_format(t.end_date,'%y%m%d') &lt;= date_format(#{endDate},'%y%m%d')
+            </if>
+            <if test="processTypeList != null and processTypeList.length >0">
+                and t.process_type in
+                (<foreach collection="processTypeList" item="processType" separator=",">#{processType}</foreach>)
+            </if>
+            <if test="vendorSid != null ">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="contractType != null and contractType != ''">
+                and (<foreach collection="contractType.split(';')" item="item" separator=" or ">t.contract_type like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companyBrandSid != null ">
+                and t.company_brand_sid = #{companyBrandSid}
+            </if>
+            <if test="buyer != null and buyer != ''">
+                and (<foreach collection="buyer.split(';')" item="item" separator=" or ">t.buyer like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="rawMaterialMode != null and rawMaterialMode != ''">
+                and t.raw_material_mode = #{rawMaterialMode}
+            </if>
+            <if test="rawMaterialModeList != null and rawMaterialModeList.length >0">
+                and t.raw_material_mode in
+                (<foreach collection="rawMaterialModeList" item="rawMaterialMode" separator=",">
+                #{rawMaterialMode}</foreach>)
+            </if>
+            <if test="businessChannel != null and businessChannel != ''">
+                and (<foreach collection="businessChannel.split(';')" item="item" separator=" or ">t.business_channel like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="referProject != null ">
+                and t.refer_project = #{referProject}
+            </if>
+            <if test="purchaseMode != null and purchaseMode != ''">
+                and t.purchase_mode = #{purchaseMode}
+            </if>
+            <if test="purchaseOrg != null and purchaseOrg != ''">
+                and (<foreach collection="purchaseOrg.split(';')" item="item" separator=" or ">t.purchase_org like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="year != null and year != ''">
+                and (<foreach collection="year.split(';')" item="item" separator=" or ">t.year like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="productSeasonSid != null ">
+                and t.product_season_sid = #{productSeasonSid}
+            </if>
+            <if test="businessType != null and businessType != ''">
+                and (<foreach collection="businessType.split(';')" item="item" separator=" or ">t.business_type like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="accountsMethodGroup != null ">
+                and t.accounts_method_group = #{accountsMethodGroup}
+            </if>
+            <if test="accountsMethodGroupCode != null and accountsMethodGroupCode != ''">
+                and t.accounts_method_group_code = #{accountsMethodGroupCode}
+            </if>
+            <if test="materialType != null and materialType != ''">
+                and (<foreach collection="materialType.split(';')" item="item" separator=" or ">t.material_type like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="taxRate != null ">
+                and t.tax_rate = #{taxRate}
+            </if>
+            <if test="currencyAmountTax != null ">
+                and t.currency_amount_tax = #{currencyAmountTax}
+            </if>
+            <if test="currencyAmount != null ">
+                and t.currency_amount = #{currencyAmount}
+            </if>
+            <if test="currency != null and currency != ''">
+                and (<foreach collection="currency.split(';')" item="item" separator=" or ">t.currency like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="currencyUnit != null and currencyUnit != ''">
+                and (<foreach collection="currencyUnit.split(';')" item="item" separator=" or ">t.currency_unit like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="startDate != null">
+                and date_format(t.start_date,'%y%m%d') &gt;= date_format(#{startDate},'%y%m%d')
+            </if>
+            <if test="endDate != null">
+                and date_format(t.end_date,'%y%m%d') &lt;= date_format(#{endDate},'%y%m%d')
+            </if>
+            <if test="settleProject != null ">
+                and t.settle_project = #{settleProject}
+            </if>
+            <if test="purchaseGroup != null and purchaseGroup != ''">
+                and (<foreach collection="purchaseGroup.split(';')" item="item" separator=" or ">t.purchase_group like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="warranty != null ">
+                and t.warranty = #{warranty}
+            </if>
+            <if test="warrantyUnit != null and warrantyUnit != ''">
+                and (<foreach collection="warrantyUnit.split(';')" item="item" separator=" or ">t.warranty_unit like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="advanceSettleMode != null and advanceSettleMode != ''">
+                and (<foreach collection="advanceSettleMode.split(';')" item="item" separator=" or ">t.advance_settle_mode
+                like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="remainSettleMode != null and remainSettleMode != ''">
+                and (<foreach collection="remainSettleMode.split(';')" item="item" separator=" or ">t.remain_settle_mode
+                like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="allowableRatioShort != null ">
+                and t.allowable_ratio_short = #{allowableRatioShort}
+            </if>
+            <if test="allowableRatioMore != null ">
+                and t.allowable_ratio_more = #{allowableRatioMore}
+            </if>
+            <if test="vendorContractCode != null and vendorContractCode != ''">
+                and (<foreach collection="vendorContractCode.split(';')" item="item" separator=" or ">
+                t.vendor_contract_code like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="exemptionDay != null ">
+                and t.exemption_day = #{exemptionDay}
+            </if>
+            <if test="exemptionDay != null ">
+                and t.contract_purpose = #{contractPurpose}
+            </if>
+            <if test="uploadStatus != null and uploadStatus != ''">
+                and (<foreach collection="uploadStatus.split(';')" item="item" separator=" or ">t.upload_status like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="signInStatus != null and signInStatus != ''">
+                and (<foreach collection="signInStatus.split(';')" item="item" separator=" or ">t.sign_in_status like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="closeStatus != null and closeStatus != ''">
+                and (<foreach collection="closeStatus.split(';')" item="item" separator=" or ">t.close_status like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="contractName != null and contractName != ''">
+                and t.contract_name like concat('%', #{contractName}, '%')
+            </if>
+            <if test="originalPurchaseContractSid != null ">
+                and t.original_purchase_contract_sid = #{originalPurchaseContractSid}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator=" or ">t.handle_status like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">t10.nick_name like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator=" or ">t.updater_account like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator=" or ">t.confirmer_account
+                like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator=" or ">t.data_source_sys like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.create_date desc,t.purchase_contract_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_purchase_contract
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            purchase_contract_sid,
+            purchase_contract_code,
+            vendor_sid,
+            contract_type,
+            company_sid,
+            company_brand_sid,
+            buyer,
+            business_channel,
+            raw_material_mode,
+            purchase_mode,
+            refer_project,
+            purchase_org,
+            year,
+            product_season_sid,
+            business_type,
+            accounts_method_group,
+            accounts_method_group_code,
+            material_type,
+            tax_rate,
+            currency_amount_tax,
+            currency_amount,
+            currency,
+            currency_unit,
+            start_date,
+            end_date,
+            settle_project,
+            purchase_group,
+            warranty,
+            warranty_unit,
+            advance_settle_mode,
+            remain_settle_mode,
+            allowable_ratio_short,
+            allowable_ratio_more,
+            vendor_contract_code,
+            exemption_day,
+            toexpire_days,
+            contract_purpose,
+            upload_status,
+            sign_in_status,
+            close_status,
+            contract_name,
+            original_purchase_contract_sid,
+            yufukuan_remark,
+            zhongqikuan_remark,
+            weikuan_remark,
+            yf_account_valid_days,
+            zq_account_valid_days,
+            wq_account_valid_days,
+            day_type,
+            contract_signer,
+            contract_sign_date,
+            framework_agreement_sid,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{o.clientId},
+                #{o.purchaseContractSid},
+                #{o.purchaseContractCode},
+                #{o.vendorSid},
+                #{o.contractType},
+                #{o.companySid},
+                #{o.companyBrandSid},
+                #{o.buyer},
+                #{o.businessChannel},
+                #{o.rawMaterialMode},
+                #{o.referProject},
+                #{o.purchaseOrg},
+                #{o.year},
+                #{o.productSeasonSid},
+                #{o.businessType},
+                #{o.accountsMethodGroup},
+                #{o.accountsMethodGroupCode},
+                #{o.materialType},
+                #{o.taxRate},
+                #{o.currencyAmountTax},
+                #{o.currencyAmount},
+                #{o.currency},
+                #{o.currencyUnit},
+                #{o.startDate},
+                #{o.endDate},
+                #{o.settleProject},
+                #{o.purchaseGroup},
+                #{o.warranty},
+                #{o.warrantyUnit},
+                #{o.advanceSettleMode},
+                #{o.remainSettleMode},
+                #{o.allowableRatioShort},
+                #{o.allowableRatioMore},
+                #{o.vendorContractCode},
+                #{o.exemptionDay},
+                #{o.toexpireDays},
+                #{o.contractPurpose},
+                #{o.uploadStatus},
+                #{o.signInStatus},
+                #{o.closeStatus},
+                #{o.contractName},
+                #{o.originalPurchaseContractSid},
+                #{o.yufukuanRemark},
+                #{o.zhongqikuanRemark},
+                #{o.weikuanRemark},
+                #{o.yfAccountValidDays},
+                #{o.zqAccountValidDays},
+                #{o.wqAccountValidDays},
+                #{o.dayType},
+                #{o.contractSigner},
+                #{o.contractSignDate},
+                #{o.frameworkAgreementSid},
+                #{o.remark},
+                #{o.handleStatus},
+                #{o.creatorAccount},
+                #{o.createDate},
+                #{o.updaterAccount},
+                #{o.updateDate},
+                #{o.confirmerAccount},
+                #{o.confirmDate},
+                #{o.dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_purchase_contract
+        <trim prefix="SET" suffixOverrides=",">
+            purchase_contract_code = #{purchaseContractCode},
+            vendor_sid = #{vendorSid},
+            contract_type = #{contractType},
+            company_sid = #{companySid},
+            company_brand_sid = #{companyBrandSid},
+            buyer = #{buyer},
+            business_channel = #{businessChannel},
+            raw_material_mode = #{rawMaterialMode},
+            purchase_mode = #{purchaseMode},
+            refer_project = #{referProject},
+            purchase_org = #{purchaseOrg},
+            year = #{year},
+            product_season_sid = #{productSeasonSid},
+            business_type = #{businessType},
+            accounts_method_group = #{accountsMethodGroup},
+            accounts_method_group_code = #{accountsMethodGroupCode},
+            material_type = #{materialType},
+            tax_rate = #{taxRate},
+            currency_amount_tax = #{currencyAmountTax},
+            currency_amount = #{currencyAmount},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            start_date = #{startDate},
+            end_date = #{endDate},
+            settle_project = #{settleProject},
+            purchase_group = #{purchaseGroup},
+            warranty = #{warranty},
+            warranty_unit = #{warrantyUnit},
+            advance_settle_mode = #{advanceSettleMode},
+            remain_settle_mode = #{remainSettleMode},
+            allowable_ratio_short = #{allowableRatioShort},
+            allowable_ratio_more = #{allowableRatioMore},
+            vendor_contract_code = #{vendorContractCode},
+            exemption_day = #{exemptionDay},
+            toexpire_days = #{toexpireDays},
+            contract_purpose = #{contractPurpose},
+            upload_status = #{uploadStatus},
+            sign_in_status = #{signInStatus},
+            close_status = #{closeStatus},
+            contract_name = #{contractName},
+            original_purchase_contract_sid = #{originalPurchaseContractSid},
+            yufukuan_remark = #{yufukuanRemark},
+            zhongqikuan_remark = #{zhongqikuanRemark},
+            weikuan_remark = #{weikuanRemark},
+            yf_account_valid_days = #{yfAccountValidDays},
+            zq_account_valid_days = #{zqAccountValidDays},
+            wq_account_valid_days = #{wqAccountValidDays},
+            day_type = #{dayType},
+            contract_signer = #{contractSigner},
+            contract_sign_date = #{contractSignDate},
+            framework_agreement_sid = #{frameworkAgreementSid},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            contract_tag = #{contractTag},
+            perform_remark = #{performRemark},
+        </trim>
+        where purchase_contract_sid = #{purchaseContractSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_purchase_contract
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                purchase_contract_code = #{purchaseContractCode},
+                vendor_sid = #{vendorSid},
+                contract_type = #{contractType},
+                company_sid = #{companySid},
+                company_brand_sid = #{companyBrandSid},
+                buyer = #{buyer},
+                business_channel = #{businessChannel},
+                raw_material_mode = #{rawMaterialMode},
+                purchase_mode = #{purchaseMode},
+                refer_project = #{referProject},
+                purchase_org = #{purchaseOrg},
+                year = #{year},
+                product_season_sid = #{productSeasonSid},
+                business_type = #{businessType},
+                accounts_method_group = #{accountsMethodGroup},
+                accounts_method_group_code = #{accountsMethodGroupCode},
+                material_type = #{materialType},
+                tax_rate = #{taxRate},
+                currency_amount_tax = #{currencyAmountTax},
+                currency_amount = #{currencyAmount},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+                start_date = #{startDate},
+                end_date = #{endDate},
+                settle_project = #{settleProject},
+                purchase_group = #{purchaseGroup},
+                warranty = #{warranty},
+                warranty_unit = #{warrantyUnit},
+                advance_settle_mode = #{advanceSettleMode},
+                remain_settle_mode = #{remainSettleMode},
+                allowable_ratio_short = #{allowableRatioShort},
+                allowable_ratio_more = #{allowableRatioMore},
+                vendor_contract_code = #{vendorContractCode},
+                exemption_day = #{exemptionDay},
+                toexpire_days = #{toexpireDays},
+                contract_purpose = #{contractPurpose},
+                upload_status = #{uploadStatus},
+                sign_in_status = #{signInStatus},
+                close_status = #{closeStatus},
+                contract_name = #{contractName},
+                original_purchase_contract_sid = #{originalPurchaseContractSid},
+                yufukuan_remark = #{yufukuanRemark},
+                zhongqikuan_remark = #{zhongqikuanRemark},
+                weikuan_remark = #{weikuanRemark},
+                yf_account_valid_days = #{yfAccountValidDays},
+                zq_account_valid_days = #{zqAccountValidDays},
+                wq_account_valid_days = #{wqAccountValidDays},
+                day_type = #{dayType},
+                contract_signer = #{contractSigner},
+                contract_sign_date = #{contractSignDate},
+                framework_agreement_sid = #{frameworkAgreementSid},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where purchase_contract_sid = #{purchaseContractSid}
+        </foreach>
+    </update>
+
+    <select id="countByDomain" resultType="java.lang.Integer">
+        select count(1) from s_pur_purchase_contract
+        <where>
+            <if test="purchaseContractSids != null and purchaseContractSids.size > 0">
+                and purchase_contract_sid in (
+                <foreach collection="purchaseContractSids" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            and handle_status in (1,4)
+        </where>
+    </select>
+
+    <select id="getName" parameterType="Long" resultType="com.platform.ems.domain.PurPurchaseContract">
+        SELECT t1.vendor_code,
+               t1.vendor_name,
+               t2.company_code,
+               t2.company_name,
+               t3.product_season_code,
+               t3.product_season_name
+        FROM s_pur_purchase_contract t
+                 LEFT JOIN s_bas_vendor t1 ON t1.vendor_sid = t.vendor_sid
+                 LEFT JOIN s_bas_company t2 ON t2.company_sid = t.company_sid
+                 LEFT JOIN s_bas_product_season t3 ON t3.product_season_sid = t.product_season_sid
+        WHERE t.purchase_contract_sid = #{purchaseContractSid}
+    </select>
+
+    <select id="getPurPurchaseContractList" resultType="com.platform.ems.domain.PurPurchaseContract">
+        select purchase_contract_sid, purchase_contract_code, contract_name, handle_status, create_date
+        from s_pur_purchase_contract
+        where handle_status = '5'
+        order by create_date desc
+    </select>
+
+    <select id="getPurchaseContractList" parameterType="com.platform.ems.domain.PurPurchaseContract"
+            resultType="com.platform.ems.domain.PurPurchaseContract">
+        select t.purchase_contract_sid, t.purchase_contract_code, t.contract_name, t.vendor_sid, t.company_sid, t.close_status, t.handle_status, t.create_date,
+               t1.vendor_code, t1.vendor_name, ifnull(t1.short_name, t1.vendor_name) as vendor_short_name,
+               t2.company_code, t2.company_name, ifnull(t2.short_name, t2.company_name) as company_short_name
+        from s_pur_purchase_contract t
+        left join s_bas_vendor t1 on t.vendor_sid = t1.vendor_sid
+        left join s_bas_company t2 on t.company_sid = t2.company_sid
+        <where>
+            <if test="vendorSid != null and vendorSid != ''">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null and companySid != ''">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length > 0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="closeStatus != null and closeStatus != ''">
+                and t.close_status = #{closeStatus}
+            </if>
+        </where>
+        order by t.create_date desc
+    </select>
+
+    <select id="getOriginalContractList" resultType="com.platform.ems.domain.PurPurchaseContract">
+        select
+        purchase_contract_sid,
+        purchase_contract_code,
+        contract_name,
+        handle_status,
+        create_date
+        from s_pur_purchase_contract
+        <where>
+            <if test="companySid != null">
+                and company_sid = #{companySid}
+            </if>
+            <if test="vendorSid != null">
+                and vendor_sid = #{vendorSid}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and handle_status = #{handleStatus}
+            </if>
+        </where>
+        order by contract_name
+    </select>
+
+    <select id="getToexpireBusiness" resultType="com.platform.ems.domain.PurPurchaseContract">
+        SELECT t.purchase_contract_sid,
+               t.client_id,
+               t.purchase_contract_code,
+               t.vendor_sid,
+               t.contract_type,
+               t.framework_agreement_sid,
+               t.contract_name,
+               t.start_date,
+               t.end_date,
+               t.raw_material_mode,
+               t.upload_status,
+               t.sign_in_status,
+               t.handle_status,
+               t.year,
+               t.company_sid,
+               t.company_brand_sid,
+               t.buyer,
+               t.purchase_mode,
+               t.currency_amount_tax,
+               t.vendor_contract_code,
+               t.exemption_day,
+               t.warranty,
+               t.contract_purpose,
+               t.allowable_ratio_short,
+               t.allowable_ratio_more,
+               t.tax_rate,
+               t.currency,
+               t.currency_unit,
+               t.yufukuan_remark,
+               t.zhongqikuan_remark,
+               t.weikuan_remark,
+               t.contract_signer,
+               t.contract_sign_date,
+               t.cancel_remark,
+               t.remark,
+               t.business_channel,
+               t.refer_project,
+               t.purchase_org,
+               t.product_season_sid,
+               t.business_type,
+               t.accounts_method_group,
+               t.accounts_method_group_code,
+               t.material_type,
+               t.currency_amount,
+               t.settle_project,
+               t.purchase_group,
+               t.warranty_unit,
+               t.advance_settle_mode,
+               t.remain_settle_mode,
+               t.close_status,
+               t.original_purchase_contract_sid,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t.instance_id,
+               t.process_type,
+               t1.short_name AS vendor_short_name,
+               t2.user_id    AS creator_account_id
+        FROM s_pur_purchase_contract t
+                 LEFT JOIN s_bas_vendor t1 ON t.vendor_sid = t1.vendor_sid
+                 LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        WHERE (t.handle_status = '5' AND end_date &gt;= DATE_FORMAT(NOW(), '%Y-%m-%d') AND
+               end_date &lt;= DATE_FORMAT(date_add(now(), interval ${offset} day), '%Y-%m-%d'));
+    </select>
+
+    <select id="getOverdueBusiness" resultType="com.platform.ems.domain.PurPurchaseContract">
+        SELECT t.purchase_contract_sid,
+               t.client_id,
+               t.purchase_contract_code,
+               t.vendor_sid,
+               t.contract_type,
+               t.framework_agreement_sid,
+               t.contract_name,
+               t.start_date,
+               t.end_date,
+               t.raw_material_mode,
+               t.upload_status,
+               t.sign_in_status,
+               t.handle_status,
+               t.year,
+               t.company_sid,
+               t.company_brand_sid,
+               t.buyer,
+               purchase_mode,
+               t.currency_amount_tax,
+               t.vendor_contract_code,
+               t.exemption_day,
+               t.warranty,
+               t.contract_purpose,
+               t.allowable_ratio_short,
+               t.allowable_ratio_more,
+               t.tax_rate,
+               currency,
+               t.currency_unit,
+               t.yufukuan_remark,
+               t.zhongqikuan_remark,
+               t.weikuan_remark,
+               t.contract_signer,
+               t.contract_sign_date,
+               t.cancel_remark,
+               t.remark,
+               t.business_channel,
+               t.refer_project,
+               t.purchase_org,
+               t.product_season_sid,
+               t.business_type,
+               t.accounts_method_group,
+               t.accounts_method_group_code,
+               t.material_type,
+               t.currency_amount,
+               t.settle_project,
+               t.purchase_group,
+               t.warranty_unit,
+               t.advance_settle_mode,
+               t.remain_settle_mode,
+               t.close_status,
+               t.original_purchase_contract_sid,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t.instance_id,
+               t.process_type,
+               t1.short_name AS vendor_short_name,
+               t2.user_id    AS creator_account_id
+        FROM s_pur_purchase_contract t
+                 LEFT JOIN s_bas_vendor t1 ON t.vendor_sid = t1.vendor_sid
+                 LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        WHERE (t.handle_status = '5' AND end_date &lt; DATE_FORMAT(NOW(), '%Y-%m-%d'));
+    </select>
+
+    <select id="getCountForm" parameterType="com.platform.ems.domain.PurPurchaseContract" resultType="com.platform.ems.domain.dto.response.form.PurPurchaseContractFormResponse">
+        SELECT ifnull(t.num_contract, 0) as num_contract,
+               ifnull(t.sum_amount_tax_contract, 0) as sum_amount_tax_contract,
+               t.year,t.vendor_sid,ifnull(t.contract_type,'') as contract_type,
+               ifnull(t1.num_order, 0) as num_order,
+               t2.vendor_name, ifnull(t2.short_name,t2.vendor_name) as vendor_short_name
+        FROM (
+            SELECT COUNT(x.purchase_contract_sid) as num_contract, SUM(x.currency_amount_tax) as sum_amount_tax_contract,
+            x.year, x.vendor_sid, x.contract_type
+            FROM s_pur_purchase_contract x
+            WHERE x.handle_status IN ('5', '9')
+            GROUP BY x.vendor_sid,x.year,x.contract_type
+        ) t
+        LEFT JOIN (
+            SELECT COUNT(distinct y.purchase_order_sid) as num_order, y2.year, y2.contract_type, y.vendor_sid
+            FROM s_pur_purchase_order y
+            LEFT JOIN s_pur_purchase_contract y2 ON y.purchase_contract_sid = y2.purchase_contract_sid
+            WHERE y.handle_status IN ('5', '7') and y2.handle_status IN ('5', '9')
+            GROUP BY y2.vendor_sid, y2.year, y2.contract_type
+        ) t1 ON t.year = t1.year AND t.contract_type = t1.contract_type AND t.vendor_sid = t1.vendor_sid
+        LEFT JOIN s_bas_vendor t2 ON t.vendor_sid = t2.vendor_sid
+        <where>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="yearList != null and yearList.length >0">
+                and t.year in
+                (<foreach collection="yearList" item="year" separator=",">#{year}</foreach>)
+            </if>
+            <if test="contractTypeList != null and contractTypeList.length >0">
+                and t.contract_type in
+                (<foreach collection="contractTypeList" item="contractType" separator=",">#{contractType}</foreach>)
+            </if>
+            <if test="year != null and year != ''">
+                and t.year = #{year}
+            </if>
+            <if test="vendorSid != null">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="contractType != null and contractType != ''">
+                and t.contract_type = #{contractType}
+            </if>
+        </where>
+        ORDER BY t.year DESC, t2.vendor_name ASC, t.contract_type ASC
+    </select>
+
+    <select id="getCountFormItem" parameterType="com.platform.ems.domain.PurPurchaseContract" resultType="com.platform.ems.domain.dto.response.form.PurPurchaseContractFormResponse">
+        SELECT ifnull(t.num_contract, 0) as num_contract,
+        ifnull(t.sum_amount_tax_contract, 0) as sum_amount_tax_contract,
+        t.year,t.vendor_sid,ifnull(t.contract_type, '') as contract_type,
+        ifnull(t1.num_order, 0) as num_order,
+        t.company_sid,t.product_season_sid,t.purchase_mode,t.raw_material_mode,
+        t2.vendor_name,ifnull(t2.short_name, t2.vendor_name) as vendor_short_name ,t3.company_name, ifnull(t3.short_name, t3.company_name) as company_short_name,
+        ifnull(t4.product_season_name, '') as product_season_name
+        FROM (
+        SELECT COUNT(x.purchase_contract_sid) as num_contract, SUM(x.currency_amount_tax) as sum_amount_tax_contract,
+        x.year, x.vendor_sid, x.contract_type, x.company_sid,x.product_season_sid,x.purchase_mode,x.raw_material_mode
+        FROM s_pur_purchase_contract x
+        <where>
+            x.handle_status IN ('5','9')
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and x.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and x.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="yearList != null and yearList.length >0">
+                and x.year in
+                (<foreach collection="yearList" item="year" separator=",">#{year}</foreach>)
+            </if>
+            <if test="contractTypeList != null and contractTypeList.length >0">
+                and x.contract_type in
+                (<foreach collection="contractTypeList" item="contractType" separator=",">#{contractType}</foreach>)
+            </if>
+            <if test="year != null and year != ''">
+                and x.year = #{year}
+            </if>
+            <if test="vendorSid != null">
+                and x.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null">
+                and x.company_sid = #{companySid}
+            </if>
+            <if test="contractType != null and contractType != ''">
+                and x.contract_type = #{contractType}
+            </if>
+        </where>
+        GROUP BY x.company_sid,x.product_season_sid,x.purchase_mode,x.raw_material_mode
+        ) t
+        LEFT JOIN (
+        SELECT COUNT(distinct y.purchase_order_sid) as num_order, y2.year, y2.contract_type, y2.vendor_sid,
+        y2.company_sid,y2.product_season_sid,y2.purchase_mode,y2.raw_material_mode
+        FROM s_pur_purchase_order y
+        LEFT JOIN s_pur_purchase_contract y2 ON y.purchase_contract_sid = y2.purchase_contract_sid
+        <where>
+            y2.handle_status IN ('5', '9')
+            AND
+            y.handle_status IN ('5','7')
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and y2.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and y2.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="yearList != null and yearList.length >0">
+                and y2.year in
+                (<foreach collection="yearList" item="year" separator=",">#{year}</foreach>)
+            </if>
+            <if test="contractTypeList != null and contractTypeList.length >0">
+                and y2.contract_type in
+                (<foreach collection="contractTypeList" item="contractType" separator=",">#{contractType}</foreach>)
+            </if>
+            <if test="year != null and year != ''">
+                and y2.year = #{year}
+            </if>
+            <if test="vendorSid != null">
+                and y2.vendor_sid = #{vendorSid}
+            </if>
+            <if test="companySid != null">
+                and y2.company_sid = #{companySid}
+            </if>
+            <if test="contractType != null and contractType != ''">
+                and y2.contract_type = #{contractType}
+            </if>
+        </where>
+        GROUP BY y2.company_sid,y2.product_season_sid,y2.purchase_mode,y2.raw_material_mode
+        ) t1 ON
+             t.company_sid = t1.company_sid
+        AND ((t.product_season_sid = t1.product_season_sid)or (t.product_season_sid is null and t1.product_season_sid is null ))
+        AND ((t.purchase_mode = t1.purchase_mode)or (t.purchase_mode is null and t1.purchase_mode is null ))
+        AND ((t.raw_material_mode = t1.raw_material_mode)or(t.raw_material_mode is null and t1.raw_material_mode is null))
+        LEFT JOIN s_bas_vendor t2 ON t.vendor_sid = t2.vendor_sid
+        LEFT JOIN s_bas_company t3 ON t.company_sid = t3.company_sid
+        LEFT JOIN s_bas_product_season t4 ON t.product_season_sid = t4.product_season_sid
+        ORDER BY t3.short_name ASC, t4.product_season_name ASC, t.purchase_mode ASC, t.raw_material_mode ASC
+    </select>
+
+    <select id="selectContractTemplateList" parameterType="com.platform.ems.domain.base.ContractTemplateAttach"
+            resultType="com.platform.ems.domain.base.ContractTemplateAttach">
+        select t.*, t1.nick_name as creator_account_name, t2.name as file_type_name, t3.name as object_name
+        from s_contract_template_attach t
+        left join sys_user t1 on t.creator_account = t1.user_name and t.client_id = t1.client_id
+        left join s_con_file_type t2 on t.file_type = t2.code
+        left join s_con_dataobject_category t3 on t.object_category = t3.code
+        <where>
+            <if test="objectCategory != null and objectCategory != ''">
+                and t.object_category = #{objectCategory}
+            </if>
+            <if test="fileType != null and fileType != ''">
+                and t.file_type = #{fileType}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectPurchaseContractKuangjia" parameterType="com.platform.ems.domain.PurPurchaseContract"
+            resultType="com.platform.ems.domain.PurPurchaseContract">
+        SELECT t.client_id,
+        t.purchase_contract_sid,
+        t.purchase_contract_code,
+        t.buyer,
+        t2.user_id as buyer_id,
+        t2.nick_name as buyer_name,
+        t3.purchase_finance_account_id
+        FROM s_pur_purchase_contract t
+        LEFT JOIN sys_user t2 ON t.buyer = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN (
+        SELECT ta.client_id,
+        GROUP_CONCAT(tb.user_id ORDER BY tb.user_id ASC SEPARATOR ';') as purchase_finance_account_id
+        FROM s_sys_default_setting_client ta
+        LEFT JOIN sys_user tb ON
+        ta.purchase_finance_account like concat('%;', tb.user_name, ';%') or
+        ta.purchase_finance_account like concat(tb.user_name, ';%') or ta.purchase_finance_account like concat('%;', tb.user_name)
+        GROUP BY ta.client_id
+        ) t3 ON t.client_id = t3.client_id
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="signInStatus != null and signInStatus != ''">
+                and t.sign_in_status = #{signInStatus}
+            </if>
+            <if test="uploadStatus != null and uploadStatus != ''">
+                and t.upload_status = #{uploadStatus}
+            </if>
+            <if test="contractType != null and contractType != ''">
+                and t.contract_type = #{contractType}
+            </if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.SysAuthorityObjectMapper">
+
+    <resultMap type="com.platform.ems.domain.SysAuthorityObject" id="SysAuthorityObjectResult">
+        <result property="clientId" column="client_id"/>
+        <result property="authorityObjectSid" column="authority_object_sid"/>
+        <result property="objectCode" column="object_code"/>
+        <result property="objectName" column="object_name"/>
+        <result property="category" column="category"/>
+        <result property="createSource" column="create_source"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <collection property="sysAuthorityFieldList" column="authority_object_sid"
+                    fetchType="eager"
+                    select="com.platform.ems.mapper.SysAuthorityObjectFieldMapper.selectSysAuthorityObjectFieldListById"/>
+    </resultMap>
+
+    <sql id="selectSysAuthorityObjectVo">
+        select
+        t.client_id,
+        t.authority_object_sid,
+        t.object_code,
+        t.object_name,
+        t.category,
+        t.create_source,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.status,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t2.nick_name AS creator_account_name,
+        t3.nick_name AS updater_account_name,
+        t4.nick_name AS confirmer_account_name
+        from s_sys_authority_object t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+        LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t3.client_id
+    </sql>
+
+    <select id="selectSysAuthorityObjectById" parameterType="Long" resultMap="SysAuthorityObjectResult">
+        <include refid="selectSysAuthorityObjectVo"/>
+        where t.authority_object_sid = #{authorityObjectSid}
+    </select>
+
+    <select id="selectSysAuthorityObjectList" parameterType="com.platform.ems.domain.SysAuthorityObject"
+            resultMap="SysAuthorityObjectResult">
+        <include refid="selectSysAuthorityObjectVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="objectCode != null and objectCode != ''">
+                and t.object_code like concat('%', #{objectCode}, '%')
+            </if>
+            <if test="objectName != null and objectName != ''">
+                and t.object_name like concat('%', #{objectName}, '%')
+            </if>
+            <if test="category != null and category != ''">
+                and t.category = #{category}
+            </if>
+            <if test="createSource != null and createSource != ''">
+                and t.create_source = #{createSource}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="categoryList != null and categoryList.length >0">
+                and t.category in
+                (<foreach collection="categoryList" item="category" separator=",">#{category}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+        </where>
+        order by t.object_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_sys_authority_object
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            authority_object_sid,
+            object_code,
+            object_name,
+            category,
+            remark,
+            handle_status,
+            creator_account,
+            status,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.objectCode},
+                #{item.objectName},
+                #{item.category},
+                #{item.createSource},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.status},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_sys_authority_object
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            object_code = #{objectCode},
+            object_name = #{objectName},
+            category = #{category},
+            create_source = #{createSource},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            status = #{status},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where authority_object_sid = #{authorityObjectSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_sys_authority_object
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                object_code = #{objectCode},
+                object_name = #{objectName},
+                category = #{category},
+                create_source = #{createSource},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                status = #{status},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+            </trim>
+            where authority_object_sid = #{authorityObjectSid}
+        </foreach>
+    </update>
+
+</mapper>

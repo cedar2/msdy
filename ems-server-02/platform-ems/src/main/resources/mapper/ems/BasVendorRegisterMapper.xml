@@ -1,0 +1,758 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasVendorRegisterMapper">
+
+    <resultMap type="com.platform.ems.domain.BasVendorRegister" id="BasVendorRegisterResult">
+        <result property="clientId" column="client_id"/>
+        <result property="vendorRegisterSid" column="vendor_register_sid"/>
+        <result property="vendorRegisterNum" column="vendor_register_num"/>
+        <result property="vendorRegisterCode" column="vendor_register_code"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="shortName" column="short_name"/>
+        <result property="vendorGroup" column="vendor_group"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="relateCompanySid" column="relate_company_sid"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="originalVendorSid" column="original_vendor_sid"/>
+        <result property="industryCode" column="industry_code"/>
+        <result property="vendorCategory" column="vendor_category"/>
+        <result property="vendorType" column="vendor_type"/>
+        <result property="businessNature" column="business_nature"/>
+        <result property="vendorProperty" column="vendor_property"/>
+        <result property="coreProduct" column="core_product"/>
+        <result property="ownerName" column="owner_name"/>
+        <result property="creditCode" column="credit_code"/>
+        <result property="registerDate" column="register_date"/>
+        <result property="registerCapital" column="register_capital"/>
+        <result property="registerCapitalCurrency" column="register_capital_currency"/>
+        <result property="countryRegion" column="country_region"/>
+        <result property="onMarket" column="on_market"/>
+        <result property="withTestlab" column="with_testlab"/>
+        <result property="isAgileVendor" column="is_agile_vendor"/>
+        <result property="technicalGrade" column="technical_grade"/>
+        <result property="managementClass" column="management_class"/>
+        <result property="fixedAssetValue" column="fixed_asset_value"/>
+        <result property="fixedAssetValueCurrency" column="fixed_asset_value_currency"/>
+        <result property="equipmentAssetValue" column="equipment_asset_value"/>
+        <result property="equipmentAssetCurrency" column="equipment_asset_currency"/>
+        <result property="registerer" column="registerer"/>
+        <result property="registerTel" column="register_tel"/>
+        <result property="registerEmail" column="register_email"/>
+        <result property="referrer" column="referrer"/>
+        <result property="referrerTel" column="referrer_tel"/>
+        <result property="creditStartDate" column="credit_start_date"/>
+        <result property="creditEndDate" column="credit_end_date"/>
+        <result property="internetUrl" column="internet_url"/>
+        <result property="taxpayerIdentifyNumber" column="taxpayer_identify_number"/>
+        <result property="invoiceTel" column="invoice_tel"/>
+        <result property="invoiceAddr" column="invoice_addr"/>
+        <result property="registerAddr" column="register_addr"/>
+        <result property="businessAddr" column="business_addr"/>
+        <result property="businessScope" column="business_scope"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="buOperator" column="bu_operator"/>
+        <result property="buOperatorVendor" column="bu_operator_vendor"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="companyName" column="company_name"/>
+        <result property="relateCompanyCode" column="relate_company_code"/>
+        <result property="relateCompanyName" column="relate_company_name"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="originalVendorCode" column="original_vendor_code"/>
+        <result property="originalVendorName" column="original_vendor_name"/>
+        <result property="outputValue" column="output_value"/>
+        <result property="outputValueCurrency" column="output_value_currency"/>
+        <result property="outputValueYear" column="output_value_year"/>
+        <result property="approvalNode" column="approval_node"/>
+        <result property="approvalUserName" column="approval_user_name"/>
+        <result property="submitUserName" column="submit_user_name"/>
+        <result property="submitDate" column="submit_date"/>
+        <result property="approvalUserId" column="approval_user_id"/>
+    </resultMap>
+
+    <sql id="selectBasVendorRegisterVo">
+        select t.client_id,
+               t.vendor_register_sid,
+               t.vendor_register_num,
+               t.vendor_register_code,
+               t.vendor_code,
+               t.vendor_name,
+               t.short_name,
+               t.vendor_group,
+               t.company_sid,
+               t.relate_company_sid,
+               t.customer_sid,
+               t.original_vendor_sid,
+               t.industry_code,
+               t.vendor_category,
+               t.vendor_type,
+               t.business_nature,
+               t.vendor_property,
+               t.core_product,
+               t.owner_name,
+               t.credit_code,
+               t.register_date,
+               t.register_capital,
+               t.register_capital_currency,
+               t.country_region,
+               t.on_market,
+               t.with_testlab,
+               t.is_agile_vendor,
+               t.technical_grade,
+               t.management_class,
+               t.fixed_asset_value,
+               t.fixed_asset_value_currency,
+               t.equipment_asset_value,
+               t.equipment_asset_currency,
+               t.registerer,
+               t.register_tel,
+               t.register_email,
+               t.output_value,t.output_value_currency,t.output_value_year,
+               t.referrer,
+               t.referrer_tel,
+               t.credit_start_date,
+               t.credit_end_date,
+               t.internet_url,
+               t.taxpayer_identify_number,
+               t.invoice_tel,
+               t.invoice_addr,
+               t.register_addr,
+               t.business_addr,
+               t.business_scope,
+               t.picture_path,
+               t.bu_operator,
+               t.bu_operator_vendor,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name    AS creator_account_name,
+               t3.nick_name    AS updater_account_name,
+               t4.nick_name    AS confirmer_account_name,
+               t5.company_code,
+               t5.company_name,
+               t6.company_code AS relate_company_code,
+               t6.company_name AS relate_company_name,
+               t7.customer_code,
+               t7.customer_name,
+               t8.vendor_code  AS original_vendor_code,
+               t8.vendor_name  AS original_vendor_name,
+               t9.approval_node,t9.approval_user_id,t9.approval_user_name,t9.create_date AS submit_date,t10.nick_name AS submit_user_name
+        from s_bas_vendor_register t
+                 LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+                 LEFT JOIN sys_user t3 ON t3.user_name = t.updater_account
+                 LEFT JOIN sys_user t4 ON t4.user_name = t.confirmer_account
+                 LEFT JOIN s_bas_company t5 ON t.company_sid = t5.company_sid
+                 LEFT JOIN s_bas_company t6 ON t.relate_company_sid = t6.company_sid
+                 LEFT JOIN s_bas_customer t7 ON t.customer_sid = t7.customer_sid
+                 LEFT JOIN s_bas_vendor t8 ON t.original_vendor_sid = t8.vendor_sid
+                 LEFT JOIN s_sys_form_process t9 ON t.vendor_register_sid = t9.form_id
+                 LEFT JOIN sys_user t10 ON t9.creator_account = t10.user_name
+    </sql>
+
+    <select id="selectBasVendorRegisterById" parameterType="Long" resultMap="BasVendorRegisterResult">
+        <include refid="selectBasVendorRegisterVo"/>
+        where t.vendor_register_sid = #{vendorRegisterSid}
+    </select>
+
+
+    <select id="selectBasVendorRegisterList" parameterType="com.platform.ems.domain.BasVendorRegister"
+            resultMap="BasVendorRegisterResult">
+        <include refid="selectBasVendorRegisterVo"/>
+        <where>
+            <if test="approvalUserIdList != null  and approvalUserIdList.length >0">
+                and t9.approval_user_id in (<foreach collection="approvalUserIdList" item="approvalUserId" separator=",">#{approvalUserId}</foreach>)
+            </if>
+            <if test="approvalUserId != null and approvalUserId != ''">
+                and t9.approval_user_id = #{approvalUserId}
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="vendorRegisterNum != null">and
+                t.vendor_register_num like concat('%', #{vendorRegisterNum}, '%')
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="vendorCategoryList != null  and vendorCategoryList.length >0 ">
+                and t.vendor_category in
+                (<foreach collection="vendorCategoryList" item="vendorCategory" separator=",">#{vendorCategory}</foreach>)
+            </if>
+            <if test="vendorPropertyList != null  and vendorPropertyList.length >0 ">
+                and t.vendor_property in
+                (<foreach collection="vendorPropertyList" item="vendorProperty" separator=",">#{vendorProperty}</foreach>)
+            </if>
+            <if test="vendorRegisterCode != null ">
+                and t.vendor_register_code =#{vendorRegisterCode}
+            </if>
+            <if test="vendorCode != null  and vendorCode != ''">
+                and (<foreach collection="vendorCode.split(';')" item="item" separator="or">t.vendor_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="vendorName != null  and vendorName != ''">and
+                t.vendor_name like concat('%', #{vendorName}, '%')
+            </if>
+            <if test="shortName != null  and shortName != ''">and
+                t.short_name like concat('%', #{shortName}, '%')
+            </if>
+            <if test="vendorGroup != null  and vendorGroup != ''">
+                and (<foreach collection="vendorGroup.split(';')" item="item" separator="or">t.vendor_group
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="relateCompanySid != null ">
+                and t.relate_company_sid =#{relateCompanySid}
+            </if>
+            <if test="customerSid != null ">
+                and t.customer_sid =#{customerSid}
+            </if>
+            <if test="originalVendorSid != null ">
+                and t.original_vendor_sid =#{originalVendorSid}
+            </if>
+            <if test="industryCode != null  and industryCode != ''">
+                and (<foreach collection="industryCode.split(';')" item="item" separator="or">t.industry_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="vendorCategory != null  and vendorCategory != ''">
+                and (<foreach collection="vendorCategory.split(';')" item="item" separator="or">t.vendor_category
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="vendorType != null  and vendorType != ''">
+                and (<foreach collection="vendorType.split(';')" item="item" separator="or">t.vendor_type
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="businessNature != null  and businessNature != ''">
+                and (<foreach collection="businessNature.split(';')" item="item" separator="or">t.business_nature
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="vendorProperty != null  and vendorProperty != ''">
+                and (<foreach collection="vendorProperty.split(';')" item="item" separator="or">t.vendor_property
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="coreProduct != null  and coreProduct != ''">
+                and (<foreach collection="coreProduct.split(';')" item="item" separator="or">t.core_product
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="ownerName != null  and ownerName != ''">and
+                t.owner_name like concat('%', #{ownerName}, '%')
+            </if>
+            <if test="creditCode != null  and creditCode != ''">
+                and (<foreach collection="creditCode.split(';')" item="item" separator="or">t.credit_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="registerDate != null ">
+                and t.register_date = #{registerDate}
+            </if>
+            <if test="registerCapital != null ">
+                and t.register_capital = #{registerCapital}
+            </if>
+            <if test="registerCapitalCurrency != null  and registerCapitalCurrency != ''">
+                and (<foreach collection="registerCapitalCurrency.split(';')" item="item" separator="or">
+                t.register_capital_currency
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="countryRegion != null ">
+                and t.country_region =#{countryRegion}
+            </if>
+            <if test="onMarket != null  and onMarket != ''">
+                and (<foreach collection="onMarket.split(';')" item="item" separator="or">t.on_market
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="withTestlab != null  and withTestlab != ''">
+                and (<foreach collection="withTestlab.split(';')" item="item" separator="or">t.with_testlab
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isAgileVendor != null  and isAgileVendor != ''">
+                and (<foreach collection="isAgileVendor.split(';')" item="item" separator="or">t.is_agile_vendor
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="technicalGrade != null  and technicalGrade != ''">
+                and (<foreach collection="technicalGrade.split(';')" item="item" separator="or">t.technical_grade
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="managementClass != null  and managementClass != ''">
+                and (<foreach collection="managementClass.split(';')" item="item" separator="or">t.management_class
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="fixedAssetValue != null ">
+                and t.fixed_asset_value = #{fixedAssetValue}
+            </if>
+            <if test="fixedAssetValueCurrency != null  and fixedAssetValueCurrency != ''">
+                and (<foreach collection="fixedAssetValueCurrency.split(';')" item="item" separator="or">
+                t.fixed_asset_value_currency
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="equipmentAssetValue != null ">
+                and t.equipment_asset_value = #{equipmentAssetValue}
+            </if>
+            <if test="equipmentAssetCurrency != null  and equipmentAssetCurrency != ''">
+                and (<foreach collection="equipmentAssetCurrency.split(';')" item="item" separator="or">
+                t.equipment_asset_currency
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="registerer != null  and registerer != ''">
+                and (<foreach collection="registerer.split(';')" item="item" separator="or">t.registerer
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="registerEmail != null  and registerEmail != ''">
+                and (<foreach collection="registerEmail.split(';')" item="item" separator="or">t.register_email
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="registerTel != null  and registerTel != ''">
+                and (<foreach collection="registerTel.split(';')" item="item" separator="or">t.register_tel
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="referrer != null  and referrer != ''">
+                and (<foreach collection="referrer.split(';')" item="item" separator="or">t.referrer
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="referrerTel != null  and referrerTel != ''">
+                and (<foreach collection="referrerTel.split(';')" item="item" separator="or">t.referrer_tel
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creditStartDate != null ">
+                and t.credit_start_date = #{creditStartDate}
+            </if>
+            <if test="creditEndDate != null ">
+                and t.credit_end_date = #{creditEndDate}
+            </if>
+            <if test="internetUrl != null  and internetUrl != ''">
+                and (<foreach collection="internetUrl.split(';')" item="item" separator="or">t.internet_url
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="taxpayerIdentifyNumber != null  and taxpayerIdentifyNumber != ''">
+                and (<foreach collection="taxpayerIdentifyNumber.split(';')" item="item" separator="or">
+                t.taxpayer_identify_number
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="invoiceTel != null  and invoiceTel != ''">
+                and (<foreach collection="invoiceTel.split(';')" item="item" separator="or">t.invoice_tel
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="invoiceAddr != null  and invoiceAddr != ''">
+                and (<foreach collection="invoiceAddr.split(';')" item="item" separator="or">t.invoice_addr
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="registerAddr != null  and registerAddr != ''">
+                and (<foreach collection="registerAddr.split(';')" item="item" separator="or">t.register_addr
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="businessAddr != null  and businessAddr != ''">
+                and (<foreach collection="businessAddr.split(';')" item="item" separator="or">t.business_addr
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="businessScope != null  and businessScope != ''">
+                and (<foreach collection="businessScope.split(';')" item="item" separator="or">t.business_scope
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="picturePath != null  and picturePath != ''">
+                and (<foreach collection="picturePath.split(';')" item="item" separator="or">t.picture_path
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="buOperator != null  and buOperator != ''">
+                and (<foreach collection="buOperator.split(';')" item="item" separator="or">t.bu_operator
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="buOperatorVendor != null  and buOperatorVendor != ''">
+                and (<foreach collection="buOperatorVendor.split(';')" item="item" separator="or">t.bu_operator_vendor
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where> order by t.create_date desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_vendor_register
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            vendor_register_sid,
+            vendor_name,
+            short_name,
+            vendor_group,
+            company_sid,
+            relate_company_sid,
+            customer_sid,
+            original_vendor_sid,
+            industry_code,
+            vendor_category,
+            vendor_type,
+            business_nature,
+            vendor_property,
+            core_product,
+            owner_name,
+            credit_code,
+            register_date,
+            register_capital,
+            register_capital_currency,
+            country_region,
+            on_market,
+            with_testlab,
+            is_agile_vendor,
+            technical_grade,
+            management_class,
+            fixed_asset_value,
+            fixed_asset_value_currency,
+            equipment_asset_value,
+            equipment_asset_currency,
+            output_value,
+            output_value_currency,
+            output_value_year,
+            registerer,
+            register_tel,
+            register_email,
+            referrer,
+            referrer_tel,
+            credit_start_date,
+            credit_end_date,
+            internet_url,
+            taxpayer_identify_number,
+            invoice_tel,
+            invoice_addr,
+            register_addr,
+            business_addr,
+            business_scope,
+            picture_path,
+            bu_operator,
+            bu_operator_vendor,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.vendorRegisterSid},
+                #{item.vendorName},
+                #{item.shortName},
+                #{item.vendorGroup},
+                #{item.companySid},
+                #{item.relateCompanySid},
+                #{item.customerSid},
+                #{item.originalVendorSid},
+                #{item.industryCode},
+                #{item.vendorCategory},
+                #{item.vendorType},
+                #{item.businessNature},
+                #{item.vendorProperty},
+                #{item.coreProduct},
+                #{item.ownerName},
+                #{item.creditCode},
+                #{item.registerDate},
+                #{item.registerCapital},
+                #{item.registerCapitalCurrency},
+                #{item.countryRegion},
+                #{item.onMarket},
+                #{item.withTestlab},
+                #{item.isAgileVendor},
+                #{item.technicalGrade},
+                #{item.managementClass},
+                #{item.fixedAssetValue},
+                #{item.fixedAssetValueCurrency},
+                #{item.equipmentAssetValue},
+                #{item.equipmentAssetCurrency},
+                #{item.outputValue},
+                #{item.outputValueCurrency},
+                #{item.outputValueYear},
+                #{item.registerer},
+                #{item.registerTel},
+                #{item.registerEmail},
+                #{item.referrer},
+                #{item.referrerTel},
+                #{item.creditStartDate},
+                #{item.creditEndDate},
+                #{item.internetUrl},
+                #{item.taxpayerIdentifyNumber},
+                #{item.invoiceTel},
+                #{item.invoiceAddr},
+                #{item.registerAddr},
+                #{item.businessAddr},
+                #{item.businessScope},
+                #{item.picturePath},
+                #{item.buOperator},
+                #{item.buOperatorVendor},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_vendor_register
+        <trim prefix="SET" suffixOverrides=",">
+            vendor_name = #{vendorName},
+            short_name = #{shortName},
+            vendor_group = #{vendorGroup},
+            company_sid = #{companySid},
+            relate_company_sid = #{relateCompanySid},
+            customer_sid = #{customerSid},
+            original_vendor_sid = #{originalVendorSid},
+            industry_code = #{industryCode},
+            vendor_category = #{vendorCategory},
+            vendor_type = #{vendorType},
+            business_nature = #{businessNature},
+            vendor_property = #{vendorProperty},
+            core_product = #{coreProduct},
+            owner_name = #{ownerName},
+            credit_code = #{creditCode},
+            register_date = #{registerDate},
+            register_capital = #{registerCapital},
+            register_capital_currency = #{registerCapitalCurrency},
+            country_region = #{countryRegion},
+            on_market = #{onMarket},
+            with_testlab = #{withTestlab},
+            is_agile_vendor = #{isAgileVendor},
+            technical_grade = #{technicalGrade},
+            management_class = #{managementClass},
+            fixed_asset_value = #{fixedAssetValue},
+            fixed_asset_value_currency = #{fixedAssetValueCurrency},
+            equipment_asset_value = #{equipmentAssetValue},
+            equipment_asset_currency = #{equipmentAssetCurrency},
+            output_value = #{outputValue},
+            output_value_currency = #{outputValueCurrency},
+            output_value_year = #{outputValueYear},
+            registerer = #{registerer},
+            register_tel = #{registerTel},
+            register_email = #{registerEmail},
+            referrer = #{referrer},
+            referrer_tel = #{referrerTel},
+            credit_start_date = #{creditStartDate},
+            credit_end_date = #{creditEndDate},
+            internet_url = #{internetUrl},
+            taxpayer_identify_number = #{taxpayerIdentifyNumber},
+            invoice_tel = #{invoiceTel},
+            invoice_addr = #{invoiceAddr},
+            register_addr = #{registerAddr},
+            business_addr = #{businessAddr},
+            business_scope = #{businessScope},
+            picture_path = #{picturePath},
+            bu_operator = #{buOperator},
+            bu_operator_vendor = #{buOperatorVendor},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where vendor_register_sid = #{vendorRegisterSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_vendor_register
+            <trim prefix="SET" suffixOverrides=",">
+                vendor_name = #{vendorName},
+                short_name = #{shortName},
+                vendor_group = #{vendorGroup},
+                company_sid = #{companySid},
+                relate_company_sid = #{relateCompanySid},
+                customer_sid = #{customerSid},
+                original_vendor_sid = #{originalVendorSid},
+                industry_code = #{industryCode},
+                vendor_category = #{vendorCategory},
+                vendor_type = #{vendorType},
+                business_nature = #{businessNature},
+                vendor_property = #{vendorProperty},
+                core_product = #{coreProduct},
+                owner_name = #{ownerName},
+                credit_code = #{creditCode},
+                register_date = #{registerDate},
+                register_capital = #{registerCapital},
+                register_capital_currency = #{registerCapitalCurrency},
+                country_region = #{countryRegion},
+                on_market = #{onMarket},
+                with_testlab = #{withTestlab},
+                is_agile_vendor = #{isAgileVendor},
+                technical_grade = #{technicalGrade},
+                management_class = #{managementClass},
+                fixed_asset_value = #{fixedAssetValue},
+                fixed_asset_value_currency = #{fixedAssetValueCurrency},
+                equipment_asset_value = #{equipmentAssetValue},
+                equipment_asset_currency = #{equipmentAssetCurrency},
+                output_value = #{outputValue},
+                output_value_currency = #{outputValueCurrency},
+                output_value_year = #{outputValueYear},
+                registerer = #{registerer},
+                register_tel = #{registerTel},
+                register_email = #{registerEmail},
+                referrer = #{referrer},
+                referrer_tel = #{referrerTel},
+                credit_start_date = #{creditStartDate},
+                credit_end_date = #{creditEndDate},
+                internet_url = #{internetUrl},
+                taxpayer_identify_number = #{taxpayerIdentifyNumber},
+                invoice_tel = #{invoiceTel},
+                invoice_addr = #{invoiceAddr},
+                register_addr = #{registerAddr},
+                business_addr = #{businessAddr},
+                business_scope = #{businessScope},
+                picture_path = #{picturePath},
+                bu_operator = #{buOperator},
+                bu_operator_vendor = #{buOperatorVendor},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where vendor_register_sid = #{vendorRegisterSid}
+        </foreach>
+    </update>
+
+</mapper>

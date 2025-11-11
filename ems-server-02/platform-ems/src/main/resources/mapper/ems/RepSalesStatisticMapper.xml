@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.RepSalesStatisticMapper">
+
+    <resultMap type="com.platform.ems.domain.RepSalesStatistic" id="RepSalesStatisticResult">
+        <result property="clientId" column="client_id"/>
+        <result property="dataRecordSid" column="data_record_sid"/>
+        <result property="salesOrderSid" column="sales_order_sid"/>
+        <result property="salesOrderCode" column="sales_order_code"/>
+        <result property="year" column="year"/>
+        <result property="moth" column="moth"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="customerShortName" column="customer_short_name"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="companyName" column="company_name"/>
+        <result property="documentTypeCode" column="document_type_code"/>
+        <result property="documentTypeName" column="document_type_name"/>
+        <result property="businessTypeCode" column="business_type_code"/>
+        <result property="businessTypeName" column="business_type_name"/>
+        <result property="saleModeCode" column="sale_mode_code"/>
+        <result property="saleModeName" column="sale_mode_name"/>
+        <result property="businessChannelCode" column="business_channel_code"/>
+        <result property="businessChannelName" column="business_channel_name"/>
+        <result property="moneyAmount" column="money_amount"/>
+        <result property="quantity" column="quantity"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="createDate" column="create_date"/>
+    </resultMap>
+
+    <sql id="selectRepSalesStatisticVo">
+        select t.client_id,
+               t.data_record_sid,
+               t.sales_order_sid,
+               t.sales_order_code,
+               t.year,
+               t.moth,
+               t.product_season_code,
+               t.customer_sid,
+               t.customer_code,
+               t.customer_short_name,
+               t.company_code,
+               t.company_name,
+               t.document_type_code,
+               t.document_type_name,
+               t.business_type_code,
+               t.business_type_name,
+               t.sale_mode_code,
+               t.sale_mode_name,
+               t.business_channel_code,
+               t.business_channel_name,
+               t.money_amount,
+               t.quantity,
+               t.currency,
+               t.currency_unit,
+               t.create_date
+        from s_rep_sales_statistic t
+    </sql>
+
+    <select id="selectRepSalesStatisticById" parameterType="Long" resultMap="RepSalesStatisticResult">
+        <include refid="selectRepSalesStatisticVo"/>
+        where t.data_record_sid = #{dataRecordSid}
+    </select>
+
+
+    <select id="selectRepSalesStatisticList" parameterType="com.platform.ems.domain.RepSalesStatistic"
+            resultMap="RepSalesStatisticResult">
+        <include refid="selectRepSalesStatisticVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id =
+                #{item}</foreach>)
+            </if>
+            <if test="salesOrderSid != null ">
+                and t.sales_order_sid =#{salesOrderSid}
+            </if>
+            <if test="salesOrderCode != null ">
+                and t.sales_order_code =#{salesOrderCode}
+            </if>
+            <if test="year != null ">
+                and t.year =#{year}
+            </if>
+            <if test="moth != null ">
+                and t.moth =#{moth}
+            </if>
+            <if test="productSeasonCode != null  and productSeasonCode != ''">
+                and (<foreach collection="productSeasonCode.split(';')" item="item" separator="or">t.product_season_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="customerSid != null ">
+                and t.customer_sid =#{customerSid}
+            </if>
+            <if test="customerCode != null  and customerCode != ''">
+                and (<foreach collection="customerCode.split(';')" item="item" separator="or">t.customer_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="customerShortName != null  and customerShortName != ''">and
+                t.customer_short_name like concat('%', #{customerShortName}, '%')
+            </if>
+            <if test="companyCode != null  and companyCode != ''">
+                and (<foreach collection="companyCode.split(';')" item="item" separator="or">t.company_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companyName != null  and companyName != ''">and
+                t.company_name like concat('%', #{companyName}, '%')
+            </if>
+            <if test="documentTypeCode != null  and documentTypeCode != ''">
+                and (<foreach collection="documentTypeCode.split(';')" item="item" separator="or">t.document_type_code
+                = #{item}</foreach>)
+            </if>
+            <if test="documentTypeName != null  and documentTypeName != ''">and
+                t.document_type_name like concat('%', #{documentTypeName}, '%')
+            </if>
+            <if test="businessTypeCode != null  and businessTypeCode != ''">
+                and (<foreach collection="businessTypeCode.split(';')" item="item" separator="or">t.business_type_code
+                = #{item}</foreach>)
+            </if>
+            <if test="businessTypeName != null  and businessTypeName != ''">and
+                t.business_type_name like concat('%', #{businessTypeName}, '%')
+            </if>
+            <if test="saleModeCode != null  and saleModeCode != ''">
+                and (<foreach collection="saleModeCode.split(';')" item="item" separator="or">t.sale_mode_code
+                = #{item}</foreach>)
+            </if>
+            <if test="saleModeName != null  and saleModeName != ''">and
+                t.sale_mode_name like concat('%', #{saleModeName}, '%')
+            </if>
+            <if test="businessChannelCode != null  and businessChannelCode != ''">
+                and (<foreach collection="businessChannelCode.split(';')" item="item" separator="or">
+                t.business_channel_code = #{item}</foreach>)
+            </if>
+            <if test="businessChannelName != null  and businessChannelName != ''">and
+                t.business_channel_name like concat('%', #{businessChannelName}, '%')
+            </if>
+            <if test="moneyAmount != null ">
+                and t.money_amount = #{moneyAmount}
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="currency != null  and currency != ''">
+                and (<foreach collection="currency.split(';')" item="item" separator="or">t.currency
+                = #{item}</foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">
+                and (<foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit
+                = #{item}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_rep_sales_statistic
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            data_record_sid,
+            sales_order_sid,
+            sales_order_code,
+            year,
+            moth,
+            product_season_code,
+            customer_sid,
+            customer_code,
+            customer_short_name,
+            company_code,
+            company_name,
+            document_type_code,
+            document_type_name,
+            business_type_code,
+            business_type_name,
+            sale_mode_code,
+            sale_mode_name,
+            business_channel_code,
+            business_channel_name,
+            money_amount,
+            quantity,
+            currency,
+            currency_unit,
+            create_date,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.dataRecordSid},
+                #{item.salesOrderSid},
+                #{item.salesOrderCode},
+                #{item.year},
+                #{item.moth},
+                #{item.productSeasonCode},
+                #{item.customerSid},
+                #{item.customerCode},
+                #{item.customerShortName},
+                #{item.companyCode},
+                #{item.companyName},
+                #{item.documentTypeCode},
+                #{item.documentTypeName},
+                #{item.businessTypeCode},
+                #{item.businessTypeName},
+                #{item.saleModeCode},
+                #{item.saleModeName},
+                #{item.businessChannelCode},
+                #{item.businessChannelName},
+                #{item.moneyAmount},
+                #{item.quantity},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.createDate},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_rep_sales_statistic
+        <trim prefix="SET" suffixOverrides=",">
+            sales_order_sid = #{salesOrderSid},
+            sales_order_code = #{salesOrderCode},
+            year = #{year},
+            moth = #{moth},
+            product_season_code = #{productSeasonCode},
+            customer_sid = #{customerSid},
+            customer_code = #{customerCode},
+            customer_short_name = #{customerShortName},
+            company_code = #{companyCode},
+            company_name = #{companyName},
+            document_type_code = #{documentTypeCode},
+            document_type_name = #{documentTypeName},
+            business_type_code = #{businessTypeCode},
+            business_type_name = #{businessTypeName},
+            sale_mode_code = #{saleModeCode},
+            sale_mode_name = #{saleModeName},
+            business_channel_code = #{businessChannelCode},
+            business_channel_name = #{businessChannelName},
+            money_amount = #{moneyAmount},
+            quantity = #{quantity},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+        </trim>
+        where data_record_sid = #{dataRecordSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_rep_sales_statistic
+            <trim prefix="SET" suffixOverrides=",">
+                sales_order_sid = #{salesOrderSid},
+                sales_order_code = #{salesOrderCode},
+                year = #{year},
+                moth = #{moth},
+                product_season_code = #{productSeasonCode},
+                customer_sid = #{customerSid},
+                customer_code = #{customerCode},
+                customer_short_name = #{customerShortName},
+                company_code = #{companyCode},
+                company_name = #{companyName},
+                document_type_code = #{documentTypeCode},
+                document_type_name = #{documentTypeName},
+                business_type_code = #{businessTypeCode},
+                business_type_name = #{businessTypeName},
+                sale_mode_code = #{saleModeCode},
+                sale_mode_name = #{saleModeName},
+                business_channel_code = #{businessChannelCode},
+                business_channel_name = #{businessChannelName},
+                money_amount = #{moneyAmount},
+                quantity = #{quantity},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+            </trim>
+            where data_record_sid = #{dataRecordSid}
+        </foreach>
+    </update>
+
+</mapper>

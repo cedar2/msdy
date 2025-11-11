@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.DevSampleReviewFormMapper">
+
+    <resultMap type="com.platform.ems.domain.DevSampleReviewForm" id="DevSampleReviewFormResult">
+        <result property="clientId" column="client_id"/>
+        <result property="sampleReviewFormSid" column="sample_review_form_sid"/>
+        <result property="sampleReviewFormCode" column="sample_review_form_code"/>
+        <result property="productSid" column="product_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="reviewStage" column="review_stage"/>
+        <result property="isCheck" column="is_check"/>
+        <result property="reviewResult" column="review_result"/>
+        <result property="postTreatment" column="post_treatment"/>
+        <result property="approveComment" column="approve_comment"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectDevSampleReviewFormVo">
+      select
+      t.client_id,
+      t.sample_review_form_sid,
+      t.sample_review_form_code,
+      t.product_sid,
+      t.sku1_sid,
+      t.review_stage,
+      t.is_check,
+      t.review_result,
+      t.post_treatment,
+      t.approve_comment,
+      t.remark,
+      t.handle_status,
+      t.creator_account,
+      t.create_date,
+      t.updater_account,
+      t.update_date,
+      t.confirmer_account,
+      t.confirm_date,
+      t.data_source_sys,
+      t1.sample_code_self,
+      t1.material_name,
+      t1.product_season_sid,
+      t1.season,
+      t1.designer_account,
+      t1.is_popularize_product,
+      t1.material_class_sid,
+      t1.company_sid,
+      t1.company_brand_sid,
+      t1.company_brand_mark_sid,
+      t2.nick_name AS creator_account_name,
+      t3.nick_name AS updater_account_name,
+      t4.nick_name AS confirmer_account_name,
+      t5.product_season_name,
+	  t5.product_season_code,
+	  t6.nick_name as designer_account_name,
+	  t7.node_name AS material_class_name,
+	  t8.sku_name AS sku1_name,
+	  t9.company_name,
+	  t9.company_code,
+	  t10.brand_name AS company_brand_name,
+	  t10.brand_code AS company_brand_code,
+	  t11.brand_mark_name,
+	  t12.approval_node,
+      t12.approval_user_name,
+      t12.create_date as submit_date,
+      t12.approval_user_id,
+      t13.nick_name as submit_user_name
+from s_dev_sample_review_form t
+      LEFT JOIN s_bas_material t1 ON t1.material_sid = t.product_sid
+      LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+      LEFT JOIN sys_user t3 ON t3.user_name = t.updater_account
+      LEFT JOIN sys_user t4 ON t4.user_name = t.confirmer_account
+      LEFT JOIN s_bas_product_season t5 ON t5.product_season_sid = t1.product_season_sid
+      LEFT JOIN sys_user t6 ON t6.user_name = t1.designer_account
+      LEFT JOIN s_con_material_class t7 ON t7.material_class_sid = t1.material_class_sid
+      LEFT JOIN s_bas_sku t8 ON t8.sku_sid = t.sku1_sid
+      LEFT JOIN s_bas_company t9 ON t9.company_sid = t1.company_sid
+	  LEFT JOIN s_bas_company_brand t10 ON t10.company_brand_sid = t1.company_brand_sid
+	  LEFT JOIN s_bas_company_brand_mark t11 ON t11.brand_mark_sid = t1.company_brand_mark_sid
+	  LEFT JOIN s_sys_form_process t12 ON t12.form_id = t.sample_review_form_sid
+      LEFT JOIN sys_user t13 ON t13.user_id = t12.create_by_id
+    </sql>
+
+    <select id="selectDevSampleReviewFormById" parameterType="Long" resultMap="DevSampleReviewFormResult">
+        <include refid="selectDevSampleReviewFormVo"/>
+        where t.sample_review_form_sid = #{sampleReviewFormSid}
+    </select>
+
+
+    <select id="selectDevSampleReviewFormList" parameterType="com.platform.ems.domain.DevSampleReviewForm"
+            resultMap="DevSampleReviewFormResult">
+        <include refid="selectDevSampleReviewFormVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sampleReviewFormSid != null ">
+                and t.sample_review_form_sid =#{sampleReviewFormSid}
+            </if>
+            <if test="sampleReviewFormCode != null">
+                and t.sample_review_form_code like concat('%',#{sampleReviewFormCode}, '%')
+            </if>
+            <if test="productSid != null ">
+                and t.product_sid =#{productSid}
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid =#{sku1Sid}
+            </if>
+            <if test="reviewStage != null  and reviewStage != ''">
+                and (<foreach collection="reviewStage.split(';')" item="item" separator="or">t.review_stage
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isCheck != null  and isCheck != ''">
+                and (<foreach collection="isCheck.split(';')" item="item" separator="or">t.is_check
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="reviewResult != null  and reviewResult != ''">
+                and (<foreach collection="reviewResult.split(';')" item="item" separator="or">t.review_result
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="postTreatment != null  and postTreatment != ''">
+                and (<foreach collection="postTreatment.split(';')" item="item" separator="or">t.post_treatment
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="approveComment != null  and approveComment != ''">
+                and (<foreach collection="approveComment.split(';')" item="item" separator="or">t.approve_comment
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t2.nick_name
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+            <if test="sampleCodeSelf != null and sampleCodeSelf != ''">
+                and (<foreach collection="sampleCodeSelf.split(';')" item="sampleCodeSelf" separator="or">t1.sample_code_self like concat('%', #{sampleCodeSelf}, '%')</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0 ">
+                and t1.product_season_sid in(<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">#{productSeasonSid}</foreach>)
+            </if>
+            <if test="seasonList != null and seasonList.length >0 ">
+                and t1.season in(<foreach collection="seasonList" item="season" separator=",">#{season}</foreach>)
+            </if>
+            <if test="designerAccountList != null and designerAccountList.length >0 ">
+                and t1.designer_account in (<foreach collection="designerAccountList" item="designerAccount" separator=",">#{designerAccount}</foreach>)
+            </if>
+            <if test="reviewStageList != null and reviewStageList.length >0 ">
+                and t.review_stage in (<foreach collection="reviewStageList" item="reviewStage" separator=",">#{reviewStage}</foreach>)
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0 ">
+                and t.handle_status in(<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccountList != null  and creatorAccountList.length >0 ">
+                and t.creator_account in(<foreach collection="creatorAccountList" item="creatorAccount" separator=",">#{creatorAccount}</foreach>)
+            </if>
+            <if test="materialClassSidList != null  and materialClassSidList.length >0 ">
+                and t1.material_class_sid in(<foreach collection="materialClassSidList" item="materialClassSid"
+                                                      separator=",">#{materialClassSid}</foreach>)
+            </if>
+        </where>
+        order by t.sample_review_form_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_dev_sample_review_form
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sample_review_form_sid,
+            sample_review_form_code,
+            product_sid,
+            sku1_sid,
+            review_stage,
+            is_check,
+            review_result,
+            post_treatment,
+            approve_comment,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.sampleReviewFormSid},
+                #{item.sampleReviewFormCode},
+                #{item.productSid},
+                #{item.sku1Sid},
+                #{item.reviewStage},
+                #{item.isCheck},
+                #{item.reviewResult},
+                #{item.postTreatment},
+                #{item.approveComment},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_dev_sample_review_form
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            sample_review_form_sid = #{sampleReviewFormSid},
+            sample_review_form_code = #{sampleReviewFormCode},
+            product_sid = #{productSid},
+            sku1_sid = #{sku1Sid},
+            review_stage = #{reviewStage},
+            is_check = #{isCheck},
+            review_result = #{reviewResult},
+            post_treatment = #{postTreatment},
+            approve_comment = #{approveComment},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where sample_review_form_sid = #{sampleReviewFormSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_dev_sample_review_form
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                sample_review_form_sid = #{sampleReviewFormSid},
+                sample_review_form_code = #{sampleReviewFormCode},
+                product_sid = #{productSid},
+                sku1_sid = #{sku1Sid},
+                review_stage = #{reviewStage},
+                is_check = #{isCheck},
+                review_result = #{reviewResult},
+                post_treatment = #{postTreatment},
+                approve_comment = #{approveComment},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where sample_review_form_sid = #{sampleReviewFormSid}
+        </foreach>
+    </update>
+
+    <update id="updateHandleStatus" >
+        update s_dev_sample_review_form
+        <set>
+            <if test="handleStatus != null and handleStatus !=''">handle_status = #{handleStatus},</if>
+            <if test="updaterAccount != null and updaterAccount !=''">updater_account = #{updaterAccount},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="confirmerAccount != null and confirmerAccount !=''">confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmDate != null">confirm_date = #{confirmDate},</if>
+        </set>
+        where sample_review_form_sid = #{sampleReviewFormSid}
+    </update>
+
+</mapper>

@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasShopMapper">
+
+    <resultMap type="com.platform.ems.domain.BasShop" id="BasShopResult">
+        <result property="clientId" column="client_id"/>
+        <result property="shopSid" column="shop_sid"/>
+        <result property="shopCode" column="shop_code"/>
+        <result property="shopName" column="shop_name"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="shopCategory" column="shop_category"/>
+        <result property="shopLevel" column="shop_level"/>
+        <result property="manageStyle" column="manage_style"/>
+        <result property="hangrackType" column="hangrack_type"/>
+        <result property="channelType" column="channel_type"/>
+        <result property="channelCategory" column="channel_category"/>
+        <result property="countryRegion" column="country_region"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <result property="address" column="address"/>
+        <result property="remark" column="remark"/>
+        <result property="disableRemark" column="disable_remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectBasShopVo">
+      select
+      t.client_id,
+      t.shop_sid,
+      t.shop_code,
+      t.shop_name,
+      t.company_sid,
+      t.customer_sid,
+      t.shop_category,
+      t.shop_level,
+      t.manage_style,
+      t.hangrack_type,
+      t.channel_type,
+      t.channel_category,
+      t.country_region,
+      t.longitude,
+      t.latitude,
+      t.address,
+      t.remark,
+      t.disable_remark,
+      t.status,
+      t.handle_status,
+      t.creator_account,
+      t.create_date,
+      t.updater_account,
+      t.update_date,
+      t.confirmer_account,
+      t.confirm_date,
+      t.data_source_sys,
+      t1.company_code,
+	  t1.company_name,
+      t1.short_name as company_short_name,
+      t2.customer_code,
+	  t2.customer_name,
+	  t2.short_name as customer_short_name,
+      t3.nick_name AS creator_account_name,
+      t4.nick_name AS updater_account_name,
+      t5.nick_name AS confirmer_account_name
+from s_bas_shop t
+      LEFT JOIN s_bas_company t1 ON t1.company_sid = t.company_sid
+      LEFT JOIN s_bas_customer t2 ON t2.customer_sid = t.customer_sid
+      LEFT JOIN sys_user t3 ON t3.user_name = t.creator_account
+      LEFT JOIN sys_user t4 ON t4.user_name = t.updater_account
+      LEFT JOIN sys_user t5 ON t5.user_name = t.confirmer_account
+    </sql>
+
+    <select id="selectBasShopById" parameterType="Long" resultMap="BasShopResult">
+        <include refid="selectBasShopVo"/>
+        where t.shop_sid = #{shopSid}
+    </select>
+
+
+    <select id="selectBasShopList" parameterType="com.platform.ems.domain.BasShop"
+            resultMap="BasShopResult">
+        <include refid="selectBasShopVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="shopSid != null ">
+                and t.shop_sid =#{shopSid}
+            </if>
+            <if test="shopCode != null">
+                and t.shop_code like concat('%',#{shopCode}, '%')
+            </if>
+            <if test="shopName != null  and shopName != ''">
+                and t.shop_name like concat('%', #{shopName}, '%')
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t.company_sid in (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="customerSid != null ">
+                and t.customer_sid =#{customerSid}
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0 ">
+                and t.customer_sid in (<foreach collection="customerSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="shopCategory != null  and shopCategory != ''">
+                and (<foreach collection="shopCategory.split(';')" item="item" separator="or">t.shop_category
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="shopCategoryList != null and shopCategoryList.length >0 ">
+                and t.shop_category in (<foreach collection="shopCategoryList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="shopLevel != null  and shopLevel != ''">
+                and (<foreach collection="shopLevel.split(';')" item="item" separator="or">t.shop_level
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="shopLevelList != null and shopLevelList.length >0 ">
+                and t.shop_level in (<foreach collection="shopLevelList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="manageStyle != null  and manageStyle != ''">
+                and (<foreach collection="manageStyle.split(';')" item="item" separator="or">t.manage_style
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="manageStyleList != null and manageStyleList.length >0 ">
+                and t.manage_style in (<foreach collection="manageStyleList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="hangrackType != null  and hangrackType != ''">
+                and (<foreach collection="hangrackType.split(';')" item="item" separator="or">t.hangrack_type
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="hangrackTypeList != null and hangrackTypeList.length >0 ">
+                and t.hangrack_type in (<foreach collection="hangrackTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="channelType != null  and channelType != ''">
+                and (<foreach collection="channelType.split(';')" item="item" separator="or">t.channel_type
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="channelTypeList != null and channelTypeList.length >0 ">
+                and t.channel_type in (<foreach collection="channelTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="channelCategory != null  and channelCategory != ''">
+                and (<foreach collection="channelCategory.split(';')" item="item" separator="or">t.channel_category
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="countryRegion != null ">
+                and t.country_region =#{countryRegion}
+            </if>
+            <if test="longitude != null and longitude != ''">
+                and t.longitude = #{longitude}
+            </if>
+            <if test="latitude != null and latitude != ''">
+                and t.latitude = #{latitude}
+            </if>
+            <if test="address != null  and address != ''">
+                and (<foreach collection="address.split(';')" item="item" separator="or">t.address
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="status != null  and status != ''">
+                and (<foreach collection="status.split(';')" item="item" separator="or">t.status
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.shop_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_shop
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            shop_sid,
+            shop_code,
+            shop_name,
+            company_sid,
+            customer_sid,
+            shop_category,
+            shop_level,
+            manage_style,
+            hangrack_type,
+            channel_type,
+            channel_category,
+            country_region,
+            longitude,
+            latitude,
+            address,
+            remark,
+            disable_remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.shopSid},
+                #{item.shopCode},
+                #{item.shopName},
+                #{item.companySid},
+                #{item.customerSid},
+                #{item.shopCategory},
+                #{item.shopLevel},
+                #{item.manageStyle},
+                #{item.hangrackType},
+                #{item.channelType},
+                #{item.channelCategory},
+                #{item.countryRegion},
+                #{item.longitude},
+                #{item.latitude},
+                #{item.address},
+                #{item.remark},
+                #{item.disableRemark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_shop
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            shop_sid = #{shopSid},
+            shop_code = #{shopCode},
+            shop_name = #{shopName},
+            company_sid = #{companySid},
+            customer_sid = #{customerSid},
+            shop_category = #{shopCategory},
+            shop_level = #{shopLevel},
+            manage_style = #{manageStyle},
+            hangrack_type = #{hangrackType},
+            channel_type = #{channelType},
+            channel_category = #{channelCategory},
+            country_region = #{countryRegion},
+            longitude = #{longitude},
+            latitude = #{latitude},
+            address = #{address},
+            remark = #{remark},
+            disable_remark = #{disableRemark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where shop_sid = #{shopSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_shop
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                shop_sid = #{shopSid},
+                shop_code = #{shopCode},
+                shop_name = #{shopName},
+                company_sid = #{companySid},
+                customer_sid = #{customerSid},
+                shop_category = #{shopCategory},
+                shop_level = #{shopLevel},
+                manage_style = #{manageStyle},
+                hangrack_type = #{hangrackType},
+                channel_type = #{channelType},
+                channel_category = #{channelCategory},
+                country_region = #{countryRegion},
+                longitude = #{longitude},
+                latitude = #{latitude},
+                address = #{address},
+                remark = #{remark},
+                disable_remark = #{disableRemark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where shop_sid = #{shopSid}
+        </foreach>
+    </update>
+
+</mapper>

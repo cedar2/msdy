@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManDayManufactureKuanProgressMapper">
+
+    <resultMap type="com.platform.ems.domain.ManDayManufactureKuanProgress" id="ManDayManufactureKuanProgressResult">
+        <result property="clientId" column="client_id"/>
+        <result property="dayManufactureKuanProgressSid" column="day_manufacture_kuan_progress_sid"/>
+        <result property="dayManufactureProgressSid" column="day_manufacture_progress_sid"/>
+        <result property="manufactureOrderSid" column="manufacture_order_sid"/>
+        <result property="manufactureOrderCode" column="manufacture_order_code"/>
+        <result property="productSid" column="product_sid"/>
+        <result property="productCode" column="product_code"/>
+        <result property="paichanBatch" column="paichan_batch"/>
+        <result property="quantity" column="quantity"/>
+        <result property="reasonQianshu" column="reason_qianshu"/>
+        <result property="solution" column="solution"/>
+        <result property="quantityCaip" column="quantity_caip"/>
+        <result property="quantityBancp" column="quantity_bancp"/>
+        <result property="quantityWeify" column="quantity_weify"/>
+        <result property="quantityWeisxs" column="quantity_weisxs"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="planQuantity" column="plan_quantity"/>
+    </resultMap>
+
+    <sql id="selectManDayManufactureKuanProgressVo">
+        select t.client_id,
+               t.day_manufacture_kuan_progress_sid,
+               t.day_manufacture_progress_sid,
+               t.manufacture_order_sid,
+               t.manufacture_order_code,
+               t.work_center_sid,
+               t.work_center_code,
+               t.department_sid,
+               t.department_code,
+               t.sku1_sid,
+               t.sku1_type,
+               t.product_sid,
+               t.product_code,
+               t.paichan_batch,
+               t.quantity,
+               t.reason_qianshu,
+               t.solution,
+               t.quantity_caip,
+               t.quantity_bancp,
+               t.quantity_weify,
+               t.quantity_weisxs,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t5.plan_quantity,
+               t6.work_center_name,
+               t7.name as department_name,
+               t8.sku_code as sku1_code,
+               t8.sku_name as sku1_name
+        from s_man_day_manufacture_kuan_progress t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN s_man_day_manufacture_progress t4 ON t.day_manufacture_progress_sid = t4.day_manufacture_progress_sid
+         LEFT JOIN (SELECT SUM(t.plan_quantity) AS plan_quantity,t.plan_date,t1.material_sid,t1.paichan_batch,t1.work_center_sid
+                    FROM s_man_day_manufacture_plan_item t
+                    LEFT JOIN s_man_week_manufacture_plan_item t1 ON t.manufacture_plan_item_sid = t1.week_manufacture_plan_item_sid
+                    GROUP BY t.plan_date,t1.material_sid,t1.paichan_batch,t1.work_center_sid
+        ) t5 ON t4.work_center_sid = t5.work_center_sid AND t4.document_date = t5.plan_date AND t.product_sid = t5.material_sid AND t.paichan_batch = t5.paichan_batch
+         LEFT JOIN s_man_work_center t6 ON t.work_center_sid = t6.work_center_sid
+         LEFT JOIN s_con_manufacture_department t7 ON t.department_sid = t7.sid
+         LEFT JOIN s_bas_sku t8 ON t.sku1_sid = t8.sku_sid
+    </sql>
+
+    <select id="selectManDayManufactureKuanProgressById" parameterType="Long"
+            resultMap="ManDayManufactureKuanProgressResult">
+        <include refid="selectManDayManufactureKuanProgressVo"/>
+        where t.day_manufacture_kuan_progress_sid = #{dayManufactureKuanProgressSid}
+    </select>
+
+    <select id="selectManDayManufactureKuanProgressList"
+            parameterType="com.platform.ems.domain.ManDayManufactureKuanProgress"
+            resultMap="ManDayManufactureKuanProgressResult">
+        <include refid="selectManDayManufactureKuanProgressVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="dayManufactureProgressSid != null ">
+                and t.day_manufacture_progress_sid = #{dayManufactureProgressSid}
+            </if>
+            <if test="manufactureOrderSid != null ">
+                and t.manufacture_order_sid = #{manufactureOrderSid}
+            </if>
+            <if test="manufactureOrderCode != null ">
+                and t.manufacture_order_code = #{manufactureOrderCode}
+            </if>
+            <if test="productSid != null ">
+                and t.product_sid = #{productSid}
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and t.product_code = #{productCode}
+            </if>
+            <if test="paichanBatch != null ">
+                and t.paichan_batch = #{paichanBatch}
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="reasonQianshu != null and reasonQianshu != ''">
+                and t.reason_qianshu = #{reasonQianshu}
+            </if>
+            <if test="solution != null and solution != ''">
+                and t.solution = #{solution}
+            </if>
+            <if test="quantityCaip != null ">
+                and t.quantity_caip = #{quantityCaip}
+            </if>
+            <if test="quantityBancp != null ">
+                and t.quantity_bancp = #{quantityBancp}
+            </if>
+            <if test="quantityWeify != null ">
+                and t.quantity_weify = #{quantityWeify}
+            </if>
+            <if test="quantityWeisxs != null ">
+                and t.quantity_weisxs = #{quantityWeisxs}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name = #{creatorAccountName}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        ORDER BY CONVERT (t6.work_center_name USING gbk) asc, CONVERT (t.product_code USING gbk) asc, t.paichan_batch asc
+        <if test="pageNum != null and pageSize != null">LIMIT ${pageBegin},${pageSize}</if>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_day_manufacture_kuan_progress
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            day_manufacture_kuan_progress_sid,
+            day_manufacture_progress_sid,
+            manufacture_order_sid,
+            manufacture_order_code,
+            work_center_sid,
+            work_center_code,
+            department_sid,
+            department_code,
+            sku1_sid,
+            sku1_type,
+            product_sid,
+            product_code,
+            paichan_batch,
+            quantity,
+            reason_qianshu,
+            solution,
+            quantity_caip,
+            quantity_bancp,
+            quantity_weify,
+            quantity_weisxs,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.dayManufactureKuanProgressSid},
+                #{item.dayManufactureProgressSid},
+                #{item.manufactureOrderSid},
+                #{item.manufactureOrderCode},
+                #{item.workCenterSid},
+                #{item.workCenterCode},
+                #{item.departmentSid},
+                #{item.departmentCode},
+                #{item.sku1Sid},
+                #{item.sku1Type},
+                #{item.productSid},
+                #{item.productCode},
+                #{item.paichanBatch},
+                #{item.quantity},
+                #{item.reasonQianshu},
+                #{item.solution},
+                #{item.quantityCaip},
+                #{item.quantityBancp},
+                #{item.quantityWeify},
+                #{item.quantityWeisxs},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_day_manufacture_kuan_progress
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            day_manufacture_progress_sid = #{dayManufactureProgressSid},
+            manufacture_order_sid = #{manufactureOrderSid},
+            manufacture_order_code = #{manufactureOrderCode},
+            work_center_sid = #{workCenterSid},
+            work_center_code = #{workCenterCode},
+            department_sid = #{departmentSid},
+            department_code = #{departmentCode},
+            sku1_sid = #{sku1Sid},
+            sku1_type = #{sku1Type},
+            product_sid = #{productSid},
+            product_code = #{productCode},
+            paichan_batch = #{paichanBatch},
+            quantity = #{quantity},
+            reason_qianshu = #{reasonQianshu},
+            solution = #{solution},
+            quantity_caip = #{quantityCaip},
+            quantity_bancp = #{quantityBancp},
+            quantity_weify = #{quantityWeify},
+            quantity_weisxs = #{quantityWeisxs},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where day_manufacture_kuan_progress_sid = #{dayManufactureKuanProgressSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_day_manufacture_kuan_progress
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                day_manufacture_progress_sid = #{dayManufactureProgressSid},
+                manufacture_order_sid = #{manufactureOrderSid},
+                manufacture_order_code = #{manufactureOrderCode},
+                work_center_sid = #{workCenterSid},
+                work_center_code = #{workCenterCode},
+                department_sid = #{departmentSid},
+                department_code = #{departmentCode},
+                sku1_sid = #{sku1Sid},
+                sku1_type = #{sku1Type},
+                product_sid = #{productSid},
+                product_code = #{productCode},
+                paichan_batch = #{paichanBatch},
+                quantity = #{quantity},
+                reason_qianshu = #{reasonQianshu},
+                solution = #{solution},
+                quantity_caip = #{quantityCaip},
+                quantity_bancp = #{quantityBancp},
+                quantity_weify = #{quantityWeify},
+                quantity_weisxs = #{quantityWeisxs},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+            </trim>
+            where day_manufacture_kuan_progress_sid = #{dayManufactureKuanProgressSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManProduceWeekProgressTotalMapper">
+
+    <resultMap type="com.platform.ems.domain.ManProduceWeekProgressTotal" id="ManProduceWeekProgressTotalResult">
+        <result property="clientId" column="client_id"/>
+        <result property="weekProgressTotalSid" column="week_progress_total_sid"/>
+        <result property="dateStart" column="date_start"/>
+        <result property="dateEnd" column="date_end"/>
+        <result property="dateRange" column="date_range"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="plantName" column="plant_name"/>
+        <result property="plantShortName" column="plant_short_name"/>
+        <result property="departmentSid" column="department_sid"/>
+        <result property="departmentCode" column="department_code"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="quantityJih" column="quantity_jih"/>
+        <result property="quantityWanc" column="quantity_wanc"/>
+        <result property="quantityQian" column="quantity_qian"/>
+        <result property="rateWanc" column="rate_wanc"/>
+        <result property="rateWancPercent" column="rate_wanc_percent"/>
+        <result property="rateQian" column="rate_qian"/>
+        <result property="rateQianPercent" column="rate_qian_percent"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectManProduceWeekProgressTotalVo">
+        select t.client_id,
+               t.week_progress_total_sid,
+               t.date_start,
+               t.date_end,
+               CONCAT(date_format(t.date_start,'%Y-%m-%d'),'~',date_format(t.date_end,'%Y-%m-%d')) as date_range,
+               t.plant_sid,
+               t.plant_code,
+               t.department_sid,
+               t.department_code,
+               t.quantity_jih,
+               t.quantity_wanc,
+               t.quantity_qian,
+               (0 + CAST(ROUND(t.quantity_jih,2) AS CHAR)) as quantity_jih_string,
+               (0 + CAST(ROUND(t.quantity_wanc,2) AS CHAR)) as quantity_wanc_string,
+               (0 + CAST(ROUND(t.quantity_qian,2) AS CHAR)) as quantity_qian_string,
+               t.rate_wanc,
+               if(t.rate_wanc = null , t.rate_wanc , CONCAT((0 + CAST(ROUND(t.rate_wanc*100,2) AS CHAR)),'%')) as rate_wanc_percent,
+               t.rate_qian,
+               if(t.rate_qian = null , t.rate_qian , CONCAT((0 + CAST(ROUND(t.rate_qian*100,2) AS CHAR)),'%')) as rate_qian_percent,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.plant_name, ifnull(t4.short_name,t4.plant_name) as plant_short_name,
+               t5.name as department_name
+        from s_man_produce_week_progress_total t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+        LEFT JOIN s_bas_plant t4 ON t.plant_sid = t4.plant_sid
+        LEFT JOIN s_con_manufacture_department t5 ON t.department_sid = t5.sid
+    </sql>
+
+    <select id="selectManProduceWeekProgressTotalById" parameterType="Long"
+            resultMap="ManProduceWeekProgressTotalResult">
+        <include refid="selectManProduceWeekProgressTotalVo"/>
+        where t.week_progress_total_sid = #{weekProgressTotalSid}
+    </select>
+
+    <select id="selectManProduceWeekProgressTotalList"
+            parameterType="com.platform.ems.domain.ManProduceWeekProgressTotal"
+            resultMap="ManProduceWeekProgressTotalResult">
+        <include refid="selectManProduceWeekProgressTotalVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="recentWeeks == null and dateStart != null ">
+                and t.date_start = #{dateStart}
+            </if>
+            <if test="recentWeeks == null and dateEnd != null ">
+                and t.date_end = #{dateEnd}
+            </if>
+            <if test="recentWeeks != null and dateStart != null">
+                and date_format(t.date_start,'%y%m%d') &gt;= date_format(#{dateStart},'%y%m%d')
+            </if>
+            <if test="recentWeeks != null and dateEnd != null ">
+                and date_format(t.date_end,'%y%m%d') &lt;= date_format(#{dateEnd},'%y%m%d')
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid = #{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="plantCode != null and plantCode != ''">
+                and t.plant_code = #{plantCode}
+            </if>
+            <if test="departmentSid != null ">
+                and t.department_sid = #{departmentSid}
+            </if>
+            <if test="departmentSidList != null and departmentSidList.length >0">
+                and t.department_sid in
+                (<foreach collection="departmentSidList" item="departmentSid" separator=",">#{departmentSid}</foreach>)
+            </if>
+            <if test="departmentCode != null and departmentCode != ''">
+                and t.department_code = #{departmentCode}
+            </if>
+            <if test="quantityJih != null ">
+                and t.quantity_jih = #{quantityJih}
+            </if>
+            <if test="quantityWanc != null ">
+                and t.quantity_wanc = #{quantityWanc}
+            </if>
+            <if test="quantityQian != null ">
+                and t.quantity_qian = #{quantityQian}
+            </if>
+            <if test="rateWanc != null ">
+                and t.rate_wanc = #{rateWanc}
+            </if>
+            <if test="rateQian != null ">
+                and t.rate_qian = #{rateQian}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.date_start desc, t.date_end desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_produce_week_progress_total
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            week_progress_total_sid,
+            date_start,
+            date_end,
+            plant_sid,
+            plant_code,
+            department_sid,
+            department_code,
+            quantity_jih,
+            quantity_wanc,
+            quantity_qian,
+            rate_wanc,
+            rate_qian,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.weekProgressTotalSid},
+                #{item.dateStart},
+                #{item.dateEnd},
+                #{item.plantSid},
+                #{item.plantCode},
+                #{item.departmentSid},
+                #{item.departmentCode},
+                #{item.quantityJih},
+                #{item.quantityWanc},
+                #{item.quantityQian},
+                #{item.rateWanc},
+                #{item.rateQian},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_produce_week_progress_total
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            date_start = #{dateStart},
+            date_end = #{dateEnd},
+            plant_sid = #{plantSid},
+            plant_code = #{plantCode},
+            department_sid = #{departmentSid},
+            department_code = #{departmentCode},
+            quantity_jih = #{quantityJih},
+            quantity_wanc = #{quantityWanc},
+            quantity_qian = #{quantityQian},
+            rate_wanc = #{rateWanc},
+            rate_qian = #{rateQian},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where week_progress_total_sid = #{weekProgressTotalSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_produce_week_progress_total
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{o.clientId},
+                date_start = #{o.dateStart},
+                date_end = #{o.dateEnd},
+                plant_sid = #{o.plantSid},
+                plant_code = #{o.plantCode},
+                department_sid = #{o.departmentSid},
+                department_code = #{o.departmentCode},
+                quantity_jih = #{o.quantityJih},
+                quantity_wanc = #{o.quantityWanc},
+                quantity_qian = #{o.quantityQian},
+                rate_wanc = #{o.rateWanc},
+                rate_qian = #{o.rateQian},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where week_progress_total_sid = #{o.weekProgressTotalSid}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="com.platform.ems.domain.ManProduceWeekProgressTotal">
+        <if test="dateStart != null and dateEnd != null">
+            DELETE FROM s_man_produce_week_progress_total
+            <where>
+                <if test="dateStart != null">
+                    and date_format(date_start,'%y%m%d') = date_format(#{dateStart},'%y%m%d')
+                </if>
+                <if test="dateEnd != null">
+                    and date_format(date_end,'%y%m%d') = date_format(#{dateEnd},'%y%m%d')
+                </if>
+            </where>
+        </if>
+    </delete>
+
+    <select id="selectManWeekManufacturePlanList" parameterType="com.platform.ems.domain.ManProduceWeekProgressTotal"
+            resultMap="ManProduceWeekProgressTotalResult">
+        SELECT
+            t.client_id,
+            t.plant_sid,
+            t.department as department_code,
+            t.date_start,
+            t.date_end,
+            concat(t.date_start,'-',t.date_end) as date_range,
+            t.creator_account,
+            t.data_source_sys,
+            t1.plant_code,
+            t1.plant_name,
+            ifnull(t1.short_name,t1.plant_name) as plant_short_name,
+            t2.sid as department_sid,
+            t2.name as department_name,
+            t3.plan_quantity as quantity_jih,
+            ifnull(t4.quantity, 0) as quantity_wanc,
+            (t3.plan_quantity - ifnull(t4.quantity, 0)) as quantity_qian,
+            if(t4.quantity is null or t4.quantity = 0, 0, convert((t4.quantity/t3.plan_quantity),decimal(15,2))) AS rate_wanc,
+            convert(((t3.plan_quantity-ifnull(t4.quantity, 0))/t3.plan_quantity),decimal(15,2)) AS rate_qian
+        FROM
+            s_man_week_manufacture_plan t
+        LEFT JOIN s_bas_plant t1 ON t.plant_sid = t1.plant_sid
+        LEFT JOIN s_con_manufacture_department t2 ON t.department = t2.code
+        LEFT JOIN (
+            SELECT t1.week_manufacture_plan_sid, SUM(t.plan_quantity) as plan_quantity
+            FROM s_man_day_manufacture_plan_item t
+            LEFT JOIN s_man_week_manufacture_plan_item t1 ON t.manufacture_plan_item_sid = t1.week_manufacture_plan_item_sid
+            LEFT JOIN s_man_week_manufacture_plan t2 ON t1.week_manufacture_plan_sid = t2.week_manufacture_plan_sid
+            LEFT JOIN s_con_manufacture_department t3 ON t2.department = t3.code
+            <where>
+                and t2.handle_status = '5'
+                <if test="dateStart != null">
+                    and date_format(t2.date_start,'%y%m%d') &gt;= date_format(#{dateStart},'%y%m%d')
+                </if>
+                <if test="dateEnd != null ">
+                    and date_format(t2.date_end,'%y%m%d') &lt;= date_format(#{dateEnd},'%y%m%d')
+                </if>
+                <if test="plantSid != null ">
+                    and t2.plant_sid = #{plantSid}
+                </if>
+                <if test="departmentSid != null ">
+                    and t3.sid = #{departmentSid}
+                </if>
+            </where>
+            GROUP BY t1.week_manufacture_plan_sid
+        ) t3 ON t.week_manufacture_plan_sid = t3.week_manufacture_plan_sid
+        LEFT JOIN (
+            SELECT ifnull(SUM(t.quantity), 0) as quantity, t1.plant_sid, t1.department_sid
+            FROM s_man_day_manufacture_progress_item t
+            LEFT JOIN s_man_day_manufacture_progress t1 ON t.day_manufacture_progress_sid = t1.day_manufacture_progress_sid
+            LEFT JOIN s_man_manufacture_order_process t2 ON t.manufacture_order_process_sid = t2.manufacture_order_process_sid
+            <where>
+                and t1.handle_status = '5' and t2.is_stage_complete = 'Y'
+                <if test="dateStart != null">
+                    and date_format(t1.document_date,'%y%m%d') &gt;= date_format(#{dateStart},'%y%m%d')
+                </if>
+                <if test="dateEnd != null ">
+                    and date_format(t1.document_date,'%y%m%d') &lt;= date_format(#{dateEnd},'%y%m%d')
+                </if>
+                <if test="plantSid != null ">
+                    and t1.plant_sid = #{plantSid}
+                </if>
+                <if test="departmentSid != null ">
+                    and t1.department_sid = #{departmentSid}
+                </if>
+            </where>
+            GROUP BY t1.plant_sid,t1.department_sid
+        ) t4 ON t.plant_sid = t4.plant_sid AND t2.sid = t4.department_sid
+        <where>
+                and t.handle_status = '5'
+            <if test="clientId != null  and clientId != ''">
+                and t.client_id = #{}
+            </if>
+            <if test="dateStart != null">
+                and date_format(t.date_start,'%y%m%d') &gt;= date_format(#{dateStart},'%y%m%d')
+            </if>
+            <if test="dateEnd != null ">
+                and date_format(t.date_end,'%y%m%d') &lt;= date_format(#{dateEnd},'%y%m%d')
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid = #{plantSid}
+            </if>
+            <if test="departmentSid != null ">
+                and t2.sid = #{departmentSid}
+            </if>
+        </where>
+    </select>
+
+</mapper>

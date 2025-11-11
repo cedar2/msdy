@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurPurchaseSourceMapper">
+
+    <resultMap type="com.platform.ems.domain.PurPurchaseSource" id="PurPurchaseSourceResult">
+        <result property="clientId" column="client_id"/>
+        <result property="purchaseSourceSid" column="purchase_source_sid"/>
+        <result property="sourceInfoId" column="source_info_id"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="purchaseOrg" column="purchase_org"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="supplierProductCode" column="supplier_product_code"/>
+        <result property="preSupplierName" column="pre_supplier_name"/>
+        <result property="minQuantity" column="min_quantity"/>
+        <result property="devDays" column="dev_days"/>
+        <result property="purchaseDays" column="purchase_days"/>
+        <result property="isDefault" column="is_default"/>
+        <result property="contractSid" column="contract_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="companyName" column="company_name"/>
+        <result property="brandName" column="brand_name"/>
+        <result property="brandCode" column="brand_code"/>
+        <result property="purchaseContractCode" column="purchase_contract_code"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectPurPurchaseSourceVo">
+        select
+        t.client_id,
+        t.purchase_source_sid,
+        t.source_info_id,
+        t.vendor_sid,
+        t.material_sid,
+        t.company_brand_sid,
+        t.company_sid,
+        t.purchase_org,
+        t.start_date,
+        t.end_date,
+        t.supplier_product_code,
+        t.pre_supplier_name,
+        t.min_quantity,
+        t.dev_days,
+        t.purchase_days,
+        t.is_default,
+        t.contract_sid,
+        t.remark,
+        t.status,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.material_code,
+        t1.material_name,
+        t2.vendor_code,
+        t2.short_name as vendor_name,
+        t3.company_code,
+        t3.short_name as company_name,
+        t4.brand_name,
+        t4.brand_code,
+        t5.purchase_contract_code,
+
+        t7.nick_name AS creator_account_name,
+        t8.nick_name AS updater_account_name,
+        t9.nick_name AS confirmer_account_name
+
+        from s_pur_purchase_source t
+        LEFT JOIN sys_user t7 ON t.creator_account = t7.user_name AND t.client_id = t7.client_id
+        LEFT JOIN sys_user t8 ON t.updater_account = t8.user_name AND t.client_id = t8.client_id
+        LEFT JOIN sys_user t9 ON t.confirmer_account = t9.user_name AND t.client_id = t9.client_id
+        LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+        LEFT JOIN s_bas_vendor t2 on t2.vendor_sid = t.vendor_sid
+        LEFT JOIN s_bas_company t3 ON t3.company_sid = t.company_sid
+        LEFT JOIN s_bas_company_brand t4 ON t4.company_brand_sid = t.company_brand_sid
+        LEFT JOIN s_pur_purchase_contract t5 ON t5.purchase_contract_sid = t.contract_sid
+    </sql>
+
+    <select id="selectPurPurchaseSourceById" parameterType="Long" resultMap="PurPurchaseSourceResult">
+        <include refid="selectPurPurchaseSourceVo"/>
+        where t.purchase_source_sid = #{purchaseSourceSid}
+    </select>
+
+
+    <select id="selectPurPurchaseSourceList" parameterType="com.platform.ems.domain.PurPurchaseSource"
+            resultMap="PurPurchaseSourceResult">
+        <include refid="selectPurPurchaseSourceVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseSourceSid != null ">
+                and t.purchase_source_sid = #{purchaseSourceSid}
+            </if>
+            <if test="purchaseSourceSids != null and purchaseSourceSids.length > 0">
+                and t.purchase_source_sid in
+                (<foreach collection="purchaseSourceSids" item="purchaseSourceSid" separator=",">
+                #{purchaseSourceSid}</foreach>)
+            </if>
+            <if test="sourceInfoId != null and sourceInfoId != ''">
+                and t.source_info_id like concat('%', #{sourceInfoId}, '%')
+            </if>
+            <if test="vendorSid != null ">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0 ">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="materialSids != null and materialSids.size > 0">
+                and t.material_sid in
+                (<foreach collection="materialSids" item="materialSid" separator=",">#{materialSid}</foreach>)
+            </if>
+            <if test="companyBrandSid != null ">
+                and t.company_brand_sid = #{companyBrandSid}
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="materialCode != null  and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator="or">t1.material_code like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialName != null  and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="item" separator="or">t1.material_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseOrg != null  and purchaseOrg != ''">
+                and (<foreach collection="purchaseOrg.split(';')" item="item" separator="or">t.purchase_org like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="supplierProductCode != null  and supplierProductCode != ''">
+                and (<foreach collection="supplierProductCode.split(';')" item="item" separator="or">
+                t.supplier_product_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="preSupplierName != null  and preSupplierName != ''">
+                and (<foreach collection="preSupplierName.split(';')" item="item" separator="or">t.pre_supplier_name
+                like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="minQuantity != null ">
+                and t.min_quantity = #{minQuantity}
+            </if>
+            <if test="devDays != null ">
+                and t.dev_days = #{devDays}
+            </if>
+            <if test="purchaseDays != null ">
+                and t.purchase_days = #{purchaseDays}
+            </if>
+            <if test="isDefault != null  and isDefault != ''">
+                and (<foreach collection="isDefault.split(';')" item="item" separator="or">t.is_default like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="contractSid != null ">
+                and t.contract_sid = #{contractSid}
+            </if>
+            <if test="status != null  and status != ''">
+                and (<foreach collection="status.split(';')" item="item" separator="or">t.status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">and (<foreach collection="handleStatus.split(';')"
+                                                                                  item="item" separator="or">
+                t.handle_status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t7.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+
+            <!--创建日期 create_date 的范围查询，用 beginTime endTime -->
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+
+            <!--有效期 start_date, end_date 的范围查询，用 startDate endDate -->
+            <if test="startDate != null">
+                and t.start_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null">
+                and t.end_date &lt;= #{endDate}
+            </if>
+
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+        </where>
+        order by t.source_info_id desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_purchase_source
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            purchase_source_sid,
+            source_info_id,
+            vendor_sid,
+            material_sid,
+            company_brand_sid,
+            company_sid,
+            purchase_org,
+            start_date,
+            end_date,
+            supplier_product_code,
+            pre_supplier_name,
+            min_quantity,
+            dev_days,
+            purchase_days,
+            is_default,
+            contract_sid,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{clientId},
+                #{purchaseSourceSid},
+                #{sourceInfoId},
+                #{vendorSid},
+                #{materialSid},
+                #{companyBrandSid},
+                #{companySid},
+                #{purchaseOrg},
+                #{startDate},
+                #{endDate},
+                #{supplierProductCode},
+                #{preSupplierName},
+                #{minQuantity},
+                #{devDays},
+                #{purchaseDays},
+                #{isDefault},
+                #{contractSid},
+                #{remark},
+                #{status},
+                #{handleStatus},
+                #{creatorAccount},
+                #{createDate},
+                #{updaterAccount},
+                #{updateDate},
+                #{confirmerAccount},
+                #{confirmDate},
+                #{dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_purchase_source
+        <trim prefix="SET" suffixOverrides=",">
+            source_info_id = #{sourceInfoId},
+            vendor_sid = #{vendorSid},
+            vendor_code = #{vendorCode},
+            company_code = #{companyCode},
+            material_code = #{materialCode},
+            material_sid = #{materialSid},
+            company_brand_sid = #{companyBrandSid},
+            company_sid = #{companySid},
+            purchase_org = #{purchaseOrg},
+            start_date = #{startDate},
+            end_date = #{endDate},
+            supplier_product_code = #{supplierProductCode},
+            pre_supplier_name = #{preSupplierName},
+            min_quantity = #{minQuantity},
+            dev_days = #{devDays},
+            purchase_days = #{purchaseDays},
+            is_default = #{isDefault},
+            contract_sid = #{contractSid},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where purchase_source_sid = #{purchaseSourceSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_purchase_source
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                source_info_id = #{sourceInfoId},
+                vendor_sid = #{vendorSid},
+                vendor_code = #{vendorCode},
+                company_code = #{companyCode},
+                material_code = #{materialCode},
+                material_sid = #{materialSid},
+                company_brand_sid = #{companyBrandSid},
+                company_sid = #{companySid},
+                purchase_org = #{purchaseOrg},
+                start_date = #{startDate},
+                end_date = #{endDate},
+                supplier_product_code = #{supplierProductCode},
+                pre_supplier_name = #{preSupplierName},
+                min_quantity = #{minQuantity},
+                dev_days = #{devDays},
+                purchase_days = #{purchaseDays},
+                is_default = #{isDefault},
+                contract_sid = #{contractSid},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where purchase_source_sid = #{purchaseSourceSid}
+        </foreach>
+    </update>
+
+    <select id="checkVendorAndMaterial" resultType="java.lang.Integer">
+        select count(*) from s_pur_purchase_source where material_sid = #{materialSid} and vendor_sid = #{vendorSid}
+        limit 1
+    </select>
+
+    <delete id="deletePurPurchaseSourceByIds" parameterType="long">
+        delete from s_pur_purchase_source where purchase_source_sid in
+        <foreach item="purchaseSourceSid" collection="array" open="(" separator="," close=")">
+            #{purchaseSourceSid}
+        </foreach>
+    </delete>
+
+    <select id="countByDomain" resultType="java.lang.Integer">
+        select count(1) from s_pur_purchase_source
+        <where>
+            <if test="purchaseSourceSids != null  and purchaseSourceSids.length > 0">
+                and purchase_source_sid in (
+                <foreach collection="purchaseSourceSids" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and handle_status in (
+                <foreach collection="handleStatus.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+
+    <update id="confirm" parameterType="com.platform.ems.domain.PurPurchaseSource">
+        update s_pur_purchase_source
+        <set>
+            <if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmDate != null">confirm_date = #{confirmDate},</if>
+        </set>
+        where purchase_source_sid in
+        (<foreach collection="purchaseSourceSids" item="purchaseSourceSid" separator=",">#{purchaseSourceSid}</foreach>)
+    </update>
+
+</mapper>

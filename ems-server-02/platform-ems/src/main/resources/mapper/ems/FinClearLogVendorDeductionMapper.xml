@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinClearLogVendorDeductionMapper">
+
+    <resultMap type="com.platform.ems.domain.FinClearLogVendorDeduction" id="FinClearLogVendorDeductionResult">
+        <result property="clientId" column="client_id"/>
+        <result property="clearLogVendorDeductionSid" column="clear_log_vendor_deduction_sid"/>
+        <result property="payBillSid" column="pay_bill_sid"/>
+        <result property="payBillCode" column="pay_bill_code"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="vendorName" column="vendor_Name"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="companyName" column="company_name"/>
+        <result property="bookDeductionSid" column="book_deduction_sid"/>
+        <result property="bookDeductionCode" column="book_deduction_code"/>
+        <result property="bookDeductionItemSid" column="book_deduction_item_sid"/>
+        <result property="shengxiaoStatus" column="shengxiao_status"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="deductionBillCode" column="refer_doc_code"/>
+    </resultMap>
+
+    <sql id="selectFinClearLogVendorDeductionVo">
+        select t.client_id,
+               t.clear_log_vendor_deduction_sid,
+               t.pay_bill_sid,
+               t.pay_bill_code,
+               t.vendor_sid,
+               t.vendor_code,
+               t3.short_name AS vendor_name,
+               t.company_sid,
+               t.company_code,
+               t2.short_name AS company_name,
+               t.book_deduction_sid,
+               t.book_deduction_code,
+               t.book_deduction_item_sid,
+               t.shengxiao_status,
+               t.currency_amount_tax,
+               t.remark,
+               t.creator_account,
+               t4.nick_name AS creator_account_name,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t1.refer_doc_code
+        from s_fin_clear_log_vendor_deduction t
+        LEFT JOIN s_fin_book_vendor_deduction_item t1 ON t.book_deduction_item_sid = t1.book_deduction_item_sid
+        LEFT JOIN s_bas_company t2 ON t.company_sid = t2.company_sid
+        LEFT JOIN s_bas_vendor t3 ON t.vendor_sid = t3.vendor_sid
+        LEFT JOIN sys_user t4 ON t.creator_account = t4.user_name AND t.client_id = t4.client_id
+    </sql>
+
+    <select id="selectFinClearLogVendorDeductionById" parameterType="Long" resultMap="FinClearLogVendorDeductionResult">
+        <include refid="selectFinClearLogVendorDeductionVo"/>
+        where t.clear_log_vendor_deduction_sid = #{clearLogVendorDeductionSid}
+        ORDER BY t.create_date DESC, t1.refer_doc_code DESC
+    </select>
+
+    <select id="selectFinClearLogVendorDeductionList" parameterType="com.platform.ems.domain.FinClearLogVendorDeduction"
+            resultMap="FinClearLogVendorDeductionResult">
+        <include refid="selectFinClearLogVendorDeductionVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="deductionBillCode != null and deductionBillCode != '' ">
+                and t1.refer_doc_code like concat('%',#{deductionBillCode},'%')
+            </if>
+            <if test="payBillSid != null ">
+                and t.pay_bill_sid = #{payBillSid}
+            </if>
+            <if test="payBillCode != null ">
+                and t.pay_bill_code like concat('%',#{payBillCode},'%')
+            </if>
+            <if test="vendorSid != null ">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="vendorCode != null ">
+                and t.vendor_code = #{vendorCode}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companyCode != null ">
+                and t.company_code = #{companyCode}
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="bookDeductionSid != null ">
+                and t.book_deduction_sid = #{bookDeductionSid}
+            </if>
+            <if test="bookDeductionCode != null ">
+                and t.book_deduction_code like concat('%',#{bookDeductionCode},'%')
+            </if>
+            <if test="bookDeductionItemSid != null ">
+                and t.book_deduction_item_sid = #{bookDeductionItemSid}
+            </if>
+            <if test="shengxiaoStatus != null and shengxiaoStatus != ''">
+                and t.shengxiao_status = #{shengxiaoStatus}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        ORDER BY t.create_date DESC, t1.refer_doc_code DESC
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_clear_log_vendor_deduction
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            clear_log_vendor_deduction_sid,
+            pay_bill_sid,
+            pay_bill_code,
+            vendor_sid,
+            vendor_code,
+            company_sid,
+            company_code,
+            book_deduction_sid,
+            book_deduction_code,
+            book_deduction_item_sid,
+            shengxiao_status,
+            currency_amount_tax,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.clearLogVendorDeductionSid},
+                #{item.payBillSid},
+                #{item.payBillCode},
+                #{item.vendorSid},
+                #{item.vendorCode},
+                #{item.companySid},
+                #{item.companyCode},
+                #{item.bookDeductionSid},
+                #{item.bookDeductionCode},
+                #{item.bookDeductionItemSid},
+                #{item.shengxiaoStatus},
+                #{item.currencyAmountTax},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+</mapper>

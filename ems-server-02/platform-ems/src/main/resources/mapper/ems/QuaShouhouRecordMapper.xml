@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.QuaShouhouRecordMapper">
+
+    <resultMap type="com.platform.ems.domain.QuaShouhouRecord" id="QuaShouhouRecordResult">
+        <result property="clientId" column="client_id"/>
+        <result property="shouhouRecordSid" column="shouhou_record_sid"/>
+        <result property="shouhouRecordCode" column="shouhou_record_code"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="colorName" column="color_name"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="returnsType" column="returns_type"/>
+        <result property="shouhouType" column="shouhou_type"/>
+        <result property="quantity" column="quantity"/>
+        <result property="charger" column="charger"/>
+        <result property="inspector" column="inspector"/>
+        <result property="inspectionDate" column="inspection_date"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="defectType" column="defect_type"/>
+        <result property="defectDescription" column="defect_description"/>
+        <result property="resolveStatus" column="resolve_status"/>
+        <result property="solutionRemark" column="solution_remark"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="videoPath" column="video_path"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectQuaShouhouRecordVo">
+        select t.client_id,
+               t.shouhou_record_sid,
+               t.shouhou_record_code,
+               t.product_season_sid,
+               t.product_season_code,
+               t.material_sid,
+               t.material_code,
+               t.color_name,
+               t.customer_sid,
+               t.customer_code,
+               t.shouhou_type,
+               t.returns_type,
+               t.quantity,
+               t.charger,
+               t.inspector,
+               t.inspection_date,
+               t.plant_sid,
+               t.plant_code,
+               t.vendor_sid,
+               t.vendor_code,
+               t.defect_type,
+               t.defect_description,
+               t.resolve_status,
+               t.solution_remark,
+               t.picture_path,
+               t.video_path,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t5.material_name,
+               t6.plant_name,
+               t6.short_name as plant_short_name,
+               t7.product_season_name,
+               t8.customer_name,
+               t8.short_name as customer_short_name
+        from s_qua_shouhou_record t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t3.client_id
+         LEFT JOIN s_bas_material t5 ON t.material_sid = t5.material_sid
+         LEFT JOIN s_bas_plant t6 ON t.plant_sid = t6.plant_sid
+         LEFT JOIN s_bas_product_season t7 ON t.product_season_sid = t7.product_season_sid
+         LEFT JOIN s_bas_customer t8 ON t.customer_sid = t8.customer_sid
+    </sql>
+
+    <select id="selectQuaShouhouRecordById" parameterType="Long" resultMap="QuaShouhouRecordResult">
+        <include refid="selectQuaShouhouRecordVo"/>
+        where t.shouhou_record_sid = #{shouhouRecordSid}
+    </select>
+
+    <select id="selectQuaShouhouRecordList" parameterType="com.platform.ems.domain.QuaShouhouRecord"
+            resultMap="QuaShouhouRecordResult">
+        <include refid="selectQuaShouhouRecordVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="shouhouRecordSid != null ">
+                and t.shouhou_record_code = #{shouhouRecordSid}
+            </if>
+            <if test="shouhouRecordSidList != null and shouhouRecordSidList.length >0">
+                and t.shouhou_record_code in
+                (<foreach collection="shouhouRecordSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="shouhouRecordCode != null ">
+                and t.shouhou_record_code like concat('%', #{shouhouRecordCode}, '%')
+            </if>
+            <if test="productSeasonSid != null ">
+                and t.product_season_sid = #{productSeasonSid}
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">
+                and t7.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="productSeasonCode != null and productSeasonCode != ''">
+                and t.product_season_code = #{productSeasonCode}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and t.material_code like concat('%', #{materialCode}, '%')
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and t5.material_name like concat('%', #{materialName}, '%')
+            </if>
+            <if test="colorName != null and colorName != ''">and
+                t.color_name like concat('%', #{colorName}, '%')
+            </if>
+            <if test="customerSid != null ">
+                and t.customer_sid = #{customerSid}
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and t8.customer_sid in
+                (<foreach collection="customerSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="customerCode != null and customerCode != ''">
+                and t.customer_code = #{customerCode}
+            </if>
+            <if test="shouhouType != null and shouhouType != ''">
+                and t.shouhou_type = #{shouhouType}
+            </if>
+            <if test="shouhouTypeList != null and shouhouTypeList.length >0">
+                and t.shouhou_type in
+                (<foreach collection="shouhouTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="returnsType != null and returnsType != ''">
+                and t.returns_type = #{returnsType}
+            </if>
+            <if test="returnsTypeList != null and returnsTypeList.length >0">
+                and t.returns_type in
+                (<foreach collection="returnsTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="charger != null and charger != ''">
+                and t.charger = #{charger}
+            </if>
+            <if test="chargerList != null and chargerList.length >0">
+                and t.charger in
+                (<foreach collection="chargerList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="inspector != null and inspector != ''">
+                and t.inspector like concat('%', #{inspector}, '%')
+            </if>
+            <if test="inspectionDate != null ">
+                and t.inspection_date = #{inspectionDate}
+            </if>
+            <if test="inspectionDateBegin != null and inspectionDateBegin!=''">
+                and date_format(t.inspection_date,'%y%m%d') &gt;= date_format(#{inspectionDateBegin},'%y%m%d')
+            </if>
+            <if test="inspectionDateEnd != null and inspectionDateEnd!=''">
+                and date_format(t.inspection_date,'%y%m%d') &lt;= date_format(#{inspectionDateEnd},'%y%m%d')
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid = #{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="plantCode != null and plantCode != ''">
+                and t.plant_code = #{plantCode}
+            </if>
+            <if test="vendorSid != null ">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="vendorCode != null and vendorCode != ''">
+                and t.vendor_code = #{vendorCode}
+            </if>
+            <if test="defectType != null and defectType != ''">
+                and t.defect_type = #{defectType}
+            </if>
+            <if test="defectTypeList != null and defectTypeList.length >0">
+                and t.defect_type in
+                (<foreach collection="defectTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="defectDescription != null and defectDescription != ''">
+                and t.defect_description like concat('%', #{defectDescription}, '%')
+            </if>
+            <if test="resolveStatus != null and resolveStatus != ''">
+                and t.resolve_status = #{resolveStatus}
+            </if>
+            <if test="resolveStatusList != null and resolveStatusList.length >0">
+                and t.resolve_status in
+                (<foreach collection="resolveStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="solutionRemark != null and solutionRemark != ''">
+                and t.solution_remark like concat('%', #{solutionRemark}, '%')
+            </if>
+            <if test="picturePath != null and picturePath != ''">
+                and t.picture_path = #{picturePath}
+            </if>
+            <if test="videoPath != null and videoPath != ''">
+                and t.video_path = #{videoPath}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.shouhou_record_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_qua_shouhou_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            shouhou_record_sid,
+            shouhou_record_code,
+            product_season_sid,
+            product_season_code,
+            material_sid,
+            material_code,
+            color_name,
+            customer_sid,
+            customer_code,
+            returns_type,
+            shouhou_type,
+            quantity,
+            charger,
+            inspector,
+            inspection_date,
+            plant_sid,
+            plant_code,
+            vendor_sid,
+            vendor_code,
+            defect_type,
+            defect_description,
+            resolve_status,
+            solution_remark,
+            picture_path,
+            video_path,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.shouhouRecordSid},
+                #{item.shouhouRecordCode},
+                #{item.productSeasonSid},
+                #{item.productSeasonCode},
+                #{item.materialSid},
+                #{item.materialCode},
+                #{item.colorName},
+                #{item.customerSid},
+                #{item.customerCode},
+                #{item.returnsType},
+                #{item.shouhouType},
+                #{item.quantity},
+                #{item.charger},
+                #{item.inspector},
+                #{item.inspectionDate},
+                #{item.plantSid},
+                #{item.plantCode},
+                #{item.vendorSid},
+                #{item.vendorCode},
+                #{item.defectType},
+                #{item.defectDescription},
+                #{item.resolveStatus},
+                #{item.solutionRemark},
+                #{item.picturePath},
+                #{item.videoPath},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_qua_shouhou_record
+        <trim prefix="SET" suffixOverrides=",">
+            product_season_sid = #{productSeasonSid},
+            product_season_code = #{productSeasonCode},
+            material_sid = #{materialSid},
+            material_code = #{materialCode},
+            color_name = #{colorName},
+            customer_sid = #{customerSid},
+            customer_code = #{customerCode},
+            returns_type = #{returnsType},
+            shouhou_type = #{shouhouType},
+            quantity = #{quantity},
+            charger = #{charger},
+            inspector = #{inspector},
+            inspection_date = #{inspectionDate},
+            plant_sid = #{plantSid},
+            plant_code = #{plantCode},
+            vendor_sid = #{vendorSid},
+            vendor_code = #{vendorCode},
+            defect_type = #{defectType},
+            defect_description = #{defectDescription},
+            resolve_status = #{resolveStatus},
+            solution_remark = #{solutionRemark},
+            picture_path = #{picturePath},
+            video_path = #{videoPath},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where shouhou_record_sid = #{shouhouRecordSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_qua_shouhou_record
+            <trim prefix="SET" suffixOverrides=",">
+                product_season_sid = #{productSeasonSid},
+                product_season_code = #{productSeasonCode},
+                material_sid = #{materialSid},
+                material_code = #{materialCode},
+                color_name = #{colorName},
+                customer_sid = #{customerSid},
+                customer_code = #{customerCode},
+                returns_type = #{returnsType},
+                shouhou_type = #{shouhouType},
+                quantity = #{quantity},
+                charger = #{charger},
+                inspector = #{inspector},
+                inspection_date = #{inspectionDate},
+                plant_sid = #{plantSid},
+                plant_code = #{plantCode},
+                vendor_sid = #{vendorSid},
+                vendor_code = #{vendorCode},
+                defect_type = #{defectType},
+                defect_description = #{defectDescription},
+                resolve_status = #{resolveStatus},
+                solution_remark = #{solutionRemark},
+                picture_path = #{picturePath},
+                video_path = #{videoPath},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+            </trim>
+            where shouhou_record_sid = #{shouhouRecordSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasMaterialCertificateFieldMapper">
+
+    <resultMap type="com.platform.ems.domain.BasMaterialCertificateField" id="BasMaterialCertificateFieldResult">
+        <result property="clientId" column="client_id"/>
+        <result property="materialCertificateFieldSid" column="material_certificate_field_sid"/>
+        <result property="fieldName" column="field_name"/>
+        <result property="fieldType" column="field_type"/>
+        <result property="fieldTextLength" column="field_text_length"/>
+        <result property="fieldDecimalLength" column="field_decimal_length"/>
+        <result property="isNullFlag" column="is_null_flag"/>
+        <result property="isPrint" column="is_print"/>
+        <result property="fieldDesc" column="field_desc"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectBasMaterialCertificateFieldVo">
+        select t.client_id,
+               t.material_certificate_field_sid,
+               t.field_name,
+               t.field_type,
+               t.field_text_length,
+               t.field_decimal_length,
+               t.is_null_flag,
+               t.is_print,
+               t.field_desc,
+               t.company_sid,
+               t.remark,
+               t.status,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t1.nick_name as creator_account_name,
+               t2.nick_name as updater_account_name,
+               t3.nick_name as confirmer_account_name
+        from s_bas_material_certificate_field t
+        left join sys_user t1 on t.creator_account = t1.user_name and t.client_id = t1.client_id
+        left join sys_user t2 on t.updater_account = t2.user_name and t.client_id = t2.client_id
+        left join sys_user t3 on t.confirmer_account = t3.user_name and t.client_id = t3.client_id
+    </sql>
+
+    <select id="selectBasMaterialCertificateFieldById" parameterType="Long"
+            resultMap="BasMaterialCertificateFieldResult">
+        <include refid="selectBasMaterialCertificateFieldVo"/>
+        where t.material_certificate_field_sid = #{materialCertificateFieldSid}
+    </select>
+
+    <select id="selectBasMaterialCertificateFieldList"
+            parameterType="com.platform.ems.domain.BasMaterialCertificateField"
+            resultMap="BasMaterialCertificateFieldResult">
+        <include refid="selectBasMaterialCertificateFieldVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="fieldName != null and fieldName != ''">
+                and t.field_name like concat('%', #{fieldName}, '%')
+            </if>
+            <if test="fieldType != null and fieldType != ''">
+                and t.field_type = #{fieldType}
+            </if>
+            <if test="fieldTypeList != null and fieldTypeList.length >0 ">
+                and t.field_type in
+                (<foreach collection="fieldTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="fieldTextLength != null ">
+                and t.field_text_length = #{fieldTextLength}
+            </if>
+            <if test="fieldDecimalLength != null ">
+                and t.field_decimal_length = #{fieldDecimalLength}
+            </if>
+            <if test="isNullFlag != null and isNullFlag != ''">
+                and t.is_null_flag = #{isNullFlag}
+            </if>
+            <if test="isPrint != null and isPrint != ''">
+                and t.is_print = #{isPrint}
+            </if>
+            <if test="fieldDesc != null and fieldDesc != ''">
+                and t.field_desc like concat('%', #{fieldDesc}, '%')
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t1.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+        </where>
+        ORDER BY t.field_name ASC, t.create_date desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_material_certificate_field
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            material_certificate_field_sid,
+            field_name,
+            field_type,
+            field_text_length,
+            field_decimal_length,
+            is_null_flag,
+            is_print,
+            field_desc,
+            company_sid,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{o.clientId},filedDesc
+                #{o.materialCertificateFieldSid},
+                #{o.fieldName},
+                #{o.fieldType},
+                #{o.fieldTextLength},
+                #{o.fieldDecimalLength},
+                #{o.isNullFlag},
+                #{o.isPrint},
+                #{o.fieldDesc},
+                #{o.companySid},
+                #{o.remark},
+                #{o.status},
+                #{o.handleStatus},
+                #{o.creatorAccount},
+                #{o.createDate},
+                #{o.confirmerAccount},
+                #{o.confirmDate},
+                #{o.dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_material_certificate_field
+        <trim prefix="SET" suffixOverrides=",">
+            field_name = #{fieldName},
+            field_type = #{fieldType},
+            field_text_length = #{fieldTextLength},
+            field_decimal_length = #{fieldDecimalLength},
+            is_null_flag = #{isNullFlag},
+            is_print = #{isPrint},
+            field_desc = #{fieldDesc},
+            company_sid = #{companySid},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where material_certificate_field_sid = #{materialCertificateFieldSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_material_certificate_field
+            <trim prefix="SET" suffixOverrides=",">
+                field_name = #{o.fieldName},
+                field_type = #{o.fieldType},
+                field_text_length = #{o.fieldTextLength},
+                field_decimal_length = #{o.fieldDecimalLength},
+                is_null_flag = #{o.isNullFlag},
+                is_print = #{o.isPrint},
+                field_desc = #{o.fieldDesc},
+                company_sid = #{o.companySid},
+                remark = #{o.remark},
+                status = #{o.status},
+                handle_status = #{o.handleStatus},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+                data_source_sys = #{o.dataSourceSys},
+            </trim>
+            where material_certificate_field_sid = #{o.materialCertificateFieldSid}
+        </foreach>
+    </update>
+
+</mapper>

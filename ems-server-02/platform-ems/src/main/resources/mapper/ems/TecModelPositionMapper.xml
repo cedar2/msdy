@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecModelPositionMapper">
+
+    <resultMap type="com.platform.ems.domain.TecModelPosition" id="TecModelPositionResult">
+        <result property="clientId" column="client_id"/>
+        <result property="modelPositionSid" column="model_position_sid"/>
+        <result property="modelPositionCode" column="model_position_code"/>
+        <result property="modelPositionName" column="model_position_name"/>
+        <result property="modelPositionType" column="model_position_type"/>
+        <result property="measureDescription" column="measure_description"/>
+        <result property="upDownSuit" column="up_down_suit"/>
+        <result property="unit" column="unit"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerPositionCode" column="customer_position_code"/>
+        <result property="customerPositionName" column="customer_position_name"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="disableRemark" column="disable_remark"/>
+    </resultMap>
+
+    <sql id="selectTecModelPositionVo">
+        select
+        t.client_id,
+        t.model_position_sid,
+        t.model_position_code,
+        t.model_position_name,
+        t.model_position_type,
+        t.measure_description,
+        t.up_down_suit,
+        t.unit,
+        t.customer_sid,
+        t2.customer_name AS customer_name,
+        t.customer_position_code,
+        t3.model_position_name AS customer_position_name,
+        t.picture_path,
+        t.remark,
+        t.disable_remark,
+        t.status,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t4.nick_name AS creator_account_name,
+	    t5.nick_name AS updater_account_name,
+	    t6.nick_name AS confirmer_account_name
+  from s_tec_model_position t
+  LEFT JOIN s_bas_customer t2 ON t.customer_sid = t2.customer_sid
+  LEFT JOIN s_tec_model_position t3 ON t.customer_position_code = t3.model_position_code
+  LEFT JOIN sys_user t4 ON t.creator_account = t4.user_name
+  LEFT JOIN sys_user t5 ON t.updater_account = t5.user_name
+  LEFT JOIN sys_user t6 ON t.confirmer_account = t6.user_name
+    </sql>
+
+    <select id="selectTecModelPositionList" parameterType="com.platform.ems.domain.TecModelPosition"
+            resultMap="TecModelPositionResult">
+        <include refid="selectTecModelPositionVo"/>
+        <where>
+            <if test="modelPositionSid != null and modelPositionSid != ''">
+                and t.model_position_sid in
+                (<foreach collection="modelPositionSid.split(';')" item="modelPositionSid" separator=",">
+                #{modelPositionSid}</foreach>)
+            </if>
+            <if test="modelPositionSidList != null and modelPositionSidList.length > 0">
+                and t.model_position_sid in
+                (<foreach collection="modelPositionSidList" item="modelPositionSid" separator=",">
+                #{modelPositionSid}</foreach>)
+            </if>
+            <if test="modelPositionCode != null and modelPositionCode != ''">
+                and (<foreach collection="modelPositionCode.split(';')" item="modelPositionCode" separator="or">
+                t.model_position_code like concat('%', #{modelPositionCode}, '%')</foreach>)
+            </if>
+            <if test="modelPositionCodeList != null and modelPositionCodeList.size() >0 ">
+                and t.model_position_code in
+                (<foreach collection="modelPositionCodeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="modelPositionName != null and modelPositionName != ''">
+                and (<foreach collection="modelPositionName.split(';')" item="modelPositionName" separator="or">
+                t.model_position_name like concat('%', #{modelPositionName}, '%')</foreach>)
+            </if>
+            <if test="modelPositionNameList != null and modelPositionNameList.size() >0 ">
+                and t.model_position_name in
+                (<foreach collection="modelPositionNameList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length > 0">
+                and t.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="customerSid != null and customerSid != ''">
+                and t.customer_sid = #{customerSid}
+            </if>
+            <if test="upDownSuit != null and upDownSuit != ''">
+                and t.up_down_suit = #{upDownSuit}
+            </if>
+            <if test="customerPositionCode != null and customerPositionCode != ''">
+                and (<foreach collection="customerPositionCode.split(';')" item="item" separator="or">
+                t.customer_position_code like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="upDownSuitList != null and upDownSuitList.length > 0">
+                and t.up_down_suit in
+                (<foreach collection="upDownSuitList" item="upDownSuit" separator=",">#{upDownSuit}</foreach>)
+            </if>
+            <if test="statusNot != null and statusNot != ''">
+                and t.status != #{statusNot}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status in
+                (<foreach collection="status.split(';')" item="status" separator=",">#{status}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status in
+                (<foreach collection="handleStatus.split(';')" item="handleStatus" separator=",">
+                #{handleStatus}</foreach>)
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="creatorAccount" separator="or">t4.nick_name
+                like concat('%', #{creatorAccount}, '%')</foreach>)
+            </if>
+            <if test="beginTime != null">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+        </where>
+        order by t.create_date desc, t.model_position_code desc
+    </select>
+
+    <select id="selectTecModelPositionById" parameterType="Long" resultType="com.platform.ems.domain.TecModelPosition">
+        <include refid="selectTecModelPositionVo"/>
+        where t.model_position_sid = #{modelPositionSid} limit 1
+    </select>
+
+    <select id="selectTecModelPositionByCode" parameterType="Long" resultMap="TecModelPositionResult">
+        <include refid="selectTecModelPositionVo"/>
+        where model_position_code = #{param1}
+        and client_id = #{param2}
+    </select>
+
+    <!--添加多个-->
+    <insert id="insertTecModelPosition">
+        insert into s_tec_model_position
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            model_position_sid,
+            model_position_code,
+            model_position_name,
+            model_position_type,
+            measure_description,
+            up_down_suit,
+            unit,
+            customer_sid,
+            customer_position_code,
+            picture_path,
+            remark,
+            disable_remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{clientId},
+            #{modelPositionSid},
+            #{modelPositionCode},
+            #{modelPositionName},
+            #{modelPositionType},
+            #{measureDescription},
+            #{upDownSuit},
+            #{unit},
+            #{customerSid},
+            #{customerPositionCode},
+            #{picturePath},
+            #{remark},
+            #{disableRemark},
+            #{status},
+            #{handleStatus},
+            #{creatorAccount},
+            #{createDate},
+            #{updaterAccount},
+            #{updateDate},
+            #{confirmerAccount},
+            #{confirmDate},
+            #{dataSourceSys},
+        </trim>
+    </insert>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_tec_model_position
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            model_position_sid,
+            model_position_code,
+            model_position_name,
+            model_position_type,
+            measure_description,
+            unit,
+            up_down_suit,
+            picture_path,
+            remark,
+            disable_remark,
+            customer_sid,
+            customer_position_code,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.modelPositionSid},
+                #{item.modelPositionCode},
+                #{item.modelPositionName},
+                #{item.modelPositionType},
+                #{item.measureDescription},
+                #{item.unit},
+                #{item.upDownSuit},
+                #{item.picturePath},
+                #{item.remark},
+                #{item.disableRemark},
+                #{item.customerSid},
+                #{item.customerPositionCode},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <update id="updateTecModelPosition" parameterType="com.platform.ems.domain.TecModelPosition">
+        update s_tec_model_position
+        <trim prefix="SET" suffixOverrides=",">
+            model_position_code = #{modelPositionCode},
+            model_position_name = #{modelPositionName},
+            model_position_type = #{modelPositionType},
+            measure_description = #{measureDescription},
+            up_down_suit = #{upDownSuit},
+            unit = #{unit},
+            customer_sid = #{customerSid},
+            customer_position_code = #{customerPositionCode},
+            picture_path = #{picturePath},
+            remark = #{remark},
+            disable_remark = #{disableRemark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where model_position_sid = #{modelPositionSid}
+    </update>
+
+    <delete id="deleteTecModelPositionByIds">
+        delete from s_tec_model_position where model_position_sid in
+        <foreach collection="array" item="modelPositionSid" open="(" separator="," close=")">
+            #{modelPositionSid}
+        </foreach>
+    </delete>
+
+    <select id="checkCodeUnique" resultType="java.lang.Integer">
+        select count(*) from s_tec_model_position where model_position_code = #{modelPositionCode} limit 1
+    </select>
+
+    <select id="checkNameUnique" resultType="java.lang.Integer">
+        select count(*) from s_tec_model_position where model_position_name = #{modelPositionName} limit 1
+    </select>
+
+    <select id="countByDomain" resultType="java.lang.Integer">
+        select count(1) from s_tec_model_position
+        <where>
+            <if test="modelPositionSid != null  and modelPositionSid != ''">
+                and model_position_sid in (
+                <foreach collection="modelPositionSid.split(';')" item="modelPositionSid" separator=",">
+                    #{modelPositionSid}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and handle_status in (
+                <foreach collection="handleStatus.split(';')" item="handleStatus" separator=",">
+                    #{handleStatus}
+                </foreach>
+                )
+            </if>
+            <if test="status != null  and status != ''">
+                and status in (
+                <foreach collection="status.split(';')" item="status" separator=",">
+                    #{status}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+
+    <update id="confirm" parameterType="com.platform.ems.domain.TecModelPosition">
+        update s_tec_model_position
+        <set>
+            <if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmDate != null">confirm_date = #{confirmDate},</if>
+        </set>
+        where model_position_sid in
+        (<foreach collection="modelPositionSidList" item="modelPositionSid" separator=",">#{modelPositionSid}</foreach>)
+    </update>
+
+    <select id="getModelPositionList" resultType="com.platform.ems.domain.TecModelPosition">
+        select model_position_sid,model_position_code,model_position_name,status,handle_status from s_tec_model_position order by model_position_name
+    </select>
+</mapper>

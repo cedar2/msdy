@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinBookPaymentEstimationAttachmentMapper">
+
+    <resultMap type="com.platform.ems.domain.FinBookPaymentEstimationAttachment" id="FinBookPaymentEstimationAttachmentResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="bookPaymentEstimationAttachmentSid" column="book_payment_estimation_attachment_sid"/>
+                    <result property="bookPaymentEstimationSid" column="book_payment_estimation_sid"/>
+                    <result property="fileType" column="file_type"/>
+                    <result property="fileName" column="file_name"/>
+                    <result property="filePath" column="file_path"/>
+                    <result property="remark" column="remark"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+            </resultMap>
+
+    <sql id="selectFinBookPaymentEstimationAttachmentVo">
+        select t.client_id, t.book_payment_estimation_attachment_sid, t.book_payment_estimation_sid, t.file_type, t.file_name, t.file_path, t.remark, t.creator_account, t.create_date, t.updater_account, t.update_date, t.data_source_sys from s_fin_book_payment_estimation_attachment t
+    </sql>
+
+    <select id="selectFinBookPaymentEstimationAttachmentById" parameterType="Long" resultMap="FinBookPaymentEstimationAttachmentResult">
+        <include refid="selectFinBookPaymentEstimationAttachmentVo"/>
+        where t.book_payment_estimation_attachment_sid = #{bookPaymentEstimationAttachmentSid}
+    </select>
+
+
+    <select id="selectFinBookPaymentEstimationAttachmentList" parameterType="com.platform.ems.domain.FinBookPaymentEstimationAttachment"
+            resultMap="FinBookPaymentEstimationAttachmentResult">
+        <include refid="selectFinBookPaymentEstimationAttachmentVo"/>
+        <where>
+                                                                                                    <if test="clientId != null  and clientId != ''">
+                               and (<foreach collection="clientId.split(';')" item="item" separator="or"> t.client_id like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                            <if test="bookPaymentEstimationSid != null ">
+                                and t.book_payment_estimation_sid =#{bookPaymentEstimationSid}
+                            </if>
+                                                                                                                                                                <if test="fileType != null  and fileType != ''">
+                               and (<foreach collection="fileType.split(';')" item="item" separator="or"> t.file_type like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                    <if test="fileName != null  and fileName != ''">and
+                            t.file_name like concat('%', #{fileName}, '%')
+                        </if>
+                                                                                                                                        <if test="filePath != null  and filePath != ''">
+                               and (<foreach collection="filePath.split(';')" item="item" separator="or"> t.file_path like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                            <if test="creatorAccount != null  and creatorAccount != ''">
+                               and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t.creator_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="beginTime != null and beginTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                                </if>
+                                <if test="endTime != null and endTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                                </if>
+                                                                                                                                                                                            <if test="updaterAccount != null  and updaterAccount != ''">
+                               and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="updateDate != null ">
+                                    and t.update_date = #{updateDate}
+                                </if>
+                                                                                                                                                                                            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                               and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or"> t.data_source_sys like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                    <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_book_payment_estimation_attachment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                book_payment_estimation_attachment_sid,
+                                                                book_payment_estimation_sid,
+                                                                file_type,
+                                                                file_name,
+                                                                file_path,
+                                                                remark,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                data_source_sys,
+                                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                                                            #{clientId},
+                                                                                #{bookPaymentEstimationAttachmentSid},
+                                                                                #{bookPaymentEstimationSid},
+                                                                                #{fileType},
+                                                                                #{fileName},
+                                                                                #{filePath},
+                                                                                #{remark},
+                                                                                #{creatorAccount},
+                                                                                #{createDate},
+                                                                                #{updaterAccount},
+                                                                                #{updateDate},
+                                                                                #{dataSourceSys},
+                                                </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_book_payment_estimation_attachment
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                                            book_payment_estimation_sid = #{bookPaymentEstimationSid},
+                                                                file_type = #{fileType},
+                                                                file_name = #{fileName},
+                                                                file_path = #{filePath},
+                                                                remark = #{remark},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where book_payment_estimation_attachment_sid = #{bookPaymentEstimationAttachmentSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_book_payment_estimation_attachment
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    book_payment_estimation_sid = #{bookPaymentEstimationSid},
+                                                                                file_type = #{fileType},
+                                                                                file_name = #{fileName},
+                                                                                file_path = #{filePath},
+                                                                                remark = #{remark},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where book_payment_estimation_attachment_sid = #{bookPaymentEstimationAttachmentSid}
+        </foreach>
+    </update>
+
+</mapper>

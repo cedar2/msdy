@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.DevDesignDrawFormMapper">
+    <resultMap type="com.platform.ems.domain.DevDesignDrawForm" id="DevDesignDrawFormResult">
+        <result property="clientId" column="client_id"/>
+        <result property="designDrawFormSid" column="design_draw_form_sid"/>
+        <result property="designDrawFormCode" column="design_draw_form_code"/>
+        <result property="productSid" column="product_sid"/>
+        <result property="approveStatus" column="approve_status"/>
+        <result property="approveComment" column="approve_comment"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="approvalNode" column="approval_node"/>
+        <result property="approvalUserName" column="approval_user_name"/>
+        <result property="approvalUserId" column="approval_user_id" />
+        <!--<collection property="athList" ofType="com.platform.ems.domain.DevDesignDrawFormAttach">
+            <result property="attachmentSid" column="attachment_sid"/>
+            <result property="fileType" column="file_type"/>
+            <result property="fileName" column="file_name"/>
+            <result property="filePath" column="file_path"/>
+            <result property="creatorAccount" column="creator_account"/>
+            <result property="creatorAccountName" column="creator_account_name"/>
+            <result property="createDate" column="create_date"/>
+        </collection>-->
+    </resultMap>
+    <sql id="selectDevDesignDrawFormVo">
+        SELECT
+            t.client_id,
+            t.design_draw_form_sid,
+            t.design_draw_form_code,
+            t.product_sid,
+            t.approve_status,
+            t.approve_comment,
+            t.remark,
+            t.handle_status,
+            t.creator_account,
+            t2.nick_name AS creator_account_name,
+            t.create_date,
+            t.updater_account,
+            t3.nick_name AS updater_account_name,
+            t.update_date,
+            t.confirmer_account,
+            t4.nick_name AS confirmer_account_name,
+            t.confirm_date,
+            t.data_source_sys,
+            t5.approval_node,
+            t5.approval_user_id,
+            t5.approval_user_name
+        FROM
+            s_dev_design_draw_form t
+        LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+        LEFT JOIN sys_user t3 ON t3.user_name = t.updater_account
+        LEFT JOIN sys_user t4 ON t4.user_name = t.confirmer_account
+        LEFT JOIN s_sys_form_process t5 ON t5.form_id = t.design_draw_form_sid
+    </sql>
+
+    <sql id="selectDevDesignDrawFormInfoVo">
+         SELECT
+            t.client_id,
+            t.design_draw_form_sid,
+            t.design_draw_form_code,
+            t.product_sid,
+            t.approve_status,
+            t.approve_comment,
+            t.remark,
+            t.handle_status,
+            t.creator_account,
+            t2.nick_name AS creator_account_name,
+            t.create_date,
+            t.updater_account,
+            t3.nick_name AS updater_account_name,
+            t.update_date,
+            t.confirmer_account,
+            t4.nick_name AS confirmer_account_name,
+            t.confirm_date,
+            t.data_source_sys,
+            t5.approval_node,
+            t5.approval_user_id,
+            t5.approval_user_name
+        FROM
+            s_dev_design_draw_form t
+        LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+        LEFT JOIN sys_user t3 ON t3.user_name = t.updater_account
+        LEFT JOIN sys_user t4 ON t4.user_name = t.confirmer_account
+        LEFT JOIN s_sys_form_process t5 ON t5.form_id = t.design_draw_form_sid
+    </sql>
+
+    <select id="selectDevDesignDrawFormById" parameterType="Long" resultMap="DevDesignDrawFormResult">
+        <include refid="selectDevDesignDrawFormInfoVo"/> where t.design_draw_form_sid = #{designDrawFormSid}
+    </select>
+    <select id="selectDevDesignDrawFormList" parameterType="com.platform.ems.domain.DevDesignDrawForm" resultMap="DevDesignDrawFormResult">
+        <include refid="selectDevDesignDrawFormVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">and (
+                <foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="designDrawFormCode != null and designDrawFormCode !=''">and t.design_draw_form_code like concat('%',#{designDrawFormCode}, '%')</if>
+            <if test="productSid != null and productSid!=''">and t.product_sid = #{productSid}</if>
+            <if test="approveStatus != null  and approveStatus != ''">and (
+                <foreach collection="approveStatus.split(';')" item="item" separator="or">t.approve_status like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="approveComment != null  and approveComment != ''">and (
+                <foreach collection="approveComment.split(';')" item="item" separator="or">t.approve_comment like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0" >
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.size() >0" >
+                and t.creator_account in(<foreach collection="creatorAccountList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')</if>
+            <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')</if>
+            <if test="updaterAccount != null  and updaterAccount != ''">and (
+                <foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">and (
+                <foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="confirmDate != null ">and t.confirm_date = #{confirmDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and (
+                <foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">${params.dataScope}</if>
+        </where>
+        order by t.design_draw_form_code desc
+    </select>
+    <!--添加多个-->
+    <insert id="inserts">insert into s_dev_design_draw_form
+        <trim prefix="(" suffix=")" suffixOverrides=",">client_id, design_draw_form_sid, design_draw_form_code, product_sid, approve_status, approve_comment, remark, handle_status, creator_account, create_date, updater_account, update_date, confirmer_account, confirm_date, data_source_sys,</trim> values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">#{item.clientId}, #{item.designDrawFormCode}, #{item.productSid}, #{item.approveStatus}, #{item.approveComment}, #{item.remark}, #{item.handleStatus}, #{item.creatorAccount}, #{item.createDate}, #{item.updaterAccount}, #{item.updateDate}, #{item.confirmerAccount}, #{item.confirmDate}, #{item.dataSourceSys},</trim>
+        </foreach>
+    </insert>
+    <!--更新-->
+    <update id="updateAllById">update s_dev_design_draw_form
+        <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, design_draw_form_sid = #{designDrawFormSid}, design_draw_form_code = #{designDrawFormCode}, product_sid = #{productSid}, approve_status = #{approveStatus}, approve_comment = #{approveComment}, remark = #{remark}, handle_status = #{handleStatus}, creator_account = #{creatorAccount}, create_date = #{createDate}, updater_account = #{updaterAccount}, update_date = #{updateDate}, confirmer_account = #{confirmerAccount}, confirm_date = #{confirmDate}, data_source_sys = #{dataSourceSys},</trim> where design_draw_form_sid = #{designDrawFormSid}
+    </update>
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">update s_dev_design_draw_form
+            <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, design_draw_form_sid = #{designDrawFormSid}, design_draw_form_code = #{designDrawFormCode}, product_sid = #{productSid}, approve_status = #{approveStatus}, approve_comment = #{approveComment}, remark = #{remark}, handle_status = #{handleStatus}, creator_account = #{creatorAccount}, create_date = #{createDate}, updater_account = #{updaterAccount}, update_date = #{updateDate}, confirmer_account = #{confirmerAccount}, confirm_date = #{confirmDate}, data_source_sys = #{dataSourceSys},</trim> where design_draw_form_sid = #{designDrawFormSid}
+        </foreach>
+    </update>
+</mapper>

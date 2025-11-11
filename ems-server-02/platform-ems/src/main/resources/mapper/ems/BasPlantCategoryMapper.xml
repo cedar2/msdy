@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasPlantCategoryMapper">
+
+    <resultMap type="com.platform.ems.domain.BasPlantCategory" id="BasPlantCategoryResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="plantCategorySid" column="plant_category_sid"/>
+                    <result property="plantSid" column="plant_sid"/>
+                    <result property="advantageCategory" column="advantage_category"/>
+                    <result property="dailyOutput" column="daily_output"/>
+                    <result property="unit" column="unit"/>
+                    <result property="remark" column="remark"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+            </resultMap>
+
+    <sql id="selectBasPlantCategoryVo">
+        select t.client_id, t.plant_category_sid, t.plant_sid, t.advantage_category, t.daily_output, t.unit, t.remark, t.creator_account, t.create_date, t.updater_account, t.update_date, t.data_source_sys from s_bas_plant_category t
+    </sql>
+
+    <select id="selectBasPlantCategoryById" parameterType="Long" resultMap="BasPlantCategoryResult">
+        <include refid="selectBasPlantCategoryVo"/>
+        where t.plant_category_sid = #{plantCategorySid}
+    </select>
+
+
+    <select id="selectBasPlantCategoryList" parameterType="com.platform.ems.domain.BasPlantCategory"
+            resultMap="BasPlantCategoryResult">
+        <include refid="selectBasPlantCategoryVo"/>
+        <where>
+                                                                                                    <if test="clientId != null  and clientId != ''">
+                                <foreach collection="clientId.split(';')" item="item">or t.client_id like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                                            <if test="plantSid != null ">
+                                and t.plant_sid = #{plantSid}
+                            </if>
+                                                                                                                                                                <if test="advantageCategory != null  and advantageCategory != ''">
+                                <foreach collection="advantageCategory.split(';')" item="item">or t.advantage_category like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                <if test="dailyOutput != null ">
+                                and t.daily_output in
+                                (<foreach collection="dailyOutput" item="dailyOutput" separator=",">
+                                #{companySid}</foreach>)
+                            </if>
+                                                                                                                                                                <if test="unit != null  and unit != ''">
+                                <foreach collection="unit.split(';')" item="item">or t.unit like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                                            <if test="creatorAccount != null  and creatorAccount != ''">
+                                <foreach collection="creatorAccount.split(';')" item="item">or t.creator_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                                                <if test="beginTime != null and beginTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                                </if>
+                                <if test="endTime != null and endTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                                </if>
+                                                                                                                                                                                            <if test="updaterAccount != null  and updaterAccount != ''">
+                                <foreach collection="updaterAccount.split(';')" item="item">or t.updater_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                                                <if test="updateDate != null ">
+                                    and t.update_date = #{updateDate}
+                                </if>
+                                                                                                                                                                                            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                                <foreach collection="dataSourceSys.split(';')" item="item">or t.data_source_sys like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_plant_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                plant_category_sid,
+                                                                plant_sid,
+                                                                advantage_category,
+                                                                daily_output,
+                                                                unit,
+                                                                remark,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                data_source_sys,
+                                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                                                            #{clientId},
+                                                                                #{plantCategorySid},
+                                                                                #{plantSid},
+                                                                                #{advantageCategory},
+                                                                                #{dailyOutput},
+                                                                                #{unit},
+                                                                                #{remark},
+                                                                                #{creatorAccount},
+                                                                                #{createDate},
+                                                                                #{updaterAccount},
+                                                                                #{updateDate},
+                                                                                #{dataSourceSys},
+                                                </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_plant_category
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                                            plant_sid = #{plantSid},
+                                                                advantage_category = #{advantageCategory},
+                                                                daily_output = #{dailyOutput},
+                                                                unit = #{unit},
+                                                                remark = #{remark},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where plant_category_sid = #{plantCategorySid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_plant_category
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    plant_sid = #{plantSid},
+                                                                                advantage_category = #{advantageCategory},
+                                                                                daily_output = #{dailyOutput},
+                                                                                unit = #{unit},
+                                                                                remark = #{remark},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where plant_category_sid = #{plantCategorySid}
+        </foreach>
+    </update>
+
+    <delete id="deletePlantCategoryByIds" parameterType="String">
+        delete from s_bas_plant_category where plant_sid in
+        <foreach item="plantSid" collection="array" open="(" separator="," close=")">
+            #{plantSid}
+        </foreach>
+    </delete>
+</mapper>

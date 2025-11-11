@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinHuipiaoRecordUseRecordMapper">
+
+    <resultMap type="com.platform.ems.domain.FinHuipiaoRecordUseRecord" id="FinHuipiaoRecordUseRecordResult">
+        <result property="clientId" column="client_id"/>
+        <result property="huipiaoRecordUseRecordSid" column="huipiao_record_use_record_sid"/>
+        <result property="huipiaoRecordSid" column="huipiao_record_sid"/>
+        <result property="useDate" column="use_date"/>
+        <result property="useAmount" column="use_amount"/>
+        <result property="receiver" column="receiver"/>
+        <result property="useRemark" column="use_remark"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectFinHuipiaoRecordUseRecordVo">
+        select t.client_id,
+               t.huipiao_record_use_record_sid,
+               t.huipiao_record_sid,
+               t.use_date,
+               t.use_amount,
+               t.receiver,
+               t.use_remark,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               u1.nick_name AS creator_account_name,
+               u2.nick_name AS updater_account_name
+        from s_fin_huipiao_record_use_record t
+                 LEFT JOIN sys_user u1 ON t.creator_account = u1.user_name
+                 LEFT JOIN sys_user u2 ON t.updater_account = u2.user_name
+    </sql>
+
+    <select id="selectFinHuipiaoRecordUseRecordById" parameterType="Long" resultMap="FinHuipiaoRecordUseRecordResult">
+        <include refid="selectFinHuipiaoRecordUseRecordVo"/>
+        where t.huipiao_record_use_record_sid = #{huipiaoRecordUseRecordSid}
+    </select>
+
+    <select id="selectFinHuipiaoRecordUseRecordList" parameterType="com.platform.ems.domain.FinHuipiaoRecordUseRecord"
+            resultMap="FinHuipiaoRecordUseRecordResult">
+        <include refid="selectFinHuipiaoRecordUseRecordVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="huipiaoRecordSid != null ">
+                and t.huipiao_record_sid = #{huipiaoRecordSid}
+            </if>
+            <if test="useDate != null ">
+                and t.use_date = #{useDate}
+            </if>
+            <if test="useAmount != null ">
+                and t.use_amount = #{useAmount}
+            </if>
+            <if test="receiver != null and receiver != ''">
+                and t.receiver = #{receiver}
+            </if>
+            <if test="useRemark != null and useRemark != ''">
+                and t.use_remark = #{useRemark}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_huipiao_record_use_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            huipiao_record_use_record_sid,
+            huipiao_record_sid,
+            use_date,
+            use_amount,
+            receiver,
+            use_remark,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.huipiaoRecordUseRecordSid},
+                #{item.huipiaoRecordSid},
+                #{item.useDate},
+                #{item.useAmount},
+                #{item.receiver},
+                #{item.useRemark},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_huipiao_record_use_record
+        <trim prefix="SET" suffixOverrides=",">
+            use_date = #{useDate},
+            use_amount = #{useAmount},
+            receiver = #{receiver},
+            use_remark = #{useRemark},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where huipiao_record_use_record_sid = #{huipiaoRecordUseRecordSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_huipiao_record_use_record
+            <trim prefix="SET" suffixOverrides=",">
+                use_date = #{o.useDate},
+                use_amount = #{o.useAmount},
+                receiver = #{o.receiver},
+                use_remark = #{o.useRemark},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where huipiao_record_use_record_sid = #{o.huipiaoRecordUseRecordSid}
+        </foreach>
+    </update>
+
+</mapper>

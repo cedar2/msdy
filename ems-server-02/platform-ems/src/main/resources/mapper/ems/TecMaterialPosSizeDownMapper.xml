@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecMaterialPosSizeDownMapper">
+
+    <resultMap type="com.platform.ems.domain.TecMaterialPosSizeDown" id="TecMaterialPosSizeDownResult">
+        <result property="clientId" column="client_id"/>
+        <result property="materialPosSizeSid" column="material_pos_size_sid"/>
+        <result property="materialPosInforSid" column="material_pos_infor_sid"/>
+        <result property="skuSid" column="sku_sid"/>
+        <result property="sizeValue" column="size_value"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="skuCode" column="sku_code"/>
+        <result property="skuName" column="sku_name"/>
+    </resultMap>
+
+    <sql id="selectTecMaterialPosSizeDownVo">
+        select t.client_id, t.material_pos_size_sid, t.material_pos_infor_sid, t.sku_sid, t.size_value, t.remark,
+               t.creator_account, t.create_date, t.updater_account, t.update_date, t.data_source_sys, t1.sku_code, t1.sku_name
+        from s_tec_material_pos_size_down t
+        LEFT JOIN s_bas_sku t1 on t1.sku_sid = t.sku_sid
+    </sql>
+
+    <select id="selectTecMaterialPosSizeDownById" parameterType="Long" resultMap="TecMaterialPosSizeDownResult">
+        <include refid="selectTecMaterialPosSizeDownVo"/>
+        where t.material_pos_size_sid = #{materialPosSizeSid}
+    </select>
+
+
+    <select id="selectTecMaterialPosSizeDownList" parameterType="com.platform.ems.domain.TecMaterialPosSizeDown"
+            resultMap="TecMaterialPosSizeDownResult">
+        <include refid="selectTecMaterialPosSizeDownVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialPosInforSid != null ">
+                and t.material_pos_infor_sid =#{materialPosInforSid}
+            </if>
+            <if test="skuSid != null ">
+                and t.sku_sid =#{skuSid}
+            </if>
+            <if test="sizeValue != null ">
+                and t.size_value = #{sizeValue}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_tec_material_pos_size_down
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            material_pos_size_sid,
+            material_pos_infor_sid,
+            sku_sid,
+            size_value,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{clientId},
+                #{materialPosSizeSid},
+                #{materialPosInforSid},
+                #{skuSid},
+                #{sizeValue},
+                #{remark},
+                #{creatorAccount},
+                #{createDate},
+                #{updaterAccount},
+                #{updateDate},
+                #{dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_tec_material_pos_size_down
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            material_pos_infor_sid = #{materialPosInforSid},
+            sku_sid = #{skuSid},
+            size_value = #{sizeValue},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where material_pos_size_sid = #{materialPosSizeSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_tec_material_pos_size_down
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                material_pos_infor_sid = #{materialPosInforSid},
+                sku_sid = #{skuSid},
+                size_value = #{sizeValue},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where material_pos_size_sid = #{materialPosSizeSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManManufactureDefectiveMapper">
+
+    <resultMap type="com.platform.ems.domain.ManManufactureDefective" id="ManManufactureDefectiveResult">
+        <result property="clientId" column="client_id"/>
+        <result property="manufactureDefectiveSid" column="manufacture_defective_sid"/>
+        <result property="manufactureDefectiveCode" column="manufacture_defective_code"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="workCenterSid" column="work_center_sid"/>
+        <result property="manufactureOrderSid" column="manufacture_order_sid"/>
+        <result property="manufactureOrderCode" column="manufacture_order_code"/>
+        <result property="productSid" column="product_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="barcodeSid" column="barcode_sid"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="quantityDefective" column="quantity_defective"/>
+        <result property="resolveDate" column="resolve_date"/>
+        <result property="description" column="description"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectManManufactureDefectiveVo">
+      select
+      t.client_id,
+      t.manufacture_defective_sid,
+      t.manufacture_defective_code,
+      t.plant_sid, t.work_center_sid,
+      t.manufacture_order_sid,
+      t.manufacture_order_code,
+      t.product_sid,
+      t.sku1_sid,
+      t.sku2_sid,
+      t.barcode_sid,
+      t.unit_base,
+      t.quantity_defective,
+      t.resolve_date,
+      t.description,
+      t.remark,
+      t.handle_status,
+      t.creator_account,
+      t.create_date,
+      t.updater_account,
+      t.update_date,
+      t.confirmer_account,
+      t.confirm_date,
+      t.data_source_sys,
+      t1.plant_code,
+      t1.short_name,
+      t2.work_center_code,
+      t2.work_center_name,
+      t3.material_code,
+      t3.material_name,
+      t3.simple_code,
+      t4.sku_name AS sku1_name,
+	  t5.sku_name AS sku2_name,
+      t6.nick_name AS creator_account_name,
+      t7.nick_name AS updater_account_name,
+      t8.nick_name AS confirmer_account_name
+from s_man_manufacture_defective t
+      LEFT JOIN s_bas_plant t1 ON t1.plant_sid = t.plant_sid
+      LEFT JOIN s_man_work_center t2 ON t2.work_center_sid = t.work_center_sid
+      LEFT JOIN s_bas_material t3 ON t3.material_sid = t.product_sid
+      LEFT JOIN s_bas_sku t4 ON t4.sku_sid = t.sku1_sid
+	  LEFT JOIN s_bas_sku t5 ON t5.sku_sid = t.sku2_sid
+      LEFT JOIN sys_user t6 ON t6.user_name = t.creator_account
+      LEFT JOIN sys_user t7 ON t7.user_name = t.updater_account
+      LEFT JOIN sys_user t8 ON t8.user_name = t.confirmer_account
+    </sql>
+
+    <select id="selectManManufactureDefectiveById" parameterType="Long" resultMap="ManManufactureDefectiveResult">
+        <include refid="selectManManufactureDefectiveVo"/>
+        where t.manufacture_defective_sid = #{manufactureDefectiveSid}
+    </select>
+
+
+    <select id="selectManManufactureDefectiveList" parameterType="com.platform.ems.domain.ManManufactureDefective"
+            resultMap="ManManufactureDefectiveResult">
+        <include refid="selectManManufactureDefectiveVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="manufactureDefectiveSid != null ">
+                and t.manufacture_defective_sid =#{manufactureDefectiveSid}
+            </if>
+            <if test="manufactureDefectiveCode != null ">
+                and t.manufacture_defective_code like concat('%',#{manufactureDefectiveCode}, '%')
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid =#{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t.plant_sid in(<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid =#{workCenterSid}
+            </if>
+            <if test="workCenterSidList != null and workCenterSidList.length >0 ">
+                and t.work_center_sid in(<foreach collection="workCenterSidList" item="workCenterSid" separator=",">#{workCenterSid}</foreach>)
+            </if>
+            <if test="manufactureOrderSid != null ">
+                and t.manufacture_order_sid =#{manufactureOrderSid}
+            </if>
+            <if test="manufactureOrderCode != null ">
+                and t.manufacture_order_code like concat('%',#{manufactureOrderCode}, '%')
+            </if>
+            <if test="productSid != null ">
+                and t.product_sid =#{productSid}
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator="or">t3.material_code like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="item" separator="or">t3.material_name like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="simpleCode != null and simpleCode != ''">
+                and (<foreach collection="simpleCode.split(';')" item="item" separator="or">t3.simple_code like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid =#{sku1Sid}
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid =#{sku2Sid}
+            </if>
+            <if test="barcodeSid != null ">
+                and t.barcode_sid =#{barcodeSid}
+            </if>
+            <if test="unitBase != null and unitBase != ''">
+                and t.unit_base = #{unitBase}
+            </if>
+            <if test="quantityDefective != null ">
+                and t.quantity_defective = #{quantityDefective}
+            </if>
+            <if test="resolveDate != null ">
+                and t.resolve_date = #{resolveDate}
+            </if>
+            <if test="description != null and description != ''">
+                and (<foreach collection="description.split(';')" item="item" separator="or">t.description like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in(<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t6.nick_name like
+                concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_manufacture_defective
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            manufacture_defective_sid,
+            manufacture_defective_code,
+            plant_sid,
+            work_center_sid,
+            manufacture_order_sid,
+            manufacture_order_code,
+            product_sid,
+            sku1_sid,
+            sku2_sid,
+            barcode_sid,
+            unit_base,
+            quantity_defective,
+            resolve_date,
+            description,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.manufactureDefectiveCode},
+                #{item.plantSid},
+                #{item.workCenterSid},
+                #{item.manufactureOrderSid},
+                #{item.manufactureOrderCode},
+                #{item.productSid},
+                #{item.sku1Sid},
+                #{item.sku2Sid},
+                #{item.barcodeSid},
+                #{item.unitBase},
+                #{item.quantityDefective},
+                #{item.resolveDate},
+                #{item.description},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_manufacture_defective
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            manufacture_defective_sid = #{manufactureDefectiveSid},
+            manufacture_defective_code = #{manufactureDefectiveCode},
+            plant_sid = #{plantSid},
+            work_center_sid = #{workCenterSid},
+            manufacture_order_sid = #{manufactureOrderSid},
+            manufacture_order_code = #{manufactureOrderCode},
+            product_sid = #{productSid},
+            sku1_sid = #{sku1Sid},
+            sku2_sid = #{sku2Sid},
+            barcode_sid = #{barcodeSid},
+            unit_base = #{unitBase},
+            quantity_defective = #{quantityDefective},
+            resolve_date = #{resolveDate},
+            description = #{description},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where manufacture_defective_sid = #{manufactureDefectiveSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_manufacture_defective
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                manufacture_defective_sid = #{manufactureDefectiveSid},
+                manufacture_defective_code = #{manufactureDefectiveCode},
+                plant_sid = #{plantSid},
+                work_center_sid = #{workCenterSid},
+                manufacture_order_sid = #{manufactureOrderSid},
+                manufacture_order_code = #{manufactureOrderCode},
+                product_sid = #{productSid},
+                sku1_sid = #{sku1Sid},
+                sku2_sid = #{sku2Sid},
+                barcode_sid = #{barcodeSid},
+                unit_base = #{unitBase},
+                quantity_defective = #{quantityDefective},
+                resolve_date = #{resolveDate},
+                description = #{description},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where manufacture_defective_sid = #{manufactureDefectiveSid}
+        </foreach>
+    </update>
+
+</mapper>

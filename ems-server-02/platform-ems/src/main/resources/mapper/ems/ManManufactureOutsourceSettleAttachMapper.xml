@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManManufactureOutsourceSettleAttachMapper">
+
+    <resultMap type="com.platform.ems.domain.ManManufactureOutsourceSettleAttach"
+               id="ManManufactureOutsourceSettleAttachResult">
+        <result property="clientId" column="client_id"/>
+        <result property="manufactureOutsourceSettleAttachSid" column="manufacture_outsource_settle_attach_sid"/>
+        <result property="manufactureOutsourceSettleSid" column="manufacture_outsource_settle_sid"/>
+        <result property="manufactureOutsourceSettleCode" column="manufacture_outsource_settle_code"/>
+        <result property="fileType" column="file_type"/>
+        <result property="fileName" column="file_name"/>
+        <result property="filePath" column="file_path"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="fileTypeName" column="file_type_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+    </resultMap>
+
+    <sql id="selectManManufactureOutsourceSettleAttachVo">
+        select
+        t.client_id,
+        t.manufacture_outsource_settle_attach_sid,
+        t.manufacture_outsource_settle_sid,
+        t.manufacture_outsource_settle_code,
+        t.file_type,
+        t.file_name,
+        t.file_path,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+        t1.name as file_type_name,
+        t2.nick_name as creator_account_name
+  from s_man_manufacture_outsource_settle_attach t
+        LEFT JOIN s_con_file_type t1 ON t1.code = t.file_type
+        LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+    </sql>
+
+    <select id="selectManManufactureOutsourceSettleAttachById" parameterType="Long"
+            resultMap="ManManufactureOutsourceSettleAttachResult">
+        <include refid="selectManManufactureOutsourceSettleAttachVo"/>
+        where t.manufacture_outsource_settle_attach_sid = #{manufactureOutsourceSettleAttachSid}
+    </select>
+
+    <select id="selectManManufactureOutsourceSettleAttachList"
+            parameterType="com.platform.ems.domain.ManManufactureOutsourceSettleAttach"
+            resultMap="ManManufactureOutsourceSettleAttachResult">
+        <include refid="selectManManufactureOutsourceSettleAttachVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="manufactureOutsourceSettleSid != null ">
+                and t.manufacture_outsource_settle_sid = #{manufactureOutsourceSettleSid}
+            </if>
+            <if test="manufactureOutsourceSettleCode != null ">
+                and t.manufacture_outsource_settle_code = #{manufactureOutsourceSettleCode}
+            </if>
+            <if test="fileType != null and fileType != ''">
+                and t.file_type = #{fileType}
+            </if>
+            <if test="fileName != null and fileName != ''">and
+                t.file_name like concat('%', #{fileName}, '%')
+            </if>
+            <if test="filePath != null and filePath != ''">
+                and (<foreach collection="filePath.split(';')" item="item" separator="or">t.file_path like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_manufacture_outsource_settle_attach
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            manufacture_outsource_settle_attach_sid,
+            manufacture_outsource_settle_sid,
+            manufacture_outsource_settle_code,
+            file_type,
+            file_name,
+            file_path,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.manufactureOutsourceSettleAttachSid},
+                #{item.manufactureOutsourceSettleSid},
+                #{item.manufactureOutsourceSettleCode},
+                #{item.fileType},
+                #{item.fileName},
+                #{item.filePath},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_manufacture_outsource_settle_attach
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            manufacture_outsource_settle_sid = #{manufactureOutsourceSettleSid},
+            manufacture_outsource_settle_code = #{manufactureOutsourceSettleCode},
+            file_type = #{fileType},
+            file_name = #{fileName},
+            file_path = #{filePath},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where manufacture_outsource_settle_attach_sid = #{manufactureOutsourceSettleAttachSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_manufacture_outsource_settle_attach
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{o.clientId},
+                manufacture_outsource_settle_sid = #{o.manufactureOutsourceSettleSid},
+                manufacture_outsource_settle_code = #{o.manufactureOutsourceSettleCode},
+                file_type = #{o.fileType},
+                file_name = #{o.fileName},
+                file_path = #{o.filePath},
+                remark = #{o.remark},
+                creator_account = #{o.creatorAccount},
+                create_date = #{o.createDate},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                data_source_sys = #{o.dataSourceSys},
+            </trim>
+            where manufacture_outsource_settle_attach_sid = #{o.manufactureOutsourceSettleAttachSid}
+        </foreach>
+    </update>
+
+    <delete id="deleteManManufactureOutsourceSettleAttachByIds" parameterType="long">
+        delete from s_man_manufacture_outsource_settle_attach where manufacture_outsource_settle_sid in
+        <foreach item="manufactureOutsourceSettleSid" collection="list" open="(" separator="," close=")">
+            #{manufactureOutsourceSettleSid}
+        </foreach>
+    </delete>
+</mapper>

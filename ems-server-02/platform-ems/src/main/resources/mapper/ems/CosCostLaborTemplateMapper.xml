@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.CosCostLaborTemplateMapper">
+
+    <resultMap type="com.platform.ems.domain.CosCostLaborTemplate" id="CosCostLaborTemplateResult">
+        <result property="clientId" column="client_id"/>
+        <result property="costLaborTemplateSid" column="cost_labor_template_sid"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyName" column="company_name"/>
+        <result property="materialType" column="material_type"/>
+        <result property="materialTypeName" column="material_type_name"/>
+        <result property="costLaborTemplateName" column="cost_labor_template_name"/>
+        <result property="costLaborTemplateCode" column="cost_labor_template_code"/>
+        <result property="productTechniqueType" column="product_technique_type"/>
+        <result property="productTechniqueTypeName" column="product_technique_type_name"/>
+        <result property="priceEnterMode" column="price_enter_mode"/>
+        <result property="costOrg" column="cost_org"/>
+        <result property="businessType" column="business_type"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerDate" column="confirmer_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectCosCostLaborTemplateVo">
+        select t.client_id, t.cost_labor_template_sid, t.company_sid, t4.company_name AS company_name, t.material_type,
+        t3.name AS material_type_name, t.cost_labor_template_name, t.cost_labor_template_code, t.business_type,
+        t2.name AS product_technique_type_name, t.product_technique_type, t.price_enter_mode, t.cost_org, t.remark,
+        t.status, t.handle_status, t.creator_account, t.create_date, t.updater_account, t.update_date, t.confirmer_date,
+        t.data_source_sys, t.confirmer_account, t5.nick_name AS creator_account_name, t6.nick_name AS updater_account_name, t7.nick_name AS confirmer_account_name
+        from s_cos_cost_labor_template t
+        LEFT JOIN s_con_product_technique_type t2 ON t2.code = t.product_technique_type
+        LEFT JOIN s_con_material_type t3 ON t3.code = t.material_type
+        LEFT JOIN s_bas_company t4 ON t4.company_sid = t.company_sid
+        LEFT JOIN sys_user t5 ON t.creator_account = t5.user_name
+        LEFT JOIN sys_user t6 ON t.updater_account = t6.user_name
+        LEFT JOIN sys_user t7 ON t.confirmer_account = t7.user_name
+    </sql>
+
+    <select id="selectCosCostLaborTemplateById" parameterType="Long" resultMap="CosCostLaborTemplateResult">
+        <include refid="selectCosCostLaborTemplateVo"/>
+        where t.cost_labor_template_sid = #{costLaborTemplateSid}
+    </select>
+
+
+    <select id="selectCosCostLaborTemplateList" parameterType="com.platform.ems.domain.CosCostLaborTemplate"
+            resultMap="CosCostLaborTemplateResult">
+        <include refid="selectCosCostLaborTemplateVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id = #{item}</foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="costLaborTemplateSid != null ">
+                and t.cost_labor_template_sid = #{costLaborTemplateSid}
+            </if>
+            <if test="costLaborTemplateCode != null  and costLaborTemplateCode != ''">
+                and (<foreach collection="costLaborTemplateCode.split(';')" item="item" separator="or">
+                t.cost_labor_template_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialType != null  and materialType != ''">
+                and (<foreach collection="materialType.split(';')" item="item" separator="or">t.material_type = #{item}</foreach>)
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length >0">and t.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=",">#{materialType}</foreach>)
+            </if>
+            <if test="costLaborTemplateName != null  and costLaborTemplateName != ''">and
+                t.cost_labor_template_name like concat('%', #{costLaborTemplateName}, '%')
+            </if>
+            <if test="productTechniqueType != null  and productTechniqueType != ''">
+                and (<foreach collection="productTechniqueType.split(';')" item="item" separator="or">
+                t.product_technique_type = #{item}</foreach>)
+            </if>
+            <if test="productTechniqueTypeList != null and productTechniqueTypeList.length >0">and t.product_technique_type in
+                (<foreach collection="productTechniqueTypeList" item="productTechniqueType" separator=",">#{productTechniqueType}</foreach>)
+            </if>
+            <if test="priceEnterMode != null  and priceEnterMode != ''">
+                and (<foreach collection="priceEnterMode.split(';')" item="item" separator="or">t.price_enter_mode = #{item}</foreach>)
+            </if>
+            <if test="costOrg != null  and costOrg != ''">
+                and (<foreach collection="costOrg.split(';')" item="item" separator="or">t.cost_org = #{item}</foreach>)
+            </if>
+            <if test="businessType != null and businessType != ''">
+                and t.business_type = #{businessType}
+            </if>
+            <if test="businessTypeList != null and businessTypeList.length >0">and t.business_type in
+                (<foreach collection="businessTypeList" item="businessType" separator=",">#{businessType}</foreach>)
+            </if>
+            <if test="status != null  and status != ''">
+                and (<foreach collection="status.split(';')" item="item" separator="or">t.status = #{item}</foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status = #{item}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t5.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerDate != null ">
+                and t.confirmer_date = #{confirmerDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_cos_cost_labor_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            cost_labor_template_sid,
+            company_sid,
+            material_type,
+            cost_labor_template_name,
+            cost_labor_template_code,
+            product_technique_type,
+            price_enter_mode,
+            cost_org,
+            business_type,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_date,
+            data_source_sys,
+            confirmer_account,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.costLaborTemplateSid},
+                #{item.companySid},
+                #{item.materialType},
+                #{item.costLaborTemplateName},
+                #{item.costLaborTemplateCode},
+                #{item.productTechniqueType},
+                #{item.priceEnterMode},
+                #{item.costOrg},
+                #{item.businessType},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerDate},
+                #{item.dataSourceSys},
+                #{item.confirmerAccount},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_cos_cost_labor_template
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            company_sid = #{companySid},
+            material_type = #{materialType},
+            cost_labor_template_name = #{costLaborTemplateName},
+            cost_labor_template_code = #{costLaborTemplateCode},
+            product_technique_type = #{productTechniqueType},
+            price_enter_mode = #{priceEnterMode},
+            cost_org = #{costOrg},
+            business_type = #{businessType},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_date = #{confirmerDate},
+            data_source_sys = #{dataSourceSys},
+            confirmer_account = #{confirmerAccount},
+        </trim>
+        where cost_labor_template_sid = #{costLaborTemplateSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_cos_cost_labor_template
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                company_sid = #{companySid},
+                material_type = #{materialType},
+                cost_labor_template_name = #{costLaborTemplateName},
+                cost_labor_template_code = #{costLaborTemplateCode},
+                product_technique_type = #{productTechniqueType},
+                price_enter_mode = #{priceEnterMode},
+                cost_org = #{costOrg},
+                business_type = #{businessType},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_date = #{confirmerDate},
+                data_source_sys = #{dataSourceSys},
+                confirmer_account = #{confirmerAccount},
+            </trim>
+            where cost_labor_template_sid = #{costLaborTemplateSid}
+        </foreach>
+    </update>
+
+</mapper>

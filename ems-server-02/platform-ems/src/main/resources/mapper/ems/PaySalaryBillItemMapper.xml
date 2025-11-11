@@ -1,0 +1,791 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PaySalaryBillItemMapper">
+
+    <resultMap type="com.platform.ems.domain.PaySalaryBillItem" id="PaySalaryBillItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="billItemSid" column="bill_item_sid"/>
+        <result property="salaryBillSid" column="salary_bill_sid"/>
+        <result property="staffSid" column="staff_sid"/>
+        <result property="staffCode" column="staff_code"/>
+        <result property="yingfPayroll" column="yingf_payroll"/>
+        <result property="netPayroll" column="net_payroll"/>
+        <result property="wageBase" column="wage_base"/>
+        <result property="wageDuty" column="wage_duty"/>
+        <result property="wagePiece" column="wage_piece"/>
+        <result property="wagePieceSys" column="wage_piece_sys"/>
+        <result property="wageFanxiu" column="wage_fanxiu"/>
+        <result property="wageFanxiuSys" column="wage_fanxiu_sys"/>
+        <result property="timeRcjb" column="time_rcjb"/>
+        <result property="wageRcjb" column="wage_rcjb"/>
+        <result property="wageJrjb" column="wage_jrjb"/>
+        <result property="wageQit" column="wage_qit"/>
+        <result property="wageTongxjb" column="wage_tongxjb"/>
+        <result property="wageQitjb" column="wage_qitjb"/>
+        <result property="bonusChouc" column="bonus_chouc"/>
+        <result property="bonusYearend" column="bonus_yearend"/>
+        <result property="bonusOther" column="bonus_other"/>
+        <result property="bonusYuejx" column="bonus_yuejx"/>
+        <result property="bonusNiandjx" column="bonus_niandjx"/>
+        <result property="bonusYuemq" column="bonus_yuemq"/>
+        <result property="bonusJidmq" column="bonus_jidmq"/>
+        <result property="bonusNiandmq" column="bonus_niandmq"/>
+        <result property="bonusJitby" column="bonus_jitby"/>
+        <result property="bonusFuc" column="bonus_fuc"/>
+        <result property="bonusJij" column="bonus_jij"/>
+        <result property="bonusRencjs" column="bonus_rencjs"/>
+        <result property="allowanceGangw" column="allowance_gangw"/>
+        <result property="allowanceJiaot" column="allowance_jiaot"/>
+        <result property="allowanceHauf" column="allowance_hauf"/>
+        <result property="allowanceChail" column="allowance_chail"/>
+        <result property="allowanceZhuf" column="allowance_zhuf"/>
+        <result property="allowanceBang" column="allowance_bang"/>
+        <result property="allowanceGaow" column="allowance_gaow"/>
+        <result property="allowanceCanf" column="allowance_canf"/>
+        <result property="allowanceOther" column="allowance_other"/>
+        <result property="allowanceWeng" column="allowance_weng"/>
+        <result property="allowanceTesgz" column="allowance_tesgz"/>
+        <result property="allowanceCanj" column="allowance_canj"/>
+        <result property="allowanceBaod" column="allowance_baod"/>
+        <result property="allowanceQitjj" column="allowance_qitjj"/>
+        <result property="deductChid" column="deduct_chid"/>
+        <result property="deductKuangg" column="deduct_kuangg"/>
+        <result property="deductDuty" column="deduct_duty"/>
+        <result property="deductCanf" column="deduct_canf"/>
+        <result property="deductShuid" column="deduct_shuid"/>
+        <result property="deductOther" column="deduct_other"/>
+        <result property="deductCanj" column="deduct_canj"/>
+        <result property="deductDuans" column="deduct_duans"/>
+        <result property="deductPinz" column="deduct_pinz"/>
+        <result property="deductFivecheck" column="deduct_fivecheck"/>
+        <result property="feesYib" column="fees_yib"/>
+        <result property="feesSheb" column="fees_sheb"/>
+        <result property="feesYisb" column="fees_yisb"/>
+        <result property="feesGongjj" column="fees_gongjj"/>
+        <result property="feesIncometax" column="fees_incometax"/>
+        <result property="feesOther" column="fees_other"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="staffCode" column="staff_code"/>
+        <result property="staffName" column="staff_name"/>
+        <result property="departmentSid" column="department_sid"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="positionSid" column="position_sid"/>
+        <result property="positionName" column="position_name"/>
+    </resultMap>
+
+    <sql id="selectPaySalaryBillItemVo">
+        select
+        t.client_id,
+        t.bill_item_sid,
+        t.salary_bill_sid,
+        t.staff_sid,
+        t.staff_code,
+        t.yingf_payroll,
+        t.net_payroll,
+        t.wage_base,
+        t.wage_qit,
+        t.wage_duty,
+        t.wage_piece,
+        t.wage_piece_sys,
+        t.wage_fanxiu,
+        t.wage_fanxiu_sys,
+        t.time_rcjb,
+        t.wage_rcjb,
+        t.wage_jrjb,
+        t.wage_tongxjb,
+        t.wage_qitjb,
+        t.bonus_yuejx,
+        t.bonus_niandjx,
+        t.bonus_chouc,
+        t.bonus_yearend,
+        t.bonus_other,
+        t.bonus_yuemq,
+        t.bonus_jidmq,
+        t.bonus_niandmq,
+        t.bonus_jitby,
+        t.bonus_fuc,
+        t.bonus_jij,
+        t.bonus_rencjs,
+        t.allowance_gangw,
+        t.allowance_jiaot,
+        t.allowance_hauf,
+        t.allowance_chail,
+        t.allowance_zhuf,
+        t.wage_jishi,
+        t.allowance_bang,
+        t.allowance_gaow,
+        t.allowance_canf,
+        t.allowance_other,
+        t.allowance_weng,
+        t.allowance_tesgz,
+        t.allowance_canj,
+        t.allowance_baod,
+        t.allowance_qitjj,
+        t.deduct_chid,
+        t.deduct_kuangg,
+        t.deduct_duty,
+        t.deduct_canf,
+        t.deduct_shuid,
+        t.deduct_other,
+        t.deduct_canj,
+        t.deduct_duans,
+        t.deduct_pinz,
+        t.deduct_fivecheck,
+        t.fees_yisb,
+        t.fees_gongjj,
+        t.fees_incometax,
+        t.fees_yib,
+        t.fees_sheb,
+        t.fees_other,
+        t.salary_cost_allocate_type,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+		t1.staff_name,
+		t1.check_in_date,
+		t1.default_position as position_sid,
+		t3.company_sid,
+		t3.yearmonth,
+		t3.salary_bill_code,
+        t4.department_name,
+        t5.position_name
+  from s_pay_salary_bill_item t
+        LEFT JOIN s_bas_staff t1 ON t1.staff_sid = t.staff_sid
+        LEFT JOIN s_pay_salary_bill t3 ON t3.salary_bill_sid = t.salary_bill_sid
+        LEFT JOIN s_bas_department t4 ON t4.department_sid = t1.default_department_sid
+        LEFT JOIN s_bas_position t5 ON t1.default_position = t5.position_sid
+    </sql>
+
+    <sql id="getReportVo">
+        select
+        t.client_id,
+        t.bill_item_sid,
+        t.salary_bill_sid,
+        t.staff_sid,
+        t.staff_code,
+        t.yingf_payroll,
+        t.net_payroll,
+        t.wage_base,
+        t.wage_qit,
+        t.wage_duty,
+        t.wage_piece,
+        t.wage_piece_sys,
+        t.wage_fanxiu,
+        t.wage_fanxiu_sys,
+        t.time_rcjb,
+        t.wage_rcjb,
+        t.wage_jrjb,
+        t.wage_tongxjb,
+        t.wage_qitjb,
+        t.bonus_yuejx,
+        t.bonus_niandjx,
+        t.bonus_chouc,
+        t.bonus_yearend,
+        t.bonus_other,
+        t.bonus_yuemq,
+        t.bonus_jidmq,
+        t.bonus_niandmq,
+        t.bonus_jitby,
+        t.bonus_fuc,
+        t.bonus_jij,
+        t.bonus_rencjs,
+        t.allowance_gangw,
+        t.allowance_jiaot,
+        t.allowance_hauf,
+        t.allowance_chail,
+        t.allowance_zhuf,
+        t.allowance_bang,
+        t.allowance_gaow,
+        t.allowance_canf,
+        t.allowance_other,
+        t.allowance_weng,
+        t.allowance_tesgz,
+        t.allowance_canj,
+        t.allowance_baod,
+        t.allowance_qitjj,
+        t.deduct_chid,
+        t.deduct_kuangg,
+        t.deduct_duty,
+        t.deduct_canf,
+        t.deduct_shuid,
+        t.deduct_other,
+        t.deduct_canj,
+        t.deduct_duans,
+        t.deduct_pinz,
+        t.deduct_fivecheck,
+        t.fees_yisb,
+        t.fees_gongjj,
+        t.fees_incometax,
+        t.fees_yib,
+        t.fees_sheb,
+        t.fees_other,
+        t.salary_cost_allocate_type,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+		t1.staff_name,
+		t1.check_in_date,
+		t1.default_position as position_sid,
+		t3.company_sid,
+		t3.yearmonth,
+		t3.handle_status,
+		t3.salary_bill_code,
+        t4.department_name,
+        t5.position_name,
+        t6.short_name as company_name,
+        t1.check_in_date,
+        t8.short_name as plant_name,
+        t9.nick_name as creator_account_name
+  from s_pay_salary_bill_item t
+        LEFT JOIN s_bas_staff t1 ON t1.staff_sid = t.staff_sid
+        LEFT JOIN s_pay_salary_bill t3 ON t3.salary_bill_sid = t.salary_bill_sid
+        LEFT JOIN s_bas_department t4 ON t1.default_department_sid = t1.default_department_sid
+        LEFT JOIN s_bas_position t5 ON t1.default_position = t5.position_sid
+        left join s_bas_company t6 on t6.company_sid=t3.company_sid
+        LEFT JOIN s_bas_plant t8 ON t8.plant_sid = t3.plant_sid
+        LEFT JOIN sys_user t9 ON t9.user_name = t3.creator_account
+    </sql>
+    <select id="selectPaySalaryBillItemById" parameterType="Long" resultMap="PaySalaryBillItemResult">
+        <include refid="selectPaySalaryBillItemVo"/>
+        where t.bill_item_sid = #{billItemSid}
+    </select>
+
+
+    <select id="getReport" parameterType="com.platform.ems.domain.dto.request.PaySalaryBillItemRequest"
+            resultType="com.platform.ems.domain.dto.response.PaySalaryBillItemExResponse">
+        <include refid="getReportVo"/>
+        <where>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t3.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="yearmonth != null  and yearmonth != ''">
+                and t3.yearmonth = #{yearmonth}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t3.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t3.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="staffCode != null and staffCode != '' ">
+                and t1.staff_code like
+                concat('%',
+                #{staffCode}, '%')
+            </if>
+            <if test="staffName != null and staffName != '' ">
+                and t1.staff_name like
+                concat('%',
+                #{staffName}, '%')
+            </if>
+            <if test="salaryBillCode != null  and salaryBillCode != ''">
+                and t3.salary_bill_code like
+                concat('%',
+                #{item}, '%')
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t3.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">#{creatorAccount}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+        </where>
+        order by t1.staff_code asc
+    </select>
+    <select id="selectPaySalaryBillItemList" parameterType="com.platform.ems.domain.PaySalaryBillItem"
+            resultMap="PaySalaryBillItemResult">
+        <include refid="selectPaySalaryBillItemVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="billItemSid != null ">
+                and t.bill_item_sid =#{billItemSid}
+            </if>
+            <if test="salaryBillSid != null ">
+                and t.salary_bill_sid =#{salaryBillSid}
+            </if>
+            <if test="staffSid != null ">
+                and t.staff_sid =#{staffSid}
+            </if>
+            <if test="netPayroll != null ">
+                and t.net_payroll = #{netPayroll}
+            </if>
+            <if test="wageBase != null ">
+                and t.wage_base = #{wageBase}
+            </if>
+            <if test="wageDuty != null ">
+                and t.wage_duty = #{wageDuty}
+            </if>
+            <if test="wagePiece != null ">
+                and t.wage_piece = #{wagePiece}
+            </if>
+            <if test="wagePieceSys != null ">
+                and t.wage_piece_sys = #{wagePieceSys}
+            </if>
+            <if test="wageFanxiu != null ">
+                and t.wage_fanxiu = #{wageFanxiu}
+            </if>
+            <if test="wageFanxiuSys != null ">
+                and t.wage_fanxiu_sys = #{wageFanxiuSys}
+            </if>
+            <if test="wageRcjb != null ">
+                and t.wage_rcjb = #{wageRcjb}
+            </if>
+            <if test="wageJrjb != null ">
+                and t.wage_jrjb = #{wageJrjb}
+            </if>
+            <if test="bonusChouc != null ">
+                and t.bonus_chouc = #{bonusChouc}
+            </if>
+            <if test="bonusYearend != null ">
+                and t.bonus_yearend = #{bonusYearend}
+            </if>
+            <if test="bonusOther != null ">
+                and t.bonus_other = #{bonusOther}
+            </if>
+            <if test="allowanceGangw != null ">
+                and t.allowance_gangw = #{allowanceGangw}
+            </if>
+            <if test="allowanceJiaot != null ">
+                and t.allowance_jiaot = #{allowanceJiaot}
+            </if>
+            <if test="allowanceHauf != null ">
+                and t.allowance_hauf = #{allowanceHauf}
+            </if>
+            <if test="allowanceChail != null ">
+                and t.allowance_chail = #{allowanceChail}
+            </if>
+            <if test="allowanceZhuf != null ">
+                and t.allowance_zhuf = #{allowanceZhuf}
+            </if>
+            <if test="allowanceBang != null ">
+                and t.allowance_bang = #{allowanceBang}
+            </if>
+            <if test="allowanceGaow != null ">
+                and t.allowance_gaow = #{allowanceGaow}
+            </if>
+            <if test="allowanceCanf != null ">
+                and t.allowance_canf = #{allowanceCanf}
+            </if>
+            <if test="allowanceOther != null ">
+                and t.allowance_other = #{allowanceOther}
+            </if>
+            <if test="deductChid != null ">
+                and t.deduct_chid = #{deductChid}
+            </if>
+            <if test="deductKuangg != null ">
+                and t.deduct_kuangg = #{deductKuangg}
+            </if>
+            <if test="deductDuty != null ">
+                and t.deduct_duty = #{deductDuty}
+            </if>
+            <if test="deductCanf != null ">
+                and t.deduct_canf = #{deductCanf}
+            </if>
+            <if test="deductShuid != null ">
+                and t.deduct_shuid = #{deductShuid}
+            </if>
+            <if test="deductOther != null ">
+                and t.deduct_other = #{deductOther}
+            </if>
+            <if test="feesYisb != null ">
+                and t.fees_yisb = #{feesYisb}
+            </if>
+            <if test="feesGongjj != null ">
+                and t.fees_gongjj = #{feesGongjj}
+            </if>
+            <if test="feesIncometax != null ">
+                and t.fees_incometax = #{feesIncometax}
+            </if>
+            <if test="feesOther != null ">
+                and t.fees_other = #{feesOther}
+            </if>
+            <if test="salaryCostAllocateType != null and salaryCostAllocateType != ''">
+                and t.salary_cost_allocate_type = #{salaryCostAllocateType}
+            </if>
+            <if test="salaryCostAllocateTypeList != null  and salaryCostAllocateTypeList.length >0 ">
+                and t.salary_cost_allocate_type in
+                (<foreach collection="salaryCostAllocateTypeList" item="salaryCostAllocateType" separator=",">#{salaryCostAllocateType}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t3.company_sid =#{companySid}
+            </if>
+            <if test="yearmonth != null  and yearmonth != ''">
+                and t3.yearmonth = #{yearmonth}
+            </if>
+            <if test="plantSid != null">
+                AND t3.plant_sid = #{plantSid}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t1.staff_code asc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pay_salary_bill_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            bill_item_sid,
+            salary_bill_sid,
+            staff_sid,
+            staff_code,
+            yingf_payroll,
+            net_payroll,
+            wage_base,
+            wage_duty,
+            wage_piece,
+            wage_piece_sys,
+            wage_fanxiu,
+            wage_fanxiu_sys,
+            wage_qit,
+            time_rcjb,
+            wage_rcjb,
+            wage_jrjb,
+            wage_tongxjb,
+            wage_qitjb,
+            bonus_yuejx,
+            bonus_niandjx,
+            bonus_yuemq,
+            bonus_jidmq,
+            bonus_niandmq,
+            bonus_jitby,
+            bonus_fuc,
+            bonus_chouc,
+            bonus_jij,
+            bonus_rencjs,
+            bonus_yearend,
+            bonus_other,
+            allowance_gangw,
+            allowance_weng,
+            allowance_tesgz,
+            allowance_canj,
+            allowance_baod,
+            allowance_qitjj,
+            allowance_jiaot,
+            allowance_hauf,
+            allowance_chail,
+            allowance_zhuf,
+            allowance_bang,
+            allowance_gaow,
+            allowance_canf,
+            allowance_other,
+            deduct_chid,
+            deduct_canj,
+            deduct_duans,
+            deduct_pinz,
+            deduct_fivecheck,
+            deduct_kuangg,
+            deduct_duty,
+            deduct_canf,
+            deduct_shuid,
+            deduct_other,
+            fees_yib,
+            fees_sheb,
+            fees_yisb,
+            fees_gongjj,
+            fees_incometax,
+            fees_other,
+            salary_cost_allocate_type,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+            wage_jishi,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.billItemSid},
+                #{item.salaryBillSid},
+                #{item.staffSid},
+                #{item.staffCode},
+                #{item.yingfPayroll},
+                #{item.netPayroll},
+                #{item.wageBase},
+                #{item.wageDuty},
+                #{item.wagePiece},
+                #{item.wagePieceSys},
+                #{item.wageFanxiu},
+                #{item.wageFanxiuSys},
+                #{item.wageQit},
+                #{item.timeRcjb},
+                #{item.wageRcjb},
+                #{item.wageJrjb},
+                #{item.wageTongxjb},
+                #{item.wageQitjb},
+                #{item.bonusYuejx},
+                #{item.bonusNiandjx},
+                #{item.bonusYuemq},
+                #{item.bonusJidmq},
+                #{item.bonusNiandmq},
+                #{item.bonusJitby},
+                #{item.bonusFuc},
+                #{item.bonusChouc},
+                #{item.bonusJij},
+                #{item.bonusRencjs},
+                #{item.bonusYearend},
+                #{item.bonusOther},
+                #{item.allowanceGangw},
+                #{item.allowanceWeng},
+                #{item.allowanceTesgz},
+                #{item.allowanceCanj},
+                #{item.allowanceBaod},
+                #{item.allowanceQitjj},
+                #{item.allowanceJiaot},
+                #{item.allowanceHauf},
+                #{item.allowanceChail},
+                #{item.allowanceZhuf},
+                #{item.allowanceBang},
+                #{item.allowanceGaow},
+                #{item.allowanceCanf},
+                #{item.allowanceOther},
+                #{item.deductChid},
+                #{item.deductCanj},
+                #{item.deductDuans},
+                #{item.deductPinz},
+                #{item.deductFivecheck},
+                #{item.deductKuangg},
+                #{item.deductDuty},
+                #{item.deductCanf},
+                #{item.deductShuid},
+                #{item.deductOther},
+                #{item.feesYib},
+                #{item.feesSheb},
+                #{item.feesYisb},
+                #{item.feesGongjj},
+                #{item.feesIncometax},
+                #{item.feesOther},
+                #{item.salaryCostAllocateType},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+                #{item.wageJishi},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pay_salary_bill_item
+        <trim prefix="SET" suffixOverrides=",">
+            staff_sid = #{staffSid},
+            staff_code = #{staffCode},
+            yingf_payroll = #{yingfPayroll},
+            net_payroll = #{netPayroll},
+            wage_base = #{wageBase},
+            wage_duty = #{wageDuty},
+            wage_piece = #{wagePiece},
+            wage_piece_sys = #{wagePieceSys},
+            wage_fanxiu = #{wageFanxiu},
+            wage_fanxiu_sys = #{wageFanxiuSys},
+            wage_qit = #{wageQit},
+            time_rcjb = #{timeRcjb},
+            wage_rcjb = #{wageRcjb},
+            wage_jrjb = #{wageJrjb},
+            wage_tongxjb = #{wageTongxjb},
+            wage_qitjb = #{wageQitjb},
+            bonus_yuejx = #{bonusYuejx},
+            bonus_niandjx = #{bonusNiandjx},
+            bonus_yuemq = #{bonusYuemq},
+            bonus_jidmq = #{bonusJidmq},
+            bonus_niandmq = #{bonusNiandmq},
+            bonus_jitby = #{bonusJitby},
+            bonus_fuc = #{bonusFuc},
+            bonus_chouc = #{bonusChouc},
+            bonus_jij = #{bonusJij},
+            bonus_rencjs = #{bonusRencjs},
+            bonus_yearend = #{bonusYearend},
+            bonus_other = #{bonusOther},
+            allowance_gangw = #{allowanceGangw},
+            allowance_weng = #{allowanceWeng},
+            allowance_tesgz = #{allowanceTesgz},
+            allowance_canj = #{allowanceCanj},
+            allowance_baod = #{allowanceBaod},
+            allowance_qitjj = #{allowanceQitjj},
+            allowance_jiaot = #{allowanceJiaot},
+            allowance_hauf = #{allowanceHauf},
+            allowance_chail = #{allowanceChail},
+            allowance_zhuf = #{allowanceZhuf},
+            allowance_bang = #{allowanceBang},
+            allowance_gaow = #{allowanceGaow},
+            allowance_canf = #{allowanceCanf},
+            allowance_other = #{allowanceOther},
+            deduct_chid = #{deductChid},
+            deduct_canj = #{deductCanj},
+            deduct_duans = #{deductDuans},
+            deduct_pinz = #{deductPinz},
+            deduct_fivecheck = #{deductFivecheck},
+            deduct_kuangg = #{deductKuangg},
+            deduct_duty = #{deductDuty},
+            deduct_canf = #{deductCanf},
+            deduct_shuid = #{deductShuid},
+            deduct_other = #{deductOther},
+            fees_yib = #{feesYib},
+            fees_sheb = #{feesSheb},
+            fees_yisb = #{feesYisb},
+            fees_gongjj = #{feesGongjj},
+            fees_incometax = #{feesIncometax},
+            fees_other = #{feesOther},
+            salary_cost_allocate_type = #{salaryCostAllocateType},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+            wage_jishi=#{wageJishi},
+        </trim>
+        where bill_item_sid = #{billItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pay_salary_bill_item
+            <trim prefix="SET" suffixOverrides=",">
+                staff_sid = #{staffSid},
+                staff_code = #{staffCode},
+                yingf_payroll = #{yingfPayroll},
+                net_payroll = #{netPayroll},
+                wage_base = #{wageBase},
+                wage_duty = #{wageDuty},
+                wage_piece = #{wagePiece},
+                wage_piece_sys = #{wagePieceSys},
+                wage_fanxiu = #{wageFanxiu},
+                wage_fanxiu_sys = #{wageFanxiuSys},
+                wage_qit = #{wageQit},
+                time_rcjb = #{timeRcjb},
+                wage_rcjb = #{wageRcjb},
+                wage_jrjb = #{wageJrjb},
+                wage_tongxjb = #{wageTongxjb},
+                wage_qitjb = #{wageQitjb},
+                bonus_yuejx = #{bonusYuejx},
+                bonus_niandjx = #{bonusNiandjx},
+                bonus_yuemq = #{bonusYuemq},
+                bonus_jidmq = #{bonusJidmq},
+                bonus_niandmq = #{bonusNiandmq},
+                bonus_jitby = #{bonusJitby},
+                bonus_fuc = #{bonusFuc},
+                bonus_chouc = #{bonusChouc},
+                bonus_jij = #{bonusJij},
+                bonus_rencjs = #{bonusRencjs},
+                bonus_yearend = #{bonusYearend},
+                bonus_other = #{bonusOther},
+                allowance_gangw = #{allowanceGangw},
+                allowance_weng = #{allowanceWeng},
+                allowance_tesgz = #{allowanceTesgz},
+                allowance_canj = #{allowanceCanj},
+                allowance_baod = #{allowanceBaod},
+                allowance_qitjj = #{allowanceQitjj},
+                allowance_jiaot = #{allowanceJiaot},
+                allowance_hauf = #{allowanceHauf},
+                allowance_chail = #{allowanceChail},
+                allowance_zhuf = #{allowanceZhuf},
+                allowance_bang = #{allowanceBang},
+                allowance_gaow = #{allowanceGaow},
+                allowance_canf = #{allowanceCanf},
+                allowance_other = #{allowanceOther},
+                deduct_chid = #{deductChid},
+                deduct_canj = #{deductCanj},
+                deduct_duans = #{deductDuans},
+                deduct_pinz = #{deductPinz},
+                deduct_fivecheck = #{deductFivecheck},
+                deduct_kuangg = #{deductKuangg},
+                deduct_duty = #{deductDuty},
+                deduct_canf = #{deductCanf},
+                deduct_shuid = #{deductShuid},
+                deduct_other = #{deductOther},
+                fees_yib = #{feesYib},
+                fees_sheb = #{feesSheb},
+                fees_yisb = #{feesYisb},
+                fees_gongjj = #{feesGongjj},
+                fees_incometax = #{feesIncometax},
+                fees_other = #{feesOther},
+                salary_cost_allocate_type = #{salaryCostAllocateType},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where bill_item_sid = #{billItemSid}
+        </foreach>
+    </update>
+
+   <select id="getProcessStepCompleteWage" parameterType="com.platform.ems.domain.PaySalaryBillItem" resultType="com.platform.ems.domain.PaySalaryBillItem">
+       SELECT t.staff_sid,t.wage_piece_sys,t.wage_piece_sys as wage_piece,t.wage_fanxiu_sys,t.wage_fanxiu_sys as wage_fanxiu FROM (
+           SELECT
+               t1.worker_sid AS staff_sid,
+               SUM(if(t2.jixin_wangong_type = 'JXCG',(t1.complete_quantity * t1.price * t1.price_rate * t1.wangong_price_rate),0)) as wage_piece_sys,
+               SUM(if(t2.jixin_wangong_type = 'JXFG',(t1.complete_quantity * t1.price * t1.price_rate * t1.wangong_price_rate),0)) as wage_fanxiu_sys
+           FROM s_pay_process_step_complete_item t1
+           LEFT JOIN s_pay_process_step_complete t2 ON t1.step_complete_sid = t2.step_complete_sid AND t2.handle_status = '5'
+           <where>
+                   AND t2.jixin_wangong_type IN ('JXCG','JXFG')
+               <if test="staffSidList != null and staffSidList.length > 0">
+                   AND t1.worker_sid IN
+                   (<foreach collection="staffSidList" item="staffSid" separator=",">#{staffSid}</foreach>)
+               </if>
+               <if test="yearmonth != null and yearmonth != ''">
+                   AND t2.yearmonth = #{yearmonth}
+               </if>
+           </where>
+           GROUP BY t2.yearmonth,t1.worker_sid
+        ) t
+   </select>
+
+</mapper>

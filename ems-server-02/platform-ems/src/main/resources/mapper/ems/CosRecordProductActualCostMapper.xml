@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.CosRecordProductActualCostMapper">
+
+    <resultMap type="com.platform.ems.domain.CosRecordProductActualCost" id="CosRecordProductActualCostResult">
+        <result property="clientId" column="client_id"/>
+        <result property="recordCostSid" column="record_cost_sid"/>
+        <result property="recordCostCode" column="record_cost_code"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku1Code" column="sku1_code"/>
+        <result property="sku1Name" column="sku1_name"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="sku2Code" column="sku2_code"/>
+        <result property="sku2Name" column="sku2_name"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="materialPrice" column="material_price"/>
+        <result property="price" column="price"/>
+        <result property="specialCraftPrice" column="special_craft_price"/>
+        <result property="otherPrice" column="other_price"/>
+        <result property="salePrice" column="sale_price"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="productCostDate" column="product_cost_date"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectCosRecordProductActualCostVo">
+        SELECT t.client_id,
+               t.record_cost_sid,
+               t.record_cost_code,
+               t.material_sid,
+               t.material_code,
+               t.sku1_sid,
+               t.sku1_code,
+               t.sku1_name,
+               t.sku2_sid,
+               t.sku2_code,
+               t.sku2_name,
+               t.plant_sid,
+               t.plant_code,
+               t.material_price,
+               t.price,
+               t.special_craft_price,
+               t.other_price,
+               t.sale_price,
+               t.currency,
+               t.currency_unit,
+               t.product_cost_date,
+               (ifnull(t.material_price, 0) + ifnull(t.price, 0) +
+                    ifnull(t.special_craft_price, 0) + ifnull(t.other_price, 0)) as total_cost,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t5.material_name,
+               t5.unit_base,
+               t6.sku_type as sku1_type,
+               t7.sku_type as sku2_type,
+               t8.plant_name,
+               ifnull(t8.short_name, t8.plant_name) as plant_short_name,
+               t9.name AS unit_base_name
+        FROM s_cos_record_product_actual_cost t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+        LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t3.client_id
+        LEFT JOIN s_bas_material t5 ON t.material_sid = t5.material_sid
+        LEFT JOIN s_bas_sku t6 ON t.sku1_sid = t6.sku_sid
+        LEFT JOIN s_bas_sku t7 ON t.sku2_sid = t7.sku_sid
+        LEFT JOIN s_bas_plant t8 ON t.plant_sid = t8.plant_sid
+        LEFT JOIN s_con_measure_unit t9 ON t5.unit_base = t9.code
+    </sql>
+
+    <select id="selectCosRecordProductActualCostById" parameterType="Long" resultMap="CosRecordProductActualCostResult">
+        <include refid="selectCosRecordProductActualCostVo"/>
+        WHERE t.record_cost_sid = #{recordCostSid}
+    </select>
+
+    <select id="selectCosRecordProductActualCostList" parameterType="com.platform.ems.domain.CosRecordProductActualCost"
+            resultMap="CosRecordProductActualCostResult">
+        <include refid="selectCosRecordProductActualCostVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and t.material_code like concat('%', #{materialCode}, '%')
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid = #{sku1Sid}
+            </if>
+            <if test="sku1Code != null and sku1Code != ''">
+                and t.sku1_code = #{sku1Code}
+            </if>
+            <if test="sku1Name != null and sku1Name != ''">
+                and t.sku1_name like concat('%', #{sku1Name}, '%')
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid = #{sku2Sid}
+            </if>
+            <if test="sku2Code != null and sku2Code != ''">
+                and t.sku2_code = #{sku2Code}
+            </if>
+            <if test="sku2Name != null and sku2Name != ''">
+                and t.sku2_name like concat('%', #{sku2Name}, '%')
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid = #{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="plantCode != null and plantCode != ''">
+                and t.plant_code = #{plantCode}
+            </if>
+            <if test="materialPrice != null ">
+                and t.material_price = #{materialPrice}
+            </if>
+            <if test="price != null ">
+                and t.price = #{price}
+            </if>
+            <if test="specialCraftPrice != null ">
+                and t.special_craft_price = #{specialCraftPrice}
+            </if>
+            <if test="otherPrice != null ">
+                and t.other_price = #{otherPrice}
+            </if>
+            <if test="salePrice != null ">
+                and t.sale_price = #{salePrice}
+            </if>
+            <if test="currency != null and currency != ''">
+                and t.currency = #{currency}
+            </if>
+            <if test="currencyUnit != null and currencyUnit != ''">
+                and t.currency_unit = #{currencyUnit}
+            </if>
+            <if test="productCostDate != null ">
+                and t.product_cost_date = #{productCostDate}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        ORDER BY t.record_cost_code DESC
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_cos_record_product_actual_cost
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            record_cost_sid,
+            record_cost_code,
+            material_sid,
+            material_code,
+            sku1_sid,
+            sku1_code,
+            sku1_name,
+            sku2_sid,
+            sku2_code,
+            sku2_name,
+            plant_sid,
+            plant_code,
+            material_price,
+            price,
+            special_craft_price,
+            other_price,
+            sale_price,
+            currency,
+            currency_unit,
+            product_cost_date,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.recordCostSid},
+                #{item.recordCostCode},
+                #{item.materialSid},
+                #{item.materialCode},
+                #{item.sku1Sid},
+                #{item.sku1Code},
+                #{item.sku1Name},
+                #{item.sku2Sid},
+                #{item.sku2Code},
+                #{item.sku2Name},
+                #{item.plantSid},
+                #{item.plantCode},
+                #{item.materialPrice},
+                #{item.price},
+                #{item.specialCraftPrice},
+                #{item.otherPrice},
+                #{item.salePrice},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.productCostDate},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_cos_record_product_actual_cost
+        <trim prefix="SET" suffixOverrides=",">
+            material_sid = #{materialSid},
+            material_code = #{materialCode},
+            sku1_sid = #{sku1Sid},
+            sku1_code = #{sku1Code},
+            sku1_name = #{sku1Name},
+            sku2_sid = #{sku2Sid},
+            sku2_code = #{sku2Code},
+            sku2_name = #{sku2Name},
+            plant_sid = #{plantSid},
+            plant_code = #{plantCode},
+            material_price = #{materialPrice},
+            price = #{price},
+            special_craft_price = #{specialCraftPrice},
+            other_price = #{otherPrice},
+            sale_price = #{salePrice},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            product_cost_date = #{productCostDate},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where record_cost_sid = #{recordCostSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_cos_record_product_actual_cost
+            <trim prefix="SET" suffixOverrides=",">
+                material_sid = #{o.materialSid},
+                material_code = #{o.materialCode},
+                sku1_sid = #{o.sku1Sid},
+                sku1_code = #{o.sku1Code},
+                sku1_name = #{o.sku1Name},
+                sku2_sid = #{o.sku2Sid},
+                sku2_code = #{o.sku2Code},
+                sku2_name = #{o.sku2Name},
+                plant_sid = #{o.plantSid},
+                plant_code = #{o.plantCode},
+                material_price = #{o.materialPrice},
+                price = #{o.price},
+                special_craft_price = #{o.specialCraftPrice},
+                other_price = #{o.otherPrice},
+                sale_price = #{o.salePrice},
+                currency = #{o.currency},
+                currency_unit = #{o.currencyUnit},
+                product_cost_date = #{o.productCostDate},
+                remark = #{o.remark},
+                handle_status = #{o.handleStatus},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+            </trim>
+            where record_cost_sid = #{o.recordCostSid}
+        </foreach>
+    </update>
+
+</mapper>

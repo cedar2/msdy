@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurPurchaseOrderPartnerMapper">
+
+    <resultMap type="com.platform.ems.domain.PurPurchaseOrderPartner" id="PurPurchaseOrderPartnerResult">
+        <result property="clientId" column="client_id"/>
+        <result property="purchaseOrderPartnerSid" column="purchase_order_partner_sid"/>
+        <result property="purchaseOrderSid" column="purchase_order_sid"/>
+        <result property="partnerType" column="partner_type"/>
+        <result property="partnerName" column="partner_name"/>
+        <result property="partnerSid" column="partner_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+    <sql id="selectPurPurchaseOrderPartnerVo">
+        select t.client_id, t.purchase_order_partner_sid, t.purchase_order_sid, t.partner_type, t.partner_name, t.partner_sid, t.remark, t.creator_account, t.create_date, t.updater_account, t.update_date from s_pur_purchase_order_partner t
+    </sql>
+
+    <select id="selectPurPurchaseOrderPartnerById" parameterType="Long" resultMap="PurPurchaseOrderPartnerResult">
+        <include refid="selectPurPurchaseOrderPartnerVo"/>
+        where t.purchase_order_partner_sid = #{purchaseOrderPartnerSid}
+    </select>
+
+
+    <select id="selectPurPurchaseOrderPartnerList" parameterType="com.platform.ems.domain.PurPurchaseOrderPartner"
+            resultMap="PurPurchaseOrderPartnerResult">
+        <include refid="selectPurPurchaseOrderPartnerVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseOrderSid != null ">
+                and t.purchase_order_sid = #{purchaseOrderSid}
+            </if>
+            <if test="partnerType != null  and partnerType != ''">
+                and (<foreach collection="partnerType.split(';')" item="item" separator="or">t.partner_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="partnerName != null  and partnerName != ''">and
+                t.partner_name like concat('%', #{partnerName}, '%')
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_purchase_order_partner
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            purchase_order_partner_sid,
+            purchase_order_sid,
+            partner_type,
+            partner_name,
+            partner_sid,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{clientId},
+                #{purchaseOrderPartnerSid},
+                #{purchaseOrderSid},
+                #{partnerType},
+                #{partnerName},
+                #{partnerSid},
+                #{remark},
+                #{creatorAccount},
+                #{createDate},
+                #{updaterAccount},
+                #{updateDate},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_purchase_order_partner
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            purchase_order_sid = #{purchaseOrderSid},
+            partner_type = #{partnerType},
+            partner_name = #{partnerName},
+            partner_sid = #{partnerSid},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where purchase_order_partner_sid = #{purchaseOrderPartnerSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_purchase_order_partner
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                purchase_order_sid = #{purchaseOrderSid},
+                partner_type = #{partnerType},
+                partner_name = #{partnerName},
+                partner_sid = #{partnerSid},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+            </trim>
+            where purchase_order_partner_sid = #{purchaseOrderPartnerSid}
+        </foreach>
+    </update>
+
+    <delete id="deletePurPurchaseOrderPartnerByIds" parameterType="Long">
+        delete from s_pur_purchase_order_partner where purchase_order_sid in
+        <foreach item="purchaseOrderSid" collection="array" open="(" separator="," close=")">
+            #{purchaseOrderSid}
+        </foreach>
+    </delete>
+
+</mapper>

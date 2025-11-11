@@ -1,0 +1,225 @@
+# 项目相关配置
+platform:
+  # 名称
+  name: Platform
+  # 版本
+  version: 3.8.7
+  # 版权年份
+  copyrightYear: 2024
+  # 文件路径 示例（ Windows配置D:/platform/uploadPath，Linux配置 /home/platform/uploadPath）
+  profile: D:/platform/uploadPath
+  # 获取ip地址开关
+  addressEnabled: false
+  # 验证码类型 math 数字计算 char 字符验证
+  captchaType: char
+
+# 开发环境配置
+server:
+  servlet:
+    # 应用的访问路径
+    context-path: /
+  tomcat:
+    # tomcat的URI编码
+    uri-encoding: UTF-8
+    # 连接数满后的排队数，默认为100
+    accept-count: 1000
+    threads:
+      # tomcat最大线程数，默认为200
+      max: 800
+      # Tomcat启动初始化的线程数，默认值10
+      min-spare: 100
+
+# Spring配置
+spring:
+  jackson:
+    time-zone: GMT+8
+  server:
+    connection-timeout: 20000ms
+  profiles:
+    active: druid
+  # 资源信息
+  messages:
+    # 国际化资源文件路径
+    basename: i18n/messages
+  # 文件上传
+  servlet:
+    multipart:
+      # 单个文件大小
+      max-file-size: 10MB
+      # 设置总上传的文件大小
+      max-request-size: 20MB
+  # 服务模块
+  devtools:
+    restart:
+      # 热部署开关
+      enabled: false
+
+# 日志配置
+logging:
+  level:
+    com.platform: debug
+    org.springframework: warn
+    org.flowable: debug
+
+# 用户配置
+user:
+  password:
+    # 密码最大错误次数
+    maxRetryCount: 5
+    # 密码锁定时间（默认10分钟）
+    lockTime: 10
+
+# token配置
+token:
+  # 令牌自定义标识
+  header: Authorization
+  # 令牌密钥
+  secret: abcdefghijklmnopqrstuvwxyz
+  # 令牌有效期（默认30分钟）
+  expireTime: 720
+
+# jwt配置
+jwt:
+  # JWT存储的请求头
+  tokenHeader: Authorization
+  # JWT加解密使用的密钥
+  secret: platform-secret
+  # JWT的超期限时间(60*60*24*7)
+  expiration: 604800
+  # JWT负载中拿到开头
+  tokenHead: 'Bearer '
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  type-aliases-package: com.platform.**.domain
+  configuration:
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    map-underscore-to-camel-case: true
+
+# PageHelper分页插件
+pagehelper:
+  helperDialect: mysql
+  supportMethodsArguments: false
+  params: count=countSql
+
+# Swagger配置
+swagger:
+  # 是否开启swagger
+  enabled: true
+  # 请求前缀
+  pathMapping: /dev-api
+
+# 防止XSS攻击
+xss:
+  # 过滤开关
+  enabled: true
+  # 排除链接（多个用逗号分隔）
+  excludes: /system/notice
+  # 匹配链接
+  urlPatterns: /system/*,/monitor/*,/code,/ems/*,/file/*
+
+interceptor:
+  user:
+    patterns:
+      - /flowable/definition/list
+      - /flowable/definition/import
+      - /flowable/definition/delete
+      - /flowable/definition/save
+
+FlowTaskServiceImpl:
+  msg:
+    is-not-assignee: 当前用户不是审批人，不可审批
+
+dictCache: true
+
+# 不校验白名单
+ignore:
+  whites:
+    - /*/v2/api-docs
+    - /app
+    - /charge
+    - /house
+    - /demo
+    - /csrf
+    - /code
+    - /file/upload
+    - /auth/logout
+    - /auth/login
+    - /auth/sendCode
+    - /auth/verifyemailCode
+    - /auth/resetPwd
+    - /auth/dingTalkLogin
+    - /auth/h5Login
+    - /auth/qiyeLogin
+    - /auth/wechatGzh
+    - /auth/feishuLogin
+    - /system/dict/data/type/getList
+    - /system/login/dingding/**
+    - /system/login/qywx/**
+    - /ems/client/sendCode
+    - /ems/client/verifyemailCode
+    - /ems/client/api/resetPwd
+    - /ems/measure/unit/getConMeasureUnitList
+    - /ems/con/fileType/getList
+    - /ems/vendor/register/**
+    - /ems/vendor/recommend/**
+    - /ems/workflow/submitByOut
+    - /ems/eSignPartner/init
+    - /ems/eSignPartner/callback
+    - /ems/wms/v1/storage
+    - /ems/jixianyun/v1/**
+    - /ems/external/api/yunzhisuan/**
+
+# 不校验白名单
+table:
+  whites:
+    - sys_menu
+    - sys_dict_type
+    - sys_dict_data
+    - sys_dict_data_alias
+    - s_con_dataobject_category
+    - s_con_file_type
+    - s_con_measure_unit
+    - s_con_purchase_type
+    - s_con_purchase_group
+    - s_con_purchase_org
+    - s_con_invoice_type
+    - s_con_distribute_channel_category
+    - s_con_labor_type
+    - s_con_deduction_type_vendor
+    - s_con_deduction_type_customer
+    - s_con_product_technique_type
+    - s_con_tax_rate
+    - s_con_adjust_type_vendor
+    - s_con_adjust_type_customer
+    - s_con_advance_settle_mode
+    - s_con_remain_settle_mode
+    - s_con_material_type
+    - s_con_order_batch
+    - s_con_sale_channel
+    - s_con_sale_org
+    - s_con_doc_type_outsource_po
+    - s_con_doc_type_outsource_dn
+    - s_con_doc_type_purchase_order
+    - s_con_doc_type_sales_order
+    - s_con_bu_type_outsource_po
+    - s_con_bu_type_outsource_dn
+    - s_con_bu_type_pay_bill
+    - s_con_bu_type_receivable_bill
+    - s_con_discount_type
+    - s_con_payment_method
+    - s_sys_form_process
+    - s_sys_default_setting_system
+    - s_con_special_stock
+    - s_con_movement_type
+    - s_con_inventory_document_category
+    - s_con_intransit_type
+    - s_con_in_out_stock_doc_category
+    - s_con_doc_type_inventory_document
+    - s_con_inout_document_movement_type_relation
+    - s_con_doc_type_material_requisition
+    - s_con_doc_category
+    - s_con_bu_type_inout
+    - s_con_doc_type_delivery_note
+    - s_con_delivery_category
+    - s_con_bu_stock_business_flag

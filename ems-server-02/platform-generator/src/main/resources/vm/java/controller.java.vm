@@ -1,0 +1,179 @@
+package ${packageName}.controller;
+
+import java.util.List;
+import java.util.Map;
+import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+
+import com.platform.common.annotation.Idempotent;
+import com.platform.common.utils.poi.ExcelUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.platform.common.exception.CheckedException;
+import com.platform.common.annotation.Log;
+import com.platform.common.log.enums.BusinessType;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
+import javax.validation.Valid;
+
+import org.apache.commons.collections4.CollectionUtils;
+import ${packageName}.domain.${ClassName};
+import ${packageName}.service.I${ClassName}Service;
+import com.platform.common.core.controller.BaseController;
+import com.platform.common.core.domain.AjaxResult;
+import com.platform.ems.service.ISystemDictDataService;
+#if($table.crud)
+import com.platform.common.core.page.TableDataInfo;
+#elseif($table.tree)
+#end
+
+/**
+ * ${functionName}Controller
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+    #set($businessName=$businessName.replace("_","/"))
+    #set($permissionPrefix=$permissionPrefix.replace("_",":"))
+        @Api(tags = "${functionName}" )
+        @RestController
+        @RequestMapping("/${businessName}" )
+        public class ${ClassName}Controller extends BaseController {
+
+    @Autowired
+    private I${ClassName}Service ${className}Service;
+    @Autowired
+    private ISystemDictDataService sysDictDataService;
+
+    /**
+     * 查询${functionName}列表
+     */
+    // @PreAuthorize(hasPermi = "${permissionPrefix}:list" )
+    @ApiOperation(value = "查询${functionName}列表" , notes = "查询${functionName}列表" )
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功" , response = ${ClassName}.class))
+    @PostMapping("/list" )
+    #if($table.crud)
+    public TableDataInfo list(@RequestBody ${ClassName} ${className}) {
+        startPage(${className});
+        List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
+        return getDataTable(list);
+    }
+    #elseif($table.tree)
+        public AjaxResult list(@RequestBody ${ClassName} ${className}) {
+            List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
+            return AjaxResult.success(list);
+        }
+    #end
+
+    /**
+     * 导出${functionName}列表
+     */
+    // @PreAuthorize(hasPermi = "${permissionPrefix}:export" )
+    @ApiOperation(value = "导出${functionName}列表" , notes = "导出${functionName}列表" )
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功" , response = void.class))
+    @PostMapping("/export" )
+    public void export(HttpServletResponse response, ${ClassName} ${className}) throws IOException {
+        List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
+        Map<String, Object> dataMap = sysDictDataService.getDictDataList();
+        ExcelUtil<${ClassName}> util = new ExcelUtil<>(${ClassName}.class, dataMap);
+        util.exportExcel(response, list, "${functionName}");
+    }
+
+    /**
+     * 获取${functionName}详细信息
+     */
+    // @PreAuthorize(hasPermi = "${permissionPrefix}:query" )
+    @ApiOperation(value = "获取${functionName}详细信息" , notes = "获取${functionName}详细信息" )
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功" , response = ${ClassName}.class))
+    @PostMapping("/getInfo" )
+    public AjaxResult getInfo(${pkColumn.javaType} ${pkColumn.javaField}) {
+        #if(${pkColumn.javaType}=='String')
+            if (StrUtil.isEmpty(${pkColumn.javaField})) {
+                throw new CheckedException("参数缺失" );
+            }
+        #else
+            if (${pkColumn.javaField}==null){
+            throw new CheckedException("参数缺失" );
+        }
+        #end
+        return AjaxResult.success(${className}Service.select${ClassName}ById(${pkColumn.javaField}));
+    }
+
+    /**
+     * 新增${functionName}
+     */
+    // @PreAuthorize(hasPermi = "${permissionPrefix}:add")
+    // @Log(title = "${functionName}", businessType = BusinessType.INSERT)
+    @Idempotent(message = "系统处理中，请勿重复点击按钮")
+    @ApiOperation(value = "新增${functionName}", notes = "新增${functionName}")
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功", response = AjaxResult.class))
+    @PostMapping("/add")
+    public AjaxResult add(@RequestBody @Valid ${ClassName} ${className}) {
+        return toAjax(${className}Service.insert${ClassName}(${className}));
+    }
+
+    // @PreAuthorize(hasPermi = "${permissionPrefix}:edit")
+    // @Log(title = "${functionName}", businessType = BusinessType.UPDATE)
+    @Idempotent(message = "系统处理中，请勿重复点击按钮")
+    @ApiOperation(value = "修改${functionName}", notes = "修改${functionName}")
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功", response = AjaxResult.class))
+    @PostMapping("/edit")
+    public AjaxResult edit(@RequestBody ${ClassName} ${className}) {
+        return toAjax(${className}Service.update${ClassName}(${className}));
+    }
+
+    /**
+     * 变更${functionName}
+     */
+    // @PreAuthorize(hasPermi = "${permissionPrefix}:change" )
+    // @Log(title = "${functionName}" , businessType = BusinessType.CHANGE)
+    @Idempotent(message = "系统处理中，请勿重复点击按钮")
+    @ApiOperation(value = "变更${functionName}" , notes = "变更${functionName}" )
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功" , response = AjaxResult.class))
+    @PostMapping("/change" )
+    public AjaxResult change(@RequestBody @Valid ${ClassName} ${className}) {
+        return toAjax(${className}Service.change${ClassName}(${className}));
+    }
+
+    /**
+     * 删除${functionName}
+     */
+    // @PreAuthorize(hasPermi = "${permissionPrefix}:remove" )
+    // @Log(title = "${functionName}" , businessType = BusinessType.DELETE)
+    @ApiOperation(value = "删除${functionName}" , notes = "删除${functionName}" )
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功" , response = AjaxResult.class))
+    @PostMapping("/delete" )
+    public AjaxResult remove(@RequestBody List<${pkColumn.javaType}>  ${pkColumn.javaField}s) {
+        if (CollectionUtils.isEmpty(${pkColumn.javaField}s)) {
+            throw new CheckedException("参数缺失" );
+        }
+        return toAjax(${className}Service.delete${ClassName}ByIds(${pkColumn.javaField}s));
+    }
+
+    // @PreAuthorize(hasPermi = "${permissionPrefix}:status" )
+    // @Log(title = "${functionName}" , businessType = BusinessType.UPDATE)
+    @Idempotent(message = "系统处理中，请勿重复点击按钮")
+    @ApiOperation(value = "启用停用接口" , notes = "启用停用接口" )
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功" , response = AjaxResult.class))
+    @PostMapping("/changeStatus" )
+    public AjaxResult changeStatus(@RequestBody ${ClassName} ${className}) {
+        return AjaxResult.success(${className}Service.changeStatus(${className}));
+    }
+
+    // @PreAuthorize(hasPermi = "${permissionPrefix}:check")
+    // @Log(title = "${functionName}", businessType = BusinessType.CHECK)
+    @Idempotent(message = "系统处理中，请勿重复点击按钮")
+    @ApiOperation(value = "修改处理状态接口", notes = "修改处理状态接口")
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功", response = AjaxResult.class))
+    @PostMapping("/check")
+    public AjaxResult check(@RequestBody ${ClassName} ${className}) {
+        return toAjax(${className}Service.check(${className}));
+    }
+
+}

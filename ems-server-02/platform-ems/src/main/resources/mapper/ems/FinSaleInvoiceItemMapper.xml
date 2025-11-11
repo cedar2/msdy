@@ -1,0 +1,769 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinSaleInvoiceItemMapper">
+
+    <resultMap type="com.platform.ems.domain.FinSaleInvoiceItem" id="FinSaleInvoiceItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="saleInvoiceItemSid" column="sale_invoice_item_sid"/>
+        <result property="saleInvoiceSid" column="sale_invoice_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="barcodeSid" column="barcode_sid"/>
+        <result property="materialName" column="material_name"/>
+        <result property="specification" column="specification"/>
+        <result property="quantity" column="quantity"/>
+        <result property="price" column="price"/>
+        <result property="priceTax" column="price_tax"/>
+        <result property="currencyAmount" column="currency_amount"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="taxAmount" column="tax_amount"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="unitBaseName" column="unit_base_name"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="unitPriceName" column="unit_price_name"/>
+        <result property="taxRate" column="tax_rate"/>
+        <result property="saleContractSid" column="sale_contract_sid"/>
+        <result property="saleContractCode" column="sale_contract_code"/>
+        <result property="salesOrderSid" column="sales_order_sid"/>
+        <result property="deliveryNoteSid" column="delivery_note_sid"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="salesOrderCode" column="sales_order_code"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="deliveryNoteCode" column="delivery_note_code"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="accountDocumentSid" column="account_document_sid"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="accountDocumentCode" column="account_document_code"/>
+        <result property="bookReceiptEstimationCode" column="book_receipt_estimation_code"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="bookType" column="book_type"/>
+        <result property="bookTypeName" column="book_type_name"/>
+        <result property="bookSourceCategory" column="book_source_category"/>
+        <result property="bookSourceCategoryName" column="book_source_category_name"/>
+        <result property="accountItemSid" column="account_item_sid"/>
+        <result property="bookReceiptEstimationItemSid" column="book_receipt_estimation_item_sid"/>
+        <result property="accountItemCode" column="account_item_code"/>
+        <result property="saleInvoiceCode" column="sale_invoice_code"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="invoiceType" column="invoice_type"/>
+        <result property="invoiceCategory" column="invoice_category"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="companyName" column="company_name"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="materialType" column="material_type"/>
+        <result property="saleOrg" column="sale_org"/>
+        <result property="invoiceDate" column="invoice_date"/>
+        <result property="generalLedgerDate" column="general_ledger_date"/>
+        <result property="invoiceNum" column="invoice_num"/>
+        <result property="invoiceCode" column="invoice_code"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="sendFlag" column="send_flag"/>
+        <result property="exceptionConfirmFlag" column="exception_confirm_flag"/>
+        <result property="quantityLeft" column="quantity_left"/>
+        <result property="currencyAmountTaxLeft" column="currency_amount_tax_left"/>
+        <result property="accountsMethodGroup" column="accounts_method_group"/>
+        <result property="accountsMethodGroupName" column="accounts_method_group_name"/>
+    </resultMap>
+
+    <sql id="selectFinSaleInvoiceItemVo">
+    SELECT
+	t.client_id,
+	t.sale_invoice_item_sid,
+	t.sale_invoice_sid,
+	t.material_sid,
+	t.sku1_sid,
+	t.sku2_sid,
+	t.barcode_sid,
+	t.specification,
+	t.quantity,
+	t.price,
+	t.price_tax,
+	t.currency_amount,
+	t.currency_amount_tax,
+	t.tax_amount,
+	t.unit_base,
+	t20.name AS unit_base_name,
+    t.unit_price,
+    t24.name AS unit_price_name,
+	t.tax_rate,
+	t.sale_contract_sid,
+	t6.sale_contract_code,
+	t21.sales_order_sid,
+	t.delivery_note_sid,
+	t.item_num,
+	t7.sales_order_code,
+	t.remark,
+	t.creator_account,
+	t8.delivery_note_code,
+	t.create_date,
+	t.updater_account,
+	t.account_document_sid,
+	t.update_date,
+	t.account_document_code,
+	t.account_document_code AS book_receipt_estimation_code,
+	t.data_source_sys,
+	t.book_type,
+	t.book_source_category,
+	t.account_item_sid,
+	t.account_item_code,
+	t1.sale_invoice_code,
+	t1.customer_sid,
+	t9.customer_name,
+	t9.customer_code,
+	t1.invoice_type,
+	t1.invoice_category,
+	t1.handle_status,
+	t2.material_name,
+	t2.material_code,
+	t1.company_sid,
+	t10.company_name,
+	t10.company_code,
+	t1.product_season_sid,
+	t11.product_season_name,
+	t11.product_season_code,
+	t1.material_type,
+	t1.sale_org,
+	t1.invoice_date,
+	t1.general_ledger_date,
+	t1.invoice_num,
+	t1.invoice_code,
+	t1.currency,
+	t1.currency_unit,
+	t1.send_flag,
+	t1.exception_confirm_flag,
+    t3.sku_name AS sku1_name,
+    t3.sku_code as sku1_code,
+    t4.sku_name AS sku2_name,
+    t4.sku_code as sku2_code,
+    t12.name AS invoice_type_name,
+    t13.name AS invoice_category_name,
+    t15.name AS material_type_name,
+    t16.name AS sale_org_name,
+    t17.nick_name AS creator_account_name,
+    t18.name AS book_source_category_name,
+    t19.name AS book_type_name,
+    t21.book_receipt_estimation_item_sid,
+    t21.is_business_verify,
+    t21.business_verify_period,
+    ifnull((t21.quantity - t21.quantity_yhx - t21.quantity_hxz),0) AS quantity_left,
+    ifnull((t21.currency_amount_tax - t21.currency_amount_tax_yhx - t21.currency_amount_tax_hxz),0) AS currency_amount_tax_left,
+    t22.accounts_method_group, t7.raw_material_mode, t7.sale_mode,
+    t23.name AS accounts_method_group_name
+    FROM
+	s_fin_sale_invoice_item t
+	LEFT JOIN s_fin_sale_invoice t1 ON t1.sale_invoice_sid = t.sale_invoice_sid
+	LEFT JOIN s_bas_material t2 ON t2.material_sid = t.material_sid
+	LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t.sku1_sid
+	LEFT JOIN s_bas_sku t4 ON t4.sku_sid = t.sku2_sid
+	LEFT JOIN s_bas_material_barcode t5 ON t5.barcode_sid = t.barcode_sid
+	LEFT JOIN s_sal_sale_contract t6 ON t6.sale_contract_sid = t.sale_contract_sid
+	LEFT JOIN s_del_delivery_note t8 ON t8.delivery_note_sid = t.delivery_note_sid
+	LEFT JOIN s_bas_customer t9 ON t9.customer_sid = t1.customer_sid
+	LEFT JOIN s_bas_company t10 ON t10.company_sid = t1.company_sid
+	LEFT JOIN s_bas_product_season t11 ON t11.product_season_sid = t1.product_season_sid
+    LEFT JOIN s_con_invoice_type t12 on t1.invoice_type = t12.code
+    LEFT JOIN s_con_invoice_category t13 on t1.invoice_category = t13.code
+    LEFT JOIN s_con_material_type t15 on t1.material_type = t15.code
+    LEFT JOIN s_con_sale_org t16 on t1.sale_org = t16.code
+    LEFT JOIN sys_user t17 on t.creator_account = t17.user_name
+    LEFT JOIN s_con_book_source_category t18 on t.book_source_category = t18.code
+    LEFT JOIN s_con_book_type t19 on t.book_type = t19.code
+    LEFT JOIN s_con_measure_unit t20 on t.unit_base = t20.code
+    LEFT JOIN s_fin_book_receipt_estimation_item t21 ON t.account_item_sid = t21.book_receipt_estimation_item_sid
+    LEFT JOIN s_sal_sales_order t7 ON t7.sales_order_sid = t21.sales_order_sid
+    LEFT JOIN s_sal_sale_contract t22 ON t7.sale_contract_sid = t22.sale_contract_sid
+    LEFT JOIN s_con_account_method_group t23 ON t22.accounts_method_group = t23.sid
+    LEFT JOIN s_con_measure_unit t24 on t.unit_price = t24.code
+    </sql>
+
+    <select id="selectFinSaleInvoiceItemById" parameterType="Long" resultMap="FinSaleInvoiceItemResult">
+        <include refid="selectFinSaleInvoiceItemVo"/>
+        where t.sale_invoice_item_sid = #{saleInvoiceItemSid}
+    </select>
+
+
+    <select id="selectFinSaleInvoiceItemList" parameterType="com.platform.ems.domain.FinSaleInvoiceItem"
+            resultMap="FinSaleInvoiceItemResult">
+        <include refid="selectFinSaleInvoiceItemVo"/>
+        <where>
+            <if test="invoiceCode != null and invoiceCode!='' ">
+                and t1.invoice_code =#{invoiceCode}
+            </if>
+            <if test="invoiceNum != null  and invoiceNum != ''">
+                and (<foreach collection="invoiceNum.split(';')" item="item" separator="or">t1.invoice_num like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus!='' ">
+                and t1.handle_status =#{handleStatus}
+            </if>
+            <if test="sendFlag != null and sendFlag!='' ">
+                and t1.send_flag =#{sendFlag}
+            </if>
+            <if test="exceptionConfirmFlag != null and exceptionConfirmFlag!='' ">
+                and t1.exception_confirm_flag =#{exceptionConfirmFlag}
+            </if>
+            <if test="saleOrg != null and saleOrg!='' ">
+                and t1.sale_org =#{saleOrg}
+            </if>
+            <if test="materialType != null and materialType!='' ">
+                and t2.material_type =#{materialType}
+            </if>
+            <if test="productSeasonSid != null ">
+                and t1.product_season_sid =#{productSeasonSid}
+            </if>
+            <if test="companySid != null ">
+                and t1.company_sid =#{companySid}
+            </if>
+            <if test="invoiceCategory != null and invoiceCategory!='' ">
+                and t1.invoice_category =#{invoiceCategory}
+            </if>
+            <if test="invoiceType != null and invoiceType!='' ">
+                and t1.invoice_type =#{invoiceType}
+            </if>
+            <if test="saleInvoiceCode != null  and saleInvoiceCode != ''">
+                and t1.sale_invoice_code like concat('%', #{saleInvoiceCode}, '%')
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="saleInvoiceSid != null ">
+                and t.sale_invoice_sid =#{saleInvoiceSid}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid =#{materialSid}
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid =#{sku1Sid}
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid =#{sku2Sid}
+            </if>
+            <if test="barcodeSid != null ">
+                and t.barcode_sid =#{barcodeSid}
+            </if>
+            <if test="materialName != null  and materialName != ''">and
+                t.material_name like concat('%', #{materialName}, '%')
+            </if>
+            <if test="specification != null  and specification != ''">
+                and (<foreach collection="specification.split(';')" item="item" separator="or">t.specification like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="quantity != null ">
+                and t.quantity = #{quantity}
+            </if>
+            <if test="price != null ">
+                and t.price = #{price}
+            </if>
+            <if test="priceTax != null ">
+                and t.price_tax = #{priceTax}
+            </if>
+            <if test="currencyAmount != null ">
+                and t.currency_amount = #{currencyAmount}
+            </if>
+            <if test="currencyAmountTax != null ">
+                and t.currency_amount_tax = #{currencyAmountTax}
+            </if>
+            <if test="taxAmount != null ">
+                and t.tax_amount = #{taxAmount}
+            </if>
+            <if test="unitBase != null  and unitBase != ''">
+                and (<foreach collection="unitBase.split(';')" item="item" separator="or">t.unit_base like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="unitPrice != null  and unitPrice != ''">
+                and (<foreach collection="unitPrice.split(';')" item="item" separator="or">t.unit_price like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="taxRate != null ">
+                and t.tax_rate = #{taxRate}
+            </if>
+            <if test="saleContractSid != null ">
+                and t.sale_contract_sid =#{saleContractSid}
+            </if>
+            <if test="saleContractCode != null ">
+                and t.sale_contract_code =#{saleContractCode}
+            </if>
+            <if test="salesOrderSid != null ">
+                and t.sales_order_sid =#{salesOrderSid}
+            </if>
+            <if test="deliveryNoteSid != null ">
+                and t.delivery_note_sid =#{deliveryNoteSid}
+            </if>
+            <if test="salesOrderCode != null ">
+                and t.sales_order_code =#{salesOrderCode}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t17.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="deliveryNoteCode != null ">
+                and t.delivery_note_code =#{deliveryNoteCode}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="accountDocumentSid != null ">
+                and t.account_document_sid =#{accountDocumentSid}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="accountDocumentCode != null ">
+                and t.account_document_code =#{accountDocumentCode}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="bookType != null  and bookType != ''">
+                and (<foreach collection="bookType.split(';')" item="item" separator="or">t.book_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="bookSourceCategory != null  and bookSourceCategory != ''">
+                and (<foreach collection="bookSourceCategory.split(';')" item="item" separator="or">
+                t.book_source_category like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="accountItemSid != null ">
+                and t.account_item_sid =#{accountItemSid}
+            </if>
+            <if test="accountItemCode != null ">
+                and t.account_item_code =#{accountItemCode}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_sale_invoice_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sale_invoice_item_sid,
+            sale_invoice_sid,
+            material_sid,
+            sku1_sid,
+            sku2_sid,
+            barcode_sid,
+            material_name,
+            specification,
+            quantity,
+            price,
+            price_tax,
+            currency_amount,
+            currency_amount_tax,
+            tax_amount,
+            unit_price,
+            unit_base,
+            tax_rate,
+            sale_contract_sid,
+            sale_contract_code,
+            sales_order_sid,
+            delivery_note_sid,
+            item_num,
+            sales_order_code,
+            remark,
+            creator_account,
+            delivery_note_code,
+            create_date,
+            updater_account,
+            account_document_sid,
+            update_date,
+            account_document_code,
+            data_source_sys,
+            book_type,
+            book_source_category,
+            account_item_sid,
+            account_item_code,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.saleInvoiceItemSid},
+                #{item.saleInvoiceSid},
+                #{item.materialSid},
+                #{item.sku1Sid},
+                #{item.sku2Sid},
+                #{item.barcodeSid},
+                #{item.materialName},
+                #{item.specification},
+                #{item.quantity},
+                #{item.price},
+                #{item.priceTax},
+                #{item.currencyAmount},
+                #{item.currencyAmountTax},
+                #{item.taxAmount},
+                #{item.unitPrice},
+                #{item.unitBase},
+                #{item.taxRate},
+                #{item.saleContractSid},
+                #{item.saleContractCode},
+                #{item.salesOrderSid},
+                #{item.deliveryNoteSid},
+                #{item.itemNum},
+                #{item.salesOrderCode},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.deliveryNoteCode},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.accountDocumentSid},
+                #{item.updateDate},
+                #{item.accountDocumentCode},
+                #{item.dataSourceSys},
+                #{item.bookType},
+                #{item.bookSourceCategory},
+                #{item.accountItemSid},
+                #{item.accountItemCode},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_sale_invoice_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            sale_invoice_sid = #{saleInvoiceSid},
+            material_sid = #{materialSid},
+            sku1_sid = #{sku1Sid},
+            sku2_sid = #{sku2Sid},
+            barcode_sid = #{barcodeSid},
+            material_name = #{materialName},
+            specification = #{specification},
+            quantity = #{quantity},
+            price = #{price},
+            price_tax = #{priceTax},
+            currency_amount = #{currencyAmount},
+            currency_amount_tax = #{currencyAmountTax},
+            tax_amount = #{taxAmount},
+            unit_price = #{unitPrice},
+            unit_base = #{unitBase},
+            tax_rate = #{taxRate},
+            sale_contract_sid = #{saleContractSid},
+            sale_contract_code = #{saleContractCode},
+            sales_order_sid = #{salesOrderSid},
+            delivery_note_sid = #{deliveryNoteSid},
+            item_num = #{itemNum},
+            sales_order_code = #{salesOrderCode},
+            remark = #{remark},
+            delivery_note_code = #{deliveryNoteCode},
+            updater_account = #{updaterAccount},
+            account_document_sid = #{accountDocumentSid},
+            update_date = #{updateDate},
+            account_document_code = #{accountDocumentCode},
+            data_source_sys = #{dataSourceSys},
+            book_type = #{bookType},
+            book_source_category = #{bookSourceCategory},
+            account_item_sid = #{accountItemSid},
+            account_item_code = #{accountItemCode},
+        </trim>
+        where sale_invoice_item_sid = #{saleInvoiceItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_sale_invoice_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                sale_invoice_sid = #{saleInvoiceSid},
+                material_sid = #{materialSid},
+                sku1_sid = #{sku1Sid},
+                sku2_sid = #{sku2Sid},
+                barcode_sid = #{barcodeSid},
+                material_name = #{materialName},
+                specification = #{specification},
+                quantity = #{quantity},
+                price = #{price},
+                price_tax = #{priceTax},
+                currency_amount = #{currencyAmount},
+                currency_amount_tax = #{currencyAmountTax},
+                tax_amount = #{taxAmount},
+                unit_price = #{unitPrice},
+                unit_base = #{unitBase},
+                tax_rate = #{taxRate},
+                sale_contract_sid = #{saleContractSid},
+                sale_contract_code = #{saleContractCode},
+                sales_order_sid = #{salesOrderSid},
+                delivery_note_sid = #{deliveryNoteSid},
+                item_num = #{itemNum},
+                sales_order_code = #{salesOrderCode},
+                remark = #{remark},
+                delivery_note_code = #{deliveryNoteCode},
+                updater_account = #{updaterAccount},
+                account_document_sid = #{accountDocumentSid},
+                update_date = #{updateDate},
+                account_document_code = #{accountDocumentCode},
+                data_source_sys = #{dataSourceSys},
+                book_type = #{bookType},
+                book_source_category = #{bookSourceCategory},
+                account_item_sid = #{accountItemSid},
+                account_item_code = #{accountItemCode},
+            </trim>
+            where sale_invoice_item_sid = #{saleInvoiceItemSid}
+        </foreach>
+    </update>
+
+    <sql id="getReportFormItem">
+        SELECT
+            t.client_id,
+            t.sale_invoice_item_sid,
+            null AS sale_invoice_discount_sid,
+            t.sale_invoice_sid,
+            t1.sale_invoice_code,
+            t2.material_code,
+            t2.material_name,
+            t.quantity,
+            t.price,
+            t.price_tax,
+            t.currency_amount,
+            t.currency_amount_tax,
+            null AS currency_amount_tax_discount,
+            t.tax_amount,
+            t.tax_rate,
+            t.item_num,
+            t.remark,
+            t.create_date,
+            t.data_source_sys,
+            t9.customer_name,
+            t10.company_name,
+            t11.product_season_name,
+            t1.invoice_date,
+            t1.general_ledger_date,
+            t1.invoice_num,
+            t1.invoice_code,
+            t1.handle_status,
+            t1.currency,
+            t1.currency_unit,
+            t12.name AS invoice_type_name,
+            t13.name AS invoice_category_name,
+            t19.name AS book_type_name,
+            t18.name AS book_source_category_name,
+            t15.name AS material_type_name,
+            t16.name AS sale_org_name,
+            t17.nick_name AS creator_account_name
+        FROM
+            s_fin_sale_invoice_item t
+                LEFT JOIN s_fin_sale_invoice t1 ON t1.sale_invoice_sid = t.sale_invoice_sid
+                LEFT JOIN s_bas_material t2 ON t2.material_sid = t.material_sid
+                LEFT JOIN s_bas_customer t9 ON t9.customer_sid = t1.customer_sid
+                LEFT JOIN s_bas_company t10 ON t10.company_sid = t1.company_sid
+                LEFT JOIN s_bas_product_season t11 ON t11.product_season_sid = t1.product_season_sid
+                LEFT JOIN s_con_invoice_type t12 on t1.invoice_type = t12.code
+                LEFT JOIN s_con_invoice_category t13 on t1.invoice_category = t13.code
+                LEFT JOIN s_con_material_type t15 on t1.material_type = t15.code
+                LEFT JOIN s_con_sale_org t16 on t1.sale_org = t16.code
+                LEFT JOIN sys_user t17 on t.creator_account = t17.user_name
+                LEFT JOIN s_con_book_source_category t18 on t.book_source_category = t18.code
+                LEFT JOIN s_con_book_type t19 on t.book_type = t19.code
+        <where>
+            <if test="invoiceCode != null and invoiceCode!=''">and t1.invoice_code like concat('%', #{invoiceCode}, '%')</if>
+            <if test="invoiceNum != null and invoiceNum!=''">and t1.invoice_num like concat('%', #{invoiceNum}, '%')</if>
+            <if test="handleStatus != null and handleStatus!=''">and t1.handle_status = #{handleStatus}</if>
+            <if test="handleStatusList != null and handleStatusList.length >0">and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="saleOrg != null and saleOrg!=''">and t1.sale_org = #{saleOrg}</if>
+            <if test="saleOrgList != null and saleOrgList.length >0">and t1.sale_org in
+                (<foreach collection="saleOrgList" item="saleOrg" separator=",">#{saleOrg}</foreach>)
+            </if>
+            <if test="productSeasonSid != null and productSeasonSid != ''">and t1.product_season_sid = #{productSeasonSid}</if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">and t1.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">#{productSeasonSid}</foreach>)
+            </if>
+            <if test="invoiceCategory != null and invoiceCategory!=''">and t1.invoice_category = #{invoiceCategory}</if>
+            <if test="invoiceCategoryList != null and invoiceCategoryList.length >0">and t1.invoice_category in
+                (<foreach collection="invoiceCategoryList" item="invoiceCategory" separator=",">#{invoiceCategory}</foreach>)
+            </if>
+            <if test="invoiceType != null and invoiceType!=''">and t1.invoice_type = #{invoiceType}</if>
+            <if test="invoiceTypeList != null and invoiceTypeList.length >0">and t1.invoice_type in
+                (<foreach collection="invoiceTypeList" item="invoiceType" separator=",">#{invoiceType}</foreach>)
+            </if>
+            <if test="saleInvoiceCode != null  and saleInvoiceCode != ''">
+                and t1.sale_invoice_code like concat('%', #{saleInvoiceCode}, '%')
+            </if>
+            <if test="customerSid != null and customerSid != ''">and t1.customer_sid = #{customerSid}</if>
+            <if test="customerSidList != null and customerSidList.length >0">and t1.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="companySid != null and companySid != ''">and t1.company_sid = #{companySid}</if>
+            <if test="companySidList != null and companySidList.length >0">and t1.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="materialType != null and materialType != ''">and t1.material_type = #{materialType}</if>
+            <if test="materialTypeList != null and materialTypeList.length >0">and t1.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=",">#{materialType}</foreach>)
+            </if>
+            <if test="clientId != null  and clientId != ''">and (
+                <foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and (
+                <foreach collection="creatorAccount.split(';')" item="item" separator="or">t17.nick_name like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;=
+                date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;=
+                date_format(#{endTime},'%y%m%d')
+            </if>
+        </where> order by create_date desc
+    </sql>
+
+    <sql id="getReportFormDiscount">
+        select
+        t.client_id,
+        null AS sale_invoice_item_sid,
+        t.sale_invoice_discount_sid,
+        t.sale_invoice_sid,
+        t1.sale_invoice_code,
+        null AS material_code,
+        null AS material_name,
+        null AS quantity,
+        null AS price,
+        null AS price_tax,
+        t.currency_amount,
+        null AS currency_amount_tax,
+        t.currency_amount_tax AS currency_amount_tax_discount,
+        t.tax_amount,
+        t1.tax_rate,
+        t.item_num,
+        t.remark,
+        t.create_date,
+        t.data_source_sys,
+        t4.customer_name,
+        t5.company_name,
+        t6.product_season_name,
+        t1.invoice_date,
+        t1.general_ledger_date,
+        t1.invoice_num,
+        t1.invoice_code,
+        t1.handle_status,
+        t1.currency,
+        t1.currency_unit,
+        t8.name AS invoice_type_name,
+        t9.name AS invoice_category_name,
+        t2.name AS book_type_name,
+        t3.name AS book_source_category_name,
+        t10.name AS material_type_name,
+        t11.name AS sale_org_name,
+        t7.nick_name AS creator_account_name
+        from s_fin_sale_invoice_discount t
+        LEFT JOIN s_fin_sale_invoice t1 on t.sale_invoice_sid = t1.sale_invoice_sid
+        LEFT JOIN s_con_book_type t2 ON t.book_type = t2.code
+        LEFT JOIN s_con_book_source_category t3 ON t.book_source_category = t3.code
+        LEFT JOIN s_bas_customer t4 on t4.customer_sid = t1.customer_sid
+        LEFT JOIN s_bas_company t5 on t5.company_sid = t1.company_sid
+        LEFT JOIN s_bas_product_season t6 on t6.product_season_sid = t1.product_season_sid
+        LEFT JOIN sys_user t7 on t.creator_account = t7.user_name
+        LEFT JOIN s_con_invoice_type t8 on t1.invoice_type = t8.code
+        LEFT JOIN s_con_invoice_category t9 on t1.invoice_category = t9.code
+        LEFT JOIN s_con_material_type t10 on t1.material_type = t10.code
+        LEFT JOIN s_con_sale_org t11 on t1.sale_org = t11.code
+        <where>
+            <if test="handleStatus != null and handleStatus!=''">and t1.handle_status = #{handleStatus}</if>
+            <if test="handleStatusList != null and handleStatusList.length >0">and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="invoiceCategory != null and invoiceCategory !=''">and t1.invoice_category = #{invoiceCategory}</if>
+            <if test="invoiceCategoryList != null and invoiceCategoryList.length >0">and t1.invoice_category in
+                (<foreach collection="invoiceCategoryList" item="invoiceCategory" separator=",">#{invoiceCategory}</foreach>)
+            </if>
+            <if test="invoiceType != null and invoiceType !=''">and t1.invoice_type = #{invoiceType}</if>
+            <if test="invoiceTypeList != null and invoiceTypeList.length >0">and t1.invoice_type in
+                (<foreach collection="invoiceTypeList" item="invoiceType" separator=",">#{invoiceType}</foreach>)
+            </if>
+            <if test="invoiceCode != null and invoiceCode !=''">and t1.invoice_code like concat('%', #{invoiceCode}, '%')</if>
+            <if test="invoiceNum != null and invoiceNum !=''">and t1.invoice_num like concat('%', #{invoiceNum}, '%')</if>
+            <if test="saleOrg != null and saleOrg !=''">and t1.sale_org = #{saleOrg}</if>
+            <if test="saleOrgList != null and saleOrgList.length >0">and t1.sale_org in
+                (<foreach collection="saleOrgList" item="saleOrg" separator=",">#{saleOrg}</foreach>)
+            </if>
+            <if test="materialType != null and materialType != ''">and t1.material_type = #{materialType}</if>
+            <if test="materialTypeList != null and materialTypeList.length >0">and t1.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=",">#{materialType}</foreach>)
+            </if>
+            <if test="customerSid != null and customerSid != ''">and t1.customer_sid = #{customerSid}</if>
+            <if test="customerSidList != null and customerSidList.length >0">and t1.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="companySid != null and companySid != ''">and t1.company_sid = #{companySid}</if>
+            <if test="companySidList != null and companySidList.length >0">and t1.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="productSeasonSid != null and productSeasonSid != ''">and t1.product_season_sid = #{productSeasonSid}</if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">and t1.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">#{productSeasonSid}</foreach>)
+            </if>
+            <if test="saleInvoiceCode != null and saleInvoiceCode != ''">
+                and t1.sale_invoice_code like concat('%', #{saleInvoiceCode}, '%')
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and (
+                <foreach collection="creatorAccount.split(';')" item="item" separator="or">t7.nick_name like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;=
+                date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;=
+                date_format(#{endTime},'%y%m%d')
+            </if>
+        </where> order by create_date desc
+    </sql>
+
+    <sql id="reportForm" >
+        (<include refid="getReportFormItem"/>) union all (<include refid="getReportFormDiscount"/>)
+    </sql>
+
+    <select id="getReportForm" parameterType="com.platform.ems.domain.FinSaleInvoiceItem"
+            resultType="com.platform.ems.domain.FinSaleInvoiceItem">
+        <include refid="reportForm"/>
+    </select>
+
+</mapper>

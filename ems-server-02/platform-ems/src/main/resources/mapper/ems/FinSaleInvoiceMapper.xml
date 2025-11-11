@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.FinSaleInvoiceMapper">
+    <resultMap type="com.platform.ems.domain.FinSaleInvoice" id="FinSaleInvoiceResult">
+        <result property="clientId" column="client_id"/>
+        <result property="saleInvoiceSid" column="sale_invoice_sid"/>
+        <result property="saleInvoiceCode" column="sale_invoice_code"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="invoiceCategory" column="invoice_category"/>
+        <result property="invoiceCategoryName" column="invoice_category_name"/>
+        <result property="invoiceType" column="invoice_type"/>
+        <result property="invoiceTypeName" column="invoice_type_name"/>
+        <result property="invoiceDimension" column="invoice_dimension"/>
+        <result property="invoiceDimensionName" column="invoice_dimension_name"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyName" column="company_Name"/>
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="saleOrg" column="sale_org"/>
+        <result property="saleOrgName" column="sale_org_name"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="businessChannel" column="business_channel"/>
+        <result property="invoiceNum" column="invoice_num"/>
+        <result property="materialType" column="material_type"/>
+        <result property="materialTypeName" column="material_type_name"/>
+        <result property="invoiceCode" column="invoice_code"/>
+        <result property="isFinanceVerify" column="is_finance_verify"/>
+        <result property="sendFlag" column="send_flag"/>
+        <result property="exceptionConfirmFlag" column="exception_confirm_flag"/>
+        <result property="generalLedgerDate" column="general_ledger_date"/>
+        <result property="invoiceDate" column="invoice_date"/>
+        <result property="monthAccountPeriod" column="month_account_period"/>
+        <result property="referenceInvoice" column="reference_invoice"/>
+        <result property="totalTaxAmount" column="total_tax_amount"/>
+        <result property="taxRate" column="tax_rate"/>
+        <result property="totalCurrencyAmountTax" column="total_currency_amount_tax"/>
+        <result property="totalCurrencyAmount" column="total_currency_amount"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="payeeCompanySid" column="payee_company_sid"/>
+        <result property="invoiceCustomerSid" column="invoice_customer_sid"/>
+        <result property="identificationNumber" column="identification_number"/>
+        <result property="checkCode" column="check_code"/>
+        <result property="accountsMethodGroup" column="accounts_method_group"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="approvalNode" column="approval_node"/>
+        <result property="approvalUserName" column="approval_user_name"/>
+        <result property="submitUserName" column="submit_user_name"/>
+        <result property="submitDate" column="submit_date"/>
+        <result property="approvalUserId" column="approval_user_id"/>
+    </resultMap>
+    <sql id="selectFinSaleInvoiceVo">
+    SELECT t.client_id, t.sale_invoice_sid, t.sale_invoice_code, t.document_date, t.invoice_category, t4.name AS invoice_category_name,
+    t.invoice_type, t5.name AS invoice_type_name, t.invoice_dimension, t7.name AS invoice_dimension_name, t.customer_sid,
+    t1.customer_name AS customer_name, t.company_sid, t2.company_name AS company_name, t.company_brand_sid, t.sale_org, t8.name AS sale_org_name,
+    t.product_season_sid, t3.product_season_name AS product_season_name, t.business_channel, t.invoice_num, t.material_type,
+    t6.name AS material_type_name, t.invoice_code, t.is_finance_verify, t.send_flag, t.exception_confirm_flag, t.general_ledger_date, t.invoice_date,
+    t.reference_invoice, t.total_tax_amount, t.tax_rate, t.total_currency_amount_tax, t.total_currency_amount, t.currency, t.currency_unit,
+    t.payee_company_sid, t.invoice_customer_sid, t.identification_number, t.check_code, t.accounts_method_group, t.remark, t.handle_status,
+    t.creator_account, t.create_date, t.updater_account, t.update_date, t.confirmer_account, t.confirm_date, t.month_account_period,
+    t.data_source_sys, t1.customer_code, t1.customer_name, ifnull(t1.short_name,t1.customer_name) as customer_short_name,
+    t2.company_code, t2.company_name, ifnull(t2.short_name,t2.company_name) as company_short_name, t3.product_season_code, t3.product_season_name,
+    t9.nick_name AS creator_account_name, t10.nick_name AS updater_account_name, t11.nick_name AS confirmer_account_name,
+    t12.approval_node,t12.approval_user_id,t12.approval_user_name,t12.create_date AS submit_date,t13.nick_name AS submit_user_name
+    from s_fin_sale_invoice t
+    LEFT JOIN s_bas_customer t1 ON t1.customer_sid = t.customer_sid
+    LEFT JOIN s_bas_company t2 ON t2.company_sid = t.company_sid
+    LEFT JOIN s_bas_product_season t3 ON t3.product_season_sid = t.product_season_sid
+    LEFT JOIN s_con_invoice_category t4 ON t4.code = t.invoice_category
+    LEFT JOIN s_con_invoice_type t5 ON t5.code = t.invoice_type
+    LEFT JOIN s_con_material_type t6 ON t6.code = t.material_type
+    LEFT JOIN s_con_invoice_dimension t7 ON t7.code = t.invoice_dimension
+    LEFT JOIN s_con_sale_org t8 ON t8.code = t.sale_org
+    LEFT JOIN sys_user t9 ON t.creator_account = t9.user_name
+    LEFT JOIN sys_user t10 ON t.updater_account = t10.user_name
+    LEFT JOIN sys_user t11 ON t.confirmer_account = t11.user_name
+    LEFT JOIN s_sys_form_process t12 ON t.sale_invoice_sid = t12.form_id
+    LEFT JOIN sys_user t13 ON t12.creator_account = t13.user_name
+    </sql>
+    <select id="selectFinSaleInvoiceById" parameterType="Long" resultMap="FinSaleInvoiceResult">
+        <include refid="selectFinSaleInvoiceVo"/>
+        where t.sale_invoice_sid = #{saleInvoiceSid}
+    </select>
+    <select id="selectFinSaleInvoiceList" parameterType="com.platform.ems.domain.FinSaleInvoice"
+            resultMap="FinSaleInvoiceResult">
+        <include refid="selectFinSaleInvoiceVo"/>
+        <where>
+            <if test="approvalUserIdList != null  and approvalUserIdList.length >0">
+                and t12.approval_user_id in (<foreach collection="approvalUserIdList" item="approvalUserId" separator=",">#{approvalUserId}</foreach>)
+            </if>
+            <if test="approvalUserId != null and approvalUserId != ''">
+                and t12.approval_user_id = #{approvalUserId}
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0">and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="exceptionConfirmFlagList != null  and exceptionConfirmFlagList.length >0">and t.exception_confirm_flag in
+                (<foreach collection="exceptionConfirmFlagList" item="exceptionConfirmFlag" separator=",">#{exceptionConfirmFlag}</foreach>)
+            </if>
+            <if test="sendFlagList != null  and sendFlagList.length >0">and t.send_flag in
+                (<foreach collection="sendFlagList" item="sendFlag" separator=",">#{sendFlag}</foreach>)
+            </if>
+            <if test="invoiceDimensionList != null  and invoiceDimensionList.length >0">and t.invoice_dimension in
+                (<foreach collection="invoiceDimensionList" item="invoiceDimension" separator=",">#{invoiceDimension}</foreach>)
+            </if>
+            <if test="saleOrgList != null  and saleOrgList.length >0">and t.sale_org in
+                (<foreach collection="saleOrgList" item="saleOrg" separator=",">#{saleOrg}</foreach>)
+            </if>
+            <if test="materialTypeList != null  and materialTypeList.length >0">and t.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=",">#{materialType}</foreach>)
+            </if>
+            <if test="invoiceCategoryList != null  and invoiceCategoryList.length >0">and t.invoice_category in
+                (<foreach collection="invoiceCategoryList" item="invoiceCategory" separator=",">#{invoiceCategory}</foreach>)
+            </if>
+            <if test="invoiceTypeList != null  and invoiceTypeList.length >0">and t.invoice_type in
+                (<foreach collection="invoiceTypeList" item="invoiceType" separator=",">#{invoiceType}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null  and productSeasonSidList.length >0">and t.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">#{productSeasonSid}</foreach>)
+            </if>
+            <if test="companySidList != null  and companySidList.length >0">and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="customerSidList != null  and customerSidList.length >0">and t.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="clientId != null  and clientId != ''">and (
+                <foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="saleInvoiceCode != null and saleInvoiceCode != ''">and t.sale_invoice_code like concat('%', #{saleInvoiceCode}, '%')
+            </if>
+            <if test="isFinanceVerify != null and isFinanceVerify != ''">and t.is_finance_verify = #{isFinanceVerify}</if>
+            <if test="documentDate != null ">and t.document_date = #{documentDate}</if>
+            <if test="invoiceCategory != null  and invoiceCategory != ''">and (
+                <foreach collection="invoiceCategory.split(';')" item="item" separator="or">t.invoice_category like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="invoiceType != null  and invoiceType != ''">and (
+                <foreach collection="invoiceType.split(';')" item="item" separator="or">t.invoice_type like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="invoiceDimension != null  and invoiceDimension != ''">and (
+                <foreach collection="invoiceDimension.split(';')" item="item" separator="or">t.invoice_dimension like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="customerSid != null ">and t.customer_sid =#{customerSid}</if>
+            <if test="companySid != null ">and t.company_sid =#{companySid}</if>
+            <if test="companyBrandSid != null ">and t.company_brand_sid =#{companyBrandSid}</if>
+            <if test="saleOrg != null  and saleOrg != ''">and (
+                <foreach collection="saleOrg.split(';')" item="item" separator="or">t.sale_org like concat('%', #{item},
+                    '%')</foreach>)
+            </if>
+            <if test="productSeasonSid != null ">and t.product_season_sid =#{productSeasonSid}</if>
+            <if test="businessChannel != null  and businessChannel != ''">and (
+                <foreach collection="businessChannel.split(';')" item="item" separator="or">t.business_channel like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="invoiceNum != null  and invoiceNum != ''">and (
+                <foreach collection="invoiceNum.split(';')" item="item" separator="or">t.invoice_num like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="materialType != null  and materialType != ''">and (
+                <foreach collection="materialType.split(';')" item="item" separator="or">t.material_type like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="invoiceCode != null  and invoiceCode != ''">and (
+                <foreach collection="invoiceCode.split(';')" item="item" separator="or">t.invoice_code like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="sendFlag != null  and sendFlag != ''">and (
+                <foreach collection="sendFlag.split(';')" item="item" separator="or">t.send_flag like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="exceptionConfirmFlag != null  and exceptionConfirmFlag != ''">and (
+                <foreach collection="exceptionConfirmFlag.split(';')" item="item" separator="or">
+                    t.exception_confirm_flag like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="generalLedgerDate != null ">and t.general_ledger_date = #{generalLedgerDate}</if>
+            <if test="invoiceDate != null ">and t.invoice_date = #{invoiceDate}</if>
+            <if test="referenceInvoice != null  and referenceInvoice != ''">and (
+                <foreach collection="referenceInvoice.split(';')" item="item" separator="or">t.reference_invoice like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="totalTaxAmount != null ">and t.total_tax_amount = #{totalTaxAmount}</if>
+            <if test="taxRate != null ">and t.tax_rate = #{taxRate}</if>
+            <if test="totalCurrencyAmountTax != null ">and t.total_currency_amount_tax = #{totalCurrencyAmountTax}</if>
+            <if test="totalCurrencyAmount != null ">and t.total_currency_amount = #{totalCurrencyAmount}</if>
+            <if test="currency != null  and currency != ''">and (
+                <foreach collection="currency.split(';')" item="item" separator="or">t.currency like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">and (
+                <foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="payeeCompanySid != null ">and t.payee_company_sid =#{payeeCompanySid}</if>
+            <if test="invoiceCustomerSid != null ">and t.invoice_customer_sid =#{invoiceCustomerSid}</if>
+            <if test="identificationNumber != null  and identificationNumber != ''">and (
+                <foreach collection="identificationNumber.split(';')" item="item" separator="or">t.identification_number
+                    like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="checkCode != null  and checkCode != ''">and (
+                <foreach collection="checkCode.split(';')" item="item" separator="or">t.check_code like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="accountsMethodGroup != null ">and t.accounts_method_group =#{accountsMethodGroup}</if>
+            <if test="handleStatus != null  and handleStatus != ''">and (
+                <foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and (
+                <foreach collection="creatorAccount.split(';')" item="item" separator="or">t9.nick_name like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">and date_format(t.invoice_date,'%y%m%d') &gt;=
+                date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">and date_format(t.invoice_date,'%y%m%d') &lt;=
+                date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">and (
+                <foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">and (
+                <foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="confirmDate != null ">and t.confirm_date = #{confirmDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and (
+                <foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">${params.dataScope}</if>
+        </where> order by t.sale_invoice_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">insert into s_fin_sale_invoice
+        <trim prefix="(" suffix=")" suffixOverrides=",">client_id, sale_invoice_sid, sale_invoice_code, document_date,
+            invoice_category, invoice_type, invoice_dimension, customer_sid, company_sid, company_brand_sid, sale_org,
+            product_season_sid, business_channel, invoice_num, material_type, invoice_code, is_finance_verify, send_flag,
+            exception_confirm_flag, general_ledger_date, invoice_date, reference_invoice,
+            total_tax_amount, tax_rate, total_currency_amount_tax, total_currency_amount,
+            total_currency_amount_tax, total_currency_amount, currency, currency_unit, payee_company_sid,
+            invoice_customer_sid, identification_number, check_code, accounts_method_group, remark, handle_status,
+            creator_account, create_date, updater_account, update_date, confirmer_account, confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">#{item.clientId}, #{item.saleInvoiceSid},
+                #{item.saleInvoiceCode}, #{item.documentDate}, #{item.invoiceCategory}, #{item.invoiceType},
+                #{item.invoiceDimension}, #{item.customerSid}, #{item.companySid}, #{item.companyBrandSid},
+                #{item.saleOrg}, #{item.productSeasonSid}, #{item.businessChannel}, #{item.invoiceNum},
+                #{item.materialType}, #{item.invoiceCode}, #{item.isFinanceVerify}, #{item.sendFlag}, #{item.exceptionConfirmFlag},
+                #{item.generalLedgerDate}, #{item.invoiceDate}, #{item.referenceInvoice}, #{item.totalTaxAmount},
+                #{item.taxRate}, #{totalCurrencyAmountTax}, #{totalCurrencyAmount},
+                #{item.totalCurrencyAmountTax}, #{item.totalCurrencyAmount}, #{item.currency},
+                #{item.currencyUnit}, #{item.payeeCompanySid}, #{item.invoiceCustomerSid}, #{item.identificationNumber},
+                #{item.checkCode}, #{item.accountsMethodGroup}, #{item.remark}, #{item.handleStatus},
+                #{item.creatorAccount}, #{item.createDate}, #{item.updaterAccount}, #{item.updateDate},
+                #{item.confirmerAccount}, #{item.confirmDate}, #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+    <!--更新-->
+    <update id="updateAllById">update s_fin_sale_invoice
+        <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, sale_invoice_code = #{saleInvoiceCode},
+            document_date = #{documentDate}, invoice_category = #{invoiceCategory}, invoice_type = #{invoiceType},
+            invoice_dimension = #{invoiceDimension}, customer_sid = #{customerSid}, company_sid = #{companySid},
+            company_brand_sid = #{companyBrandSid}, sale_org = #{saleOrg}, product_season_sid = #{productSeasonSid},
+            business_channel = #{businessChannel}, invoice_num = #{invoiceNum}, material_type = #{materialType},
+            invoice_code = #{invoiceCode}, is_finance_verify = #{isFinanceVerify}, send_flag = #{sendFlag}, exception_confirm_flag = #{exceptionConfirmFlag},
+            general_ledger_date = #{generalLedgerDate}, invoice_date = #{invoiceDate}, reference_invoice =
+            #{referenceInvoice},total_currency_amount_tax = #{totalCurrencyAmountTax}, total_currency_amount = #{totalCurrencyAmount},
+            total_tax_amount = #{totalTaxAmount}, tax_rate = #{taxRate}, total_currency_amount_tax
+            = #{totalCurrencyAmountTax}, total_currency_amount = #{totalCurrencyAmount}, currency = #{currency},
+            currency_unit = #{currencyUnit}, payee_company_sid = #{payeeCompanySid}, invoice_customer_sid =
+            #{invoiceCustomerSid}, identification_number = #{identificationNumber}, check_code = #{checkCode},
+            accounts_method_group = #{accountsMethodGroup}, remark = #{remark}, handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate}, confirmer_account = #{confirmerAccount}, confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys}, month_account_period = #{monthAccountPeriod},
+        </trim>
+        where sale_invoice_sid = #{saleInvoiceSid}
+    </update>
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">update s_fin_sale_invoice
+            <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, sale_invoice_code = #{saleInvoiceCode},
+                document_date = #{documentDate}, invoice_category = #{invoiceCategory}, invoice_type = #{invoiceType},
+                invoice_dimension = #{invoiceDimension}, customer_sid = #{customerSid}, company_sid = #{companySid},
+                company_brand_sid = #{companyBrandSid}, sale_org = #{saleOrg}, product_season_sid = #{productSeasonSid},
+                business_channel = #{businessChannel}, invoice_num = #{invoiceNum}, material_type = #{materialType},
+                invoice_code = #{invoiceCode}, is_finance_verify = #{isFinanceVerify}, send_flag = #{sendFlag}, exception_confirm_flag =
+                #{exceptionConfirmFlag}, general_ledger_date = #{generalLedgerDate}, invoice_date = #{invoiceDate},
+                reference_invoice = #{referenceInvoice}, total_tax_amount = #{totalTaxAmount}, tax_rate = #{taxRate},
+                total_currency_amount_tax = #{totalCurrencyAmountTax}, total_currency_amount = #{totalCurrencyAmount},
+                currency = #{currency}, currency_unit = #{currencyUnit}, payee_company_sid = #{payeeCompanySid},
+                invoice_customer_sid = #{invoiceCustomerSid}, identification_number = #{identificationNumber},
+                check_code = #{checkCode}, accounts_method_group = #{accountsMethodGroup}, remark = #{remark},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount}, update_date = #{updateDate}, confirmer_account =
+                #{confirmerAccount}, confirm_date = #{confirmDate}, data_source_sys = #{dataSourceSys},
+            </trim>
+            where sale_invoice_sid = #{saleInvoiceSid}
+        </foreach>
+    </update>
+    <select id="countByDomain" resultType="java.lang.Integer">select count(1) from s_fin_sale_invoice
+        <where>
+            <if test="saleInvoiceSids != null  and saleInvoiceSids.length &gt; 0">and sale_invoice_sid in (
+                <foreach collection="saleInvoiceSids" item="item" separator=",">#{item}</foreach>
+                )
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">and handle_status in (
+                <foreach collection="handleStatus.split(';')" item="item" separator=",">#{item}</foreach>
+                )
+            </if>
+        </where>
+    </select>
+    <delete id="deleteFinSaleInvoiceByIds" parameterType="long">delete from s_fin_sale_invoice where sale_invoice_sid in
+        <foreach item="saleInvoiceSid" collection="array" open="(" separator="," close=")">#{saleInvoiceSid}</foreach>
+    </delete>
+    <update id="confirm" parameterType="com.platform.ems.domain.FinSaleInvoice">update s_fin_sale_invoice
+        <set>
+            <if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmDate != null">confirm_date = #{confirmDate},</if>
+        </set>
+        where sale_invoice_sid in (
+        <foreach collection="saleInvoiceSids" item="saleInvoiceSid" separator=",">#{saleInvoiceSid}</foreach>)
+    </update>
+</mapper>

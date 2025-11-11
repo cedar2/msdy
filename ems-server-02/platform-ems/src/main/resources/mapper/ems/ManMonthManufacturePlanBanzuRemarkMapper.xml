@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManMonthManufacturePlanBanzuRemarkMapper">
+
+    <resultMap type="com.platform.ems.domain.ManMonthManufacturePlanBanzuRemark" id="ManMonthManufacturePlanBanzuRemarkResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="banzuRemarkSid" column="banzu_remark_sid"/>
+                    <result property="monthManufacturePlanSid" column="month_manufacture_plan_sid"/>
+                    <result property="workCenterSid" column="work_center_sid"/>
+                    <result property="workCenterCode" column="work_center_code"/>
+                    <result property="banzuRemark" column="banzu_remark"/>
+                    <result property="remark" column="remark"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+                <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectManMonthManufacturePlanBanzuRemarkVo">
+select t.client_id, t.banzu_remark_sid,
+        t.month_manufacture_plan_sid,
+        t.work_center_sid,
+        t.work_center_code,
+        t.banzu_remark,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys ,
+        t2.nick_name AS creator_account_name,
+        t3.work_center_name
+        from s_man_month_manufacture_plan_banzu_remark t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        left join  s_man_work_center t3 on t3.work_center_sid=t.work_center_sid
+
+    </sql>
+
+    <select id="selectManMonthManufacturePlanBanzuRemarkById" parameterType="Long" resultMap="ManMonthManufacturePlanBanzuRemarkResult">
+        <include refid="selectManMonthManufacturePlanBanzuRemarkVo"/>
+        where t.month_manufacture_plan_sid = #{monthManufacturePlanSid}
+    </select>
+
+    <select id="selectManMonthManufacturePlanBanzuRemarkList" parameterType="com.platform.ems.domain.ManMonthManufacturePlanBanzuRemark"
+            resultMap="ManMonthManufacturePlanBanzuRemarkResult">
+        <include refid="selectManMonthManufacturePlanBanzuRemarkVo"/>
+        <where>
+                                                                                                    <if test="clientId != null and clientId != ''">
+                                and t.client_id = #{clientId}
+                            </if>
+                                                                                                                                                                                            <if test="monthManufacturePlanSid != null ">
+                                and t.month_manufacture_plan_sid = #{monthManufacturePlanSid}
+                            </if>
+                                                                                                                                                                <if test="workCenterSid != null ">
+                                and t.work_center_sid = #{workCenterSid}
+                            </if>
+                                                                                                                                                                <if test="workCenterCode != null and workCenterCode != ''">
+                                and t.work_center_code = #{workCenterCode}
+                            </if>
+                                                                                                                                                                <if test="banzuRemark != null and banzuRemark != ''">
+                                and t.banzu_remark = #{banzuRemark}
+                            </if>
+                                                                                                                                                                                            <if test="creatorAccount != null and creatorAccount != ''">
+                                and t.creator_account = #{creatorAccount}
+                            </if>
+                                                                                                                                                                                                <if test="beginTime != null and beginTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                                </if>
+                                <if test="endTime != null and endTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                                </if>
+                                                                                                                                                                                            <if test="updaterAccount != null and updaterAccount != ''">
+                                and t.updater_account = #{updaterAccount}
+                            </if>
+                                                                                                                                                                                                <if test="updateDate != null ">
+                                    and t.update_date = #{updateDate}
+                                </if>
+                                                                                                                                                                                            <if test="dataSourceSys != null and dataSourceSys != ''">
+                                and t.data_source_sys = #{dataSourceSys}
+                            </if>
+                                                                                    <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_month_manufacture_plan_banzu_remark
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                banzu_remark_sid,
+                                                                month_manufacture_plan_sid,
+                                                                work_center_sid,
+                                                                work_center_code,
+                                                                banzu_remark,
+                                                                remark,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                data_source_sys,
+                                    </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                                                            #{item.clientId},
+                                                                                #{item.banzuRemarkSid},
+                                                                                #{item.monthManufacturePlanSid},
+                                                                                #{item.workCenterSid},
+                                                                                #{item.workCenterCode},
+                                                                                #{item.banzuRemark},
+                                                                                #{item.remark},
+                                                                                #{item.creatorAccount},
+                                                                                #{item.createDate},
+                                                                                #{item.updaterAccount},
+                                                                                #{item.updateDate},
+                                                                                #{item.dataSourceSys},
+                                                </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_month_manufacture_plan_banzu_remark
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                                            month_manufacture_plan_sid = #{monthManufacturePlanSid},
+                                                                work_center_sid = #{workCenterSid},
+                                                                work_center_code = #{workCenterCode},
+                                                                banzu_remark = #{banzuRemark},
+                                                                remark = #{remark},
+                                                                                                                        updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                </trim>
+        where banzu_remark_sid = #{banzuRemarkSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_month_manufacture_plan_banzu_remark
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    month_manufacture_plan_sid = #{monthManufacturePlanSid},
+                                                                                work_center_sid = #{workCenterSid},
+                                                                                work_center_code = #{workCenterCode},
+                                                                                banzu_remark = #{banzuRemark},
+                                                                                remark = #{remark},
+                                                                                                                                                        updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                    </trim>
+            where banzu_remark_sid = #{banzuRemarkSid}
+        </foreach>
+    </update>
+
+</mapper>

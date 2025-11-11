@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasPlantProdLineMapper">
+
+    <resultMap type="com.platform.ems.domain.BasPlantProdLine" id="BasPlantProdLineResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="productLineSid" column="product_line_sid"/>
+                    <result property="plantSid" column="plant_sid"/>
+                    <result property="productLineName" column="product_line_name"/>
+                    <result property="productCategory" column="product_category"/>
+                    <result property="workNumber" column="work_number"/>
+                    <result property="perdayOutput" column="perday_output"/>
+                    <result property="name" column="name"/>
+                    <result property="position" column="position"/>
+                    <result property="phone" column="phone"/>
+                    <result property="fax" column="fax"/>
+                    <result property="email" column="email"/>
+                    <result property="address" column="address"/>
+                    <result property="surplusCapacityD" column="surplus_capacity_d"/>
+                    <result property="remark" column="remark"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+                    <result property="shareFlag" column="share_flag"/>
+            </resultMap>
+
+    <sql id="selectBasPlantProdLineVo">
+        select t.client_id, t.product_line_sid, t.plant_sid, t.product_line_name, t.product_category, t.work_number, t.perday_output, t.name, t.position, t.phone, t.fax, t.email, t.address, t.surplus_capacity_d, t.remark, t.creator_account, t.create_date, t.updater_account, t.update_date, t.data_source_sys, t.share_flag from s_bas_plant_prod_line t
+    </sql>
+
+    <select id="selectBasPlantProdLineById" parameterType="Long" resultMap="BasPlantProdLineResult">
+        <include refid="selectBasPlantProdLineVo"/>
+        where t.product_line_sid = #{productLineSid}
+    </select>
+
+
+    <select id="selectBasPlantProdLineList" parameterType="com.platform.ems.domain.BasPlantProdLine"
+            resultMap="BasPlantProdLineResult">
+        <include refid="selectBasPlantProdLineVo"/>
+        <where>
+                                                                                                    <if test="clientId != null  and clientId != ''">
+                                <foreach collection="clientId.split(';')" item="item">or t.client_id like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                                            <if test="plantSid != null ">
+                                and t.plant_sid = #{plantSid}
+                            </if>
+                                                                                                                                    <if test="productLineName != null  and productLineName != ''">and
+                            t.product_line_name like concat('%', #{productLineName}, '%')
+                        </if>
+                                                                                                                                        <if test="productCategory != null  and productCategory != ''">
+                                <foreach collection="productCategory.split(';')" item="item">or t.product_category like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                <if test="workNumber != null ">
+                                and t.work_number in
+                                (<foreach collection="workNumber" item="workNumber" separator=",">
+                                #{companySid}</foreach>)
+                            </if>
+                                                                                                                                                                <if test="perdayOutput != null ">
+                                and t.perday_output in
+                                (<foreach collection="perdayOutput" item="perdayOutput" separator=",">
+                                #{companySid}</foreach>)
+                            </if>
+                                                                                                                                    <if test="name != null  and name != ''">and
+                            t.name like concat('%', #{name}, '%')
+                        </if>
+                                                                                                                                        <if test="position != null  and position != ''">
+                                <foreach collection="position.split(';')" item="item">or t.position like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                <if test="phone != null  and phone != ''">
+                                <foreach collection="phone.split(';')" item="item">or t.phone like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                <if test="fax != null  and fax != ''">
+                                <foreach collection="fax.split(';')" item="item">or t.fax like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                <if test="email != null  and email != ''">
+                                <foreach collection="email.split(';')" item="item">or t.email like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                <if test="address != null  and address != ''">
+                                <foreach collection="address.split(';')" item="item">or t.address like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                <if test="surplusCapacityD != null  and surplusCapacityD != ''">
+                                <foreach collection="surplusCapacityD.split(';')" item="item">or t.surplus_capacity_d like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                                            <if test="creatorAccount != null  and creatorAccount != ''">
+                                <foreach collection="creatorAccount.split(';')" item="item">or t.creator_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                                                <if test="beginTime != null and beginTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                                </if>
+                                <if test="endTime != null and endTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                                </if>
+                                                                                                                                                                                            <if test="updaterAccount != null  and updaterAccount != ''">
+                                <foreach collection="updaterAccount.split(';')" item="item">or t.updater_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                                                <if test="updateDate != null ">
+                                    and t.update_date = #{updateDate}
+                                </if>
+                                                                                                                                                                                            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                                <foreach collection="dataSourceSys.split(';')" item="item">or t.data_source_sys like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                                                                                                <if test="shareFlag != null  and shareFlag != ''">
+                                <foreach collection="shareFlag.split(';')" item="item">or t.share_flag like concat('%',
+                                    #{item}, '%')
+                                </foreach>
+                            </if>
+                                                                                </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_plant_prod_line
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                product_line_sid,
+                                                                plant_sid,
+                                                                product_line_name,
+                                                                product_category,
+            work_number,
+                                                                perday_output,
+                                                                name,
+                                                                position,
+                                                                phone,
+                                                                fax,
+                                                                email,
+                                                                address,
+                                                                surplus_capacity_d,
+                                                                remark,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                data_source_sys,
+                                                                share_flag,
+                                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                                                            #{clientId},
+                                                                                #{productLineSid},
+                                                                                #{plantSid},
+                                                                                #{productLineName},
+                                                                                #{productCategory},
+                                                                                #{workNumber},
+                                                                                #{perdayOutput},
+                                                                                #{name},
+                                                                                #{position},
+                                                                                #{phone},
+                                                                                #{fax},
+                                                                                #{email},
+                                                                                #{address},
+                                                                                #{surplusCapacityD},
+                                                                                #{remark},
+                                                                                #{creatorAccount},
+                                                                                #{createDate},
+                                                                                #{updaterAccount},
+                                                                                #{updateDate},
+                                                                                #{dataSourceSys},
+                                                                                #{shareFlag},
+                                                </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_plant_prod_line
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                                            plant_sid = #{plantSid},
+                                                                product_line_name = #{productLineName},
+                                                                product_category = #{productCategory},
+            work_number = #{workNumber},
+                                                                perday_output = #{perdayOutput},
+                                                                name = #{name},
+                                                                position = #{position},
+                                                                phone = #{phone},
+                                                                fax = #{fax},
+                                                                email = #{email},
+                                                                address = #{address},
+                                                                surplus_capacity_d = #{surplusCapacityD},
+                                                                remark = #{remark},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                                                share_flag = #{shareFlag},
+                                    </trim>
+        where product_line_sid = #{productLineSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_plant_prod_line
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    plant_sid = #{plantSid},
+                                                                                product_line_name = #{productLineName},
+                                                                                product_category = #{productCategory},
+                work_number = #{workNumber},
+                                                                                perday_output = #{perdayOutput},
+                                                                                name = #{name},
+                                                                                position = #{position},
+                                                                                phone = #{phone},
+                                                                                fax = #{fax},
+                                                                                email = #{email},
+                                                                                address = #{address},
+                                                                                surplus_capacity_d = #{surplusCapacityD},
+                                                                                remark = #{remark},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                                                share_flag = #{shareFlag},
+                                                </trim>
+            where product_line_sid = #{productLineSid}
+        </foreach>
+    </update>
+
+</mapper>

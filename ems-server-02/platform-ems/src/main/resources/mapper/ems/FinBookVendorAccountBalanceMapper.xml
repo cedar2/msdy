@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.FinBookVendorAccountBalanceMapper">
+    <resultMap type="com.platform.ems.domain.FinBookVendorAccountBalance" id="FinBookVendorAccountBalanceResult">
+        <result property="clientId" column="client_id"/>
+        <result property="bookAccountBalanceSid" column="book_account_balance_sid"/>
+        <result property="bookAccountBalanceCode" column="book_account_balance_code"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="paymentYear" column="payment_year"/>
+        <result property="paymentMonth" column="payment_month"/>
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="businessChannel" column="business_channel"/>
+        <result property="currencyAmountTaxHd" column="currency_amount_tax_hd"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="referAccountDocumentCode" column="refer_account_document_code"/>
+        <result property="referBookType" column="refer_book_type"/>
+        <result property="referBookTypeName" column="refer_book_type_name"/>
+        <result property="referBookSourceCategory" column="refer_book_source_category"/>
+        <result property="referBookSourceCategoryName" column="refer_book_source_category_name"/>
+    </resultMap>
+    <sql id="selectFinBookVendorAccountBalanceVo">
+        select t.client_id,
+               t.book_account_balance_sid,
+               t.book_account_balance_code,
+               t.vendor_sid,
+               t.company_sid,
+               t.document_date,
+               t.payment_year,
+               t.payment_month,
+               t.company_brand_sid,
+               t.business_channel,
+               t.currency,
+               t.currency_unit,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys
+        from s_fin_book_vendor_account_balance t</sql>
+    <select id="selectFinBookVendorAccountBalanceById" parameterType="Long"
+            resultMap="FinBookVendorAccountBalanceResult">
+        <include refid="selectFinBookVendorAccountBalanceVo"/>
+        where t.book_account_balance_sid = #{bookAccountBalanceSid}
+    </select>
+    <select id="selectFinBookVendorAccountBalanceList"
+            parameterType="com.platform.ems.domain.FinBookVendorAccountBalance"
+            resultMap="FinBookVendorAccountBalanceResult">
+        <include refid="selectFinBookVendorAccountBalanceVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">and (
+                <foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="bookAccountBalanceCode != null ">and t.book_account_balance_code =#{bookAccountBalanceCode}</if>
+            <if test="vendorSid != null ">and t.vendor_sid =#{vendorSid}</if>
+            <if test="companySid != null ">and t.company_sid =#{companySid}</if>
+            <if test="documentDate != null ">and t.document_date = #{documentDate}</if>
+            <if test="paymentYear != null ">and t.payment_year =#{paymentYear}</if>
+            <if test="paymentMonth != null ">and t.payment_month =#{paymentMonth}</if>
+            <if test="companyBrandSid != null ">and t.company_brand_sid =#{companyBrandSid}</if>
+            <if test="businessChannel != null  and businessChannel != ''">and (
+                <foreach collection="businessChannel.split(';')" item="item" separator="or">t.business_channel like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="currency != null  and currency != ''">and (
+                <foreach collection="currency.split(';')" item="item" separator="or">t.currency like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">and (
+                <foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">and (
+                <foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and (
+                <foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;=
+                date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;=
+                date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">and (
+                <foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">and (
+                <foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="confirmDate != null ">and t.confirm_date = #{confirmDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and (
+                <foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">${params.dataScope}</if>
+        </where>
+    </select>
+    <!--添加多个-->
+    <insert id="inserts">insert into s_fin_book_vendor_account_balance
+        <trim prefix="(" suffix=")" suffixOverrides=",">client_id, book_account_balance_sid, book_account_balance_code,
+            book_type, book_source_category,
+            vendor_sid, company_sid, document_date, payment_year, payment_month, company_brand_sid, business_channel,
+            currency, currency_unit, remark, handle_status, creator_account, create_date, updater_account, update_date,
+            confirmer_account, confirm_date, data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">#{item.clientId}, #{item.bookAccountBalanceSid},
+                #{item.bookType}, #{item.bookSourceCategory},
+                #{item.bookAccountBalanceCode}, #{item.vendorSid}, #{item.companySid}, #{item.documentDate},
+                #{item.paymentYear}, #{item.paymentMonth}, #{item.companyBrandSid}, #{item.businessChannel},
+                #{item.currency}, #{item.currencyUnit}, #{item.remark}, #{item.handleStatus}, #{item.creatorAccount},
+                #{item.createDate}, #{item.updaterAccount}, #{item.updateDate}, #{item.confirmerAccount},
+                #{item.confirmDate}, #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+    <!--更新-->
+    <update id="updateAllById">update s_fin_book_vendor_account_balance
+        <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, book_account_balance_code =
+            #{bookAccountBalanceCode}, vendor_sid = #{vendorSid}, company_sid = #{companySid}, document_date =
+            #{documentDate}, payment_year = #{paymentYear}, payment_month = #{paymentMonth}, company_brand_sid =
+            #{companyBrandSid}, business_channel = #{businessChannel}, currency = #{currency}, currency_unit =
+            #{currencyUnit}, remark = #{remark}, handle_status = #{handleStatus}, creator_account = #{creatorAccount},
+            create_date = #{createDate}, updater_account = #{updaterAccount}, update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount}, confirm_date = #{confirmDate}, data_source_sys = #{dataSourceSys},
+        </trim>
+        where book_account_balance_sid = #{bookAccountBalanceSid}
+    </update>
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">update s_fin_book_vendor_account_balance
+            <trim prefix="SET" suffixOverrides=",">client_id = #{clientId}, book_account_balance_code =
+                #{bookAccountBalanceCode}, vendor_sid = #{vendorSid}, company_sid = #{companySid}, document_date =
+                #{documentDate}, payment_year = #{paymentYear}, payment_month = #{paymentMonth}, company_brand_sid =
+                #{companyBrandSid}, business_channel = #{businessChannel}, currency = #{currency}, currency_unit =
+                #{currencyUnit}, remark = #{remark}, handle_status = #{handleStatus}, creator_account =
+                #{creatorAccount}, create_date = #{createDate}, updater_account = #{updaterAccount}, update_date =
+                #{updateDate}, confirmer_account = #{confirmerAccount}, confirm_date = #{confirmDate}, data_source_sys =
+                #{dataSourceSys},
+            </trim>
+            where book_account_balance_sid = #{bookAccountBalanceSid}
+        </foreach>
+    </update>
+    <select id="getReportForm"
+            parameterType="com.platform.ems.domain.FinBookVendorAccountBalance"
+            resultMap="FinBookVendorAccountBalanceResult">
+        SELECT
+        t.client_id,
+        t.book_account_balance_code,
+        t3.account_balance_bill_code AS refer_doc_code,
+        t3.account_balance_bill_code,
+        t.vendor_sid,
+        t5.vendor_name,
+        t.company_sid,
+        t6.company_name,
+        t7.product_season_name,
+        t8.nick_name AS buyer_name,
+        t10.name AS material_type_name,
+        t2.item_num,
+        t2.currency_amount_tax_hd,
+        t11.name AS refer_doc_category_name,
+        t3.document_date,
+        t2.refer_doc_category,
+        t.currency,
+        t.currency_unit,
+        t.handle_status,
+        t2.remark,
+        t.create_date,
+        t.creator_account,
+        t9.nick_name AS creator_account_name,
+        t.data_source_sys,
+        t.book_type,
+        t.book_source_category,
+        t14.name AS book_type_name,
+        t15.name AS book_source_category_name,
+        t2.refer_account_document_code,
+        t2.refer_book_type,
+        t12.name AS refer_book_type_name,
+        t2.refer_book_source_category,
+        t13.name AS refer_book_source_category_name
+        FROM
+        s_fin_book_vendor_account_balance t
+        LEFT JOIN s_fin_book_vendor_account_balance_item t2 ON t.book_account_balance_sid = t2.book_account_balance_sid
+        LEFT JOIN s_fin_vendor_account_balance_bill t3 ON t2.refer_doc_sid = t3.account_balance_bill_sid
+        LEFT JOIN s_bas_vendor t5 ON t.vendor_sid = t5.vendor_sid
+        LEFT JOIN s_bas_company t6 ON t.company_sid = t6.company_sid
+        LEFT JOIN s_bas_product_season t7 ON t3.product_season_sid = t7.product_season_sid
+        LEFT JOIN sys_user t8 ON t3.buyer = t8.user_name
+        LEFT JOIN sys_user t9 ON t.creator_account = t9.user_name
+        LEFT JOIN s_con_material_type t10 ON t3.material_type = t10.code
+        LEFT JOIN s_con_doc_category t11 ON t2.refer_doc_category = t11.code
+        LEFT JOIN s_con_book_type t12 ON t2.refer_book_type = t12.code
+        LEFT JOIN s_con_book_source_category t13 ON t2.refer_book_source_category = t13.code
+        LEFT JOIN s_con_book_type t14 ON t.book_type = t14.code
+        LEFT JOIN s_con_book_source_category t15 ON t.book_source_category = t15.code
+        <where>
+            <if test="clientId != null  and clientId != ''">and (
+                <foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="accountBalanceBillCode != null and accountBalanceBillCode !=''">
+                and t3.account_balance_bill_code like concat('%', #{accountBalanceBillCode}, '%')
+            </if>
+            <if test="referBookTypeList != null and referBookTypeList.length >0">and t2.refer_book_type in
+                (<foreach collection="referBookTypeList" item="referBookType" separator=","> #{referBookType}</foreach>)
+            </if>
+            <if test="referBookSourceCategoryList != null and referBookSourceCategoryList.length >0">and t2.refer_book_source_category in
+                (<foreach collection="referBookSourceCategoryList" item="referBookSourceCategory" separator=","> #{referBookSourceCategory}</foreach>)
+            </if>
+            <if test="buyerList != null and buyerList.length >0">and t3.buyer in
+                (<foreach collection="buyerList" item="buyer" separator=","> #{buyer}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=","> #{companySid}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=","> #{vendorSid}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">and t3.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=","> #{productSeasonSid}</foreach>)
+            </if>
+            <if test="referDocSid != null and referDocSid !=''">and t2.refer_doc_sid =#{referDocSid}</if>
+            <if test="vendorSid != null and vendorSid !=''">and t.vendor_sid =#{vendorSid}</if>
+            <if test="companySid != null and companySid !=''">and t.company_sid =#{companySid}</if>
+            <if test="productSeasonSid != null and productSeasonSid != ''">and t3.product_season_sid
+                =#{productSeasonSid}
+            </if>
+            <if test="referBookType != null  and referBookType != ''">and t2.refer_book_type = #{referBookType}</if>
+            <if test="referBookSourceCategory != null  and referBookSourceCategory != ''">and
+                t2.refer_book_source_category = #{referBookSourceCategory}
+            </if>
+            <if test="buyer != null and buyer != ''">and t3.buyer =#{buyer}</if>
+            <if test="materialType != null and materialType != ''">and t3.material_type =#{materialType}</if>
+            <if test="handleStatus != null  and handleStatus != ''">and (
+                <foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and (
+                <foreach collection="creatorAccount.split(';')" item="item" separator="or">t9.nick_name like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;=
+                date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;=
+                date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and (
+                <foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">${params.dataScope}</if>
+        </where>
+        order by t.book_account_balance_code desc
+    </select>
+</mapper>

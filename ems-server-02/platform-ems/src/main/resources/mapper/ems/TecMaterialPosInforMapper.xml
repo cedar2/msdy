@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecMaterialPosInforMapper">
+
+    <resultMap type="com.platform.ems.domain.TecMaterialPosInfor" id="TecMaterialPosInforResult">
+        <result property="clientId" column="client_id"/>
+        <result property="materialPosInforSid" column="material_pos_infor_sid"/>
+        <result property="materialSizeSid" column="material_size_sid"/>
+        <result property="modelPositionSid" column="model_position_sid"/>
+        <result property="deviation" column="deviation"/>
+        <result property="deviationMinus"    column="deviation_minus"    />
+        <result property="serialNum" column="serial_num"/>
+        <result property="unit" column="unit"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="modelPositionCode" column="model_position_code"/>
+        <result property="modelPositionName" column="model_position_name"/>
+        <result property="measureDescription" column="measure_description"/>
+    </resultMap>
+
+    <sql id="selectTecMaterialPosInforVo">
+       select t.client_id,
+               t.material_pos_infor_sid,
+               t.material_size_sid,
+               t.model_position_sid,
+               t.deviation,
+               t.deviation_minus,
+               t.serial_num,
+               t.unit,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t1.model_position_code ,
+               t1.model_position_name,
+               t1.measure_description,
+               t2.nick_name AS creator_account_name
+        from s_tec_material_pos_infor t
+        left join s_tec_model_position t1 on t1.model_position_sid =t.model_position_sid
+        left join sys_user t2 on t.creator_account = t2.user_name
+    </sql>
+
+    <select id="selectTecMaterialPosInforList" parameterType="com.platform.ems.domain.TecMaterialPosInfor"
+            resultMap="TecMaterialPosInforResult">
+        <include refid="selectTecMaterialPosInforVo"/>
+        <where>
+            <if test="materialSizeSid != null  and materialSizeSid != ''">and t.material_size_sid =  #{materialSizeSid}
+            </if>
+            <if test="materialPosInforSid != null  and materialPosInforSid != ''">and t.material_pos_infor_sid =  #{materialPosInforSid}
+            </if>
+            <if test="deviation != null ">and t.deviation = #{deviation}</if>
+            <if test="serialNum != null ">and t.serial_num = #{serialNum}</if>
+            <if test="unit != null  and unit != ''">and t.unit = #{unit}</if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and t.creator_account = #{creatorAccount}</if>
+            <if test="createDate != null ">and t.create_date = #{createDate}</if>
+            <if test="updaterAccount != null  and updaterAccount != ''">and t.updater_account = #{updaterAccount}</if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and t.data_source_sys = #{dataSourceSys}</if>
+        </where>
+        order by t.serial_num asc, t1.model_position_code asc
+    </select>
+
+    <select id="selectTecMaterialPosInforById" parameterType="Long" resultMap="TecMaterialPosInforResult">
+        <include refid="selectTecMaterialPosInforVo"/>
+        where material_pos_infor_sid = #{materialPosInforSid}
+    </select>
+
+    <insert id="insertTecMaterialPosInfor" parameterType="com.platform.ems.domain.TecMaterialPosInfor">
+        insert into s_tec_material_pos_infor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">client_id,</if>
+            <if test="materialPosInforSid != null and materialPosInforSid != ''">material_pos_infor_sid,</if>
+            <if test="materialSizeSid != null">material_size_sid,</if>
+            <if test="modelPositionSid != null">model_position_sid,</if>
+            <if test="deviation != null">deviation,</if>
+            <if test="deviationMinus != null">deviation_minus,</if>
+            <if test="serialNum != null">serial_num,</if>
+            <if test="unit != null and unit != ''">unit,</if>
+            <if test="remark != null">remark,</if>
+            <if test="handleStatus != null and handleStatus != ''">handle_status,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updaterAccount != null">updater_account,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="dataSourceSys != null">data_source_sys,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">#{clientId},</if>
+            <if test="materialPosInforSid != null and materialPosInforSid != ''">#{materialPosInforSid},</if>
+            <if test="materialSizeSid != null">#{materialSizeSid},</if>
+            <if test="modelPositionSid != null">#{modelPositionSid},</if>
+            <if test="deviation != null">#{deviation},</if>
+            <if test="deviationMinus != null">#{deviationMinus},</if>
+            <if test="serialNum != null">#{serialNum},</if>
+            <if test="unit != null and unit != ''">#{unit},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="handleStatus != null and handleStatus != ''">#{handleStatus},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">#{creatorAccount},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updaterAccount != null">#{updaterAccount},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="dataSourceSys != null">#{dataSourceSys},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTecMaterialPosInfor" parameterType="com.platform.ems.domain.TecMaterialPosInfor">
+        update s_tec_material_pos_infor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="materialSizeSid != null">material_size_sid = #{materialSizeSid},</if>
+            <if test="modelPositionSid != null">model_position_sid = #{modelPositionSid},</if>
+            <if test="deviation != null">deviation = #{deviation},</if>
+            <if test="deviationMinus != null">deviation_minus = #{deviationMinus},</if>
+            <if test="serialNum != null">serial_num = #{serialNum},</if>
+            <if test="unit != null and unit != ''">unit = #{unit},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account = #{creatorAccount},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updaterAccount != null">updater_account = #{updaterAccount},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="dataSourceSys != null">data_source_sys = #{dataSourceSys},</if>
+        </trim>
+        where material_pos_infor_sid = #{materialPosInforSid}
+    </update>
+
+    <delete id="deleteTecMaterialPosInforById" parameterType="Long">
+        delete
+        from s_tec_material_pos_infor
+        where material_pos_infor_sid = #{materialPosInforSid}
+    </delete>
+
+    <delete id="deleteTecMaterialPosInforByIds" parameterType="Long">
+        delete from s_tec_material_pos_infor where model_position_infor_sid in
+        <foreach item="materialPosInfoSid" collection="materialPosInfoSids" open="(" separator="," close=")">
+            #{materialPosInfoSid}
+        </foreach>
+    </delete>
+
+    <delete id="deleteTecMaterialPosInforBySizeId" parameterType="list">
+        delete
+        from s_tec_material_pos_infor
+        where material_size_sid in
+        <foreach item="materialSizeSid" collection="list" open="(" separator="," close=")">
+            #{materialSizeSid}
+        </foreach>
+    </delete>
+
+    <select id="selectPosInforIds" resultType="long">
+        select material_pos_infor_sid from s_tec_material_pos_infor
+        where material_size_sid = #{materialSizeSid}
+    </select>
+</mapper>

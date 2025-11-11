@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ConMaterialCodeRangeConfigMapper">
+
+    <resultMap type="com.platform.ems.domain.ConMaterialCodeRangeConfig" id="ConMaterialCodeRangeConfigResult">
+        <result property="clientId" column="client_id"/>
+        <result property="rangeConfigSid" column="range_config_sid"/>
+        <result property="materialCategory" column="material_category"/>
+        <result property="rangeCodeStart" column="range_code_start"/>
+        <result property="rangeCodeEnd" column="range_code_end"/>
+        <result property="rangeCodePresent" column="range_code_present"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectConMaterialCodeRangeConfigVo">
+        select t.client_id, t.range_config_sid, t.material_category, t.range_code_start, t.range_code_end, t.range_code_present, t.company_sid, t.remark, t.status, t.handle_status, t.creator_account, t.create_date, t.updater_account, t.update_date, t.confirmer_account, t.confirm_date, t.data_source_sys from s_con_material_code_range_config t
+    </sql>
+
+    <select id="selectConMaterialCodeRangeConfigById" parameterType="Long" resultMap="ConMaterialCodeRangeConfigResult">
+        <include refid="selectConMaterialCodeRangeConfigVo"/>
+        where t.range_config_sid = #{rangeConfigSid}
+    </select>
+
+
+    <select id="selectConMaterialCodeRangeConfigList" parameterType="com.platform.ems.domain.ConMaterialCodeRangeConfig"
+            resultMap="ConMaterialCodeRangeConfigResult">
+        <include refid="selectConMaterialCodeRangeConfigVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialCategory != null  and materialCategory != ''">
+                and (<foreach collection="materialCategory.split(';')" item="item" separator="or">t.material_category
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="rangeCodeStart != null ">
+                and t.range_code_start =#{rangeCodeStart}
+            </if>
+            <if test="rangeCodeEnd != null ">
+                and t.range_code_end =#{rangeCodeEnd}
+            </if>
+            <if test="rangeCodePresent != null ">
+                and t.range_code_present =#{rangeCodePresent}
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="status != null  and status != ''">
+                and (<foreach collection="status.split(';')" item="item" separator="or">t.status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_material_code_range_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            range_config_sid,
+            material_category,
+            range_code_start,
+            range_code_end,
+            range_code_present,
+            company_sid,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="item" separator=",">
+                #{item.clientId},
+                #{item.rangeConfigSid},
+                #{item.materialCategory},
+                #{item.rangeCodeStart},
+                #{item.rangeCodeEnd},
+                #{item.rangeCodePresent},
+                #{item.companySid},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <update id="updateCode">
+        update s_con_material_code_range_config set
+          range_code_present = range_code_present+1,update_date= sysdate()
+        where material_category = #{materialCategory}
+        and client_id = #{clientId}
+    </update>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_material_code_range_config
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            material_category = #{materialCategory},
+            range_code_start = #{rangeCodeStart},
+            range_code_end = #{rangeCodeEnd},
+            range_code_present = #{rangeCodePresent},
+            company_sid = #{companySid},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where range_config_sid = #{rangeConfigSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_material_code_range_config
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                material_category = #{materialCategory},
+                range_code_start = #{rangeCodeStart},
+                range_code_end = #{rangeCodeEnd},
+                range_code_present = #{rangeCodePresent},
+                company_sid = #{companySid},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where range_config_sid = #{rangeConfigSid}
+        </foreach>
+    </update>
+
+</mapper>

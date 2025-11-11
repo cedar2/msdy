@@ -1,0 +1,209 @@
+package com.platform.ems.controller;
+
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+import com.platform.common.exception.CheckedException;
+import com.platform.common.exception.CustomException;
+import com.platform.common.utils.bean.BeanCopyUtils;
+import com.platform.common.utils.poi.ExcelUtil;
+import com.platform.common.core.controller.BaseController;
+import com.platform.common.core.domain.AjaxResult;
+import com.platform.common.core.page.TableDataInfo;
+import com.platform.common.annotation.Log;
+import com.platform.common.log.enums.BusinessType;
+import com.platform.common.redis.thread.ApiThreadLocalUtil;
+import com.platform.common.annotation.PreAuthorize;
+import com.platform.common.annotation.Idempotent;
+import com.platform.ems.domain.InvRecordCustomerRepair;
+import com.platform.ems.domain.InvRecordVendorRepair;
+import com.platform.ems.domain.InvRecordVendorRepairExResponse;
+import com.platform.ems.domain.dto.request.InvRecordVendorRepairRequest;
+import com.platform.ems.domain.dto.response.InvRecordCustomerRepairExResponse;
+import com.platform.ems.domain.dto.response.InvRecordVendorRepairResponse;
+import com.platform.ems.enums.HandleStatus;
+import com.platform.ems.service.IInvRecordVendorRepairService;
+import com.platform.ems.service.ISystemDictDataService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 供应商返修台账Controller
+ *
+ * @author linhongwei
+ * @date 2021-10-27
+ */
+@RestController
+@RequestMapping("/record/vendor/repair")
+@Api(tags = "供应商返修台账")
+public class InvRecordVendorRepairController extends BaseController {
+
+    @Autowired
+    private IInvRecordVendorRepairService invRecordVendorRepairService;
+    @Autowired
+    private ISystemDictDataService sysDictDataService;
+
+    /**
+     * 查询供应商返修台账列表
+     */
+//    @PreAuthorize(hasPermi = "ems:repair:list")
+    @PostMapping("/list")
+    @ApiOperation(value = "查询供应商返修台账列表", notes = "查询供应商返修台账列表")
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功", response = InvRecordVendorRepair.class))
+    public TableDataInfo list(@RequestBody InvRecordVendorRepair invRecordVendorRepair) {
+        startPage(invRecordVendorRepair);
+        List<InvRecordVendorRepair> list = invRecordVendorRepairService.selectInvRecordVendorRepairList(invRecordVendorRepair);
+        return getDataTable(list);
+    }
+
+    /**
+     * 查询供应商返修台账明细报表
+     */
+//    @PreAuthorize(hasPermi = "ems:repair::vendor:report")
+    @PostMapping("/report")
+    @ApiOperation(value = "查询供应商返修台账明细报表", notes = "查询供应商返修台账明细报表")
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功", response = InvRecordVendorRepair.class))
+    public TableDataInfo report(@RequestBody InvRecordVendorRepairRequest invRecordVendorRepair) {
+        startPage(invRecordVendorRepair);
+        List<InvRecordVendorRepairResponse> list = invRecordVendorRepairService.report(invRecordVendorRepair);
+        return getDataTable(list);
+    }
+
+    @Log(title = "供应商返修台账", businessType = BusinessType.EXPORT)
+    @ApiOperation(value = "导出供应商返修台账明细报表", notes = "导出供应商返修台账明细报表")
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功", response = void.class))
+    @PostMapping("/export/report")
+    public void exportR(HttpServletResponse response, InvRecordVendorRepairRequest invRecordVendorRepair) throws IOException {
+        List<InvRecordVendorRepairResponse> list = invRecordVendorRepairService.report(invRecordVendorRepair);
+        Map<String,Object> dataMap=sysDictDataService.getDictDataList();
+        ExcelUtil<InvRecordVendorRepairResponse> util = new ExcelUtil<>(InvRecordVendorRepairResponse.class,dataMap);
+        util.exportExcel(response, list, "供应商返修台账明细报表");
+    }
+    /**
+     * 导出供应商返修台账列表
+     */
+    @PreAuthorize(hasPermi = "ems::vendor:repair:export")
+    @Log(title = "供应商返修台账", businessType = BusinessType.EXPORT)
+    @ApiOperation(value = "导出供应商返修台账列表", notes = "导出供应商返修台账列表")
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功", response = void.class))
+    @PostMapping("/export")
+    public void export(HttpServletResponse response, InvRecordVendorRepair invRecordVendorRepair) throws IOException {
+        List<InvRecordVendorRepair> list = invRecordVendorRepairService.selectInvRecordVendorRepairList(invRecordVendorRepair);
+        Map<String,Object> dataMap=sysDictDataService.getDictDataList();
+        ExcelUtil<InvRecordVendorRepairExResponse> util = new ExcelUtil<>(InvRecordVendorRepairExResponse.class,dataMap);
+        util.exportExcel(response, BeanCopyUtils.copyListProperties(list, InvRecordVendorRepairExResponse::new), "供应商返修台账"+ DateUtil.format(new DateTime(), "yyyyMMddHHmmss"));
+    }
+
+
+    /**
+     * 获取供应商返修台账详细信息
+     */
+    @ApiOperation(value = "获取供应商返修台账详细信息", notes = "获取供应商返修台账详细信息")
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功", response = InvRecordVendorRepair.class))
+//    @PreAuthorize(hasPermi = "ems:repair:query")
+    @PostMapping("/getInfo")
+    public AjaxResult getInfo(Long vendorRepairSid) {
+        if (vendorRepairSid == null) {
+            throw new CheckedException("参数缺失");
+        }
+        return AjaxResult.success(invRecordVendorRepairService.selectInvRecordVendorRepairById(vendorRepairSid));
+    }
+
+    /**
+     * 新增供应商返修台账
+     */
+    @ApiOperation(value = "新增供应商返修台账", notes = "新增供应商返修台账")
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功", response = AjaxResult.class))
+//    @PreAuthorize(hasPermi = "ems:repair:add")
+    @Log(title = "供应商返修台账", businessType = BusinessType.INSERT)
+    @PostMapping("/add")
+    @Idempotent(message = "系统处理中，请勿重复点击按钮")
+    public AjaxResult add(@RequestBody @Valid InvRecordVendorRepair invRecordVendorRepair) {
+        return toAjax(invRecordVendorRepairService.insertInvRecordVendorRepair(invRecordVendorRepair));
+    }
+
+    @ApiOperation(value = "添加明细行物料重复校验", notes = "添加明细行物料重复校验")
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功", response = AjaxResult.class))
+    @PostMapping("/judge/add")
+    public AjaxResult add(@RequestBody List<InvRecordVendorRepair> list) {
+        if(CollectionUtils.isEmpty(list)){
+            throw  new CustomException("参数不允许为空");
+        }
+        return toAjax(invRecordVendorRepairService.judgeRepeat(list));
+    }
+
+    /**
+     * 修改供应商返修台账
+     */
+    @ApiOperation(value = "修改/变更供应商返修台账", notes = "修改/变更供应商返修台账")
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功", response =AjaxResult.class))
+//    @PreAuthorize(hasPermi = "ems:repair:edit")
+    @Log(title = "供应商返修台账", businessType = BusinessType.UPDATE)
+    @PostMapping("/edit")
+    @Idempotent(message = "系统处理中，请勿重复点击按钮")
+    public AjaxResult edit(@RequestBody InvRecordVendorRepair invRecordVendorRepair) {
+        return toAjax(invRecordVendorRepairService.updateInvRecordVendorRepair(invRecordVendorRepair));
+    }
+
+    /**
+     * 变更供应商返修台账
+     */
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功", response =AjaxResult.class))
+    @PreAuthorize(hasPermi = "ems:repair:change")
+    @Log(title = "供应商返修台账", businessType = BusinessType.CHANGE)
+    @PostMapping("/change")
+    public AjaxResult change(@RequestBody InvRecordVendorRepair invRecordVendorRepair) {
+        return toAjax(invRecordVendorRepairService.changeInvRecordVendorRepair(invRecordVendorRepair));
+    }
+
+    /**
+     * 删除供应商返修台账
+     */
+    @ApiOperation(value = "删除供应商返修台账", notes = "删除供应商返修台账")
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功", response = AjaxResult.class))
+    @PreAuthorize(hasPermi = "ems::vendor:repair:remove")
+    @Log(title = "供应商返修台账", businessType = BusinessType.DELETE)
+	@PostMapping("/delete")
+    public AjaxResult remove(@RequestBody List<Long>  vendorRepairSids) {
+        if(CollectionUtils.isEmpty( vendorRepairSids)){
+            throw new CheckedException("参数缺失");
+        }
+        return toAjax(invRecordVendorRepairService.deleteInvRecordVendorRepairByIds(vendorRepairSids));
+    }
+
+    @ApiOperation(value = "启用停用接口", notes = "启用停用接口")
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功", response = AjaxResult.class))
+    @Log(title = "供应商返修台账", businessType = BusinessType.UPDATE)
+    @PreAuthorize(hasPermi = "ems:repair:enbleordisable")
+    @PostMapping("/changeStatus")
+    public AjaxResult changeStatus(@RequestBody InvRecordVendorRepair invRecordVendorRepair) {
+        return AjaxResult.success(invRecordVendorRepairService.changeStatus(invRecordVendorRepair));
+    }
+
+    @ApiOperation(value = "确认供应商返修台账", notes = "确认供应商返修台账")
+    @PreAuthorize(hasPermi = "ems:vendor:repair:check")
+    @ApiResponses(@ApiResponse(code = 200, message = "请求成功", response = AjaxResult.class))
+    @Log(title = "供应商返修台账", businessType = BusinessType.CHECK)
+    @PostMapping("/check")
+    public AjaxResult check(@RequestBody InvRecordVendorRepair invRecordVendorRepair) {
+        invRecordVendorRepair.setConfirmDate(new Date());
+        invRecordVendorRepair.setConfirmerAccount(ApiThreadLocalUtil.get().getUsername());
+        invRecordVendorRepair.setHandleStatus(HandleStatus.CONFIRMED.getCode());
+        return toAjax(invRecordVendorRepairService.check(invRecordVendorRepair));
+    }
+
+}

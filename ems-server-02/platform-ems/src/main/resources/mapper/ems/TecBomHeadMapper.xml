@@ -1,0 +1,750 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecBomHeadMapper">
+
+    <resultMap type="com.platform.ems.domain.TecBomHead" id="TecBomHeadResult">
+        <result property="clientId" column="client_id"/>
+        <result property="bomSid" column="bom_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="sampleCodeSelf" column="sample_code_self"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="bomUsage" column="bom_usage"/>
+        <result property="bomStatus" column="bom_status"/>
+        <result property="bomType" column="bom_type"/>
+        <result property="bomVersionId" column="bom_version_id"/>
+        <result property="bomVersionIdPre" column="bom_version_id_pre"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="processType" column="process_type"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="instanceId" column="instance_id"/>
+    </resultMap>
+
+    <select id="selectTecBomHeadByMaterialSid" parameterType="Long" resultMap="TecBomHeadResult">
+        <include refid="selectTecBomHeadVo"/>
+        where t.material_sid = #{materialSid}
+    </select>
+
+
+    <select id="selectTecBomHeadList" parameterType="com.platform.ems.domain.TecBomHead" resultMap="TecBomHeadResult">
+        <include refid="selectTecBomHeadVo"/>
+        <where>
+            <if test="processType != null and processType != ''">
+                and t.process_type = #{processType}
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">
+                and t1.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="materialCategory !=null and materialCategory !=''">
+                and t1.material_category=#{materialCategory}
+            </if>
+            <if test="modelSidList != null and modelSidList.length >0">
+                and t1.model_sid in
+                (<foreach collection="modelSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and t1.customer_sid in
+                (<foreach collection="customerSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="upDownSuitList != null and upDownSuitList.length >0">
+                and t1.up_down_suit in
+                (<foreach collection="upDownSuitList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="instanceId != null and instanceId != ''">
+                and t.instance_id = #{instanceId}
+            </if>
+            <if test="materialSid !=null and materialSid !=''">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="materialCode !=null and materialCode !=''">
+                and t1.material_code like concat('%',
+                #{materialCode}, '%')
+            </if>
+            <if test="materialName != null  and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="item" separator="or">t1.material_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="customerProductCode != null  and customerProductCode != ''">
+                and (<foreach collection="customerProductCode.split(';')" item="item" separator="or">
+                t1.customer_product_code like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialType !=null and materialType !=''">
+                and t1.material_type = #{materialType}
+            </if>
+            <if test="vendorSid !=null and vendorSid !=''">
+                and t1.vendor_sid = #{vendorSid}
+            </if>
+            <if test="sampleCodeVendor !=null and sampleCodeVendor !=''">
+                and t1.sample_code_vendor = #{sampleCodeVendor}
+            </if>
+            <if test="materialClassSid !=null and materialClassSid !=''">
+                and t1.material_class_sid = #{materialClassSid}
+            </if>
+            <if test="bomSid != null  and bomSid != ''">
+                and t.bom_sid = #{bomSid}
+            </if>
+            <if test="sampleCodeSelf != null  and sampleCodeSelf != ''">
+                and (<foreach collection="sampleCodeSelf.split(';')" item="item" separator="or">t1.sample_code_self like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sku1Sid != null  and sku1Sid != ''">
+                and t.sku1_sid = #{sku1Sid}
+            </if>
+            <if test="sku2Sid != null  and sku2Sid != ''">
+                and t.sku2_sid = #{sku2Sid}
+            </if>
+            <if test="bomUsage != null  and bomUsage != ''">
+                and t.bom_usage in (
+                <foreach collection="bomUsage.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="bomStatus != null  and bomStatus != ''">
+                and t.bom_status in (
+                <foreach collection="bomStatus.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="bomType != null  and bomType != ''">
+                and t.bom_type in (
+                <foreach collection="bomType.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="bomVersionId != null  and bomVersionId != ''">
+                and t.bom_version_id in (
+                <foreach collection="bomVersionId.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="bomVersionIdPre != null  and bomVersionIdPre != ''">
+                and t.bom_version_id_pre in (
+                <foreach collection="bomVersionIdPre.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="status != null  and status != ''">
+                and t.status in (
+                <foreach collection="status.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and t.handle_status in (
+                <foreach collection="handleStatus.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+
+            <if test="processType != null and processType !=''">and t.process_type = #{processType}</if>
+
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="createDate != null ">and t.create_date = #{createDate}</if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and t.updater_account in (
+                <foreach collection="updaterAccount.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and t.confirmer_account in (
+                <foreach collection="confirmerAccount.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="confirmDate != null ">and t.confirm_date = #{confirmDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and t.data_source_sys in (
+                <foreach collection="dataSourceSys.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="beginTime != null "><!-- 开始时间检索 -->
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null "><!-- 结束时间检索 -->
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            order by t.create_date desc ,t1.material_code desc
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_tec_bom_head
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            bom_sid,
+            material_sid,
+            sample_code_self,
+            sku1_sid,
+            sku2_sid,
+            bom_usage,
+            bom_status,
+            bom_type,
+            bom_version_id,
+            bom_version_id_pre,
+            remark,
+            status,
+            handle_status,
+            process_type,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{clientId},
+                #{bomSid},
+                #{materialSid},
+                #{sampleCodeSelf},
+                #{sku1Sid},
+                #{sku2Sid},
+                #{bomUsage},
+                #{bomStatus},
+                #{bomType},
+                #{bomVersionId},
+                #{bomVersionIdPre},
+                #{remark},
+                #{status},
+                #{handleStatus},
+                #{processType},
+                #{creatorAccount},
+                #{createDate},
+                #{updaterAccount},
+                #{updateDate},
+                #{confirmerAccount},
+                #{confirmDate},
+                #{dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_tec_bom_head
+        <trim prefix="SET" suffixOverrides=",">
+            bom_sid = #{bomSid},
+            material_sid = #{materialSid},
+            sample_code_self = #{sampleCodeSelf},
+            sku1_sid = #{sku1Sid},
+            sku2_sid = #{sku2Sid},
+            bom_usage = #{bomUsage},
+            bom_status = #{bomStatus},
+            bom_type = #{bomType},
+            bom_version_id = #{bomVersionId},
+            bom_version_id_pre = #{bomVersionIdPre},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            process_type = #{processType},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where bom_sid = #{bomSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_tec_bom_head
+            <trim prefix="SET" suffixOverrides=",">
+                bom_sid = #{bomSid},
+                material_sid = #{materialSid},
+                sample_code_self = #{sampleCodeSelf},
+                sku1_sid = #{sku1Sid},
+                sku2_sid = #{sku2Sid},
+                bom_usage = #{bomUsage},
+                bom_status = #{bomStatus},
+                bom_type = #{bomType},
+                bom_version_id = #{bomVersionId},
+                bom_version_id_pre = #{bomVersionIdPre},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                process_type = #{processType},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where bom_sid = #{bomSid}
+        </foreach>
+    </update>
+
+    <select id="getAllBom" resultType="com.platform.ems.domain.TecBomHead">
+        select t.material_sid,t.bom_sid,t2.material_code,t.creator_account
+        from (select * from s_tec_bom_head WHERE bom_sid in (select min(bom_sid) from s_tec_bom_head GROUP BY material_sid)) t
+        left join s_bas_material t2 on t2.material_sid=t.material_sid
+        where t2.material_category='SP' and t.handle_status='5'
+    </select>
+    <select id="selectTecBomHeadNewList" parameterType="com.platform.ems.domain.TecBomHead" resultMap="TecBomHeadResult">
+        <include refid="selectTecBomHeadVoNew"/>
+        <where>
+            <if test="approvalUserId != null and approvalUserId != '' ">
+                and (t19.approval_user_id = #{approvalUserId}  or t19.approval_user_id like concat('%, ', #{approvalUserId}, ',%')
+                or t19.approval_user_id like concat('%, ', #{approvalUserId}) or t19.approval_user_id like concat(#{approvalUserId}, ',%')
+                or t19.approval_user_id like concat('%,', #{approvalUserId}, ',%') or t19.approval_user_id like concat('%,', #{approvalUserId}))
+            </if>
+            <if test="approvalUserIdList != null and approvalUserIdList.length >0 ">
+                and (<foreach collection="approvalUserIdList" item="approvalUserId" separator=" or ">
+                (t19.approval_user_id = #{approvalUserId} or t19.approval_user_id like concat('%, ', #{approvalUserId}, ',%')
+                or t19.approval_user_id like concat('%, ', #{approvalUserId}) or t19.approval_user_id like concat(#{approvalUserId}, ',%')
+                or t19.approval_user_id like concat('%,', #{approvalUserId}, ',%') or t19.approval_user_id like concat('%,', #{approvalUserId}))</foreach>)
+            </if>
+            <if test="processType != null and processType != ''">
+                and t.process_type = #{processType}
+            </if>
+            <if test="itemSidList != null  and itemSidList.size> 0">
+                 and t.material_sid in
+                <foreach collection="itemSidList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">
+                and t1.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="materialCategory !=null and materialCategory !=''">
+                and t1.material_category=#{materialCategory}
+            </if>
+            <if test="materialCategoryList !=null and materialCategoryList.length>0 ">
+                and t1.material_category in
+                (<foreach collection="materialCategoryList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="modelSidList != null and modelSidList.length >0">
+                and t1.model_sid in
+                (<foreach collection="modelSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and t1.customer_sid in
+                (<foreach collection="customerSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t1.company_sid in
+                (<foreach collection="companySidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and (
+                t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">
+                #{item}</foreach>)
+                <if test="taskCode != null and taskCode !=''">
+                    OR t21.task_code =#{taskCode} OR t21.task_code ='ZZQR'
+                </if>
+                )
+            </if>
+            <if test="upDownSuitList != null and upDownSuitList.length >0">
+                and t1.up_down_suit in
+                (<foreach collection="upDownSuitList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length >0">
+                and t1.material_type in
+                (<foreach collection="materialTypeList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="instanceId != null and instanceId != ''">
+                and t.instance_id = #{instanceId}
+            </if>
+            <if test="materialSid !=null and materialSid !=''">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="materialCode !=null and materialCode !=''">
+                and t1.material_code like concat('%',
+                #{materialCode}, '%')
+            </if>
+            <if test="designerAccountName !=null and designerAccountName !=''">
+                and t15.nick_name like concat('%',
+                #{designerAccountName}, '%')
+            </if>
+            <if test="sampleCodeCustomer !=null and sampleCodeCustomer !=''">
+                and t1.sample_code_customer like concat('%',
+                #{sampleCodeCustomer}, '%')
+            </if>
+            <if test="simpleCode !=null and simpleCode !=''">
+                and t1.simple_code like concat('%',
+                #{simpleCode}, '%')
+            </if>
+            <if test="materialName != null  and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="item" separator="or">t1.material_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="customerProductCode != null  and customerProductCode != ''">
+                and (<foreach collection="customerProductCode.split(';')" item="item" separator="or">
+                t1.customer_product_code like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialType !=null and materialType !=''">
+                and t1.material_type = #{materialType}
+            </if>
+            <if test="vendorSid !=null and vendorSid !=''">
+                and t1.vendor_sid = #{vendorSid}
+            </if>
+            <if test="sampleCodeVendor !=null and sampleCodeVendor !=''">
+                and t1.sample_code_vendor = #{sampleCodeVendor}
+            </if>
+            <if test="materialClassSid !=null and materialClassSid !=''">
+                and t1.material_class_sid = #{materialClassSid}
+            </if>
+            <if test="bomSid != null  and bomSid != ''">
+                and t.bom_sid = #{bomSid}
+            </if>
+            <if test="sampleCodeSelf != null  and sampleCodeSelf != ''">
+                and (<foreach collection="sampleCodeSelf.split(';')" item="item" separator="or">t1.sample_code_self like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sku1Sid != null  and sku1Sid != ''">
+                and t.sku1_sid = #{sku1Sid}
+            </if>
+            <if test="sku2Sid != null  and sku2Sid != ''">
+                and t.sku2_sid = #{sku2Sid}
+            </if>
+            <if test="bomUsage != null  and bomUsage != ''">
+                and t.bom_usage in (
+                <foreach collection="bomUsage.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="bomStatus != null  and bomStatus != ''">
+                and t.bom_status in (
+                <foreach collection="bomStatus.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="bomType != null  and bomType != ''">
+                and t.bom_type in (
+                <foreach collection="bomType.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="bomVersionId != null  and bomVersionId != ''">
+                and t.bom_version_id in (
+                <foreach collection="bomVersionId.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="bomVersionIdPre != null  and bomVersionIdPre != ''">
+                and t.bom_version_id_pre in (
+                <foreach collection="bomVersionIdPre.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="status != null  and status != ''">
+                and t.status in (
+                <foreach collection="status.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and t.handle_status in (
+                <foreach collection="handleStatus.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+
+            <if test="processType != null and processType !=''">and t.process_type = #{processType}</if>
+
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t7.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="createDate != null ">and t.create_date = #{createDate}</if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and t.updater_account in (
+                <foreach collection="updaterAccount.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and t.confirmer_account in (
+                <foreach collection="confirmerAccount.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="confirmDate != null ">and t.confirm_date = #{confirmDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and t.data_source_sys in (
+                <foreach collection="dataSourceSys.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="beginTime != null "><!-- 开始时间检索 -->
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null "><!-- 结束时间检索 -->
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+
+            order by t.create_date desc ,t1.material_code desc
+        </where>
+    </select>
+    <sql id="selectTecBomHeadVoNew">
+        select
+         t.bom_sid,
+         t.sku1_sid,
+         t.sku2_sid,
+         t.material_sid,
+         t.bom_usage,
+         t.bom_status,
+         t.standard_sku,
+         t.bom_type,
+         t.bom_version_id,
+         t.bom_version_id_pre,
+         t.remark,
+         t.status,
+         t.handle_status,
+         t.creator_account,
+         t.create_date,
+         t.updater_account,
+         t.update_date,
+         t.confirmer_account,
+         t.confirm_date,
+         t.data_source_sys,
+         t.instance_id,
+         t1.material_code,
+         t1.material_name,
+         t1.material_type,
+         t1.sample_code_self,
+         t1.vendor_sid,
+         t1.model_sid,
+         t1.sample_code_vendor,
+         t1.product_season_sid,
+         t1.material_class_sid,
+         t1.designer_account,
+         t1.customer_product_code,
+         t1.customer_sid,
+         t1.sample_code_self_initial,
+         t1.up_down_suit,
+         t1.sample_code_customer,
+         t1.simple_code,
+         t1.male_female_flag,
+         t1.style,
+         t1.kuan_type,
+         t1.product_season_sid,
+         t1.company_sid,
+         t1.picture_path,
+         t1.cycle_stage,
+         t1.unit_base,
+         t2.sku_name as standard_sku_name,
+         t3.customer_name,
+         t4.product_season_name,
+         t5.company_name,
+         t6.name as product_technique_type_name,
+         t7.nick_name as creator_account_name,
+         t8.nick_name as updater_account_name,
+         t9.nick_name as confirmer_account_name,
+         t10.name as unit_base_name,
+         t11.model_name,
+         t12.name as material_type_name,
+         t13.brand_name AS company_brand_name,
+         t14.sku_name as sku1_name,
+         t15.nick_name as designer_account_name,
+         t16.node_name as material_class_name,
+         t19.approval_node,
+	     t19.approval_user_id,
+	     t19.approval_user_name,
+	     t19.create_date AS submit_date,
+	     t20.nick_name AS submit_user_name,
+	     t21.task_code,
+	     t22.name as  bom_usage_name
+         from (select * from s_tec_bom_head WHERE bom_sid
+         in (select min(bom_sid) from s_tec_bom_head  where status='1' GROUP BY material_sid)
+         ) t
+         left join s_bas_material t1 on t1.material_sid=t.material_sid
+         left join s_bas_sku t2 on t2.sku_sid=t.standard_sku
+         LEFT JOIN s_bas_customer t3 ON t3.customer_sid = t1.customer_sid
+         LEFT JOIN s_bas_product_season t4 ON t4.product_season_sid = t1.product_season_sid
+         LEFT JOIN s_bas_company t5 ON t5.company_sid = t1.company_sid
+         left join  s_con_product_technique_type t6 on t6.code=t1.product_technique_type
+         LEFT JOIN sys_user t7 ON t7.user_name = t.creator_account and t7.client_id = t.client_id
+         LEFT JOIN sys_user t8 ON t8.user_name = t.updater_account and t8.client_id = t.client_id
+         LEFT JOIN sys_user t9 ON t9.user_name = t.confirmer_account and t9.client_id = t.client_id
+         LEFT JOIN s_con_measure_unit t10 ON t10.code = t1.unit_base
+         LEFT JOIN s_tec_model t11 ON t11.model_sid = t1.model_sid
+         LEFT JOIN s_con_material_type t12 ON t12.code = t1.material_type
+         LEFT JOIN s_bas_company_brand t13 ON t13.company_brand_sid = t1.company_brand_sid
+         left join s_bas_sku t14 on t14.sku_sid= t.sku1_sid
+         LEFT JOIN sys_user t15 ON t15.user_name = t1.designer_account and t15.client_id = t1.client_id
+         LEFT JOIN s_con_material_class t16 ON t1.material_class_sid = t16.material_class_sid
+         left join s_sys_form_process t19 on t19.form_id=t.material_sid
+         LEFT JOIN sys_user t20 ON t19.creator_account = t20.user_name and t19.client_id = t20.client_id
+         left join s_sys_process_task_config t21 on t19.approval_node=t21.task_name
+         left join s_con_bom_usage t22 on t22.code=t.bom_usage
+    </sql>
+    <!--更新-->
+    <update id="updateHandleStatus">
+        update s_tec_bom_head set handle_status = #{handleStatus}, update_date = now() where bom_sid = #{bomSid}
+    </update>
+    <update id="updateStatus">
+        update s_tec_bom_head set status = #{status}, update_date = now() where bom_sid = #{bomSid}
+    </update>
+    <update id="updateBomStatus">
+        update s_tec_bom_head set bom_status = #{bomStatus}, update_date = now() where bom_sid = #{bomSid}
+    </update>
+    <sql id="selectTecBomHeadVo">
+        select t.client_id,
+         t.bom_sid,
+         t.material_sid,
+         t.sku1_sid,
+         t.sku2_sid,
+         t.bom_usage,
+         t.bom_status,
+         t.standard_sku,
+         t.bom_type,
+         t.bom_version_id,
+         t.bom_version_id_pre,
+         t.remark,
+         t.status,
+         t.handle_status,
+         t.creator_account,
+         t.create_date,
+         t.updater_account,
+         t.update_date,
+         t.confirmer_account,
+         t.confirm_date,
+         t.data_source_sys,
+         t.instance_id,
+         t1.material_code,
+         t1.material_name,
+         t1.material_type,
+         t1.sample_code_self,
+         t1.vendor_sid,
+         t1.picture_path,
+         t1.model_sid,
+         t1.sample_code_vendor,
+         t1.product_season_sid,
+         t1.material_class_sid,
+         t1.designer_account,
+         t1.customer_product_code,
+         t1.customer_sid,
+         t1.sample_code_self_initial,
+         t1.up_down_suit,
+         t1.sample_code_customer,
+         t1.simple_code,
+         t1.male_female_flag,
+         t1.style,
+         t1.kuan_type,
+         t1.product_season_sid,
+         t1.company_sid,
+         t1.cycle_stage,
+         t1.unit_base,
+         t2.sku_name as standard_sku_name,
+         t3.customer_name,
+         t4.product_season_name,
+         t5.company_name,
+         t6.name as product_technique_type_name,
+         t7.nick_name as creator_account_name,
+         t8.nick_name as updater_account_name,
+         t9.nick_name as confirmer_account_name,
+         t10.name as unit_base_name,
+         t11.model_name,
+         t12.name as material_type_name,
+         t13.brand_name AS company_brand_name,
+         t14.sku_name as sku1_name,
+         t15.nick_name as designer_account_name,
+         t16.name as  bom_usage_name
+         from s_tec_bom_head t
+         left join s_bas_material t1 on t1.material_sid=t.material_sid
+         left join s_bas_sku t2 on t2.sku_sid=t.standard_sku
+         LEFT JOIN s_bas_customer t3 ON t3.customer_sid = t1.customer_sid
+         LEFT JOIN s_bas_product_season t4 ON t4.product_season_sid = t1.product_season_sid
+         LEFT JOIN s_bas_company t5 ON t5.company_sid = t1.company_sid
+         left join  s_con_product_technique_type t6 on t6.code=t1.product_technique_type
+         LEFT JOIN sys_user t7 ON t7.user_name = t.creator_account and t7.client_id = t.client_id
+         LEFT JOIN sys_user t8 ON t8.user_name = t.updater_account and t8.client_id = t.client_id
+         LEFT JOIN sys_user t9 ON t9.user_name = t.confirmer_account and t9.client_id = t.client_id
+         LEFT JOIN s_con_measure_unit t10 ON t10.code = t1.unit_base
+         LEFT JOIN s_tec_model t11 ON t11.model_sid = t1.model_sid
+         LEFT JOIN s_con_material_type t12 ON t12.code = t1.material_type
+         LEFT JOIN s_bas_company_brand t13 ON t13.company_brand_sid = t1.company_brand_sid
+         left join s_bas_sku t14 on t14.sku_sid= t.sku1_sid
+         LEFT JOIN sys_user t15 ON t15.user_name = t1.designer_account and t15.client_id = t1.client_id
+         left join s_con_bom_usage t16 on t16.code=t.bom_usage
+    </sql>
+    <!-- 修改流程参数 -->
+    <update id="updateProcessValue" parameterType="com.platform.ems.domain.TecBomHead">
+	UPDATE s_tec_bom_head SET process_type = #{processType}, instance_id = #{instanceId} WHERE material_sid = #{materialSid}
+	</update>
+    <!-- 获取用户代办任务list -->
+    <select id="getUsetTaskList" parameterType="com.platform.ems.domain.TecBomHead" resultMap="TecBomHeadResult">
+        <include refid="selectTecBomHeadVo"/>where t.material_sid in
+        <foreach collection="materialSidList" item="materialSid" open="(" close=")" separator=",">#{materialSid}
+        </foreach>
+    </select>
+</mapper>

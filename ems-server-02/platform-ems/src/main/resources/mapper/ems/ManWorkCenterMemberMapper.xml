@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManWorkCenterMemberMapper">
+
+    <resultMap type="com.platform.ems.domain.ManWorkCenterMember" id="ManWorkCenterMemberResult">
+        <result property="clientId" column="client_id"/>
+        <result property="workCenterMemberSid" column="work_center_member_sid"/>
+        <result property="workCenterSid" column="work_center_sid"/>
+        <result property="memberCode" column="member_code"/>
+        <result property="memberSid" column="member_sid"/>
+        <result property="memberName" column="member_name"/>
+        <result property="memberPosition" column="member_position"/>
+        <result property="phone" column="phone"/>
+        <result property="sort" column="sort"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="workCenterName" column="work_center_name"/>
+    </resultMap>
+
+    <sql id="selectManWorkCenterMemberVo">
+      select
+      t.client_id,
+      t.work_center_member_sid,
+      t.work_center_sid,
+      t.member_code,
+      t.member_sid,
+      t.member_name,
+      t.member_position,
+      t.phone,
+      t.sort,
+      t.remark,
+      t.creator_account,
+      t.create_date,
+      t.updater_account,
+      t.update_date,
+      t.data_source_sys,
+      t1.nick_name AS creator_account_name,
+      t2.nick_name AS updater_account_name,
+      t3.position_name,
+      t4.user_name AS system_account,
+      t5.work_center_name
+from s_man_work_center_member t
+      LEFT JOIN sys_user t1 ON t1.user_name = t.creator_account
+      LEFT JOIN sys_user t2 ON t2.user_name = t.updater_account
+      LEFT JOIN s_bas_position t3 ON t3.position_sid = t.member_position
+      LEFT JOIN sys_user t4 ON t4.staff_sid = t.member_sid and t4.account_type = 'YG'
+      LEFT JOIN s_man_work_center t5 ON t.work_center_sid = t5.work_center_sid
+      LEFT JOIN s_bas_staff t6 ON t.member_sid = t6.staff_sid
+    </sql>
+
+    <select id="selectManWorkCenterMemberById" parameterType="Long" resultMap="ManWorkCenterMemberResult">
+        <include refid="selectManWorkCenterMemberVo"/>
+        where t.work_center_member_sid = #{workCenterMemberSid}
+    </select>
+
+
+    <select id="selectManWorkCenterMemberList" parameterType="com.platform.ems.domain.ManWorkCenterMember"
+            resultMap="ManWorkCenterMemberResult">
+        <include refid="selectManWorkCenterMemberVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="workCenterMemberSid != null ">
+                and t.work_center_member_sid =#{workCenterMemberSid}
+            </if>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid =#{workCenterSid}
+            </if>
+            <if test="memberCode != null  and memberCode != ''">
+                and (<foreach collection="memberCode.split(';')" item="item" separator="or">t.member_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="memberSid != null ">
+                and t.member_sid =#{memberSid}
+            </if>
+            <if test="memberName != null  and memberName != ''">and
+                t.member_name like concat('%', #{memberName}, '%')
+            </if>
+            <if test="isOnJob != null and isOnJob != ''">
+                and t6.is_on_job =#{isOnJob}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t6.handle_status =#{handleStatus}
+            </if>
+            <if test="memberPosition != null ">
+                and t.member_position =#{memberPosition}
+            </if>
+            <if test="phone != null  and phone != ''">
+                and (<foreach collection="phone.split(';')" item="item" separator="or">t.phone
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sort != null ">
+                and t.sort =#{sort}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        group by t.member_sid
+        order by t.member_name asc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_work_center_member
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            work_center_member_sid,
+            work_center_sid,
+            member_code,
+            member_sid,
+            member_name,
+            member_position,
+            phone,
+            sort,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.workCenterMemberSid},
+                #{item.workCenterSid},
+                #{item.memberCode},
+                #{item.memberSid},
+                #{item.memberName},
+                #{item.memberPosition},
+                #{item.phone},
+                #{item.sort},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_work_center_member
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            work_center_member_sid = #{workCenterMemberSid},
+            work_center_sid = #{workCenterSid},
+            member_code = #{memberCode},
+            member_sid = #{memberSid},
+            member_name = #{memberName},
+            member_position = #{memberPosition},
+            phone = #{phone},
+            sort = #{sort},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where work_center_member_sid = #{workCenterMemberSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_work_center_member
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                work_center_member_sid = #{workCenterMemberSid},
+                work_center_sid = #{workCenterSid},
+                member_code = #{memberCode},
+                member_sid = #{memberSid},
+                member_name = #{memberName},
+                member_position = #{memberPosition},
+                phone = #{phone},
+                sort = #{sort},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where work_center_member_sid = #{workCenterMemberSid}
+        </foreach>
+    </update>
+
+</mapper>

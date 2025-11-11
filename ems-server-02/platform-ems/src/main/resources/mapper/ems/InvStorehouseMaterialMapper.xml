@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.InvStorehouseMaterialMapper">
+
+    <resultMap type="com.platform.ems.domain.InvStorehouseMaterial" id="InvStorehouseMaterialResult">
+        <result property="clientId" column="client_id"/>
+        <result property="storehouseMaterialSid" column="storehouse_material_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="barcodeSid" column="barcode_sid"/>
+        <result property="storehouseSid" column="storehouse_sid"/>
+        <result property="price" column="price"/>
+        <result property="priceAverage" column="price_average"/>
+        <result property="priceUniform" column="price_uniform"/>
+        <result property="usageFrequencyFlag" column="usage_frequency_flag"/>
+        <result property="latestPurchaseEntryDate" column="latest_purchase_entry_date"/>
+        <result property="latestManufactEntryDate" column="latest_manufact_entry_date"/>
+        <result property="latestTransferEntryDate" column="latest_transfer_entry_date"/>
+        <result property="latestStockEntryDate" column="latest_stock_entry_date"/>
+        <result property="latestSaleOutDate" column="latest_sale_out_date"/>
+        <result property="latestTransferOutDate" column="latest_transfer_out_date"/>
+        <result property="latestRequisitionOutDate" column="latest_requisition_out_date"/>
+        <result property="latestStockOutDate" column="latest_stock_out_date"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectInvStorehouseMaterialVo">
+        select t.client_id,
+               t.storehouse_material_sid,
+               t.material_sid,
+               t.sku1_sid,
+               t.sku2_sid,
+               t.barcode_sid,
+               t.storehouse_sid,
+               t.price,
+               t.price_average,
+               t.price_uniform,
+               t.usage_frequency_flag,
+               t.latest_purchase_entry_date,
+               t.latest_manufact_entry_date,
+               t.latest_transfer_entry_date,
+               t.latest_stock_entry_date,
+               t.latest_sale_out_date,
+               t.latest_transfer_out_date,
+               t.latest_requisition_out_date,
+               t.latest_stock_out_date,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name
+        from s_inv_storehouse_material t
+         LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account and t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t3.user_name = t.updater_account and t.client_id = t3.client_id
+         LEFT JOIN sys_user t4 ON t4.user_name = t.confirmer_account and t.client_id = t4.client_id
+    </sql>
+
+    <select id="selectInvStorehouseMaterialById" parameterType="Long" resultMap="InvStorehouseMaterialResult">
+        <include refid="selectInvStorehouseMaterialVo"/>
+        where t.storehouse_material_sid = #{storehouseMaterialSid}
+    </select>
+
+    <select id="selectInvStorehouseMaterialList" parameterType="com.platform.ems.domain.InvStorehouseMaterial"
+            resultMap="InvStorehouseMaterialResult">
+        <include refid="selectInvStorehouseMaterialVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid =#{materialSid}
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid =#{sku1Sid}
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid =#{sku2Sid}
+            </if>
+            <if test="barcodeSid != null ">
+                and t.barcode_sid =#{barcodeSid}
+            </if>
+            <if test="storehouseSid != null ">
+                and t.storehouse_sid =#{storehouseSid}
+            </if>
+            <if test="price != null ">
+                and t.price = #{price}
+            </if>
+            <if test="priceAverage != null ">
+                and t.price_average = #{priceAverage}
+            </if>
+            <if test="priceUniform != null ">
+                and t.price_uniform = #{priceUniform}
+            </if>
+            <if test="usageFrequencyFlag != null and usageFrequencyFlag != ''">
+                and t.usage_frequency_flag = #{usageFrequencyFlag}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_inv_storehouse_material
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            storehouse_material_sid,
+            material_sid,
+            sku1_sid,
+            sku2_sid,
+            barcode_sid,
+            storehouse_sid,
+            price,
+            price_average,
+            price_uniform,
+            usage_frequency_flag,
+            latest_purchase_entry_date,
+            latest_manufact_entry_date,
+            latest_transfer_entry_date,
+            latest_stock_entry_date,
+            latest_sale_out_date,
+            latest_transfer_out_date,
+            latest_requisition_out_date,
+            latest_stock_out_date,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.storehouseMaterialSid},
+                #{item.materialSid},
+                #{item.sku1Sid},
+                #{item.sku2Sid},
+                #{item.barcodeSid},
+                #{item.storehouseSid},
+                #{item.price},
+                #{item.priceAverage},
+                #{item.priceUniform},
+                #{item.usageFrequencyFlag},
+                #{item.latestPurchaseEntryDate},
+                #{item.latestManufactEntryDate},
+                #{item.latestTransferEntryDate},
+                #{item.latestStockEntryDate},
+                #{item.latestSaleOutDate},
+                #{item.latestTransferOutDate},
+                #{item.latestRequisitionOutDate},
+                #{item.latestStockOutDate},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_inv_storehouse_material
+        <trim prefix="SET" suffixOverrides=",">
+            material_sid = #{materialSid},
+            sku1_sid = #{sku1Sid},
+            sku2_sid = #{sku2Sid},
+            barcode_sid = #{barcodeSid},
+            storehouse_sid = #{storehouseSid},
+            price = #{price},
+            price_average = #{priceAverage},
+            price_uniform = #{priceUniform},
+            usage_frequency_flag = #{usageFrequencyFlag},
+            latest_purchase_entry_date = #{latestPurchaseEntryDate},
+            latest_manufact_entry_date = #{latestManufactEntryDate},
+            latest_transfer_entry_date = #{latestTransferEntryDate},
+            latest_stock_entry_date = #{latestStockEntryDate},
+            latest_sale_out_date = #{latestSaleOutDate},
+            latest_transfer_out_date = #{latestTransferOutDate},
+            latest_requisition_out_date = #{latestRequisitionOutDate},
+            latest_stock_out_date = #{latestStockOutDate},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where storehouse_material_sid = #{storehouseMaterialSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_inv_storehouse_material
+            <trim prefix="SET" suffixOverrides=",">
+                material_sid = #{o.materialSid},
+                sku1_sid = #{o.sku1Sid},
+                sku2_sid = #{o.sku2Sid},
+                barcode_sid = #{o.barcodeSid},
+                storehouse_sid = #{o.storehouseSid},
+                price = #{o.price},
+                price_average = #{o.priceAverage},
+                price_uniform = #{o.priceUniform},
+                usage_frequency_flag = #{o.usageFrequencyFlag},
+                latest_purchase_entry_date = #{o.latestPurchaseEntryDate},
+                latest_manufact_entry_date = #{o.latestManufactEntryDate},
+                latest_transfer_entry_date = #{o.latestTransferEntryDate},
+                latest_stock_entry_date = #{o.latestStockEntryDate},
+                latest_sale_out_date = #{o.latestSaleOutDate},
+                latest_transfer_out_date = #{o.latestTransferOutDate},
+                latest_requisition_out_date = #{o.latestRequisitionOutDate},
+                latest_stock_out_date = #{o.latestStockOutDate},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+                data_source_sys = #{o.dataSourceSys},
+            </trim>
+            where storehouse_material_sid = #{o.storehouseMaterialSid}
+        </foreach>
+    </update>
+
+    <update id="updatesUsageFrequencyFlag">
+        <foreach collection="list" item="o" separator=";">
+            update s_inv_storehouse_material
+            <trim prefix="SET" suffixOverrides=",">
+                usage_frequency_flag = #{o.usageFrequencyFlag},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where barcode_sid = #{o.barcodeSid} and storehouse_sid = #{o.storehouseSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinBookCustomerAccountBalanceItemMapper">
+
+    <resultMap type="com.platform.ems.domain.FinBookCustomerAccountBalanceItem"
+               id="FinBookCustomerAccountBalanceItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="bookAccountBalanceItemSid" column="book_account_balance_item_sid"/>
+        <result property="bookAccountBalanceSid" column="book_account_balance_sid"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="referAccountDocumentSid" column="refer_account_document_sid"/>
+        <result property="referAccountDocumentCode" column="refer_account_document_code"/>
+        <result property="referBookType" column="refer_book_type"/>
+        <result property="referBookSourceCategory" column="refer_book_source_category"/>
+        <result property="referAccountItemSid" column="refer_account_item_sid"/>
+        <result property="referAccountItemCode" column="refer_account_item_code"/>
+        <result property="currencyAmountTaxHd" column="currency_amount_tax_hd"/>
+        <result property="referDocCategory" column="refer_doc_category"/>
+        <result property="referDocSid" column="refer_doc_sid"/>
+        <result property="referDocCode" column="refer_doc_code"/>
+        <result property="referDocItemSid" column="refer_doc_item_sid"/>
+        <result property="referDocItemCode" column="refer_doc_item_code"/>
+        <result property="taxRate" column="tax_rate"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectFinBookCustomerAccountBalanceItemVo">
+        select t.client_id, t.book_account_balance_item_sid, t.book_account_balance_sid, t.item_num, t.refer_account_document_sid, t.refer_account_document_code, t.refer_book_type, t.refer_book_source_category, t.refer_account_item_sid, t.refer_account_item_code, t.currency_amount_tax_hd, t.refer_doc_category, t.refer_doc_sid, t.refer_doc_code, t.refer_doc_item_sid, t.refer_doc_item_code, t.tax_rate, t.remark, t.creator_account, t.create_date, t.updater_account, t.update_date, t.data_source_sys from s_fin_book_customer_account_balance_item t
+    </sql>
+
+    <select id="selectFinBookCustomerAccountBalanceItemById" parameterType="Long"
+            resultMap="FinBookCustomerAccountBalanceItemResult">
+        <include refid="selectFinBookCustomerAccountBalanceItemVo"/>
+        where t.book_account_balance_item_sid = #{bookAccountBalanceItemSid}
+    </select>
+
+
+    <select id="selectFinBookCustomerAccountBalanceItemList"
+            parameterType="com.platform.ems.domain.FinBookCustomerAccountBalanceItem"
+            resultMap="FinBookCustomerAccountBalanceItemResult">
+        <include refid="selectFinBookCustomerAccountBalanceItemVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="bookAccountBalanceSid != null ">
+                and t.book_account_balance_sid =#{bookAccountBalanceSid}
+            </if>
+            <if test="referAccountDocumentSid != null ">
+                and t.refer_account_document_sid =#{referAccountDocumentSid}
+            </if>
+            <if test="referAccountDocumentCode != null ">
+                and t.refer_account_document_code =#{referAccountDocumentCode}
+            </if>
+            <if test="referBookType != null  and referBookType != ''">
+                and (<foreach collection="referBookType.split(';')" item="item" separator="or">t.refer_book_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="referBookSourceCategory != null  and referBookSourceCategory != ''">
+                and (<foreach collection="referBookSourceCategory.split(';')" item="item" separator="or">
+                t.refer_book_source_category like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="referAccountItemSid != null ">
+                and t.refer_account_item_sid =#{referAccountItemSid}
+            </if>
+            <if test="referAccountItemCode != null ">
+                and t.refer_account_item_code =#{referAccountItemCode}
+            </if>
+            <if test="currencyAmountTaxHd != null ">
+                and t.currency_amount_tax_hd = #{currencyAmountTaxHd}
+            </if>
+            <if test="referDocCategory != null  and referDocCategory != ''">
+                and (<foreach collection="referDocCategory.split(';')" item="item" separator="or">t.refer_doc_category
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="referDocSid != null ">
+                and t.refer_doc_sid =#{referDocSid}
+            </if>
+            <if test="referDocCode != null ">
+                and t.refer_doc_code =#{referDocCode}
+            </if>
+            <if test="referDocItemSid != null ">
+                and t.refer_doc_item_sid =#{referDocItemSid}
+            </if>
+            <if test="referDocItemCode != null ">
+                and t.refer_doc_item_code =#{referDocItemCode}
+            </if>
+            <if test="taxRate != null ">
+                and t.tax_rate = #{taxRate}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_book_customer_account_balance_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            book_account_balance_item_sid,
+            book_account_balance_sid,
+            item_num,
+            refer_account_document_sid,
+            refer_account_document_code,
+            refer_book_type,
+            refer_book_source_category,
+            refer_account_item_sid,
+            refer_account_item_code,
+            currency_amount_tax_hd,
+            refer_doc_category,
+            refer_doc_sid,
+            refer_doc_code,
+            refer_doc_item_sid,
+            refer_doc_item_code,
+            tax_rate,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.bookAccountBalanceItemSid},
+                #{item.bookAccountBalanceSid},
+                #{item.itemNum},
+                #{item.referAccountDocumentSid},
+                #{item.referAccountDocumentCode},
+                #{item.referBookType},
+                #{item.referBookSourceCategory},
+                #{item.referAccountItemSid},
+                #{item.referAccountItemCode},
+                #{item.currencyAmountTaxHd},
+                #{item.referDocCategory},
+                #{item.referDocSid},
+                #{item.referDocCode},
+                #{item.referDocItemSid},
+                #{item.referDocItemCode},
+                #{item.taxRate},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_book_customer_account_balance_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            book_account_balance_sid = #{bookAccountBalanceSid},
+            item_num = #{itemNum},
+            refer_account_document_sid = #{referAccountDocumentSid},
+            refer_account_document_code = #{referAccountDocumentCode},
+            refer_book_type = #{referBookType},
+            refer_book_source_category = #{referBookSourceCategory},
+            refer_account_item_sid = #{referAccountItemSid},
+            refer_account_item_code = #{referAccountItemCode},
+            currency_amount_tax_hd = #{currencyAmountTaxHd},
+            refer_doc_category = #{referDocCategory},
+            refer_doc_sid = #{referDocSid},
+            refer_doc_code = #{referDocCode},
+            refer_doc_item_sid = #{referDocItemSid},
+            refer_doc_item_code = #{referDocItemCode},
+            tax_rate = #{taxRate},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where book_account_balance_item_sid = #{bookAccountBalanceItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_book_customer_account_balance_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                book_account_balance_sid = #{bookAccountBalanceSid},
+                item_num = #{itemNum},
+                refer_account_document_sid = #{referAccountDocumentSid},
+                refer_account_document_code = #{referAccountDocumentCode},
+                refer_book_type = #{referBookType},
+                refer_book_source_category = #{referBookSourceCategory},
+                refer_account_item_sid = #{referAccountItemSid},
+                refer_account_item_code = #{referAccountItemCode},
+                currency_amount_tax_hd = #{currencyAmountTaxHd},
+                refer_doc_category = #{referDocCategory},
+                refer_doc_sid = #{referDocSid},
+                refer_doc_code = #{referDocCode},
+                refer_doc_item_sid = #{referDocItemSid},
+                refer_doc_item_code = #{referDocItemCode},
+                tax_rate = #{taxRate},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where book_account_balance_item_sid = #{bookAccountBalanceItemSid}
+        </foreach>
+    </update>
+
+</mapper>

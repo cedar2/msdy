@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasVendorRegisterBankAccountMapper">
+
+    <resultMap type="com.platform.ems.domain.BasVendorRegisterBankAccount" id="BasVendorRegisterBankAccountResult">
+        <result property="clientId" column="client_id"/>
+        <result property="vendorRegisterBankAccountSid" column="vendor_register_bank_account_sid"/>
+        <result property="vendorRegisterSid" column="vendor_register_sid"/>
+        <result property="accountType" column="account_type"/>
+        <result property="bankName" column="bank_name"/>
+        <result property="bankAccount" column="bank_account"/>
+        <result property="bankAccountName" column="bank_account_name"/>
+        <result property="bankBranchName" column="bank_branch_name"/>
+        <result property="bankBranchCode" column="bank_branch_code"/>
+        <result property="countryRegion" column="country_region"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectBasVendorRegisterBankAccountVo">
+        select t.client_id,
+               t.vendor_register_bank_account_sid,
+               t.vendor_register_sid,
+               t.account_type,
+               t.bank_name,
+               t.bank_account,
+               t.bank_account_name,
+               t.bank_branch_name,
+               t.bank_branch_code,
+               t.country_region,
+               t.picture_path,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name
+        from s_bas_vendor_register_bank_account t
+                 LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+                 LEFT JOIN sys_user t3 ON t3.user_name = t.updater_account
+    </sql>
+
+    <select id="selectBasVendorRegisterBankAccountById" parameterType="Long"
+            resultMap="BasVendorRegisterBankAccountResult">
+        <include refid="selectBasVendorRegisterBankAccountVo"/>
+        where t.vendor_register_bank_account_sid = #{vendorRegisterBankAccountSid}
+    </select>
+
+
+    <select id="selectBasVendorRegisterBankAccountList"
+            parameterType="com.platform.ems.domain.BasVendorRegisterBankAccount"
+            resultMap="BasVendorRegisterBankAccountResult">
+        <include refid="selectBasVendorRegisterBankAccountVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="vendorRegisterSid != null ">
+                and t.vendor_register_sid =#{vendorRegisterSid}
+            </if>
+            <if test="accountType != null  and accountType != ''">
+                and (<foreach collection="accountType.split(';')" item="item" separator="or">t.account_type
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="bankName != null  and bankName != ''">and
+                t.bank_name like concat('%', #{bankName}, '%')
+            </if>
+            <if test="bankAccount != null  and bankAccount != ''">
+                and (<foreach collection="bankAccount.split(';')" item="item" separator="or">t.bank_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="bankAccountName != null  and bankAccountName != ''">and
+                t.bank_account_name like concat('%', #{bankAccountName}, '%')
+            </if>
+            <if test="bankBranchName != null  and bankBranchName != ''">and
+                t.bank_branch_name like concat('%', #{bankBranchName}, '%')
+            </if>
+            <if test="bankBranchCode != null  and bankBranchCode != ''">
+                and (<foreach collection="bankBranchCode.split(';')" item="item" separator="or">t.bank_branch_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="countryRegion != null ">
+                and t.country_region =#{countryRegion}
+            </if>
+            <if test="picturePath != null  and picturePath != ''">
+                and (<foreach collection="picturePath.split(';')" item="item" separator="or">t.picture_path
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_vendor_register_bank_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            vendor_register_bank_account_sid,
+            vendor_register_sid,
+            account_type,
+            bank_name,
+            bank_account,
+            bank_account_name,
+            bank_branch_name,
+            bank_branch_code,
+            country_region,
+            picture_path,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.vendorRegisterBankAccountSid},
+                #{item.vendorRegisterSid},
+                #{item.accountType},
+                #{item.bankName},
+                #{item.bankAccount},
+                #{item.bankAccountName},
+                #{item.bankBranchName},
+                #{item.bankBranchCode},
+                #{item.countryRegion},
+                #{item.picturePath},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_vendor_register_bank_account
+        <trim prefix="SET" suffixOverrides=",">
+            vendor_register_sid = #{vendorRegisterSid},
+            account_type = #{accountType},
+            bank_name = #{bankName},
+            bank_account = #{bankAccount},
+            bank_account_name = #{bankAccountName},
+            bank_branch_name = #{bankBranchName},
+            bank_branch_code = #{bankBranchCode},
+            country_region = #{countryRegion},
+            picture_path = #{picturePath},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where vendor_register_bank_account_sid = #{vendorRegisterBankAccountSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_vendor_register_bank_account
+            <trim prefix="SET" suffixOverrides=",">
+                vendor_register_sid = #{vendorRegisterSid},
+                account_type = #{accountType},
+                bank_name = #{bankName},
+                bank_account = #{bankAccount},
+                bank_account_name = #{bankAccountName},
+                bank_branch_name = #{bankBranchName},
+                bank_branch_code = #{bankBranchCode},
+                country_region = #{countryRegion},
+                picture_path = #{picturePath},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where vendor_register_bank_account_sid = #{vendorRegisterBankAccountSid}
+        </foreach>
+    </update>
+
+</mapper>

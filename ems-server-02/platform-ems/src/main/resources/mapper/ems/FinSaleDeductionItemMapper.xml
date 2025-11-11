@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinSaleDeductionBillItemMapper">
+
+    <resultMap type="com.platform.ems.domain.FinSaleDeductionBillItem" id="FinSaleDeductionBillItemResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="saleDeductionBillItemSid" column="sale_deduction_bill_item_sid"/>
+                    <result property="saleDeductionBillSid" column="sale_deduction_bill_sid"/>
+                    <result property="deductionType" column="deduction_type"/>
+                    <result property="deductionAmountTax" column="deduction_amount_tax"/>
+                    <result property="accountClearDate" column="account_clear_date"/>
+                    <result property="accountClear" column="account_clear"/>
+                    <result property="itemNum" column="item_num"/>
+                    <result property="remark" column="remark"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+            </resultMap>
+
+    <sql id="selectFinSaleDeductionItemVo">
+        select t.client_id, t.sale_deduction_bill_item_sid, t.sale_deduction_bill_sid, t.deduction_type, t.deduction_amount_tax, t.account_clear_date, t.account_clear, t.item_num, t.remark, t.creator_account, t.create_date, t.updater_account, t.update_date, t.data_source_sys from s_fin_sale_deduction_item t
+    </sql>
+
+    <select id="selectFinSaleDeductionItemById" parameterType="Long" resultMap="FinSaleDeductionBillItemResult">
+        <include refid="selectFinSaleDeductionItemVo"/>
+        where t.sale_deduction_bill_item_sid = #{saleDeductionBillItemSid}
+    </select>
+
+
+    <select id="selectFinSaleDeductionItemList" parameterType="com.platform.ems.domain.FinSaleDeductionBillItem"
+            resultMap="FinSaleDeductionBillItemResult">
+        <include refid="selectFinSaleDeductionItemVo"/>
+        <where>
+                                                                                                    <if test="clientId != null  and clientId != ''">
+                               and (<foreach collection="clientId.split(';')" item="item" separator="or"> t.client_id like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                            <if test="saleDeductionBillSid != null ">
+                                and t.sale_deduction_bill_sid = #{saleDeductionBillSid}
+                            </if>
+                                                                                                                                                                <if test="deductionType != null  and deductionType != ''">
+                               and (<foreach collection="deductionType.split(';')" item="item" separator="or"> t.deduction_type like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="deductionAmountTax != null ">
+                                    and t.deduction_amount_tax = #{deductionAmountTax}
+                                </if>
+                                                                                                                                                                                                                            <if test="accountClearDate != null ">
+                                    and t.account_clear_date = #{accountClearDate}
+                                </if>
+                                                                                                                                                                                            <if test="accountClear != null  and accountClear != ''">
+                               and (<foreach collection="accountClear.split(';')" item="item" separator="or"> t.account_clear like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="itemNum != null ">
+                                    and t.item_num = #{itemNum}
+                                </if>
+                                                                                                                                                                                                                        <if test="creatorAccount != null  and creatorAccount != ''">
+                               and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t.creator_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="beginTime != null and beginTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                                </if>
+                                <if test="endTime != null and endTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                                </if>
+                                                                                                                                                                                            <if test="updaterAccount != null  and updaterAccount != ''">
+                               and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="updateDate != null ">
+                                    and t.update_date = #{updateDate}
+                                </if>
+                                                                                                                                                                                            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                               and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or"> t.data_source_sys like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_sale_deduction_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                sale_deduction_bill_item_sid,
+                                                                sale_deduction_bill_sid,
+                                                                deduction_type,
+                                                                deduction_amount_tax,
+                                                                account_clear_date,
+                                                                account_clear,
+                                                                item_num,
+                                                                remark,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                data_source_sys,
+                                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                                                            #{clientId},
+                                                                                #{saleDeductionBillItemSid},
+                                                                                #{saleDeductionBillSid},
+                                                                                #{deductionType},
+                                                                                #{deductionAmountTax},
+                                                                                #{accountClearDate},
+                                                                                #{accountClear},
+                                                                                #{itemNum},
+                                                                                #{remark},
+                                                                                #{creatorAccount},
+                                                                                #{createDate},
+                                                                                #{updaterAccount},
+                                                                                #{updateDate},
+                                                                                #{dataSourceSys},
+                                                </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_sale_deduction_item
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                                            sale_deduction_bill_sid = #{saleDeductionBillSid},
+                                                                deduction_type = #{deductionType},
+                                                                deduction_amount_tax = #{deductionAmountTax},
+                                                                account_clear_date = #{accountClearDate},
+                                                                account_clear = #{accountClear},
+                                                                item_num = #{itemNum},
+                                                                remark = #{remark},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where sale_deduction_bill_item_sid = #{saleDeductionBillItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_sale_deduction_item
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    sale_deduction_bill_sid = #{saleDeductionBillSid},
+                                                                                deduction_type = #{deductionType},
+                                                                                deduction_amount_tax = #{deductionAmountTax},
+                                                                                account_clear_date = #{accountClearDate},
+                                                                                account_clear = #{accountClear},
+                                                                                item_num = #{itemNum},
+                                                                                remark = #{remark},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where sale_deduction_bill_item_sid = #{saleDeductionBillItemSid}
+        </foreach>
+    </update>
+
+    <delete id="deleteFinSaleDeductionItemByIds" parameterType="long">
+        delete from s_fin_sale_deduction_item where sale_deduction_bill_sid in
+        <foreach item="saleDeductionBillSid" collection="array" open="(" separator="," close=")">
+            #{saleDeductionBillSid}
+        </foreach>
+    </delete>
+
+</mapper>

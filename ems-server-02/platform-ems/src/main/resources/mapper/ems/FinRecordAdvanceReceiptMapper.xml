@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.FinRecordAdvanceReceiptMapper">
+    <resultMap type="com.platform.ems.domain.FinRecordAdvanceReceipt" id="FinRecordAdvanceReceiptResult">
+        <result property="clientId" column="client_id"/>
+        <result property="recordAdvanceReceiptSid" column="record_advance_receipt_sid"/>
+        <result property="recordAdvanceReceiptCode" column="record_advance_receipt_code"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="bookType" column="book_type"/>
+        <result property="bookSourceCategory" column="book_source_category"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="paymentYear" column="payment_year"/>
+        <result property="paymentMonth" column="payment_month"/>
+        <result property="currencyAmountTaxDhx" column="currency_amount_tax_dhx"/>
+        <result property="currencyAmountTaxContract" column="currency_amount_tax_contract"/>
+        <result property="currencyAmountTaxSo" column="currency_amount_tax_so"/>
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="businessChannel" column="business_channel"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="settleMode" column="settle_mode"/>
+        <result property="saleContractSid" column="sale_contract_sid"/>
+        <result property="saleContractCode" column="sale_contract_code"/>
+        <result property="saleOrderSid" column="sale_order_sid"/>
+        <result property="saleOrderCode" column="sale_order_code"/>
+        <result property="salesOrderCode" column="sales_order_code"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="bookSourceCategoryName" column="book_source_category_name"/>
+        <result property="bookTypeName" column="book_type_name"/>
+        <result property="customerContractCode" column="customer_contract_code"/>
+        <result property="advanceRate" column="advance_rate"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="salePerson" column="sale_person"/>
+        <result property="salePersonName" column="sale_person_name"/>
+        <result property="itemNum" column="item_num"/>
+    </resultMap>
+    <sql id="selectFinRecordAdvanceReceiptVo">select t.client_id,
+                                                     t.record_advance_receipt_sid,
+                                                     t.record_advance_receipt_code,
+                                                     t.book_type,
+                                                     t.book_source_category,
+                                                     t.customer_sid,
+                                                     t.company_sid,
+                                                     t.document_date,
+                                                     t.payment_year,
+                                                     t.payment_month,
+                                                     t.company_brand_sid,
+                                                     t.business_channel,
+                                                     t.currency,
+                                                     t.currency_unit,
+                                                     t.settle_mode,
+                                                     t.advance_rate,
+                                                     t.currency_amount_tax_so,
+                                                     t.currency_amount_tax_contract,
+                                                     t.product_season_sid,
+                                                     t.sale_person,
+                                                     t.sale_contract_sid,
+                                                     t.sale_contract_code,
+                                                     t.sale_order_sid,
+                                                     t2.sale_order_code AS sale_order_code,
+                                                     t.remark,
+                                                     t.handle_status,
+                                                     t.creator_account,
+                                                     t.create_date,
+                                                     t.updater_account,
+                                                     t.update_date,
+                                                     t.confirmer_account,
+                                                     t.confirm_date,
+                                                     t.data_source_sys
+                                              from s_fin_record_advance_receipt t
+                                                       LEFT JOIN s_fin_record_advance_receipt t2 ON t2.sale_order_sid = t.sale_order_sid</sql>
+    <select id="selectFinRecordAdvanceReceiptById" parameterType="Long" resultMap="FinRecordAdvanceReceiptResult">
+        <include refid="selectFinRecordAdvanceReceiptVo"/>
+        where t.record_advance_receipt_sid = #{recordAdvanceReceiptSid}
+    </select>
+    <select id="selectFinRecordAdvanceReceiptList" parameterType="com.platform.ems.domain.FinRecordAdvanceReceipt"
+            resultMap="FinRecordAdvanceReceiptResult">
+        <include refid="selectFinRecordAdvanceReceiptVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">and (
+                <foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="recordAdvanceReceiptCode != null ">and t.record_advance_receipt_code
+                =#{recordAdvanceReceiptCode}
+            </if>
+            <if test="customerSid != null ">and t.customer_sid =#{customerSid}</if>
+            <if test="companySid != null ">and t.company_sid =#{companySid}</if>
+            <if test="documentDate != null ">and t.document_date = #{documentDate}</if>
+            <if test="paymentYear != null ">and t.payment_year =#{paymentYear}</if>
+            <if test="paymentMonth != null ">and t.payment_month =#{paymentMonth}</if>
+            <if test="companyBrandSid != null ">and t.company_brand_sid =#{companyBrandSid}</if>
+            <if test="businessChannel != null  and businessChannel != ''">
+                and (<foreach collection="businessChannel.split(';')" item="item" separator="or">t.business_channel like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="bookType != null  and bookType != ''">
+                and (<foreach collection="bookType.split(';')" item="item" separator="or">t.book_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="bookSourceCategory != null  and bookSourceCategory != ''">
+                and (<foreach collection="bookSourceCategory.split(';')" item="item" separator="or">
+                t.book_source_category like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="currency != null  and currency != ''">and (
+                <foreach collection="currency.split(';')" item="item" separator="or">t.currency like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">and (
+                <foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="settleMode != null  and settleMode != ''">and (
+                <foreach collection="settleMode.split(';')" item="item" separator="or">t.settle_mode like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="saleContractSid != null ">and t.sale_contract_sid =#{saleContractSid}</if>
+            <if test="saleContractCode != null ">and t.sale_contract_code =#{saleContractCode}</if>
+            <if test="saleOrderSid != null ">and t.sale_order_sid =#{saleOrderSid}</if>
+            <if test="saleOrderCode != null ">and t.sale_order_code =#{saleOrderCode}</if>
+            <if test="handleStatus != null  and handleStatus != ''">and (
+                <foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and (
+                <foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;=
+                date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;=
+                date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">and (
+                <foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">and (
+                <foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="confirmDate != null ">and t.confirm_date = #{confirmDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and (
+                <foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">${params.dataScope}</if>
+        </where>
+    </select>
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_record_advance_receipt
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            record_advance_receipt_sid,
+            record_advance_receipt_code,
+            book_type,
+            book_source_category,
+            customer_sid,
+            company_sid,
+            document_date,
+            payment_year,
+            payment_month,
+            company_brand_sid,
+            business_channel,
+            currency,
+            currency_unit,
+            settle_mode,
+            advance_rate,
+            currency_amount_tax_so,
+            currency_amount_tax_contract,
+            product_season_sid,
+            sale_person,
+            sale_contract_sid,
+            sale_contract_code,
+            sale_order_sid,
+            sale_order_code,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.recordAdvanceReceiptSid},
+                #{item.recordAdvanceReceiptCode},
+                #{item.bookType},
+                #{item.bookSourceCategory},
+                #{item.customerSid},
+                #{item.companySid},
+                #{item.documentDate},
+                #{item.paymentYear},
+                #{item.paymentMonth},
+                #{item.companyBrandSid},
+                #{item.businessChannel},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.settleMode},
+                #{advance_rate},
+                #{item.currencyAmountTaxPo},
+                #{item.currencyAmountTaxContract},
+                #{item.productSeasonSid},
+                #{item.salePerson},
+                #{item.saleContractSid},
+                #{item.saleContractCode},
+                #{item.saleOrderSid},
+                #{item.saleOrderCode},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_record_advance_receipt
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            record_advance_receipt_code = #{recordAdvanceReceiptCode},
+            book_type = #{bookType},
+            book_source_category = #{bookSourceCategory},
+            customer_sid = #{customerSid},
+            company_sid = #{companySid},
+            document_date = #{documentDate},
+            payment_year = #{paymentYear},
+            payment_month = #{paymentMonth},
+            company_brand_sid = #{companyBrandSid},
+            business_channel = #{businessChannel},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            settle_mode = #{settleMode},
+            advance_rate= #{advance_rate},
+            currency_amount_tax_so= #{currencyAmountTaxSo},
+            currency_amount_tax_contract= #{currencyAmountTaxContract},
+            product_season_sid= #{productSeasonSid},
+            sale_person= #{salePerson},
+            sale_contract_sid = #{saleContractSid},
+            sale_contract_code = #{saleContractCode},
+            sale_order_sid = #{saleOrderSid},
+            sale_order_code = #{saleOrderCode},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where record_advance_receipt_sid = #{recordAdvanceReceiptSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_record_advance_receipt
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                record_advance_receipt_code = #{recordAdvanceReceiptCode},
+                book_type = #{bookType},
+                book_source_category = #{bookSourceCategory},
+                customer_sid = #{customerSid},
+                company_sid = #{companySid},
+                document_date = #{documentDate},
+                payment_year = #{paymentYear},
+                payment_month = #{paymentMonth},
+                company_brand_sid = #{companyBrandSid},
+                business_channel = #{businessChannel},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+                settle_mode = #{settleMode},
+                sale_contract_sid = #{saleContractSid},
+                sale_contract_code = #{saleContractCode},
+                sale_order_sid = #{saleOrderSid},
+                sale_order_code = #{saleOrderCode},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where record_advance_receipt_sid = #{recordAdvanceReceiptSid}
+        </foreach>
+    </update>
+    <!-- 查报表 -->
+    <select id="getReportForm" parameterType="com.platform.ems.domain.FinRecordAdvanceReceipt"
+            resultMap="FinRecordAdvanceReceiptResult">
+        SELECT
+        t.client_id,
+        t.record_advance_receipt_sid,
+        t.record_advance_receipt_code,
+        t.customer_sid,
+        t.company_sid,
+        t14.product_season_name,
+        t.document_date,
+        t.payment_year,
+        t.payment_month,
+        t.company_brand_sid,
+        t.business_channel,
+        t.currency,
+        t.currency_unit,
+        t.settle_mode,
+        t.sale_contract_sid,
+        ifnull(t.sale_contract_code,t7.sale_contract_code) AS sale_contract_code,
+        t.sale_order_sid,
+        ifnull(t.sale_order_code, t6.sales_order_code) AS sales_order_code,
+        ifnull(t.sale_order_code, t6.sales_order_code) AS sale_order_code,
+        t8.nick_name AS sale_person_name,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t2.record_advance_receipt_item_sid,
+        t2.currency_amount_tax_yings,
+        t2.currency_amount_tax_yhx,
+        t2.currency_amount_tax_hxz,
+        (t2.currency_amount_tax_yings - t2.currency_amount_tax_yhx - t2.currency_amount_tax_hxz) AS
+        currency_amount_tax_dhx,
+        t.currency_amount_tax_contract,
+        t7.customer_contract_code,
+        t.currency_amount_tax_so,
+        t.advance_rate,
+        t2.tax_rate,
+        ifnull(t12.name,t13.name) AS material_type_name,
+        t2.clear_status,
+        t2.account_valid_date,
+        t2.item_num,
+        t3.customer_code,
+        t3.customer_name,
+        ifnull(t3.short_name,t3.customer_name) as customer_short_name,
+        t4.company_code,
+        t4.company_name,
+        ifnull(t4.short_name,t4.company_name) as company_short_name,
+        t5.brand_code,
+        t5.brand_name,
+        t.book_type,
+        t.book_source_category,
+        t18.name AS book_type_name,
+        t19.name AS book_source_category_name,
+        t17.nick_name AS creator_account_name,
+        t20.name AS settle_mode_name
+        FROM s_fin_record_advance_receipt t
+        LEFT JOIN s_fin_record_advance_receipt_item t2 ON t.record_advance_receipt_sid = t2.record_advance_receipt_sid
+        LEFT JOIN s_bas_customer t3 on t.customer_sid = t3.customer_sid
+        LEFT JOIN s_bas_company t4 on t.company_sid = t4.company_sid
+        LEFT JOIN s_bas_company_brand t5 on t.company_brand_sid = t5.company_brand_sid
+        LEFT JOIN s_sal_sales_order t6 ON t6.sales_order_sid = t.sale_order_sid
+        LEFT JOIN s_sal_sale_contract t7 ON t7.sale_contract_sid = t.sale_contract_sid
+        LEFT JOIN sys_user t8 ON t8.user_name = t.sale_person
+        LEFT JOIN s_con_material_type t12 ON t12.code = t6.material_type
+        LEFT JOIN s_con_material_type t13 ON t13.code = t7.material_type
+        LEFT JOIN s_bas_product_season t14 ON t.product_season_sid = t14.product_season_sid
+        LEFT JOIN sys_user t17 ON t17.user_name = t.creator_account
+        LEFT JOIN s_con_book_type t18 ON t.book_type = t18.code
+        LEFT JOIN s_con_book_source_category t19 ON t.book_source_category = t19.code
+        LEFT JOIN s_con_advance_settle_mode t20 ON t.settle_mode = t20.code
+        <where>
+            <if test="clientId != null  and clientId != ''">and (
+                <foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="recordAdvanceReceiptCode != null and recordAdvanceReceiptCode != ''">and
+                t.record_advance_receipt_code =#{recordAdvanceReceiptCode}
+            </if>
+            <if test="companySid != null ">and t.company_sid =#{companySid}</if>
+            <if test="documentDate != null ">and t.document_date = #{documentDate}</if>
+            <if test="paymentYear != null ">and t.payment_year =#{paymentYear}</if>
+            <if test="paymentMonth != null ">and t.payment_month =#{paymentMonth}</if>
+            <if test="companyBrandSid != null ">and t.company_brand_sid =#{companyBrandSid}</if>
+            <if test="customerContractCode != null and customerContractCode !=''">and t7.customer_contract_code like
+                concat('%', #{customerContractCode}, '%')
+            </if>
+            <if test="customerSid != null and customerSid != ''">and t.customer_sid =#{customerSid}</if>
+            <if test="salePerson != null and salePerson != ''">and t8.user_name = #{buyer}
+            </if>
+            <if test="productSeasonSid != null ">and t14.product_season_sid = #{productSeasonSid}
+            </if>
+            <if test="materialType != null and materialType != ''">and if(t.sale_order_sid is null,t7.material_type =
+                #{materialType},t6.material_type = #{materialType})
+            </if>
+            <if test="clearStatusNot != null and clearStatusNot != ''">and t2.clear_status != #{clearStatusNot}</if>
+            <if test="clearStatus != null and clearStatus != ''">and t2.clear_status =#{clearStatus}</if>
+            <if test="settleMode != null  and settleMode != ''">and t.settle_mode = #{settleMode}</if>
+            <if test="bookType != null  and bookType != ''">
+                and t.book_type = #{bookType}
+            </if>
+            <if test="bookSourceCategory != null  and bookSourceCategory != ''">
+                and t.book_source_category = #{bookSourceCategory}
+            </if>
+            <if test="bookSourceCategoryList != null and bookSourceCategoryList.length >0">and t.book_source_category in
+                (<foreach collection="bookSourceCategoryList" item="bookSourceCategory" separator=","> #{bookSourceCategory}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">and t.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="clearStatusList != null and clearStatusList.length >0">and t2.clear_status in
+                (<foreach collection="clearStatusList" item="clearStatus" separator=",">#{clearStatus}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">and if(t.sale_order_sid is null,
+                t7.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">
+                    #{productSeasonSid}</foreach>),
+                t6.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">
+                    #{productSeasonSid}</foreach>))
+            </if>
+            <if test="salePersonList != null and salePersonList.length >0">and if(t.sale_order_sid is null,
+                t7.sale_person in
+                (<foreach collection="salePersonList" item="salePerson" separator=",">#{salePerson}</foreach>),
+                t6.sale_person in
+                (<foreach collection="salePersonList" item="salePerson" separator=",">#{salePerson}</foreach>))
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length >0">and if(t.sale_order_sid is null,
+                t7.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=",">#{materialType}</foreach>),
+                t6.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=",">#{materialType}</foreach>))
+            </if>
+            <if test="businessChannel != null  and businessChannel != ''">and (
+                <foreach collection="businessChannel.split(';')" item="item" separator="or">t.business_channel like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="currency != null  and currency != ''">and (
+                <foreach collection="currency.split(';')" item="item" separator="or">t.currency like concat('%',
+                    #{item}, '%')</foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">and (
+                <foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="settleModeList != null  and settleModeList.length >0">and t.settle_mode in
+                (<foreach collection="settleModeList" item="settleMode" separator=",">#{settleMode}</foreach>)
+            </if>
+            <if test="saleContractSid != null and saleContractSid != ''">and t.sale_contract_sid =#{saleContractSid}
+            </if>
+            <if test="saleContractCode != null and saleContractCode != ''">and (
+                <foreach collection="saleContractCode.split(';')" item="item" separator="or">t7.sale_contract_code like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="saleOrderSid != null and saleOrderSid !=''">and t.sale_order_sid =#{saleOrderSid}</if>
+            <if test="saleOrderCode != null and saleOrderCode != ''">and t6.sales_order_code like concat('%',
+                #{saleOrderCode}, '%')
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">and (
+                <foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and (
+                <foreach collection="creatorAccount.split(';')" item="item" separator="or">t17.nick_name like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;=
+                date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;=
+                date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">and (
+                <foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">and (
+                <foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="confirmDate != null ">and t.confirm_date = #{confirmDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and (
+                <foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">${params.dataScope}</if>
+        </where>
+        order by t.create_date desc
+    </select>
+</mapper>

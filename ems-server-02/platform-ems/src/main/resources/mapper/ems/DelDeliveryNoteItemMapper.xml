@@ -1,0 +1,1108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.DelDeliveryNoteItemMapper">
+
+    <resultMap type="com.platform.ems.domain.DelDeliveryNoteItem" id="DelDeliveryNoteItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="deliveryNoteItemSid" column="delivery_note_item_sid"/>
+        <result property="deliveryNoteSid" column="delivery_note_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="barcodeSid" column="barcode_sid"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="deliveryQuantity" column="delivery_quantity"/>
+        <result property="inOutStockQuantity" column="in_out_stock_quantity"/>
+        <result property="price" column="price"/>
+        <result property="priceTax" column="price_tax"/>
+        <result property="taxRate" column="tax_rate"/>
+        <result property="storehouseSid" column="storehouse_sid"/>
+        <result property="storehouseLocationSid" column="storehouse_location_sid"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="unitConversionRate" column="unit_conversion_rate"/>
+        <result property="salesOrderItemSid" column="sales_order_item_sid"/>
+        <result property="purchaseOrderItemSid" column="purchase_order_item_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="sku1Name" column="sku1_name"/>
+        <result property="sku2Name" column="sku2_name"/>
+        <result property="quantity" column="quantity"/>
+        <result property="storehouseCode" column="storehouse_code"/>
+        <result property="storehouseName" column="storehouse_name"/>
+        <result property="locationCode" column="location_code"/>
+        <result property="locationName" column="location_name"/>
+        <result property="salePriceTax" column="sale_price_tax"/>
+        <result property="salePrice" column="sale_price"/>
+        <result property="purchasePriceTax" column="purchase_price_tax"/>
+        <result property="purchasePrice" column="purchase_price"/>
+        <result property="deliveryNoteCode" column="delivery_note_code"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="purchaseOrderSid" column="purchase_order_sid"/>
+        <result property="purchaseOrderCode" column="purchase_order_code"/>
+        <result property="buyer" column="buyer"/>
+        <result property="buyerName" column="buyer_name"/>
+        <result property="purchaseGroup" column="purchase_group"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="documentType" column="document_type"/>
+        <result property="businessType" column="business_type"/>
+        <result property="supplierDeliveryCode" column="supplier_delivery_code"/>
+        <result property="carrierNoteCode" column="carrier_note_code"/>
+        <result property="barcode" column="barcode"/>
+        <result property="receiverOrg" column="receiver_org"/>
+        <result property="receiverOrgCode" column="receiver_org_code"/>
+        <result property="receiverOrgName" column="receiver_org_name"/>
+        <result property="unitBaseName" column="unit_base_name"/>
+        <result property="purchaseUnitBaseName" column="purchase_unit_base_name"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="documentTypeName" column="document_type_name"/>
+        <result property="businessTypeName" column="business_type_name"/>
+        <result property="purchaseGroupName" column="purchase_group_name"/>
+        <result property="operatorName" column="operator_name"/>
+        <result property="salesOrderSid" column="sales_order_sid"/>
+        <result property="salesOrderCode" column="sales_order_code"/>
+        <result property="saleGroup" column="sale_group"/>
+        <result property="carrier" column="carrier"/>
+        <result property="carrierCode" column="carrier_code"/>
+        <result property="carrierName" column="carrier_name"/>
+        <result property="saleGroupName" column="sale_group_name"/>
+        <result property="salesOrderItemNum" column="sales_order_item_num"/>
+        <result property="purchaseOrderItemNum" column="purchase_order_item_num"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="inOutStockStatus" column="in_out_stock_status"/>
+        <result property="saleUnitBaseName" column="sale_unit_base_name"/>
+        <result property="salePerson" column="sale_person"/>
+        <result property="salePersonName" column="sale_person_name"/>
+        <result property="salePriceTax" column="sale_price_tax"/>
+        <result property="purchasePriceTax" column="purchase_price_tax"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="quantity" column="quantity"/>
+        <result property="accountDate" column="account_date"/>
+        <result property="accountPrice" column="account_price"/>
+        <result property="businessChannel" column="business_channel"/>
+        <result property="expectedShipDate" column="expected_ship_date"/>
+    </resultMap>
+
+    <sql id="selectShipmentsNoteItemVo">
+        select
+        t.client_id,
+        t.delivery_note_item_sid,
+        t.delivery_note_sid,
+        t.material_sid,
+        t.sku1_sid,
+        t.sku2_sid,
+        t.barcode_sid,
+        t.item_num,
+        t.unit_base,
+        t.delivery_quantity,
+        t.in_out_stock_quantity,
+        t.price,
+        t.reserve_status,
+        t.price_tax,
+        t.tax_rate,
+        t.storehouse_sid,
+        t.free_flag,
+        t.storehouse_location_sid,
+        t.unit_price,
+        t.unit_conversion_rate,
+        t.sales_order_sid,
+        t.sales_order_code,
+        t.purchase_order_sid,
+        t.purchase_order_code,
+        t.sales_order_item_sid,
+        t.purchase_order_item_sid,
+        t4a.document_type as refer_document_type,
+        t4a.inventory_control_mode,
+        t4a.is_return_goods,
+        t4a.is_consignment_settle,
+        t4a.is_finance_book_yfzg,
+        t4a.purchase_mode,
+        t4a.purchase_contract_sid,
+        t4a.purchase_contract_code,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+        t1.material_code,
+        t1.material_name,
+        t1.picture_path,
+        t1.specification_size,
+        t2.sku_code as sku1_code,
+        t3.sku_code as sku2_code,
+        t2.sku_name as sku1_name,
+	    t3.sku_name as sku2_name,
+	    t4.quantity,
+	    t4.purchase_price_tax,
+	    t4.purchase_price,
+        t4.contract_date,
+        t4.purchase_price_tax as order_price_tax,
+        t4.tax_rate as order_tax_rate,
+        t4.free_flag as order_free_flag,
+        t4.item_num as purchase_order_item_num,
+	    t5.storehouse_code,
+	    t5.storehouse_name,
+	    t6.location_code,
+	    t6.location_name,
+	    t7.name as unit_base_name,
+	    t8.barcode,
+        t8.barcode2,
+	    t8.status,
+	    t9.nick_name AS creator_account_name,
+	    t10.name as unit_price_name,
+        t11.vendor_sid,
+        t11.customer_sid,
+        t11.company_sid,
+        t11.delivery_category,
+        t11.document_type,
+        ta.sort as sort1,
+        tb.sort as sort2
+      from
+        s_del_delivery_note_item t
+        LEFT JOIN s_bas_material_sku ta on t.material_sid = ta.material_sid and t.sku1_sid = ta.sku_sid
+        LEFT JOIN s_bas_material_sku tb on t.material_sid = tb.material_sid and t.sku2_sid = tb.sku_sid
+        LEFT JOIN s_bas_material t1 on t1.material_sid = t.material_sid
+        LEFT JOIN s_bas_sku t2 on t2.sku_sid = t.sku1_sid
+	    LEFT JOIN s_bas_sku t3 on t3.sku_sid = t.sku2_sid
+	    LEFT JOIN s_pur_purchase_order_item t4 on t4.purchase_order_item_sid = t.purchase_order_item_sid
+        LEFT JOIN s_pur_purchase_order t4a on t4a.purchase_order_sid = t.purchase_order_sid
+	    LEFT JOIN s_bas_storehouse t5 on t5.storehouse_sid = t.storehouse_sid
+	    LEFT JOIN s_bas_storehouse_location t6 on t6.storehouse_location_sid = t.storehouse_location_sid
+	    LEFT JOIN s_con_measure_unit t7 on t7.code = t.unit_base
+	    LEFT JOIN s_bas_material_barcode t8 on t8.barcode_sid = t.barcode_sid
+	    LEFT JOIN sys_user t9 on t9.user_name = t.creator_account
+	    LEFT JOIN s_con_measure_unit t10 on t10.code = t.unit_price
+        LEFT JOIN s_del_delivery_note t11 on t11.delivery_note_sid=t.delivery_note_sid
+    </sql>
+
+    <sql id="selectDelDeliveryNoteItemVo">
+        select
+        t.client_id,
+        t.delivery_note_item_sid,
+        t.delivery_note_sid,
+        t.material_sid,
+        t.sku1_sid,
+        t.sku2_sid,
+        t.barcode_sid,
+        t.item_num,
+        t.reserve_status,
+        t.unit_base,
+        t.delivery_quantity,
+        t.in_out_stock_quantity,
+        t.price,
+        t.price_tax,
+        t.free_flag,
+        t.tax_rate,
+        t.storehouse_sid,
+        t.storehouse_location_sid,
+        t.unit_price,
+        t.unit_conversion_rate,
+        t.sales_order_sid,
+        t.sales_order_code,
+        t.purchase_order_sid,
+        t.purchase_order_code,
+        t.sales_order_item_sid,
+        t.purchase_order_item_sid,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+        t1.material_code,
+        t1.sku2_group_sid,
+        t1.material_name,
+        t1.picture_path,
+        t1.specification_size,
+        t2.sku_name as sku1_name,
+	    t3.sku_name as sku2_name,
+	    t4.quantity,
+	    t4.sale_price_tax,
+	    t4.sale_price,
+        t4.contract_date,
+	    t5.storehouse_code,
+	    t5.storehouse_name,
+	    t6.location_code,
+	    t6.location_name,
+	    t7.name as unit_base_name,
+	    t8.barcode,
+        t8.barcode2,
+        t8.status,
+	    t9.nick_name AS creator_account_name,
+	    t10.name as unit_price_name,
+		t12.document_type as sale_and_purchase_document,
+		t11.vendor_sid,
+		t11.customer_sid,
+        t11.company_sid,
+        t11.delivery_category,
+        t11.document_type,
+        ifnull(t4a.document_type, t12.document_type) as refer_document_type,
+        ifnull(t4a.inventory_control_mode, t12.inventory_control_mode) as inventory_control_mode,
+        ifnull(t4a.is_return_goods, t12.is_return_goods) as is_return_goods,
+        ifnull(t4a.is_consignment_settle, t12.is_consignment_settle) as is_consignment_settle,
+        t4a.is_finance_book_yszg,
+        t12.is_finance_book_yfzg,
+        t4a.sale_mode,
+        t12.purchase_mode,
+        t13.item_num as purchase_order_item_num,
+        ifnull(t4.sale_price_tax, t13.purchase_price_tax) as order_price_tax,
+        ifnull(t4.tax_rate, t13.tax_rate) as order_tax_rate,
+        ifnull(t4.free_flag, t13.free_flag) as order_free_flag,
+        t4a.sale_contract_sid,
+        t4a.sale_contract_code,
+        t12.purchase_contract_sid,
+        t12.purchase_contract_code,
+        ta.sort as sort1,
+        tb.sort as sort2
+      from
+        s_del_delivery_note_item t
+        LEFT JOIN s_bas_material t1 on t1.material_sid = t.material_sid
+        LEFT JOIN s_bas_sku t2 on t2.sku_sid = t.sku1_sid
+	    LEFT JOIN s_bas_sku t3 on t3.sku_sid = t.sku2_sid
+	    LEFT JOIN s_sal_sales_order_item t4 on t4.sales_order_item_sid = t.sales_order_item_sid
+        LEFT JOIN s_sal_sales_order t4a on t4a.sales_order_sid = t.sales_order_sid
+	    LEFT JOIN s_bas_storehouse t5 on t5.storehouse_sid = t.storehouse_sid
+	    LEFT JOIN s_bas_storehouse_location t6 on t6.storehouse_location_sid = t.storehouse_location_sid
+	    LEFT JOIN s_con_measure_unit t7 on t7.code = t.unit_base
+	    LEFT JOIN s_bas_material_barcode t8 on t8.barcode_sid = t.barcode_sid
+	    LEFT JOIN sys_user t9 on t9.user_name = t.creator_account
+	    LEFT JOIN s_con_measure_unit t10 on t10.code = t.unit_price
+	    left join s_del_delivery_note t11 on t11.delivery_note_sid=t.delivery_note_sid
+	    LEFT JOIN s_pur_purchase_order t12 ON t12.purchase_order_sid = t.purchase_order_sid
+	    left join s_pur_purchase_order_item t13 on t13.purchase_order_item_sid=t.purchase_order_item_sid
+        LEFT JOIN s_bas_material_sku ta on t.material_sid = ta.material_sid and t.sku1_sid = ta.sku_sid
+        LEFT JOIN s_bas_material_sku tb on t.material_sid = tb.material_sid and t.sku2_sid = tb.sku_sid
+    </sql>
+
+    <sql id="getOutItemVo">
+        select
+        t.client_id,
+        t.delivery_note_item_sid,
+        t.delivery_note_sid,
+        t.material_sid,
+        t.sku1_sid as material_sku1_sid,
+        t.sku2_sid as material_sku2_sid,
+        t.purchase_order_item_sid,
+        t.barcode_sid,
+        t.delivery_quantity,
+        t.data_source_sys,
+        t1.material_code,
+        t1.material_name,
+        t1.picture_path,
+        t2.sku_name as material_sku1_name,
+	    t3.sku_name as material_sku2_name,
+	    t4.barcode
+      from
+        s_del_delivery_note_item t
+        LEFT JOIN s_bas_material t1 on t1.material_sid = t.material_sid
+        LEFT JOIN s_bas_sku t2 on t2.sku_sid = t.sku1_sid
+	    LEFT JOIN s_bas_sku t3 on t3.sku_sid = t.sku2_sid
+	    LEFT JOIN s_bas_material_barcode t4 on t4.barcode_sid = t.barcode_sid
+    </sql>
+
+    <select id="selectDelDeliveryNoteItemById" parameterType="String" resultMap="DelDeliveryNoteItemResult">
+        <include refid="selectDelDeliveryNoteItemVo"/>
+        where t.client_id = #{clientId}
+    </select>
+
+    <select id="getOutDelDeliveryNoteItemById" parameterType="Long" resultType="com.platform.ems.domain.dto.response.DelDeliveryNoteItemOutResponse">
+        <include refid="getOutItemVo"/>
+        where t.delivery_note_sid = #{deliveryNoteSid}
+    </select>
+
+    <select id="selectShipmentsNoteItemList" parameterType="com.platform.ems.domain.DelDeliveryNoteItem"
+            resultMap="DelDeliveryNoteItemResult">
+        <include refid="selectShipmentsNoteItemVo"/>
+        <where>
+            <if test="deliveryNoteItemSid != null ">
+                and t.delivery_note_item_sid = #{deliveryNoteItemSid}
+            </if>
+            <if test="deliveryNoteSid != null ">
+                and t.delivery_note_sid = #{deliveryNoteSid}
+            </if>
+            <if test="deliveryNoteCode != null and deliveryNoteCode != ''">
+                and t11.delivery_note_code = #{deliveryNoteCode}
+            </if>
+            <if test="deliveryNoteSids != null and deliveryNoteSids.length >0">
+                and t.delivery_note_sid in
+                (<foreach collection="deliveryNoteSids" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="deliveryCategory != null and deliveryCategory != ''">
+                and t11.delivery_category = #{deliveryCategory}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid = #{sku1Sid}
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid = #{sku2Sid}
+            </if>
+            <if test="barcodeSid != null ">
+                and t.barcode_sid = #{barcodeSid}
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num = #{itemNum}
+            </if>
+            <if test="unitBase != null and unitBase != ''">
+                and (<foreach collection="unitBase.split(';')" item="item" separator=" or ">t.unit_base like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="deliveryQuantity != null ">
+                and t.delivery_quantity = #{deliveryQuantity}
+            </if>
+            <if test="inOutStockQuantity != null ">
+                and t.in_out_stock_quantity = #{inOutStockQuantity}
+            </if>
+            <if test="price != null ">
+                and t.price = #{price}
+            </if>
+            <if test="priceTax != null ">
+                and t.price_tax = #{priceTax}
+            </if>
+            <if test="taxRate != null ">
+                and t.tax_rate = #{taxRate}
+            </if>
+            <if test="storehouseSid != null ">
+                and t.storehouse_sid = #{storehouseSid}
+            </if>
+            <if test="storehouseLocationSid != null ">
+                and t.storehouse_location_sid = #{storehouseLocationSid}
+            </if>
+            <if test="unitPrice != null and unitPrice != ''">
+                and (<foreach collection="unitPrice.split(';')" item="item" separator=" or ">t.unit_price like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="unitConversionRate != null ">
+                and t.unit_conversion_rate = #{unitConversionRate}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator=" or ">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator=" or ">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+        </where>
+        order by t.item_num asc
+    </select>
+
+    <select id="selectDelDeliveryNoteItemList" parameterType="com.platform.ems.domain.DelDeliveryNoteItem"
+            resultMap="DelDeliveryNoteItemResult">
+        <include refid="selectDelDeliveryNoteItemVo"/>
+        <where>
+            <if test="deliveryNoteItemSid != null ">
+                and t.delivery_note_item_sid = #{deliveryNoteItemSid}
+            </if>
+            <if test="deliveryNoteSid != null ">
+                and t.delivery_note_sid = #{deliveryNoteSid}
+            </if>
+            <if test="deliveryNoteCode != null and deliveryNoteCode != ''">
+                and t11.delivery_note_code = #{deliveryNoteCode}
+            </if>
+            <if test="deliveryNoteSids != null and deliveryNoteSids.length >0">
+                and t.delivery_note_sid in
+                (<foreach collection="deliveryNoteSids" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="deliveryCategory != null and deliveryCategory != ''">
+                and t11.delivery_category = #{deliveryCategory}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid = #{sku1Sid}
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid = #{sku2Sid}
+            </if>
+            <if test="barcodeSid != null ">
+                and t.barcode_sid = #{barcodeSid}
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num = #{itemNum}
+            </if>
+            <if test="unitBase != null and unitBase != ''">
+                and t.unit_base = #{unitBase}
+            </if>
+            <if test="deliveryQuantity != null ">
+                and t.delivery_quantity = #{deliveryQuantity}
+            </if>
+            <if test="inOutStockQuantity != null ">
+                and t.in_out_stock_quantity = #{inOutStockQuantity}
+            </if>
+            <if test="price != null ">
+                and t.price = #{price}
+            </if>
+            <if test="priceTax != null ">
+                and t.price_tax = #{priceTax}
+            </if>
+            <if test="taxRate != null ">
+                and t.tax_rate = #{taxRate}
+            </if>
+            <if test="storehouseSid != null ">
+                and t.storehouse_sid = #{storehouseSid}
+            </if>
+            <if test="storehouseLocationSid != null ">
+                and t.storehouse_location_sid = #{storehouseLocationSid}
+            </if>
+            <if test="unitPrice != null and unitPrice != ''">
+                and t.unit_price = #{unitPrice}
+            </if>
+            <if test="unitConversionRate != null ">
+                and t.unit_conversion_rate = #{unitConversionRate}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t11.handle_status = #{handleStatus}
+            </if>
+            <if test="salesOrderItemSidList != null and salesOrderItemSidList.length >0">
+                and t.sales_order_item_sid in
+                (<foreach collection="salesOrderItemSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="purchaseOrderItemSidList != null and purchaseOrderItemSidList.length >0">
+                and t.purchase_order_item_sid in
+                (<foreach collection="purchaseOrderItemSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">
+                    t.creator_account like concat('%', #{item}, '%')
+                </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator=" or ">
+                    t.updater_account like concat('%', #{item}, '%')
+                </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+        </where>
+        order by t.item_num asc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_del_delivery_note_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            delivery_note_item_sid,
+            delivery_note_sid,
+            material_sid,
+            sku1_sid,
+            sku2_sid,
+            barcode_sid,
+            item_num,
+            unit_base,
+            delivery_quantity,
+            in_out_stock_quantity,
+            price,
+            price_tax,
+            tax_rate,
+            storehouse_sid,
+            storehouse_location_sid,
+            unit_price,
+            unit_conversion_rate,
+            sales_order_sid,
+            purchase_order_sid,
+            sales_order_code,
+            purchase_order_code,
+            sales_order_item_sid,
+            purchase_order_item_sid,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{clientId},
+                #{deliveryNoteItemSid},
+                #{deliveryNoteSid},
+                #{materialSid},
+                #{sku1Sid},
+                #{sku2Sid},
+                #{barcodeSid},
+                #{itemNum},
+                #{unitBase},
+                #{deliveryQuantity},
+                #{inOutStockQuantity},
+                #{price},
+                #{priceTax},
+                #{taxRate},
+                #{storehouseSid},
+                #{storehouseLocationSid},
+                #{unitPrice},
+                #{unitConversionRate},
+                #{salesOrderSid},
+                #{purchaseOrderSid},
+                #{salesOrderCode},
+                #{purchaseOrderCode},
+                #{salesOrderItemSid},
+                #{purchaseOrderItemSid},
+                #{remark},
+                #{creatorAccount},
+                #{createDate},
+                #{updaterAccount},
+                #{updateDate},
+                #{dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_del_delivery_note_item
+        <trim prefix="SET" suffixOverrides=",">
+            delivery_note_item_sid = #{deliveryNoteItemSid},
+            delivery_note_sid = #{deliveryNoteSid},
+            material_sid = #{materialSid},
+            sku1_sid = #{sku1Sid},
+            sku2_sid = #{sku2Sid},
+            barcode_sid = #{barcodeSid},
+            item_num = #{itemNum},
+            unit_base = #{unitBase},
+            delivery_quantity = #{deliveryQuantity},
+            in_out_stock_quantity = #{inOutStockQuantity},
+            price = #{price},
+            price_tax = #{priceTax},
+            tax_rate = #{taxRate},
+            storehouse_sid = #{storehouseSid},
+            storehouse_location_sid = #{storehouseLocationSid},
+            unit_price = #{unitPrice},
+            unit_conversion_rate = #{unitConversionRate},
+            sales_order_sid = #{salesOrderSid},
+            purchase_order_sid = #{purchaseOrderSid},
+            sales_order_code = #{salesOrderCode},
+            purchase_order_code = #{purchaseOrderCode},
+            sales_order_item_sid = #{salesOrderItemSid},
+            purchaseOrderItemSid = #{purchaseOrderItemSid},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where delivery_note_item_sid = #{deliveryNoteItemSid}
+    </update>
+
+    <delete id="deleteDelDeliveryNoteItemByIds" parameterType="long">
+        delete from s_del_delivery_note_item where delivery_note_sid in
+        <foreach item="deliveryNoteSid" collection="array" open="(" separator="," close=")">
+            #{deliveryNoteSid}
+        </foreach>
+    </delete>
+
+    <sql id="getDeliveryItemListVo">
+  SELECT
+	t.client_id,
+	t.delivery_note_item_sid,
+	t.delivery_note_sid,
+	t.material_sid,
+	t.sku1_sid,
+	t.sku2_sid,
+	t.barcode_sid,
+	t.item_num,
+	t.unit_base,
+	t.delivery_quantity,
+	t.in_out_stock_quantity,
+	t.price,
+	t.price_tax,
+	t.tax_rate,
+	t.unit_price,
+	t.reserve_status,
+	t.unit_conversion_rate,
+	t.sales_order_item_sid,
+	t.purchase_order_item_sid,
+	t.remark,
+	t.creator_account,
+	t.create_date,
+	t.updater_account,
+	t.update_date,
+	t1.is_return_goods,
+	t.data_source_sys,
+	t.free_flag,
+	t1.delivery_note_code,
+	t.purchase_order_sid,
+	t.purchase_order_code,
+	t.sales_order_sid,
+	t.sales_order_code,
+	t11.sale_group,
+	t11.sale_person,
+	t12.sale_price_tax,
+	t2.buyer,
+	IFNULL( t2.business_channel, t11.business_channel) AS business_channel,
+    ifnull(t2.inventory_control_mode, t11.inventory_control_mode) as inventory_control_mode,
+	t4.material_code,
+	t4.material_name,
+    t4.material_category,
+    t4.material_type,
+    t4.picture_path,
+    t4.sample_code_self,
+    t4.simple_code,
+    t4.retail_price,
+    t4.specification_size,
+    t4.material_composition,
+    t4.width,
+    t4.gram_weight,
+	t5.sku_name AS sku1_name,
+	t6.sku_name AS sku2_name,
+	t7.barcode,
+    t7.barcode2,
+	t8.storehouse_code,
+	t8.storehouse_name,
+	t9.location_code,
+	t9.location_name,
+    IFNULL(t10.product_season_sid,t32.product_season_sid) AS product_season_sid,
+	IFNULL(t10.product_season_name,t32.product_season_name) AS product_season_name,
+	t1.document_type,
+    ifnull(t2.document_type, t11.document_type) as refer_document_type,
+    ifnull(t2.inventory_control_mode, t11.inventory_control_mode) as inventory_control_mode,
+	t1.business_type,
+	t1.expected_ship_date,
+    t1.expected_arrival_date,
+	t1.storehouse_sid,
+	t1.storehouse_location_sid,
+	t1.supplier_delivery_code,
+	t1.carrier,
+	t1.carrier_note_code,
+	t1.handle_status,
+	t1.in_out_stock_status,
+	t3.vendor_code AS carrier_code,
+	t3.vendor_name AS carrier_name,
+	t2.purchase_group,
+	t11.customer_sid,
+	t2.vendor_sid,
+	t13.nick_name AS buyer_name,
+	t14.NAME AS unit_base_name,
+	t15.nick_name AS operator_name,
+	t16.purchase_price_tax,
+	t23.NAME AS unit_price_name,
+	t26.NAME AS sale_unit_base_name,
+	t17.NAME AS document_type_name,
+	t18.NAME AS business_type_name,
+	t1.receiver_org,
+	IFNULL( t19.vendor_name, t20.customer_name ) AS receiver_org_name,
+	IFNULL( t19.vendor_code, t20.customer_code ) AS receiver_org_code,
+	t21.NAME AS purchase_group_name,
+	t24.NAME AS sale_group_name,
+	t22.company_name,
+    ifnull(t22.short_name, t22.company_name) as company_short_name,
+	t12.item_num AS sales_order_item_num,
+    if(t.sales_order_item_sid is null, t16.contract_date, t12.contract_date) as contract_date,
+	t16.item_num AS purchase_order_item_num,
+	t25.nick_name AS creator_account_name,
+	t27.vendor_name,
+    ifnull(t27.short_name, t27.vendor_name) as vendor_short_name,
+	t28.customer_name,
+    ifnull(t28.short_name, t28.customer_name) as  customer_short_name,
+	t29.nick_name AS sale_person_name,
+	t30.quantity,
+	t31.account_date,
+	ifnull( t30.quantity * t16.purchase_price_tax, t30.quantity * t12.sale_price_tax ) AS account_price,
+	t2.document_type as sale_and_purchase_document,
+    ta.sort as sort1,
+    tb.sort as sort2,
+    t1.shipment_type,
+    t33.name as shipment_type_name,
+    t34.name as business_channel_name
+FROM
+	s_del_delivery_note_item t
+	LEFT JOIN s_del_delivery_note t1 ON t1.delivery_note_sid = t.delivery_note_sid
+	LEFT JOIN s_pur_purchase_order t2 ON t2.purchase_order_sid = t.purchase_order_sid
+	LEFT JOIN s_bas_vendor t3 ON t3.vendor_sid = t1.carrier
+	LEFT JOIN s_bas_material t4 ON t4.material_sid = t.material_sid
+	LEFT JOIN s_bas_sku t5 ON t5.sku_sid = t.sku1_sid
+	LEFT JOIN s_bas_sku t6 ON t6.sku_sid = t.sku2_sid
+	LEFT JOIN s_bas_material_barcode t7 ON t7.barcode_sid = t.barcode_sid
+	LEFT JOIN s_bas_storehouse t8 ON t8.storehouse_sid = t1.storehouse_sid
+	LEFT JOIN s_bas_storehouse_location t9 ON t9.storehouse_location_sid = t1.storehouse_location_sid
+	LEFT JOIN s_bas_product_season t10 ON t10.product_season_sid = t2.product_season_sid
+	LEFT JOIN s_sal_sales_order t11 ON t11.sales_order_sid = t.sales_order_sid
+	LEFT JOIN s_sal_sales_order_item t12 ON t12.sales_order_item_sid = t.sales_order_item_sid
+	LEFT JOIN sys_user t13 ON t13.user_name = t2.buyer and t13.client_id = t2.client_id
+	LEFT JOIN s_con_measure_unit t14 ON t14.CODE = t.unit_base
+	LEFT JOIN sys_user t15 ON t15.user_name = t1.operator and t15.client_id = t1.client_id
+	LEFT JOIN s_pur_purchase_order_item t16 ON t16.purchase_order_item_sid = t.purchase_order_item_sid
+	LEFT JOIN s_con_doc_type_delivery_note t17 ON t17.CODE = t1.document_type
+	LEFT JOIN s_con_bu_type_delivery_note t18 ON t18.CODE = t1.business_type
+	LEFT JOIN s_bas_vendor t19 ON t19.vendor_sid = t1.receiver_org
+	LEFT JOIN s_bas_customer t20 ON t20.customer_sid = t1.receiver_org
+	LEFT JOIN s_con_purchase_group t21 ON t21.CODE = t2.purchase_group
+	LEFT JOIN s_bas_company t22 ON t22.company_sid = t1.company_sid
+	LEFT JOIN s_con_measure_unit t23 ON t23.CODE = t16.unit_price
+	LEFT JOIN s_con_sale_group t24 ON t24.CODE = t11.sale_group
+	LEFT JOIN sys_user t25 ON t25.user_name = t.creator_account and t25.client_id = t.client_id
+	LEFT JOIN s_con_measure_unit t26 ON t26.CODE = t12.unit_price
+	LEFT JOIN s_bas_vendor t27 ON t27.vendor_sid = t1.vendor_sid
+	LEFT JOIN s_bas_customer t28 ON t28.customer_sid = t1.customer_sid
+	LEFT JOIN sys_user t29 ON t29.user_name = t11.sale_person
+	LEFT JOIN s_inv_inventory_document t31 ON t31.refer_document_sid = t.delivery_note_sid and t31.document_type='CG' and t31.handle_status='B'
+	LEFT JOIN s_inv_inventory_document_item t30 ON t30.refer_document_item_sid = t.delivery_note_item_sid and t30.inventory_document_sid =t31.inventory_document_sid
+	LEFT JOIN s_bas_product_season t32 ON t32.product_season_sid = t11.product_season_sid
+    LEFT JOIN s_bas_material_sku ta on t.material_sid = ta.material_sid and t.sku1_sid = ta.sku_sid
+    LEFT JOIN s_bas_material_sku tb on t.material_sid = tb.material_sid and t.sku2_sid = tb.sku_sid
+    LEFT JOIN s_con_shipment_mode t33 ON t33.code = t1.shipment_type
+    LEFT JOIN s_con_business_channel t34 ON ifnull(t2.business_channel, t11.business_channel) = t34.code
+    </sql>
+
+    <select id="getDeliveryItemList" parameterType="com.platform.ems.domain.DelDeliveryNoteItem"
+            resultMap="DelDeliveryNoteItemResult">
+        <include refid="getDeliveryItemListVo"/>
+        <where>
+            <if test="deliveryNoteCode != null and deliveryNoteCode != ''">
+                and (<foreach collection="deliveryNoteCode.split(';')" item="item" separator=" or ">t1.delivery_note_code
+                like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length >0 ">
+                and t1.document_type in
+                (<foreach collection="documentTypeList" item="documentType" separator=",">#{documentType}</foreach>)
+            </if>
+            <if test="businessTypeList != null and businessTypeList.length >0 ">
+                and t1.business_type in
+                (<foreach collection="businessTypeList" item="businessType" separator=",">#{businessType}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0 ">
+                and t2.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="supplierDeliveryCode != null and supplierDeliveryCode != ''">
+                and (<foreach collection="supplierDeliveryCode.split(';')" item="item" separator=" or ">
+                t1.supplier_delivery_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="nickName != null and nickName != ''">
+                and (<foreach collection="nickName.split(';')" item="item" separator=" or ">t13.nick_name like
+                concat('%',#{item},
+                '%')</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0 ">
+                and t2.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">
+                #{productSeasonSid}</foreach>)
+            </if>
+            <if test="purchaseOrderCode != null and purchaseOrderCode != ''">
+                and (<foreach collection="purchaseOrderCode.split(';')" item="item" separator=" or ">
+                t.purchase_order_code like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="shipmentTypeList != null and shipmentTypeList.length >0 ">
+                and t1.shipment_type in
+                (<foreach collection="shipmentTypeList" item="shipmentType" separator=",">#{shipmentType}</foreach>)
+            </if>
+            <if test="inOutStockStatusList != null and inOutStockStatusList.length >0 ">
+                and t1.in_out_stock_status in
+                (<foreach collection="inOutStockStatusList" item="inOutStockStatus" separator=",">
+                #{inOutStockStatus}</foreach>)
+            </if>
+            <if test="operator != null and operator != ''">
+                and (<foreach collection="operator.split(';')" item="item" separator=" or ">t1.operator like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="materialCode" separator=" or ">t4.material_code
+                like concat('%', #{materialCode}, '%')</foreach>)
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="materialName" separator=" or ">t4.material_name
+                like concat('%', #{materialName}, '%')</foreach>)
+            </if>
+            <if test="storehouseSidList != null and storehouseSidList.length >0 ">
+                and t1.storehouse_sid in
+                (<foreach collection="storehouseSidList" item="storehouseSid" separator=",">#{storehouseSid}</foreach>)
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="materialCode" separator=" or ">t3.material_code
+                like concat('%', #{materialCode}, '%')</foreach>)
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="materialName" separator=" or ">t.material_name
+                like concat('%', #{materialName}, '%')</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="storehouseSidList != null and storehouseSidList.length >0 ">
+                and t1.storehouse_sid in
+                (<foreach collection="storehouseSidList" item="storehouseSid" separator=",">#{storehouseSid}</foreach>)
+            </if>
+            <if test="storehouseLocationSidList != null and storehouseLocationSidList.length >0 ">
+                and t1.storehouse_location_sid in
+                (<foreach collection="storehouseLocationSidList" item="storehouseLocationSid" separator=",">
+                #{storehouseLocationSid}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">t1.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="expectedArrivalBeginDate != null">
+                and date_format(t1.expected_arrival_date,'%y%m%d') &gt;=
+                date_format(#{expectedArrivalBeginDate},'%y%m%d')
+            </if>
+            <if test="expectedArrivalEndDate != null">
+                and date_format(t1.expected_arrival_date,'%y%m%d') &lt;= date_format(#{expectedArrivalEndDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="deliveryType != null ">
+                and t1.delivery_type = #{deliveryType}
+            </if>
+            <if test="deliveryCategory != null ">
+                and t1.delivery_category = #{deliveryCategory}
+            </if>
+        </where>
+        order by t1.delivery_note_code desc, t.create_date desc
+    </select>
+
+
+    <select id="getShipmentsItemList" parameterType="com.platform.ems.domain.DelDeliveryNoteItem"
+            resultMap="DelDeliveryNoteItemResult">
+        <include refid="getDeliveryItemListVo"/>
+        <where>
+            t1.delivery_note_code is not null
+        and t5.sku_name is not null
+        and t4.material_code is not null
+            <if test="deliveryNoteSid != null and deliveryNoteSid != ''">
+                and t1.delivery_note_sid = #{deliveryNoteSid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t1.company_sid in
+                (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="supplierDeliveryCode != null and supplierDeliveryCode != ''">
+                and (<foreach collection="supplierDeliveryCode.split(';')" item="item" separator=" or ">
+                t1.supplier_delivery_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseOrderCode != null and purchaseOrderCode != ''">
+                and (<foreach collection="purchaseOrderCode.split(';')" item="item" separator=" or ">
+                t.purchase_order_code like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="businessChannelList != null and businessChannelList.length >0">
+                and (t2.business_channel in
+                (<foreach collection="businessChannelList" item="item" separator=",">#{item}</foreach>) or
+                t11.business_channel in
+                (<foreach collection="businessChannelList" item="item" separator=",">#{item}</foreach>))
+            </if>
+            <if test="deliveryNoteCode != null and deliveryNoteCode != ''">
+                and (<foreach collection="deliveryNoteCode.split(';')" item="item" separator=" or ">t1.delivery_note_code
+                like concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length >0 ">
+                and t1.document_type in
+                (<foreach collection="documentTypeList" item="documentType" separator=",">#{documentType}</foreach>)
+            </if>
+            <if test="businessTypeList != null and businessTypeList.length >0 ">
+                and t1.business_type in
+                (<foreach collection="businessTypeList" item="businessType" separator=",">#{businessType}</foreach>)
+            </if>
+            <if test="vendorSid != null">
+                and t1.vendor_sid = #{vendorSid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0 ">
+                and t1.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="deliveryNoteItemSidList != null and deliveryNoteItemSidList.size >0 ">
+                and t.delivery_note_item_sid in
+                (<foreach collection="deliveryNoteItemSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="customerSid != null">
+                and t1.customer_sid = #{customerSid}
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0 ">
+                and t1.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="materialCode" separator=" or ">t4.material_code
+                like concat('%', #{materialCode}, '%')</foreach>)
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="materialName" separator=" or ">t4.material_name
+                like concat('%', #{materialName}, '%')</foreach>)
+            </if>
+            <if test=" buyerList != null and buyerList.length >0  ">
+                and t2.buyer in
+                (<foreach collection="buyerList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="buyer != null and buyer != ''">
+                and t2.buyer = #{buyer}
+            </if>
+            <if test=" salePersonList != null and salePersonList.length >0  ">
+                and t11.sale_person in
+                (<foreach collection="salePersonList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="salePerson != null and salePerson != ''">
+                and t11.sale_person = #{salePerson}
+            </if>
+            <if test="salesOrderCode != null and salesOrderCode != ''">
+                and (<foreach collection="salesOrderCode.split(';')" item="item" separator=" or ">t.sales_order_code like
+                concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="carrierNoteCode != null and carrierNoteCode != ''">
+                and (<foreach collection="carrierNoteCode.split(';')" item="item" separator=" or ">t1.carrier_note_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="shipmentTypeList != null and shipmentTypeList.length >0 ">
+                and t1.shipment_type in
+                (<foreach collection="shipmentTypeList" item="shipmentType" separator=",">#{shipmentType}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0 ">
+                and (t2.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="item" separator=",">#{item}</foreach>) or
+                t11.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="item" separator=",">#{item}</foreach>))
+            </if>
+            <if test="operatorList != null and operatorList.length >0 ">
+                and t1.operator in
+                (<foreach collection="operatorList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="inOutStockStatusList != null and inOutStockStatusList.length >0 ">
+                and t1.in_out_stock_status in
+                (<foreach collection="inOutStockStatusList" item="inOutStockStatus" separator=",">
+                #{inOutStockStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != '' ">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">
+                    t25.nick_name like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="storehouseSid != null">
+                and t1.storehouse_sid = #{storehouseSid}
+            </if>
+            <if test="storehouseSidList != null and storehouseSidList.length >0 ">
+                and t1.storehouse_sid in
+                (<foreach collection="storehouseSidList" item="storehouseSid" separator=",">#{storehouseSid}</foreach>)
+            </if>
+            <if test="storehouseLocationSidList != null and storehouseLocationSidList.length >0 ">
+                and t1.storehouse_location_sid in
+                (<foreach collection="storehouseLocationSidList" item="storehouseLocationSid" separator=",">
+                #{storehouseLocationSid}</foreach>)
+            </if>
+            <if test="expectedArrivalBeginDate != null">
+                and date_format(t1.expected_arrival_date,'%y%m%d') &gt;=
+                date_format(#{expectedArrivalBeginDate},'%y%m%d')
+            </if>
+            <if test="expectedArrivalEndDate != null">
+                and date_format(t1.expected_arrival_date,'%y%m%d') &lt;= date_format(#{expectedArrivalEndDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="expectedShipDateStart != null and expectedShipDateStart!=''">
+                and date_format(t1.expected_ship_date,'%y%m%d') &gt;= date_format(#{expectedShipDateStart},'%y%m%d')
+            </if>
+            <if test="expectedShipDateEnd != null and expectedShipDateEnd!=''">
+                and date_format(t1.expected_ship_date,'%y%m%d') &lt;= date_format(#{expectedShipDateEnd},'%y%m%d')
+            </if>
+
+            <if test="accountDateStart != null and accountDateStart!=''">
+                and date_format(t31.account_date,'%y%m%d') &gt;= date_format(#{accountDateStart},'%y%m%d')
+            </if>
+            <if test="accountDateEnd != null and accountDateEnd!=''">
+                and date_format(t31.account_date,'%y%m%d') &lt;= date_format(#{accountDateEnd},'%y%m%d')
+            </if>
+
+            <if test="deliveryType != null ">
+                and t1.delivery_type = #{deliveryType}
+            </if>
+            <if test="deliveryCategory != null ">
+                and t1.delivery_category = #{deliveryCategory}
+            </if>
+            <if test="contractDateBegin != null and contractDateBegin!=''">
+                <if test="deliveryCategory != null and deliveryCategory == 'SD'.toString()">
+                    and date_format(t12.contract_date,'%y%m%d') &gt;= date_format(#{contractDateBegin},'%y%m%d')
+                </if>
+                <if test="deliveryCategory != null and deliveryCategory == 'PD'.toString()">
+                    and date_format(t16.contract_date,'%y%m%d') &gt;= date_format(#{contractDateBegin},'%y%m%d')
+                </if>
+            </if>
+            <if test="contractDateEnd!= null and contractDateEnd!=''">
+                <if test="deliveryCategory != null and deliveryCategory == 'SD'.toString()">
+                    and date_format(t12.contract_date,'%y%m%d') &lt;= date_format(#{contractDateEnd},'%y%m%d')
+                </if>
+                <if test="deliveryCategory != null and deliveryCategory == 'PD'.toString()">
+                    and date_format(t16.contract_date,'%y%m%d') &lt;= date_format(#{contractDateEnd},'%y%m%d')
+                </if>
+            </if>
+        </where>
+        order by t1.delivery_note_code desc,t4.material_code asc , -ta.sort DESC, t5.sku_name asc,
+            -tb.sort DESC, t6.sku_name asc, t16.contract_date asc, t12.contract_date asc
+    </select>
+</mapper>

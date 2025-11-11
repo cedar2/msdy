@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasPlantMapper">
+
+    <resultMap type="com.platform.ems.domain.BasPlant" id="BasPlantResult">
+        <result property="clientId" column="client_id"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="plantName" column="plant_name"/>
+        <result property="shortName" column="short_name"/>
+        <result property="briefIntroduction" column="brief_introduction"/>
+        <result property="isSubcontract" column="is_subcontract"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="country" column="country"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="operateCategory" column="operate_category"/>
+        <result property="plantArea" column="plant_area"/>
+        <result property="factoryArea" column="factory_area"/>
+        <result property="isSameCity" column="is_same_city"/>
+        <result property="plantAttribute" column="plant_attribute"/>
+        <result property="subcontractAttribute" column="subcontract_attribute"/>
+        <result property="address" column="address"/>
+        <result property="allStaffNum" column="all_staff_num"/>
+        <result property="devStaffNum" column="dev_staff_num"/>
+        <result property="qualityStaffNum" column="quality_staff_num"/>
+        <result property="prodStaffNum" column="prod_staff_num"/>
+        <result property="ownWorkersNum" column="own_workers_num"/>
+        <result property="managerNum" column="manager_num"/>
+        <result property="permonthWorkHours" column="permonth_work_hours"/>
+        <result property="permonthWage" column="permonth_wage"/>
+        <result property="averageWageCurrency" column="average_wage_currency"/>
+        <result property="isLodging" column="is_lodging"/>
+        <result property="isMealAllowance" column="is_meal_allowance"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="companyName" column="company_name"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="plantDirector" column="plant_director"/>
+        <result property="plantDirectorName" column="plant_director_name"/>
+        <result property="disableRemark" column="disable_remark"/>
+        <result property="companyShortName" column="company_short_name"/>
+        <result property="vendorShortName" column="vendor_short_name"/>
+    </resultMap>
+
+    <select id="selectBasPlantById" parameterType="Long" resultMap="BasPlantResult">
+        <include refid="selectBasPlantVo"/>
+        where t.plant_sid = #{plantSid}
+    </select>
+
+
+    <select id="selectBasPlantList" parameterType="com.platform.ems.domain.BasPlant" resultMap="BasPlantResult">
+        <include refid="selectBasPlantVo"/>
+        <where>
+            <if test="plantSid != null">
+                and t.plant_sid = #{plantSid}
+            </if>
+            <if test="plantDirectorList != null and plantDirectorList.length > 0">
+                and t.plant_director in
+                (<foreach collection="plantDirectorList" item="plantDirector" separator=",">#{plantDirector}</foreach>)
+            </if>
+            <if test="plantDirector != null and plantDirector != ''">
+                and t.plant_director = #{plantDirector}
+            </if>
+            <if test="plantSidList != null and plantSidList.length > 0">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="plantCode != null  and plantCode != ''">and t.plant_code like concat('%', #{plantCode}, '%')</if>
+            <if test="plantName != null  and plantName != ''">
+                and (<foreach collection="plantName.split(';')" item="item" separator="or">t.plant_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="briefIntroduction != null  and briefIntroduction != ''">and t.brief_introduction like concat('%',
+                #{briefIntroduction}, '%')
+            </if>
+            <if test="operateCategory != null  and operateCategory != ''">
+                and t.operate_category in (
+                <foreach collection="operateCategory.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and t.handle_status in (
+                <foreach collection="handleStatus.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="isSubcontract != null  and isSubcontract != ''">
+                and t.is_subcontract in (
+                <foreach collection="isSubcontract.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="isSubcontractList != null and isSubcontractList.length >0 ">
+                and t.is_subcontract in
+                (<foreach collection="isSubcontractList" item="isSubcontract" separator=",">#{isSubcontract}</foreach>)
+            </if>
+            <if test="subcontractAttributeList != null and subcontractAttributeList.length >0 ">
+                and t.subcontract_attribute in
+                (<foreach collection="subcontractAttributeList" item="subcontractAttribute" separator=",">
+                #{subcontractAttribute}</foreach>)
+            </if>
+            <if test="companySid != null  and companySid != ''">
+                and t.company_sid in (
+                <foreach collection="companySid.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="vendorSid != null  and vendorSid != ''">
+                and t.vendor_sid in (
+                <foreach collection="vendorSid.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="vendorName != null  and vendorName != ''">
+                and (<foreach collection="vendorName.split(';')" item="item" separator="or">t2.vendor_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="plantAttribute != null  and plantAttribute != ''">
+                and t.plant_attribute in (
+                <foreach collection="plantAttribute.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="plantAttributeList != null and plantAttributeList.length >0 ">
+                and t.plant_attribute in
+                (<foreach collection="plantAttributeList" item="plantAttribute" separator=",">
+                #{plantAttribute}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and t3.nick_name like concat('%',
+                #{creatorAccount}, '%')
+            </if>
+            <if test="status != null  and status != ''">
+                and t.status in (
+                <foreach collection="status.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="beginTime != null "><!-- 开始时间检索 -->
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null "><!-- 结束时间检索 -->
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+        </where>
+        order by t.create_date desc, t.plant_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_plant
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            plant_sid,
+            plant_code,
+            plant_name,
+            short_name,
+            brief_introduction,
+            is_subcontract,
+            company_sid,
+            vendor_sid,
+            country,
+            province,
+            city,
+            operate_type,
+            plant_area,
+            factory_area,
+            is_same_city,
+            plant_attribute,
+            subcontract_attribute,
+            address,
+            all_staff_num,
+            dev_staff_num,
+            quality_staff_num,
+            prod_staff_num,
+            own_workers_num,
+            manager_num,
+            permonth_work_hours,
+            permonth_wage,
+            average_wage_currency,
+            is_lodging,
+            is_meal_allowance,
+            picture_path,
+            plant_director,
+            remark,
+            disable_remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{clientId},
+                #{plantSid},
+                #{plantCode},
+                #{plantName},
+                #{shortName},
+                #{briefIntroduction},
+                #{isSubcontract},
+                #{companySid},
+                #{vendorSid},
+                #{country},
+                #{province},
+                #{city},
+                #{operateType},
+                #{plantArea},
+                #{factoryArea},
+                #{isSameCity},
+                #{plantAttribute},
+                #{subcontractAttribute},
+                #{address},
+                #{allStaffNum},
+                #{devStaffNum},
+                #{qualityStaffNum},
+                #{prodStaffNum},
+                #{ownWorkersNum},
+                #{managerNum},
+                #{permonthWorkHours},
+                #{permonthWage},
+                #{averageWageCurrency},
+                #{isLodging},
+                #{isMealAllowance},
+                #{picturePath},
+                #{plantDirector},
+                #{remark},
+                #{disableRemark},
+                #{status},
+                #{handleStatus},
+                #{creatorAccount},
+                #{createDate},
+                #{updaterAccount},
+                #{updateDate},
+                #{confirmerAccount},
+                #{confirmDate},
+                #{dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_plant
+        <trim prefix="SET" suffixOverrides=",">
+            plant_code = #{plantCode},
+            plant_name = #{plantName},
+            short_name = #{shortName},
+            brief_introduction = #{briefIntroduction},
+            is_subcontract = #{isSubcontract},
+            company_sid = #{companySid},
+            vendor_sid = #{vendorSid},
+            country = #{country},
+            province = #{province},
+            city = #{city},
+            operate_category = #{operateCategory},
+            plant_area = #{plantArea},
+            factory_area = #{factoryArea},
+            is_same_city = #{isSameCity},
+            plant_attribute = #{plantAttribute},
+            subcontract_attribute = #{subcontractAttribute},
+            address = #{address},
+            all_staff_num = #{allStaffNum},
+            dev_staff_num = #{devStaffNum},
+            quality_staff_num = #{qualityStaffNum},
+            prod_staff_num = #{prodStaffNum},
+            own_workers_num = #{ownWorkersNum},
+            manager_num = #{managerNum},
+            permonth_work_hours = #{permonthWorkHours},
+            permonth_wage = #{permonthWage},
+            average_wage_currency = #{averageWageCurrency},
+            is_lodging = #{isLodging},
+            is_meal_allowance = #{isMealAllowance},
+            picture_path = #{picturePath},
+            plant_director = #{plantDirector},
+            remark = #{remark},
+            disable_remark = #{disableRemark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where plant_sid = #{plantSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_plant
+            <trim prefix="SET" suffixOverrides=",">
+                plant_sid = #{plantSid},
+                plant_code = #{plantCode},
+                plant_name = #{plantName},
+                short_name = #{shortName},
+                brief_introduction = #{briefIntroduction},
+                is_subcontract = #{isSubcontract},
+                company_sid = #{companySid},
+                vendor_sid = #{vendorSid},
+                country = #{country},
+                province = #{province},
+                city = #{city},
+                operate_category = #{operateCategory},
+                plant_area = #{plantArea},
+                factory_area = #{factoryArea},
+                is_same_city = #{isSameCity},
+                plant_attribute = #{plantAttribute},
+                subcontract_attribute = #{subcontractAttribute},
+                address = #{address},
+                all_staff_num = #{allStaffNum},
+                dev_staff_num = #{devStaffNum},
+                quality_staff_num = #{qualityStaffNum},
+                prod_staff_num = #{prodStaffNum},
+                own_workers_num = #{ownWorkersNum},
+                manager_num = #{managerNum},
+                permonth_work_hours = #{permonthWorkHours},
+                permonth_wage = #{permonthWage},
+                average_wage_currency = #{averageWageCurrency},
+                is_lodging = #{isLodging},
+                is_meal_allowance = #{isMealAllowance},
+                picture_path = #{picturePath},
+                plant_director = #{plantDirector},
+                remark = #{remark},
+                disable_remark = #{disableRemark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where client_id = #{clientId}
+        </foreach>
+    </update>
+
+
+    <sql id="selectBasPlantVo">
+        select t.client_id, t.plant_sid, t.plant_code, t.plant_name, t.short_name, t.brief_introduction, t.is_subcontract, t.company_sid, t.vendor_sid, t.country,
+        t.province, t.city, t.operate_category, t.plant_area, t.factory_area, t.is_same_city, t.plant_attribute, t.subcontract_attribute,
+        t.address, t.all_staff_num, t.dev_staff_num, t.quality_staff_num, t.prod_staff_num, t.own_workers_num, t.manager_num,
+        t.permonth_work_hours, t.permonth_wage, t.average_wage_currency, t.is_lodging, t.is_meal_allowance, t.picture_path, t.remark, t.disable_remark,
+        t.status, t.handle_status, t.creator_account, t.create_date, t.updater_account, t.update_date, t.confirmer_account, t.confirm_date,
+        t.data_source_sys, t1.company_name, t1.short_name as company_short_name, t1.company_code, t2.vendor_name, t2.short_name as vendor_short_name, t2.vendor_code, t3.nick_name AS creator_account_name,
+        t4.nick_name AS updater_account_name, t5.nick_name AS confirmer_account_name,t.plant_director,t6.staff_name AS plant_director_name
+        from s_bas_plant t
+        LEFT JOIN s_bas_company t1 ON t1.company_sid = t.company_sid
+	    LEFT JOIN s_bas_vendor t2 on t2.vendor_sid = t.vendor_sid
+	    LEFT JOIN sys_user t3 on t.creator_account = t3.user_name
+	    LEFT JOIN sys_user t4 on t.updater_account = t4.user_name
+	    LEFT JOIN sys_user t5 on t.confirmer_account = t5.user_name
+        LEFT JOIN s_bas_staff t6 on t.plant_director = t6.staff_code
+    </sql>
+
+    <select id="checkNameUnique" resultType="java.lang.Integer">
+        select count(*) from s_bas_plant where plant_name = #{plantName} limit 1
+    </select>
+
+    <select id="checkCodeUnique" resultType="java.lang.Integer">
+        select count(*) from s_bas_plant where plant_code = #{plantCode} limit 1
+    </select>
+
+    <delete id="deleteBasPlantByIds" parameterType="Long">
+        delete from s_bas_plant where plant_sid in
+        <foreach item="plantSid" collection="array" open="(" separator="," close=")">
+            #{plantSid}
+        </foreach>
+    </delete>
+
+    <select id="countByDomain" resultType="java.lang.Integer">
+        select count(1) from s_bas_plant
+        <where>
+            <if test="plantSid != null  and plantSid != ''">
+                and plant_sid in (
+                <foreach collection="plantSid.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and handle_status in (
+                <foreach collection="handleStatus.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertBasPlant" parameterType="com.platform.ems.domain.BasPlant">
+        insert into s_bas_plant
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">client_id,</if>
+            <if test="plantSid != null and plantSid != ''">plant_sid,</if>
+            <if test="plantCode != null">plant_code,</if>
+            <if test="plantName != null and plantName != ''">plant_name,</if>
+            <if test="isSubcontract != null">is_subcontract,</if>
+            <if test="companySid != null">company_sid,</if>
+            <if test="vendorSid != null">vendor_sid,</if>
+            <if test="country != null">country,</if>
+            <if test="province != null">province,</if>
+            <if test="city != null and city != ''">city,</if>
+            <if test="operateType != null">operate_type,</if>
+            <if test="factoryArea != null and factoryArea != ''">factory_area,</if>
+            <if test="isSameCity != null">is_same_city,</if>
+            <if test="plantAttribute != null">plant_attribute,</if>
+            <if test="subcontractAttribute != null">subcontract_attribute,</if>
+            <if test="address != null">address,</if>
+            <if test="allStaffNum != null">all_staff_num,</if>
+            <if test="devStaffNum != null and devStaffNum != ''">dev_staff_num,</if>
+            <if test="qualityStaffNum != null">quality_staff_num,</if>
+            <if test="prodStaffNum != null">prod_staff_num,</if>
+            <if test="ownWorkersNum != null">own_workers_num,</if>
+            <if test="managerNum != null and managerNum != ''">manager_num,</if>
+            <if test="permonthWorkHours != null">permonth_work_hours,</if>
+            <if test="permonthWage != null and permonthWage != ''">permonth_wage,</if>
+            <if test="averageWageCurrency != null">average_wage_currency,</if>
+            <if test="isLodging != null">is_lodging,</if>
+            <if test="isMealAllowance != null">is_meal_allowance,</if>
+            <if test="picturePath != null">picture_path,</if>
+            <if test="remark != null">remark,</if>
+            <if test="disableRemark != null">disable_remark,</if>
+            <if test="status != null">status,</if>
+            <if test="handleStatus != null and handleStatus != ''">handle_status,</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updaterAccount != null">updater_account,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="confirmerAccount != null">confirmer_account,</if>
+            <if test="confirmDate != null">confirm_date,</if>
+            <if test="dataSourceSys != null">data_source_sys,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">#{clientId},</if>
+            <if test="plantSid != null and plantSid != ''">#{plantSid},</if>
+            <if test="plantCode != null">#{plantCode},</if>
+            <if test="plantName != null and plantName != ''">#{plantName},</if>
+            <if test="isSubcontract != null">#{isSubcontract},</if>
+            <if test="companySid != null">#{companySid},</if>
+            <if test="vendorSid != null">#{vendorSid},</if>
+            <if test="country != null">#{country},</if>
+            <if test="province != null">#{province},</if>
+            <if test="city != null and city != ''">#{city},</if>
+            <if test="operateType != null">#{operateType},</if>
+            <if test="factoryArea != null and factoryArea != ''">#{factoryArea},</if>
+            <if test="isSameCity != null">#{isSameCity},</if>
+            <if test="plantAttribute != null">#{plantAttribute},</if>
+            <if test="subcontractAttribute != null">#{subcontractAttribute},</if>
+            <if test="address != null">#{address},</if>
+            <if test="allStaffNum != null">#{allStaffNum},</if>
+            <if test="devStaffNum != null and devStaffNum != ''">#{devStaffNum},</if>
+            <if test="qualityStaffNum != null">#{qualityStaffNum},</if>
+            <if test="prodStaffNum != null">#{prodStaffNum},</if>
+            <if test="ownWorkersNum != null">#{ownWorkersNum},</if>
+            <if test="managerNum != null and managerNum != ''">#{managerNum},</if>
+            <if test="permonthWorkHours != null">#{permonthWorkHours},</if>
+            <if test="permonthWage != null and permonthWage != ''">#{permonthWage},</if>
+            <if test="averageWageCurrency != null">#{averageWageCurrency},</if>
+            <if test="isLodging != null">#{isLodging},</if>
+            <if test="isMealAllowance != null">#{isMealAllowance},</if>
+            <if test="picturePath != null">#{picturePath},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="disableRemark != null">#{disableRemark},</if>
+            <if test="status != null">#{status},</if>
+            <if test="handleStatus != null and handleStatus != ''">#{handleStatus},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">#{creatorAccount},</if>
+            <if test="createDate != null">now(),</if>
+            <if test="updaterAccount != null">#{updaterAccount},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="confirmerAccount != null">#{confirmerAccount},</if>
+            <if test="confirmDate != null">#{confirmDate},</if>
+            <if test="dataSourceSys != null">#{dataSourceSys},</if>
+        </trim>
+    </insert>
+
+    <update id="confirm" parameterType="com.platform.ems.domain.BasPlant">
+        update s_bas_plant
+        <set>
+            <if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmDate != null">confirm_date = #{confirmDate},</if>
+        </set>
+        where plant_sid in
+        (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+    </update>
+
+    <select id="getPlantList" parameterType="com.platform.ems.domain.BasPlant" resultType="com.platform.ems.domain.BasPlant">
+        select
+            t.plant_sid,
+            t.plant_code,
+            t.plant_name,
+            t.short_name,
+            t.short_name as plant_short_name,
+            t.status,
+            t.handle_status,
+            t.company_sid,
+            t1.company_code,
+            t1.company_name
+        from s_bas_plant t
+        left join s_bas_company t1 on t.company_sid = t1.company_sid
+        <where>
+            <if test="plantSid != null">
+                and t.plant_sid = #{plantSid}
+            </if>
+            <if test="plantCodeName != null and plantCodeName != ''">
+                and (t.plant_code like concat('%', #{plantCodeName}, '%')
+                         or t.plant_name like concat('%', #{plantCodeName}, '%')
+                         or t.short_name like concat('%', #{plantCodeName}, '%'))
+            </if>
+            <if test="companySid != null">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t.company_sid in(<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+        </where>
+        order by t.plant_name asc
+    </select>
+</mapper>

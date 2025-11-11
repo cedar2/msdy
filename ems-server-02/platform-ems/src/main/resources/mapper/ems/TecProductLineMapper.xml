@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecProductLineMapper">
+
+    <resultMap type="com.platform.ems.domain.TecProductLine" id="TecProductLineResult">
+        <result property="clientId" column="client_id"/>
+        <result property="productLineSid" column="product_line_sid"/>
+        <result property="productSid" column="product_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="sampleCodeSelf" column="sample_code_self"/>
+    </resultMap>
+
+    <sql id="selectTecProductLineVo">
+        select
+        t.client_id,
+        t.product_line_sid,
+        t.product_sid,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.material_code,
+	    t1.material_name,
+	    t1.sample_code_self,
+        t2.name as unit_base_name
+        from s_tec_product_line t
+        LEFT JOIN s_bas_material t1 ON t1.material_sid = t.product_sid
+        LEFT JOIN s_con_measure_unit t2 ON t1.unit_base = t2.code
+    </sql>
+
+    <sql id="getEstimateLineVo">
+     SELECT
+       t.quantity,
+       t2.material_code,
+       t2.material_sid,
+       t2.zipper_flag,
+	   t2.material_name,
+	   t2.vendor_sid,
+	   t2.unit_base,
+	   t2.unit_conversion_rate,
+	   t2.supplier_product_code,
+	   t2.width,
+	   t2.gram_weight,
+	   t2.composition,
+	   t2.zipper_flag,
+	   t2.yarn_count,
+	   t2.density,
+	   t2.specification_size,
+	   t2.unit_quantity,
+	   t2.material_composition,
+	   t2.material_type,
+	   t2.purchase_type,
+	   t2.material_class_sid,
+	   t2.supplier_product_code,
+	   t2.touse_produce_stage,
+	   t2.unit_conversion_rate,
+	   m1.material_sku_sid as material_sku1_sid,
+	   t3.sku_code AS material_sku1_code,
+	   t3.sku_name AS material_sku1_name,
+	   t2.unit_base,
+	   t2.purchase_type,
+	   t2.touse_produce_stage,
+	   t2.vendor_sid,
+	   t5.vendor_code,
+	   t5.vendor_name,
+	   t2.supplier_product_code,
+	   t2.material_type,
+	   t2.material_class_sid,
+	   t2.material_composition,
+	   t2.material_type,
+	   t6.node_name,
+	   t7.name as material_type_name,
+       t8.name as unit_quantity_name,
+       t9.name as unit_base_name,
+       t9.is_integer,
+       t10.name as purchase_type_name
+  FROM s_tec_product_linepos_mat t
+      LEFT JOIN s_tec_product_linepos_mat_color m1 ON m1.linepos_mat_sid = t.linepos_mat_sid
+      LEFT JOIN s_tec_product_line m2 ON m2.product_line_sid = t.product_line_sid
+	  LEFT JOIN s_bas_material t2 ON t2.material_sid = t.material_sid
+	  LEFT JOIN s_bas_sku t3 ON t3.sku_sid = m1.material_sku_sid
+	  LEFT JOIN s_bas_material c ON c.material_sid = t.product_sid
+	  LEFT JOIN s_bas_vendor t5 ON t5.vendor_sid = t2.vendor_sid
+	  LEFT JOIN s_con_material_class t6 ON t6.material_class_sid = c.material_class_sid
+	  LEFT JOIN s_con_material_type t7 ON t7.code = t2.material_type
+	  left join s_con_measure_unit t8 on t8.code=t2.unit_quantity
+	  left join s_con_measure_unit t9 on t9.code=t2.unit_base
+	  left join s_con_purchase_type t10 on t10.code =t2.purchase_type
+    </sql>
+    <select id="getEstimateLine" parameterType="com.platform.ems.domain.dto.request.EstimateLineReportRequest"
+            resultType="com.platform.ems.domain.dto.response.EstimateLineReportResponse">
+        <include refid="getEstimateLineVo"/>
+        <where>
+            <if test="vendorSid != null  and vendorSid != ''">
+                and t2.vendor_sid = #{vendorSid}
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and  m2.handle_status = #{handleStatus}
+            </if>
+            <if test="materialSid != null  and materialSid != ''">
+                and t.product_sid=#{materialSid}
+            </if>
+            <if test="sku1Sid != null  and sku1Sid != ''">
+                and m1.product_sku_sid=#{sku1Sid}
+            </if>
+            <if test="materialType != null  and materialType != ''">
+                and t2.material_type=#{materialType}
+            </if>
+            <if test="materialCategory != null  and materialCategory != ''">
+                and t2.material_category= #{materialCategory}
+            </if>
+            <if test="purchaseType != null  and purchaseType != ''">
+                and t2.purchase_type= #{purchaseType}
+            </if>
+            <if test="touseProduceStage != null  and touseProduceStage != ''">
+                and t2.touse_produce_stage= #{touseProduceStage}
+            </if>
+            <if test="materialCode != null  and materialCode != ''">
+                and t2.material_code like concat('%',
+                #{materialCode}, '%')
+            </if>
+        </where>
+        order by t2.material_code desc
+    </select>
+    <select id="selectTecProductLineById" parameterType="com.platform.ems.domain.TecProductLine" resultMap="TecProductLineResult">
+        <include refid="selectTecProductLineVo"/>
+        where t.product_sid = #{materialSid}
+    </select>
+
+
+    <select id="selectTecProductLineList" parameterType="com.platform.ems.domain.TecProductLine"
+            resultMap="TecProductLineResult">
+        <include refid="selectTecProductLineVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="productLineSid != null ">
+                and t.product_line_sid =#{productLineSid}
+            </if>
+            <if test="productSid != null ">
+                and t.product_sid =#{productSid}
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_tec_product_line
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            product_line_sid,
+            product_sid,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.productSid},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_tec_product_line
+        <trim prefix="SET" suffixOverrides=",">
+            product_line_sid = #{productLineSid},
+            product_sid = #{productSid},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where product_line_sid = #{productLineSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_tec_product_line
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                product_line_sid = #{productLineSid},
+                product_sid = #{productSid},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where product_line_sid = #{productLineSid}
+        </foreach>
+    </update>
+
+</mapper>

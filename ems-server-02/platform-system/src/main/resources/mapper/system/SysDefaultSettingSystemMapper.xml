@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.system.mapper.SysDefaultSettingSystemMapper">
+
+    <resultMap type="com.platform.common.core.domain.entity.SysDefaultSettingSystem" id="SysDefaultSettingSystemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="logonTimeout" column="logon_timeout"/>
+        <result property="toexpireDaysLdht" column="toexpire_days_ldht"/>
+        <result property="toexpireDaysSyq" column="toexpire_days_syq"/>
+        <result property="deploymentMode" column="deployment_mode"/>
+        <result property="industrySolution" column="industry_solution"/>
+        <result property="sysClientId" column="sys_client_id"/>
+        <result property="toexpireDaysCght" column="toexpire_days_cght"/>
+        <result property="toexpireDaysCgdd" column="toexpire_days_cgdd"/>
+        <result property="toexpireDaysXsht" column="toexpire_days_xsht"/>
+        <result property="toexpireDaysXsdd" column="toexpire_days_xsdd"/>
+        <result property="toexpireDaysScdd" column="toexpire_days_scdd"/>
+        <result property="toexpireDaysScddGx" column="toexpire_days_scdd_gx"/>
+        <result property="toexpireDaysScddSp" column="toexpire_days_scdd_sp"/>
+        <result property="toexpireDaysScddSx" column="toexpire_days_scdd_sx"/>
+        <result property="toexpireDaysProject" column="toexpire_days_project"/>
+        <result property="toexecuteNoticeDaysPrjTask" column="toexecute_notice_days_prj_task"/>
+        <result property="toexpireDaysGzzrx" column="toexpire_days_gzzrx"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectSysDefaultSettingSystemVo">
+        select t.client_id,
+               t.deployment_mode,
+               t.industry_solution,
+               t.sys_client_id,
+               t.logon_timeout,
+               t.toexpire_days_ldht,
+               t.toexpire_days_syq,
+               t.toexpire_days_cght,
+               t.toexpire_days_cgdd,
+               t.toexpire_days_xsht,
+               t.toexpire_days_xsdd,
+               t.toexpire_days_scdd,
+               t.toexpire_days_scdd_gx,
+               t.toexpire_days_scdd_sp,
+               t.toexpire_days_scdd_sx,
+               t.toexpire_days_project,
+               t.toexecute_notice_days_prj_task,
+               t.toexpire_days_gzzrx,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name
+        from s_sys_default_setting_system t
+                 LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+                 LEFT JOIN sys_user t3 ON t3.user_name = t.updater_account
+    </sql>
+
+    <select id="selectSysDefaultSettingSystemById" parameterType="String" resultMap="SysDefaultSettingSystemResult">
+        <include refid="selectSysDefaultSettingSystemVo"/>
+        where t.client_id = #{clientId}
+    </select>
+
+    <select id="selectSysDefaultSettingSystemList" parameterType="com.platform.common.core.domain.entity.SysDefaultSettingSystem"
+            resultMap="SysDefaultSettingSystemResult">
+        <include refid="selectSysDefaultSettingSystemVo"/>
+        <where>
+            <if test="deploymentMode != null  and deploymentMode != ''">
+                and (<foreach collection="deploymentMode.split(';')" item="item" separator="or">t.deployment_mode
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+                <if test="logonTimeout != null">
+                    and t.logon_timeout = #{logonTimeout }
+                </if>
+            </if>
+            <if test="toexpireDaysLdht != null ">
+                and t.toexpire_days_ldht = #{toexpireDaysLdht}
+            </if>
+            <if test="toexpireDaysSyq != null ">
+                and t.toexpire_days_syq = #{toexpireDaysSyq}
+            </if>
+            <if test="industrySolution != null  and industrySolution != ''">
+                and (<foreach collection="industrySolution.split(';')" item="item" separator="or">t.industry_solution
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sysClientId != null  and sysClientId != ''">
+                and (<foreach collection="sysClientId.split(';')" item="item" separator="or">t.sys_client_id
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="toexpireDaysCght != null ">
+                and t.toexpire_days_cght = #{toexpireDaysCght}
+            </if>
+            <if test="toexpireDaysCgdd != null ">
+                and t.toexpire_days_cgdd = #{toexpireDaysCgdd}
+            </if>
+            <if test="toexpireDaysXsht != null ">
+                and t.toexpire_days_xsht = #{toexpireDaysXsht}
+            </if>
+            <if test="toexpireDaysXsdd != null ">
+                and t.toexpire_days_xsdd = #{toexpireDaysXsdd}
+            </if>
+            <if test="toexpireDaysScdd != null ">
+                and t.toexpire_days_scdd = #{toexpireDaysScdd}
+            </if>
+            <if test="toexpireDaysScddGx != null ">
+                and t.toexpire_days_scdd_gx = #{toexpireDaysScddGx}
+            </if>
+            <if test="toexpireDaysScddSp != null ">
+                and t.toexpire_days_scdd_sp = #{toexpireDaysScddSp}
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_sys_default_setting_system
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            logon_timeout,
+            toexpire_days_ldht,
+            toexpire_days_syq,
+            deployment_mode,
+            industry_solution,
+            sys_client_id,
+            toexpire_days_cght,
+            toexpire_days_cgdd,
+            toexpire_days_xsht,
+            toexpire_days_xsdd,
+            toexpire_days_scdd,
+            toexpire_days_scdd_gx,
+            toexpire_days_scdd_sp,
+            toexpire_days_scdd_sx,
+            toexpire_days_project,
+            toexecute_notice_days_prj_task,
+            toexpire_days_gzzrx,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.logonTimeout},
+                #{item.toexpireDaysLdht},
+                #{item.toexpireDaysSyq},
+                #{item.deploymentMode},
+                #{item.industrySolution},
+                #{item.sysClientId},
+                #{item.toexpireDaysCght},
+                #{item.toexpireDaysCgdd},
+                #{item.toexpireDaysXsht},
+                #{item.toexpireDaysXsdd},
+                #{item.toexpireDaysScdd},
+                #{item.toexpireDaysScddGx},
+                #{item.toexpireDaysScddSp},
+                #{item.toexpireDaysScddSx},
+                #{item.toexpireDaysProject},
+                #{item.toexecuteNoticeDaysPrjTask},
+                #{item.toexpireDaysGzzrx},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_sys_default_setting_system
+        <trim prefix="SET" suffixOverrides=",">
+            deployment_mode = #{deploymentMode},
+            industry_solution = #{industrySolution},
+            sys_client_id = #{sysClientId},
+            logon_timeout = #{logonTimeout},
+            toexpire_days_ldht = #{toexpireDaysLdht},
+            toexpire_days_syq = #{toexpireDaysSyq},
+            toexpire_days_cght = #{toexpireDaysCght},
+            toexpire_days_cgdd = #{toexpireDaysCgdd},
+            toexpire_days_xsht = #{toexpireDaysXsht},
+            toexpire_days_xsdd = #{toexpireDaysXsdd},
+            toexpire_days_scdd = #{toexpireDaysScdd},
+            toexpire_days_scdd_gx = #{toexpireDaysScddGx},
+            toexpire_days_scdd_sp = #{toexpireDaysScddSp},
+            toexpire_days_scdd_sx = #{toexpireDaysScddSx},
+            toexpire_days_project = #{toexpireDaysProject},
+            toexecute_notice_days_prj_task = #{toexecuteNoticeDaysPrjTask},
+            toexpire_days_gzzrx = #{toexpireDaysGzzrx},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where client_id = #{clientId}
+    </update>
+
+</mapper>

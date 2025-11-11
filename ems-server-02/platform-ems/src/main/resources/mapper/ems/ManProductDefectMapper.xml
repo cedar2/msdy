@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManProductDefectMapper">
+
+    <resultMap type="com.platform.ems.domain.ManProductDefect" id="ManProductDefectResult">
+        <result property="clientId" column="client_id"/>
+        <result property="productDefectSid" column="product_defect_sid"/>
+        <result property="productDefectCode" column="product_defect_code"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="department" column="department"/>
+        <result property="workCenterSid" column="work_center_sid"/>
+        <result property="workCenterCode" column="work_center_code"/>
+        <result property="defectSource" column="defect_source"/>
+        <result property="manufactureOrderSid" column="manufacture_order_sid"/>
+        <result property="manufactureOrderCode" column="manufacture_order_code"/>
+        <result property="productSid" column="product_sid"/>
+        <result property="productCode" column="product_code"/>
+        <result property="paichanBatch" column="paichan_batch"/>
+        <result property="defectReporterSid" column="defect_reporter_sid"/>
+        <result property="defectReporterCode" column="defect_reporter_code"/>
+        <result property="defectReportDate" column="defect_report_date"/>
+        <result property="planResolveDate" column="plan_resolve_date"/>
+        <result property="defectPriority" column="defect_priority"/>
+        <result property="defectResolverSid" column="defect_resolver_sid"/>
+        <result property="defectResolverCode" column="defect_resolver_code"/>
+        <result property="resolveStatus" column="resolve_status"/>
+        <result property="defectClassSid" column="defect_class_sid"/>
+        <result property="defectClassCode" column="defect_class_code"/>
+        <result property="defectShortDescription" column="defect_short_description"/>
+        <result property="solutionDescription" column="solution_description"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+
+        <result property="productName" column="product_name"/>
+        <result property="defectResolverName" column="defectResolver_name"/>
+        <result property="defectReporterName" column="defectReporter_name"/>
+        <result property="plantShortName" column="plantShort_name"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="workCenterName" column="work_center_name"/>
+    </resultMap>
+
+    <sql id="selectManProductDefectVo">
+        select t.client_id,
+               t.product_defect_sid,
+               t.product_defect_code,
+               t.plant_sid,
+               t.plant_code,
+               t.department,
+               t.work_center_sid,
+               t.work_center_code,
+               t.defect_source,
+               t.manufacture_order_sid,
+               t.manufacture_order_code,
+               t.product_sid,
+               t.product_code,
+               t.paichan_batch,
+               t.defect_reporter_sid,
+               t.defect_reporter_code,
+               t.defect_report_date,
+               t.plan_resolve_date,
+               t.defect_priority,
+               t.defect_resolver_sid,
+               t.defect_resolver_code,
+               t.resolve_status,
+               t.defect_class_sid,
+               t.defect_class_code,
+               t.defect_short_description,
+               t.solution_description,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys ,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               m.material_name AS product_name ,
+               s1.staff_name as defectResolver_name ,
+               s2.staff_name as defectReporter_name,
+               p.short_name as plantShort_name ,
+               d.name as department_name,
+               c.work_center_name as work_center_name
+        from
+               s_man_product_defect t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+        LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t4.client_id
+        LEFT JOIN s_bas_material m ON t.product_sid = m.material_sid
+        LEFT JOIN s_bas_staff s1 ON t.defect_resolver_sid = s1.staff_sid
+        LEFT JOIN s_bas_staff s2 ON t.defect_reporter_sid = s2.staff_sid
+        LEFT JOIN s_bas_plant p ON t.plant_sid = p.plant_sid
+        LEFT JOIN s_con_manufacture_department d ON t.department = d.code
+        LEFT JOIN s_man_work_center c ON t.work_center_sid = c.work_center_sid
+    </sql>
+
+    <select id="selectManProductDefectById" parameterType="Long" resultMap="ManProductDefectResult">
+        <include refid="selectManProductDefectVo"/>
+        where t.product_defect_sid = #{productDefectSid}
+    </select>
+
+    <select id="selectManProductDefectList" parameterType="com.platform.ems.domain.ManProductDefect"
+            resultMap="ManProductDefectResult">
+        <include refid="selectManProductDefectVo"/>
+        <where>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and creator_account_name like concat("%" , #{creatorAccountName} , "%")
+            </if>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="departmentList != null and departmentList.length >0 ">
+                and t.department in
+                (<foreach collection="departmentList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="workCenterSidList != null and workCenterSidList.length >0 ">
+                and t.work_center_sid in
+                (<foreach collection="workCenterSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="plantCode != null and plantCode != ''">
+                and t.plant_code = #{plantCode}
+            </if>
+            <if test="department != null and department != ''">
+                and t.department like concat("%" , #{department} , "%")
+            </if>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid = #{workCenterSid}
+            </if>
+            <if test="workCenterCode != null and workCenterCode != ''">
+                and t.work_center_code = #{workCenterCode}
+            </if>
+            <if test="defectSource != null and defectSource != ''">
+                and t.defect_source = #{defectSource}
+            </if>
+            <if test="manufactureOrderSid != null ">
+                and t.manufacture_order_sid = #{manufactureOrderSid}
+            </if>
+            <if test="manufactureOrderCode != null and manufactureOrderCode!='' ">
+                and t.manufacture_order_code like concat("%" , #{manufactureOrderCode} , "%")
+            </if>
+            <if test="productDefectCode != null and productDefectCode!='' ">
+                and t.product_defect_code like concat("%" , #{productDefectCode} , "%")
+            </if>
+            <if test="productSid != null ">
+                and t.product_sid = #{productSid}
+            </if>
+            <if test="productCode != null ">
+                and t.product_code like concat("%" , #{productCode} , "%")
+            </if>
+            <if test="paichanBatch != null ">
+                and t.paichan_batch = #{paichanBatch}
+            </if>
+            <if test="defectReporterSid != null ">
+                and t.defect_reporter_sid = #{defectReporterSid}
+            </if>
+            <if test="defectReporterCode != null and defectReporterCode != ''">
+                and t.defect_reporter_code like concat("%" , #{defectReporterCode} , "%")
+            </if>
+            <if test="defectReportDate != null ">
+                and t.defect_report_date = #{defectReportDate}
+            </if>
+            <if test="planResolveDate != null ">
+                and t.plan_resolve_date = #{planResolveDate}
+            </if>
+            <if test="defectPriority != null and defectPriority != ''">
+                and t.defect_priority = #{defectPriority}
+            </if>
+            <if test="defectResolverSid != null ">
+                and t.defect_resolver_sid = #{defectResolverSid}
+            </if>
+            <if test="defectResolverCode != null and defectResolverCode != ''">
+                and t.defect_resolver_code = #{defectResolverCode}
+            </if>
+            <if test="resolveStatus != null and resolveStatus != ''">
+                and t.resolve_status = #{resolveStatus}
+            </if>
+            <if test="defectClassSid != null ">
+                and t.defect_class_sid = #{defectClassSid}
+            </if>
+            <if test="defectClassCode != null and defectClassCode != ''">
+                and t.defect_class_code = #{defectClassCode}
+            </if>
+            <if test="defectShortDescription != null and defectShortDescription != ''">
+                and t.defect_short_description = #{defectShortDescription}
+            </if>
+            <if test="solutionDescription != null and solutionDescription != ''">
+                and t.solution_description = #{solutionDescription}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="defectSourceList != null and defectSourceList.length >0 ">
+                and t.defect_source in
+                (<foreach collection="defectSourceList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="resolveStatusList != null and resolveStatusList.length >0 ">
+                and t.resolve_status in
+                (<foreach collection="resolveStatusList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="defectReporterSidList != null and defectReporterSidList.length >0 ">
+                and t.defect_reporter_sid in
+                (<foreach collection="defectReporterSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="defectResolverSidList != null and defectResolverSidList.length >0 ">
+                and t.defect_resolver_sid in
+                (<foreach collection="defectResolverSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="defectPriorityList != null and defectPriorityList.length >0 ">
+                and t.defect_priority in
+                (<foreach collection="defectPriorityList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="planResolveDateBegin != null and planResolveDateBegin!=''">
+                and date_format(t.plan_resolve_date,'%y%m%d') &gt;= date_format(#{planResolveDateBegin},'%y%m%d')
+            </if>
+            <if test="planResolveDateEnd != null and planResolveDateEnd!=''">
+                and date_format(t.plan_resolve_date,'%y%m%d') &lt;= date_format(#{planResolveDateEnd},'%y%m%d')
+            </if>
+
+            <if test="defectReportDateBegin != null and defectReportDateBegin!=''">
+                and date_format(t.defect_report_date,'%y%m%d') &gt;= date_format(#{defectReportDateBegin},'%y%m%d')
+            </if>
+            <if test="defectReportDateEnd != null and defectReportDateEnd!=''">
+                and date_format(t.defect_report_date,'%y%m%d') &lt;= date_format(#{defectReportDateEnd},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by  t.product_defect_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_product_defect
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            product_defect_sid,
+            product_defect_code,
+            plant_sid,
+            plant_code,
+            department,
+            work_center_sid,
+            work_center_code,
+            defect_source,
+            manufacture_order_sid,
+            manufacture_order_code,
+            product_sid,
+            product_code,
+            paichan_batch,
+            defect_reporter_sid,
+            defect_reporter_code,
+            defect_report_date,
+            plan_resolve_date,
+            defect_priority,
+            defect_resolver_sid,
+            defect_resolver_code,
+            resolve_status,
+            defect_class_sid,
+            defect_class_code,
+            defect_short_description,
+            solution_description,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.productDefectCode},
+                #{item.plantSid},
+                #{item.plantCode},
+                #{item.department},
+                #{item.workCenterSid},
+                #{item.workCenterCode},
+                #{item.defectSource},
+                #{item.manufactureOrderSid},
+                #{item.manufactureOrderCode},
+                #{item.productSid},
+                #{item.productCode},
+                #{item.paichanBatch},
+                #{item.defectReporterSid},
+                #{item.defectReporterCode},
+                #{item.defectReportDate},
+                #{item.planResolveDate},
+                #{item.defectPriority},
+                #{item.defectResolverSid},
+                #{item.defectResolverCode},
+                #{item.resolveStatus},
+                #{item.defectClassSid},
+                #{item.defectClassCode},
+                #{item.defectShortDescription},
+                #{item.solutionDescription},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_product_defect
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            product_defect_code = #{productDefectCode},
+            plant_sid = #{plantSid},
+            plant_code = #{plantCode},
+            department = #{department},
+            work_center_sid = #{workCenterSid},
+            work_center_code = #{workCenterCode},
+            defect_source = #{defectSource},
+            manufacture_order_sid = #{manufactureOrderSid},
+            manufacture_order_code = #{manufactureOrderCode},
+            product_sid = #{productSid},
+            product_code = #{productCode},
+            paichan_batch = #{paichanBatch},
+            defect_reporter_sid = #{defectReporterSid},
+            defect_reporter_code = #{defectReporterCode},
+            defect_report_date = #{defectReportDate},
+            plan_resolve_date = #{planResolveDate},
+            defect_priority = #{defectPriority},
+            defect_resolver_sid = #{defectResolverSid},
+            defect_resolver_code = #{defectResolverCode},
+            resolve_status = #{resolveStatus},
+            defect_class_sid = #{defectClassSid},
+            defect_class_code = #{defectClassCode},
+            defect_short_description = #{defectShortDescription},
+            solution_description = #{solutionDescription},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where product_defect_sid = #{productDefectSid}
+    </update>
+
+    <!--更新-->
+    <update id="updateStatus">
+        update s_man_product_defect
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="defectResolverSid !=null and defectResolverSid !=''">
+                defect_resolver_sid = #{defectResolverSid},
+            </if>
+            <if test="planResolveDate !=null">
+                plan_resolve_date = #{planResolveDate},
+            </if>
+            <if test="defectPriority !=null and defectPriority !=''">
+                defect_priority = #{defectPriority},
+            </if>
+            <if test="resolveStatus !=null and resolveStatus !=''">
+                resolve_status = #{resolveStatus},
+            </if>
+        </trim>
+        where product_defect_sid in
+        (<foreach collection="productDefectSidList" item="item" separator=",">#{item}</foreach>)
+
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_product_defect
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                product_defect_code = #{productDefectCode},
+                plant_sid = #{plantSid},
+                plant_code = #{plantCode},
+                department = #{department},
+                work_center_sid = #{workCenterSid},
+                work_center_code = #{workCenterCode},
+                defect_source = #{defectSource},
+                manufacture_order_sid = #{manufactureOrderSid},
+                manufacture_order_code = #{manufactureOrderCode},
+                product_sid = #{productSid},
+                product_code = #{productCode},
+                paichan_batch = #{paichanBatch},
+                defect_reporter_sid = #{defectReporterSid},
+                defect_reporter_code = #{defectReporterCode},
+                defect_report_date = #{defectReportDate},
+                plan_resolve_date = #{planResolveDate},
+                defect_priority = #{defectPriority},
+                defect_resolver_sid = #{defectResolverSid},
+                defect_resolver_code = #{defectResolverCode},
+                resolve_status = #{resolveStatus},
+                defect_class_sid = #{defectClassSid},
+                defect_class_code = #{defectClassCode},
+                defect_short_description = #{defectShortDescription},
+                solution_description = #{solutionDescription},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+            </trim>
+            where product_defect_sid = #{productDefectSid}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,803 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.system.mapper.SysDefaultSettingClientMapper">
+
+    <resultMap type="com.platform.common.core.domain.entity.SysDefaultSettingClient" id="SysDefaultSettingClientResult">
+        <result property="clientId" column="client_id"/>
+        <result property="productSeasonYanfa" column="product_season_yanfa"/>
+        <result property="productSeasonCaigou" column="product_season_caigou"/>
+        <result property="productSeasonXiaoshou" column="product_season_xiaoshou"/>
+        <result property="productSeasonShengchan" column="product_season_shengchan"/>
+        <result property="isAutodisplayPriceInStockOther" column="is_autodisplay_price_in_stock_other"/>
+        <result property="isAutodisplayPriceOutStockOther" column="is_autodisplay_price_out_stock_other"/>
+        <result property="isPandianApproval" column="is_pandian_approval"/>
+        <result property="vendorEnterRequestInStockOther" column="vendor_enter_request_in_stock_other"/>
+        <result property="customerEnterRequestInStockOther" column="customer_enter_request_in_stock_other"/>
+        <result property="vendorEnterRequestOutStockOther" column="vendor_enter_request_out_stock_other"/>
+        <result property="customerEnterRequestOutStockOther" column="customer_enter_request_out_stock_other"/>
+        <result property="priceEnterRequestInStockOther" column="price_enter_request_in_stock_other"/>
+        <result property="priceEnterRequestOutStockOther" column="price_enter_request_out_stock_other"/>
+        <result property="isProcessWorkCenterEditable" column="is_process_work_center_editable"/>
+        <result property="isRequiredConcernTask" column="is_required_concern_task"/>
+        <result property="isProductContractDateIdentical" column="is_product_contract_date_identical"/>
+        <result property="isAutoUpdateProcessStatus" column="is_auto_update_process_status"/>
+        <result property="isAutoUpdateConcernTaskStatus" column="is_auto_update_concern_task_status"/>
+        <result property="isAssociateLatestManufactureOrder" column="is_associate_latest_manufacture_order"/>
+        <result property="isInDefectivePriceTaxEqualToPriceTax" column="is_in_defective_price_tax_equal_to_price_tax"/>
+        <result property="erpMaterialSkuEnterModeProject" column="erp_material_sku_enter_mode_project"/>
+        <result property="productCodeEnterModeProject" column="product_code_enter_mode_project"/>
+        <result property="purchaseOrderContractEnterMode" column="purchase_order_contract_enter_mode"/>
+        <result property="saleOrderContractEnterMode" column="sale_order_contract_enter_mode"/>
+        <result property="manOutsourceSettleContractEnterMode" column="man_outsource_settle_contract_enter_mode"/>
+        <result property="isQueryOtherUser" column="is_query_other_user"/>
+        <result property="logonTimeout" column="logon_timeout"/>
+        <result property="isXiefuIndustry" column="is_xiefu_industry"/>
+        <result property="dianqianExceedNoticeAccount" column="dianqian_exceed_notice_account"/>
+        <result property="toexpireDaysLdht" column="toexpire_days_ldht"/>
+        <result property="toexpireDaysSyq" column="toexpire_days_syq"/>
+        <result property="toexpireDaysCght" column="toexpire_days_cght"/>
+        <result property="toexpireDaysCgdd" column="toexpire_days_cgdd"/>
+        <result property="toexpireDaysXsht" column="toexpire_days_xsht"/>
+        <result property="toexpireDaysXsdd" column="toexpire_days_xsdd"/>
+        <result property="toexpireDaysScdd" column="toexpire_days_scdd"/>
+        <result property="toexpireDaysScddGx" column="toexpire_days_scdd_gx"/>
+        <result property="toexpireDaysScddSp" column="toexpire_days_scdd_sp"/>
+        <result property="toexpireDaysScddSx" column="toexpire_days_scdd_sx"/>
+        <result property="toexpireDaysProject" column="toexpire_days_project"/>
+        <result property="toexpireDaysPrjTask" column="toexpire_days_prj_task"/>
+        <result property="todoDaysPrjTask" column="todo_days_prj_task"/>
+        <result property="toexecuteNoticeDaysPrjTask" column="toexecute_notice_days_prj_task"/>
+        <result property="toexpireDaysGzzrx" column="toexpire_days_gzzrx"/>
+        <result property="noticeTypePreTaskIncomplete" column="notice_type_pre_task_incomplete"/>
+        <result property="noticeTypeProcessPriceInconsistent" column="notice_type_process_price_inconsistent"/>
+        <result property="noticeTypePurRequireToOrderExcess" column="notice_type_pur_require_to_order_excess"/>
+        <result property="isAutoSetProjectStatus" column="is_auto_set_project_status"/>
+        <result property="isAutoSetProjectTaskStatus" column="is_auto_set_project_task_status"/>
+        <result property="isRequiredProductSeasonProduct" column="is_required_product_season_product"/>
+        <result property="isRequiredUpDownSuitProduct" column="is_required_up_down_suit_product"/>
+        <result property="isRequiredModelProduct" column="is_required_model_product"/>
+        <result property="isRequiredProductTechniqueTypeProduct" column="is_required_product_technique_type_product"/>
+        <result property="isRequiredSku2GroupProduct" column="is_required_sku2_group_product"/>
+        <result property="isRequiredVendorMaterial" column="is_required_vendor_material"/>
+        <result property="isRequiredUnitQuantityMaterial" column="is_required_unit_quantity_material"/>
+        <result property="isRequiredQuotePriceTaxMaterial" column="is_required_quote_price_tax_material"/>
+        <result property="isRequiredPurchaseOrderContract" column="is_required_purchase_order_contract"/>
+        <result property="quotePriceAssociateDimensionPurchasePrice" column="quote_price_associate_dimension_purchase_price"/>
+        <result property="isRequiredSaleOrderContract" column="is_required_sale_order_contract"/>
+        <result property="isWorkflowPurchaseRequire" column="is_workflow_purchase_require"/>
+        <result property="isWorkflowTughzd" column="is_workflow_tughzd"/>
+        <result property="isWorkflowYangpcsd" column="is_workflow_yangpcsd"/>
+        <result property="isWorkflowYangpzsd" column="is_workflow_yangpzsd"/>
+        <result property="isWorkflowShijsjd" column="is_workflow_shijsjd"/>
+        <result property="isWorkflowWenapsd" column="is_workflow_wenapsd"/>
+        <result property="isWorkflowShixjhd" column="is_workflow_shixjhd"/>
+        <result property="isWorkflowShixjgd" column="is_workflow_shixjgd"/>
+        <result property="isRequiredMaterialTypeGysdzd" column="is_required_material_type_gysdzd"/>
+        <result property="isRequiredMaterialTypeKhdzd" column="is_required_material_type_khdzd"/>
+        <result property="shoukuanAccountClearWay" column="shoukuan_account_clear_way"/>
+        <result property="fukuanAccountClearWay" column="fukuan_account_clear_way"/>
+        <result property="isAttachRequiredShoukuan" column="is_attach_required_shoukuan"/>
+        <result property="isAttachRequiredFukuan" column="is_attach_required_fukuan"/>
+        <result property="isWorkflowFk" column="is_workflow_fk"/>
+        <result property="isWorkflowSk" column="is_workflow_sk"/>
+        <result property="isWorkflowKhkk" column="is_workflow_khkk"/>
+        <result property="isWorkflowGyskk" column="is_workflow_gyskk"/>
+        <result property="isWorkflowKhyj" column="is_workflow_khyj"/>
+        <result property="isWorkflowGysyj" column="is_workflow_gysyj"/>
+        <result property="isWorkflowKhzyk" column="is_workflow_khzyk"/>
+        <result property="isWorkflowGyszyk" column="is_workflow_gyszyk"/>
+        <result property="isWorkflowYfzgtjld" column="is_workflow_yfzgtjld"/>
+        <result property="isWorkflowYszgtjld" column="is_workflow_yszgtjld"/>
+        <result property="purchaseFinanceAccount" column="purchase_finance_account"/>
+        <result property="saleFinanceAccount" column="sale_finance_account"/>
+        <result property="isSalePriceAssociateCustomer" column="is_sale_price_associate_customer" />
+        <result property="isEnableEsign" column="is_enable_esign"/>
+        <result property="wpcRemindDays" column="wpc_remind_days"/>
+        <result property="personnelMgtNoticeAccount" column="personnel_mgt_notice_account"/>
+        <result property="saleDpcNoticeAccount" column="sale_dpc_notice_account"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectSysDefaultSettingClientVo">
+        select t.client_id,
+               t.product_season_yanfa,
+               t.product_season_caigou,
+               t.product_season_xiaoshou,
+               t.product_season_shengchan,
+               t.is_autodisplay_price_in_stock_other,
+               t.is_autodisplay_price_out_stock_other,
+               t.is_pandian_approval,
+               t.vendor_enter_request_in_stock_other,
+               t.customer_enter_request_in_stock_other,
+               t.vendor_enter_request_out_stock_other,
+               t.customer_enter_request_out_stock_other,
+               t.price_enter_request_in_stock_other,
+               t.price_enter_request_out_stock_other,
+               t.is_process_work_center_editable,
+               t.is_required_concern_task,
+               t.is_product_contract_date_identical,
+               t.is_auto_update_process_status,
+               t.is_auto_update_concern_task_status,
+               t.is_associate_latest_manufacture_order,
+               t.is_in_defective_price_tax_equal_to_price_tax,
+               t.erp_material_sku_enter_mode_project,
+               t.product_code_enter_mode_project,
+               t.purchase_order_contract_enter_mode,
+               t.sale_order_contract_enter_mode,
+               t.man_outsource_settle_contract_enter_mode,
+               t.is_query_other_user,
+               t.is_xiefu_industry,
+               t.dianqian_exceed_notice_account,
+               t.toexpire_days_ldht,
+               t.toexpire_days_syq,
+               t.toexpire_days_cght,
+               t.toexpire_days_cgdd,
+               t4.toexpire_days_cgdd as toexpire_days_cgdd_sys,
+               t.toexpire_days_xsht,
+               t.toexpire_days_xsdd,
+               t4.toexpire_days_xsdd as toexpire_days_xsdd_sys,
+               t.toexpire_days_scdd,
+               t.toexpire_days_scdd_gx,
+               t.toexpire_days_scdd_sp,
+               t.toexpire_days_scdd_sx,
+               t.toexpire_days_project,
+               t.toexpire_days_prj_task,
+               t.todo_days_prj_task,
+               t.toexpire_days_gzzrx,
+               t.toexecute_notice_days_prj_task,
+               t.notice_type_pre_task_incomplete,
+               t.notice_type_process_price_inconsistent,
+               t.notice_type_pur_require_to_order_excess,
+               t.is_auto_set_project_status,
+               t.is_required_product_season_product,
+               t.is_required_up_down_suit_product,
+               t.is_required_model_product,
+               t.is_required_product_technique_type_product,
+               t.is_required_sku2_group_product,
+               t.is_required_vendor_material,
+               t.is_required_unit_quantity_material,
+               t.is_required_quote_price_tax_material,
+               t.is_required_purchase_order_contract,
+               t.quote_price_associate_dimension_purchase_price,
+               t.is_required_sale_order_contract,
+               t.is_workflow_purchase_require,
+               t.is_workflow_tughzd,
+               t.is_workflow_yangpcsd,
+               t.is_workflow_yangpzsd,
+               t.is_workflow_shijsjd,
+               t.is_workflow_wenapsd,
+               t.is_workflow_shixjhd,
+               t.is_workflow_shixjgd,
+               t.is_required_material_type_gysdzd,
+               t.is_required_material_type_khdzd,
+               t.shoukuan_account_clear_way,
+               t.fukuan_account_clear_way,
+               t.is_attach_required_shoukuan,
+               t.is_attach_required_fukuan,
+               t.is_workflow_fk,
+               t.is_workflow_sk,
+               t.is_workflow_khkk,
+               t.is_workflow_gyskk,
+               t.is_workflow_khyj,
+               t.is_workflow_gysyj,
+               t.is_workflow_khzyk,
+               t.is_workflow_gyszyk,
+               t.is_workflow_yfzgtjld,
+               t.is_workflow_yszgtjld,
+               t.is_auto_set_project_task_status,
+               t.purchase_finance_account,
+               t.sale_finance_account,
+               t.is_sale_price_associate_customer,
+               t.is_enable_esign,
+               t.wpc_remind_days,
+               t.personnel_mgt_notice_account,
+               t.sale_dpc_notice_account,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.logon_timeout,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               u4.user_id as sale_dpc_notice_account_id
+        from s_sys_default_setting_client t
+                 LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account and t2.client_id = t.client_id
+                 LEFT JOIN sys_user t3 ON t3.user_name = t.updater_account and t3.client_id = t.client_id
+                 left join s_sys_default_setting_system t4 on t4.client_id='10000'
+                 LEFT JOIN sys_user u4 ON t.sale_dpc_notice_account = u4.user_name and t.client_id = u4.client_id
+    </sql>
+
+    <select id="selectSysDefaultSettingClientById" parameterType="String" resultMap="SysDefaultSettingClientResult">
+        <include refid="selectSysDefaultSettingClientVo"/>
+        where t.client_id = #{clientId}
+    </select>
+
+    <sql id="selectSysDefaultSettingClientWhere">
+        <where>
+            <if test="productSeasonYanfa != null and productSeasonYanfa != ''">
+                and t.product_season_yanfa = #{productSeasonYanfa}
+            </if>
+            <if test="productSeasonCaigou != null and productSeasonCaigou != ''">
+                and t.product_season_caigou = #{productSeasonCaigou}
+            </if>
+            <if test="productSeasonXiaoshou != null and productSeasonXiaoshou != ''">
+                and t.product_season_xiaoshou = #{productSeasonXiaoshou}
+            </if>
+            <if test="productSeasonShengchan != null and productSeasonShengchan != ''">
+                and t.product_season_shengchan = #{productSeasonShengchan}
+            </if>
+            <if test="isAutodisplayPriceInStockOther != null and isAutodisplayPriceInStockOther != ''">
+                and t.is_autodisplay_price_in_stock_other = #{isAutodisplayPriceInStockOther}
+            </if>
+            <if test="isAutodisplayPriceOutStockOther != null and isAutodisplayPriceOutStockOther != ''">
+                and t.is_autodisplay_price_out_stock_other = #{isAutodisplayPriceOutStockOther}
+            </if>
+            <if test="isPandianApproval != null and isPandianApproval != ''">
+                and t.is_pandian_approval  = #{isPandianApproval}
+            </if>
+            <if test="vendorEnterRequestInStockOther != null and vendorEnterRequestInStockOther != ''">
+                and t.vendor_enter_request_in_stock_other  = #{vendorEnterRequestInStockOther}
+            </if>
+            <if test="customerEnterRequestInStockOther != null and customerEnterRequestInStockOther != ''">
+                and t.customer_enter_request_in_stock_other  = #{customerEnterRequestInStockOther}
+            </if>
+            <if test="vendorEnterRequestOutStockOther != null and vendorEnterRequestOutStockOther != ''">
+                and t.vendor_enter_request_out_stock_other  = #{vendorEnterRequestOutStockOther}
+            </if>
+            <if test="customerEnterRequestOutStockOther != null and customerEnterRequestOutStockOther != ''">
+                and t.customer_enter_request_out_stock_other  = #{customerEnterRequestOutStockOther}
+            </if>
+            <if test="priceEnterRequestInStockOther != null and priceEnterRequestInStockOther != ''">
+                and t.price_enter_request_in_stock_other  = #{priceEnterRequestInStockOther}
+            </if>
+            <if test="priceEnterRequestOutStockOther != null and priceEnterRequestOutStockOther != ''">
+                and t.price_enter_request_out_stock_other  = #{priceEnterRequestOutStockOther}
+            </if>
+            <if test="isProcessWorkCenterEditable != null and isProcessWorkCenterEditable != ''">
+                and t.is_process_work_center_editable  = #{isProcessWorkCenterEditable}
+            </if>
+            <if test="isRequiredConcernTask != null and isRequiredConcernTask != ''">
+                and t.is_required_concern_task  = #{isRequiredConcernTask}
+            </if>
+            <if test="isProductContractDateIdentical != null and isProductContractDateIdentical != ''">
+                and t.is_product_contract_date_identical  = #{isProductContractDateIdentical}
+            </if>
+            <if test="isAutoUpdateProcessStatus != null and isAutoUpdateProcessStatus != ''">
+                and t.is_auto_update_process_status  = #{isAutoUpdateProcessStatus}
+            </if>
+            <if test="isAutoUpdateConcernTaskStatus != null and isAutoUpdateConcernTaskStatus != ''">
+                and t.is_auto_update_concern_task_status  = #{isAutoUpdateConcernTaskStatus}
+            </if>
+            <if test="isAssociateLatestManufactureOrder != null and isAssociateLatestManufactureOrder != ''">
+                and t.is_associate_latest_manufacture_order  = #{isAssociateLatestManufactureOrder}
+            </if>
+            <if test="isInDefectivePriceTaxEqualToPriceTax != null and isInDefectivePriceTaxEqualToPriceTax != ''">
+                and t.is_in_defective_price_tax_equal_to_price_tax = #{isInDefectivePriceTaxEqualToPriceTax}
+            </if>
+            <if test="erpMaterialSkuEnterModeProject != null and erpMaterialSkuEnterModeProject != ''">
+                and t.erp_material_sku_enter_mode_project  = #{erpMaterialSkuEnterModeProject}
+            </if>
+            <if test="productCodeEnterModeProject != null and productCodeEnterModeProject != ''">
+                and t.product_code_enter_mode_project  = #{productCodeEnterModeProject}
+            </if>
+            <if test="toexpireDaysLdht != null ">
+                and t.toexpire_days_ldht = #{toexpireDaysLdht}
+            </if>
+            <if test="toexpireDaysSyq != null ">
+                and t.toexpire_days_syq = #{toexpireDaysSyq}
+            </if>
+            <if test="toexpireDaysCght != null ">
+                and t.toexpire_days_cght = #{toexpireDaysCght}
+            </if>
+            <if test="toexpireDaysCgdd != null ">
+                and t.toexpire_days_cgdd = #{toexpireDaysCgdd}
+            </if>
+            <if test="toexpireDaysXsht != null ">
+                and t.toexpire_days_xsht = #{toexpireDaysXsht}
+            </if>
+            <if test="toexpireDaysXsdd != null ">
+                and t.toexpire_days_xsdd = #{toexpireDaysXsdd}
+            </if>
+            <if test="toexpireDaysScdd != null ">
+                and t.toexpire_days_scdd = #{toexpireDaysScdd}
+            </if>
+            <if test="toexpireDaysScddGx != null ">
+                and t.toexpire_days_scdd_gx = #{toexpireDaysScddGx}
+            </if>
+            <if test="toexpireDaysScddSp != null ">
+                and t.toexpire_days_scdd_sp = #{toexpireDaysScddSp}
+            </if>
+            <if test="isAutoSetProjectStatus != null and isAutoSetProjectStatus != ''">
+                and t.is_auto_set_project_status = #{isAutoSetProjectStatus}
+            </if>
+            <if test="isAutoSetProjectTaskStatus != null and isAutoSetProjectTaskStatus != ''">
+                and t.is_auto_set_project_task_status = #{isAutoSetProjectTaskStatus}
+            </if>
+            <if test="isRequiredProductSeasonProduct != null and isRequiredProductSeasonProduct != ''">
+                and t.is_required_product_season_product = #{isRequiredProductSeasonProduct}
+            </if>
+            <if test="isRequiredUpDownSuitProduct != null and isRequiredUpDownSuitProduct != ''">
+                and t.is_required_up_down_suit_product = #{isRequiredUpDownSuitProduct}
+            </if>
+            <if test="isRequiredModelProduct != null and isRequiredModelProduct != ''">
+                and t.is_required_model_product = #{isRequiredModelProduct}
+            </if>
+            <if test="isRequiredProductTechniqueTypeProduct != null and isRequiredProductTechniqueTypeProduct != ''">
+                and t.is_required_product_technique_type_product = #{isRequiredProductTechniqueTypeProduct}
+            </if>
+            <if test="isRequiredSku2GroupProduct != null and isRequiredSku2GroupProduct != ''">
+                and t.is_required_sku2_group_product = #{isRequiredSku2GroupProduct}
+            </if>
+            <if test="isRequiredVendorMaterial != null and isRequiredVendorMaterial != ''">
+                and t.is_required_vendor_material = #{isRequiredVendorMaterial}
+            </if>
+            <if test="isRequiredUnitQuantityMaterial != null and isRequiredUnitQuantityMaterial != ''">
+                and t.is_required_unit_quantity_material = #{isRequiredUnitQuantityMaterial}
+            </if>
+            <if test="isRequiredQuotePriceTaxMaterial != null and isRequiredQuotePriceTaxMaterial != ''">
+                and t.is_required_quote_price_tax_material = #{isRequiredQuotePriceTaxMaterial}
+            </if>
+            <if test="purchaseFinanceAccount  != null and purchaseFinanceAccount  != ''">
+                and t.purchase_finance_account = #{purchaseFinanceAccount}
+            </if>
+            <if test="saleFinanceAccount != null and saleFinanceAccount != ''">
+                and t.sale_finance_account = #{saleFinanceAccount}
+            </if>
+            <if test="isSalePriceAssociateCustomer != null and isSalePriceAssociateCustomer != ''">
+                and t.is_sale_price_associate_customer = #{isSalePriceAssociateCustomer}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account like concat('%',#{creatorAccount}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account like concat('%', #{updaterAccount}, '%')
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectSysDefaultSettingClientList" parameterType="com.platform.common.core.domain.entity.SysDefaultSettingClient"
+            resultMap="SysDefaultSettingClientResult">
+        <include refid="selectSysDefaultSettingClientVo"/>
+        <include refid="selectSysDefaultSettingClientWhere"/>
+    </select>
+
+    <select id="selectSysDefaultSettingClientAll" parameterType="com.platform.common.core.domain.entity.SysDefaultSettingClient"
+            resultMap="SysDefaultSettingClientResult">
+        <include refid="selectSysDefaultSettingClientVo"/>
+        <include refid="selectSysDefaultSettingClientWhere"/>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_sys_default_setting_client
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            product_season_yanfa,
+            product_season_caigou,
+            product_season_xiaoshou,
+            product_season_shengchan,
+            is_autodisplay_price_in_stock_other,
+            is_autodisplay_price_out_stock_other,
+            is_pandian_approval,
+            vendor_enter_request_in_stock_other,
+            customer_enter_request_in_stock_other,
+            vendor_enter_request_out_stock_other,
+            customer_enter_request_out_stock_other,
+            price_enter_request_in_stock_other,
+            price_enter_request_out_stock_other,
+            is_process_work_center_editable,
+            is_required_concern_task,
+            is_product_contract_date_identical,
+            is_auto_update_process_status,
+            is_auto_update_concern_task_status,
+            is_associate_latest_manufacture_order,
+            is_in_defective_price_tax_equal_to_price_tax,
+            erp_material_sku_enter_mode_project,
+            product_code_enter_mode_project,
+            purchase_order_contract_enter_mode,
+            sale_order_contract_enter_mode,
+            man_outsource_settle_contract_enter_mode,
+            is_query_other_user,
+            logon_timeout,
+            is_xiefu_industry,
+            dianqian_exceed_notice_account,
+            toexpire_days_ldht,
+            toexpire_days_syq,
+            toexpire_days_cght,
+            toexpire_days_cgdd,
+            toexpire_days_xsht,
+            toexpire_days_xsdd,
+            toexpire_days_scdd,
+            toexpire_days_scdd_gx,
+            toexpire_days_scdd_sp,
+            toexpire_days_scdd_sx,
+            toexpire_days_project,
+            toexpire_days_prj_task,
+            toexpire_days_gzzrx,
+            todo_days_prj_task,
+            toexecute_notice_days_prj_task,
+            notice_type_pre_task_incomplete,
+            notice_type_process_price_inconsistent,
+            notice_type_pur_require_to_order_excess,
+            is_auto_set_project_status,
+            is_auto_set_project_task_status,
+            is_required_product_season_product,
+            is_required_up_down_suit_product,
+            is_required_model_product,
+            is_required_product_technique_type_product,
+            is_required_sku2_group_product,
+            is_required_vendor_material,
+            is_required_unit_quantity_material,
+            is_required_quote_price_tax_material,
+            is_required_purchase_order_contract,
+            quote_price_associate_dimension_purchase_price,
+            is_required_sale_order_contract,
+            is_workflow_purchase_require,
+            is_workflow_tughzd,
+            is_workflow_yangpcsd,
+            is_workflow_yangpzsd,
+            is_workflow_shijsjd,
+            is_workflow_wenapsd,
+            is_workflow_shixjhd,
+            is_workflow_shixjgd,
+            is_required_material_type_gysdzd,
+            is_required_material_type_khdzd,
+            shoukuan_account_clear_way,
+            fukuan_account_clear_way,
+            is_attach_required_shoukuan,
+            is_attach_required_fukuan,
+            is_workflow_fk,
+            is_workflow_sk,
+            is_workflow_khkk,
+            is_workflow_gyskk,
+            is_workflow_khyj,
+            is_workflow_gysyj,
+            is_workflow_khzyk,
+            is_workflow_gyszyk,
+            is_workflow_yfzgtjld,
+            is_workflow_yszgtjld,
+            purchase_finance_account,
+            sale_finance_account,
+            is_enable_esign,
+            wpc_remind_days,
+            personnel_mgt_notice_account,
+            sale_dpc_notice_account,
+            handle_status,
+            creator_account,
+            create_date,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.productSeasonYanfa},
+                #{item.productSeasonCaigou},
+                #{item.productSeasonXiaoshou},
+                #{item.productSeasonShengchan},
+                #{item.isAutodisplayPriceInStockOther},
+                #{item.isAutodisplayPriceOutStockOther},
+                #{item.isPandianApproval},
+                #{item.vendorEnterRequestInStockOther},
+                #{item.customerEnterRequestInStockOther},
+                #{item.vendorEnterRequestOutStockOther},
+                #{item.customerEnterRequestOutStockOther},
+                #{item.priceEnterRequestInStockOther},
+                #{item.priceEnterRequestOutStockOther},
+                #{item.isProcessWorkCenterEditable},
+                #{item.isRequiredConcernTask},
+                #{item.isProductContractDateIdentical},
+                #{item.isAutoUpdateProcessStatus},
+                #{item.isAutoUpdateConcernTaskStatus},
+                #{item.isAssociateLatestManufactureOrder},
+                #{item.isInDefectivePriceTaxEqualToPriceTax},
+                #{item.erpMaterialSkuEnterModeProject},
+                #{item.productCodeEnterModeProject},
+                #{item.purchaseOrderContractEnterMode},
+                #{item.saleOrderContractEnterMode},
+                #{item.manOutsourceSettleContractEnterMode},
+                #{item.logonTimeout},
+                #{item.isXiefuIndustry},
+                #{item.dianqianExceedNoticeAccount},
+                #{item.toexpireDaysLdht},
+                #{item.toexpireDaysSyq},
+                #{item.toexpireDaysCght},
+                #{item.toexpireDaysCgdd},
+                #{item.toexpireDaysXsht},
+                #{item.toexpireDaysXsdd},
+                #{item.toexpireDaysScdd},
+                #{item.toexpireDaysScddGx},
+                #{item.toexpireDaysScddSp},
+                #{item.toexpireDaysScddSx},
+                #{item.toexpireDaysProject},
+                #{item.toexpireDaysPrjTask},
+                #{item.toexpireDaysGzzrx},
+                #{item.todoDaysPrjTask},
+                #{item.toexecuteNoticeDaysPrjTask},
+                #{item.noticeTypePreTaskIncomplete},
+                #{item.noticeTypeProcessPriceInconsistent},
+                #{item.noticeTypePurRequireToOrderExcess},
+                #{item.isAutoSetProjectStatus},
+                #{item.isAutoSetProjectTaskStatus},
+                #{item.isRequiredProductSeasonProduct},
+                #{item.isRequiredUpDownSuitProduct},
+                #{item.isRequiredModelProduct},
+                #{item.isRequiredProductTechniqueTypeProduct},
+                #{item.isRequiredSku2GroupProduct},
+                #{item.isRequiredVendorMaterial},
+                #{item.isRequiredUnitQuantityMaterial},
+                #{item.isRequiredQuotePriceTaxMaterial},
+                #{item.isRequiredPurchaseOrderContract},
+                #{item.quotePriceAssociateDimensionPurchasePrice},
+                #{item.isRequiredSaleOrderContract},
+                #{item.isWorkflowPurchaseRequire},
+                #{item.isWorkflowTughzd},
+                #{item.isWorkflowYangpcsd},
+                #{item.isWorkflowYangpzsd},
+                #{item.isWorkflowShijsjd},
+                #{item.isWorkflowWenapsd},
+                #{item.isWorkflowShixjhd},
+                #{item.isWorkflowShixjgd},
+                #{item.isRequiredMaterialTypeGysdzd},
+                #{item.isRequiredMaterialTypeKhdzd},
+                #{item.shoukuanAccountClearWay},
+                #{item.fukuanAccountClearWay},
+                #{item.isAttachRequiredShoukuan},
+                #{item.isAttachRequiredFukuan},
+                #{item.isWorkflowFk},
+                #{item.isWorkflowSk},
+                #{item.isWorkflowKhkk},
+                #{item.isWorkflowGyskk},
+                #{item.isWorkflowKhyj},
+                #{item.isWorkflowGysyj},
+                #{item.isWorkflowKhzyk},
+                #{item.isWorkflowGyszyk},
+                #{item.isWorkflowYfzgtjld},
+                #{item.isWorkflowYszgtjld},
+                #{item.isSalePriceAssociateCustomer},
+                #{item.isEnableEsign},
+                #{item.wpcRemindDays},
+                #{item.personnelMgtNoticeAccount},
+                #{item.saleDpcNoticeAccount},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_sys_default_setting_client
+        <trim prefix="SET" suffixOverrides=",">
+            product_season_yanfa = #{productSeasonYanfa},
+            product_season_caigou = #{productSeasonCaigou},
+            product_season_xiaoshou = #{productSeasonXiaoshou},
+            product_season_shengchan = #{productSeasonShengchan},
+            is_autodisplay_price_in_stock_other = #{isAutodisplayPriceInStockOther},
+            is_autodisplay_price_out_stock_other = #{isAutodisplayPriceOutStockOther},
+            is_pandian_approval = #{isPandianApproval},
+            vendor_enter_request_in_stock_other = #{vendorEnterRequestInStockOther},
+            customer_enter_request_in_stock_other = #{customerEnterRequestInStockOther},
+            vendor_enter_request_out_stock_other = #{vendorEnterRequestOutStockOther},
+            customer_enter_request_out_stock_other = #{customerEnterRequestOutStockOther},
+            price_enter_request_in_stock_other = #{priceEnterRequestInStockOther},
+            price_enter_request_out_stock_other = #{priceEnterRequestOutStockOther},
+            is_process_work_center_editable = #{isProcessWorkCenterEditable},
+            is_required_concern_task = #{isRequiredConcernTask},
+            is_product_contract_date_identical = #{isProductContractDateIdentical},
+            is_auto_update_process_status = #{isAutoUpdateProcessStatus},
+            is_auto_update_concern_task_status = #{isAutoUpdateConcernTaskStatus},
+            is_associate_latest_manufacture_order = #{isAssociateLatestManufactureOrder},
+            is_in_defective_price_tax_equal_to_price_tax = #{isInDefectivePriceTaxEqualToPriceTax},
+            erp_material_sku_enter_mode_project = #{erpMaterialSkuEnterModeProject},
+            product_code_enter_mode_project = #{productCodeEnterModeProject},
+            purchase_order_contract_enter_mode = #{purchaseOrderContractEnterMode},
+            sale_order_contract_enter_mode = #{saleOrderContractEnterMode},
+            man_outsource_settle_contract_enter_mode = #{manOutsourceSettleContractEnterMode},
+            is_query_other_user = #{isQueryOtherUser},
+            logon_timeout = #{logonTimeout},
+            is_xiefu_industry = #{isXiefuIndustry},
+            dianqian_exceed_notice_account = #{dianqianExceedNoticeAccount},
+            toexpire_days_ldht = #{toexpireDaysLdht},
+            toexpire_days_syq = #{toexpireDaysSyq},
+            toexpire_days_cght = #{toexpireDaysCght},
+            toexpire_days_cgdd = #{toexpireDaysCgdd},
+            toexpire_days_xsht = #{toexpireDaysXsht},
+            toexpire_days_scdd_sx=#{toexpireDaysScddSx},
+            toexpire_days_xsdd = #{toexpireDaysXsdd},
+            toexpire_days_scdd = #{toexpireDaysScdd},
+            toexpire_days_scdd_gx = #{toexpireDaysScddGx},
+            toexpire_days_scdd_sp = #{toexpireDaysScddSp},
+            toexpire_days_scdd_sx = #{toexpireDaysScddSx},
+            toexpire_days_project = #{toexpireDaysProject},
+            toexpire_days_prj_task = #{toexpireDaysPrjTask},
+            toexpire_days_gzzrx = #{toexpireDaysGzzrx},
+            todo_days_prj_task = #{todoDaysPrjTask},
+            toexecute_notice_days_prj_task = #{toexecuteNoticeDaysPrjTask},
+            notice_type_pre_task_incomplete = #{noticeTypePreTaskIncomplete},
+            notice_type_process_price_inconsistent = #{noticeTypeProcessPriceInconsistent},
+            notice_type_pur_require_to_order_excess = #{noticeTypePurRequireToOrderExcess},
+            is_auto_set_project_status = #{isAutoSetProjectStatus},
+            is_auto_set_project_task_status = #{isAutoSetProjectTaskStatus},
+            is_required_product_season_product = #{isRequiredProductSeasonProduct},
+            is_required_up_down_suit_product = #{isRequiredUpDownSuitProduct},
+            is_required_model_product = #{isRequiredModelProduct},
+            is_required_product_technique_type_product = #{isRequiredProductTechniqueTypeProduct},
+            is_required_sku2_group_product = #{isRequiredSku2GroupProduct},
+            is_required_vendor_material = #{isRequiredVendorMaterial},
+            is_required_unit_quantity_material = #{isRequiredUnitQuantityMaterial},
+            is_required_quote_price_tax_material = #{isRequiredQuotePriceTaxMaterial},
+            is_required_purchase_order_contract = #{isRequiredPurchaseOrderContract},
+            quote_price_associate_dimension_purchase_price = #{quotePriceAssociateDimensionPurchasePrice},
+            is_required_sale_order_contract = #{isRequiredSaleOrderContract},
+            is_workflow_purchase_require = #{isWorkflowPurchaseRequire},
+            is_workflow_tughzd = #{isWorkflowTughzd},
+            is_workflow_yangpcsd = #{isWorkflowYangpcsd},
+            is_workflow_yangpzsd = #{isWorkflowYangpzsd},
+            is_workflow_shijsjd = #{isWorkflowShijsjd},
+            is_workflow_wenapsd = #{isWorkflowWenapsd},
+            is_workflow_shixjhd = #{isWorkflowShixjhd},
+            is_workflow_shixjgd = #{isWorkflowShixjgd},
+            is_required_material_type_gysdzd = #{isRequiredMaterialTypeGysdzd},
+            is_required_material_type_khdzd = #{isRequiredMaterialTypeKhdzd},
+            shoukuan_account_clear_way = #{shoukuanAccountClearWay},
+            fukuan_account_clear_way = #{fukuanAccountClearWay},
+            is_attach_required_shoukuan = #{isAttachRequiredShoukuan},
+            is_attach_required_fukuan = #{isAttachRequiredFukuan},
+            is_workflow_fk = #{isWorkflowFk},
+            is_workflow_sk = #{isWorkflowSk},
+            is_workflow_khkk = #{isWorkflowKhkk},
+            is_workflow_gyskk = #{isWorkflowGyskk},
+            is_workflow_khyj = #{isWorkflowKhyj},
+            is_workflow_gysyj = #{isWorkflowGysyj},
+            is_workflow_khzyk = #{isWorkflowKhzyk},
+            is_workflow_gyszyk = #{isWorkflowGyszyk},
+            is_workflow_yfzgtjld = #{isWorkflowYfzgtjld},
+            is_workflow_yszgtjld = #{isWorkflowYszgtjld},
+            purchase_finance_account = #{purchaseFinanceAccount},
+            sale_finance_account = #{saleFinanceAccount},
+            is_sale_price_associate_customer=#{isSalePriceAssociateCustomer},
+            is_enable_esign = #{isEnableEsign},
+            wpc_remind_days = #{wpcRemindDays},
+            personnel_mgt_notice_account = #{personnelMgtNoticeAccount},
+            sale_dpc_notice_account = #{saleDpcNoticeAccount},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where client_id = #{clientId}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_sys_default_setting_client
+            <trim prefix="SET" suffixOverrides=",">
+                product_season_yanfa = #{o.productSeasonYanfa},
+                product_season_caigou = #{o.productSeasonCaigou},
+                product_season_xiaoshou = #{o.productSeasonXiaoshou},
+                product_season_shengchan = #{o.productSeasonShengchan},
+                is_autodisplay_price_in_stock_other = #{o.isAutodisplayPriceInStockOther},
+                is_autodisplay_price_out_stock_other = #{o.isAutodisplayPriceOutStockOther},
+                is_pandian_approval = #{o.isPandianApproval},
+                vendor_enter_request_in_stock_other = #{o.vendorEnterRequestInStockOther},
+                customer_enter_request_in_stock_other = #{o.customerEnterRequestInStockOther},
+                vendor_enter_request_out_stock_other = #{o.vendorEnterRequestOutStockOther},
+                customer_enter_request_out_stock_other = #{o.customerEnterRequestOutStockOther},
+                price_enter_request_in_stock_other = #{o.priceEnterRequestInStockOther},
+                price_enter_request_out_stock_other = #{o.priceEnterRequestOutStockOther},
+                is_process_work_center_editable = #{o.isProcessWorkCenterEditable},
+                is_required_concern_task = #{o.isRequiredConcernTask},
+                is_product_contract_date_identical = #{o.isProductContractDateIdentical},
+                is_auto_update_process_status = #{o.isAutoUpdateProcessStatus},
+                is_auto_update_concern_task_status = #{o.isAutoUpdateConcernTaskStatus},
+                is_associate_latest_manufacture_order = #{o.isAssociateLatestManufactureOrder},
+                is_in_defective_price_tax_equal_to_price_tax = #{o.isInDefectivePriceTaxEqualToPriceTax},
+                erp_material_sku_enter_mode_project = #{o.erpMaterialSkuEnterModeProject},
+                product_code_enter_mode_project = #{o.productCodeEnterModeProject},
+                purchase_order_contract_enter_mode = #{o.purchaseOrderContractEnterMode},
+                sale_order_contract_enter_mode = #{o.saleOrderContractEnterMode},
+                man_outsource_settle_contract_enter_mode = #{o.manOutsourceSettleContractEnterMode},
+                is_query_other_user = #{o.isQueryOtherUser},
+                logon_timeout = #{o.logonTimeout},
+                is_xiefu_industry = #{o.isXiefuIndustry},
+                dianqian_exceed_notice_account = #{o.dianqianExceedNoticeAccount},
+                toexpire_days_ldht = #{o.toexpireDaysLdht},
+                toexpire_days_syq = #{o.toexpireDaysSyq},
+                toexpire_days_cght = #{o.toexpireDaysCght},
+                toexpire_days_cgdd = #{o.toexpireDaysCgdd},
+                toexpire_days_xsht = #{o.toexpireDaysXsht},
+                toexpire_days_xsdd = #{o.toexpireDaysXsdd},
+                toexpire_days_scdd = #{o.toexpireDaysScdd},
+                toexpire_days_scdd_gx = #{o.toexpireDaysScddGx},
+                toexpire_days_scdd_sp = #{o.toexpireDaysScddSp},
+                toexpire_days_scdd_sx = #{o.toexpireDaysScddSx},
+                toexpire_days_project = #{o.toexpireDaysProject},
+                toexpire_days_prj_task = #{o.toexpireDaysPrjTask},
+                toexpire_days_gzzrx = #{o.toexpireDaysGzzrx},
+                todo_days_prj_task = #{o.todoDaysPrjTask},
+                toexecute_notice_days_prj_task = #{o.toexecuteNoticeDaysPrjTask},
+                notice_type_pre_task_incomplete = #{o.noticeTypePreTaskIncomplete},
+                notice_type_process_price_inconsistent = #{o.noticeTypeProcessPriceInconsistent},
+                notice_type_pur_require_to_order_excess = #{o.noticeTypePurRequireToOrderExcess},
+                is_auto_set_project_status = #{o.isAutoSetProjectStatus},
+                is_auto_set_project_task_status = #{o.isAutoSetProjectTaskStatus},
+                is_required_product_season_product = #{o.isRequiredProductSeasonProduct},
+                is_required_up_down_suit_product = #{o.isRequiredUpDownSuitProduct},
+                is_required_model_product = #{o.isRequiredModelProduct},
+                is_required_product_technique_type_product = #{o.isRequiredProductTechniqueTypeProduct},
+                is_required_sku2_group_product = #{o.isRequiredSku2GroupProduct},
+                is_required_vendor_material = #{o.isRequiredVendorMaterial},
+                is_required_unit_quantity_material = #{o.isRequiredUnitQuantityMaterial},
+                is_required_quote_price_tax_material = #{o.isRequiredQuotePriceTaxMaterial},
+                is_required_purchase_order_contract = #{o.isRequiredPurchaseOrderContract},
+                quote_price_associate_dimension_purchase_price = #{o.quotePriceAssociateDimensionPurchasePrice},
+                is_required_sale_order_contract = #{o.isRequiredSaleOrderContract},
+                is_workflow_purchase_require = #{o.isWorkflowPurchaseRequire},
+                is_workflow_tughzd = #{o.isWorkflowTughzd},
+                is_workflow_yangpcsd = #{o.isWorkflowYangpcsd},
+                is_workflow_yangpzsd = #{o.isWorkflowYangpzsd},
+                is_workflow_shijsjd = #{o.isWorkflowShijsjd},
+                is_workflow_wenapsd = #{o.isWorkflowWenapsd},
+                is_workflow_shixjhd = #{o.isWorkflowShixjhd},
+                is_workflow_shixjgd = #{o.isWorkflowShixjgd},
+                is_required_material_type_gysdzd = #{o.isRequiredMaterialTypeGysdzd},
+                is_required_material_type_khdzd = #{o.isRequiredMaterialTypeKhdzd},
+                shoukuan_account_clear_way = #{o.shoukuanAccountClearWay},
+                fukuan_account_clear_way = #{o.fukuanAccountClearWay},
+                is_attach_required_shoukuan = #{o.isAttachRequiredShoukuan},
+                is_attach_required_fukuan = #{o.isAttachRequiredFukuan},
+                is_workflow_fk = #{o.isWorkflowFk},
+                is_workflow_sk = #{o.isWorkflowSk},
+                is_workflow_khkk = #{o.isWorkflowKhkk},
+                is_workflow_gyskk = #{o.isWorkflowGyskk},
+                is_workflow_khyj = #{o.isWorkflowKhyj},
+                is_workflow_gysyj = #{o.isWorkflowGysyj},
+                is_workflow_khzyk = #{o.isWorkflowKhzyk},
+                is_workflow_gyszyk = #{o.isWorkflowGyszyk},
+                is_workflow_yfzgtjld = #{o.isWorkflowYfzgtjld},
+                is_workflow_yszgtjld = #{o.isWorkflowYszgtjld},
+                purchase_finance_account = #{o.purchaseFinanceAccount},
+                sale_finance_account = #{o.saleFinanceAccount},
+                is_sale_price_associate_customer=#{o.isSalePriceAssociateCustomer},
+                is_enable_esign = #{o.isEnableEsign},
+                handle_status = #{o.handleStatus},
+                wpc_remind_days = #{o.wpcRemindDays},
+                personnel_mgt_notice_account = #{o.personnelMgtNoticeAccount},
+                sale_dpc_notice_account = #{o.saleDpcNoticeAccount},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where client_id = #{o.clientId}
+        </foreach>
+    </update>
+
+    <select id="selectSysDefaultSettingSystem" resultType="com.platform.common.core.domain.entity.SysDefaultSettingSystem">
+        select * from s_sys_default_setting_system
+    </select>
+
+</mapper>

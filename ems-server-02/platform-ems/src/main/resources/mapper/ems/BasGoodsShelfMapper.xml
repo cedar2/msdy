@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasGoodsShelfMapper">
+
+    <resultMap type="com.platform.ems.domain.BasGoodsShelf" id="BasGoodsShelfResult">
+        <result property="clientId" column="client_id"/>
+        <result property="goodsShelfSid" column="goods_shelf_sid"/>
+        <result property="goodsShelfCode" column="goods_shelf_code"/>
+        <result property="storehouseSid" column="storehouse_sid"/>
+        <result property="storehouseCode" column="storehouse_code"/>
+        <result property="goodsShelfName" column="goods_shelf_name"/>
+        <result property="storehouseLocationSid" column="storehouse_location_sid"/>
+        <result property="locationCode" column="location_code"/>
+        <result property="address" column="address"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="storehouseName" column="storehouse_name"/>
+        <result property="locationName" column="location_name"/>
+        <collection property="materialClassList"
+                    column="goods_shelf_sid"
+                    fetchType="eager"
+                    select="com.platform.ems.mapper.BasGoodsShelfMaterialClassMapper.selectMaterialClassList"/>
+
+    </resultMap>
+
+    <sql id="selectBasGoodsShelfVo">
+        select t.client_id,
+        t.goods_shelf_sid,
+        t.goods_shelf_code,
+        t.storehouse_sid,
+        t.storehouse_code,
+        t.goods_shelf_name,
+        t.storehouse_location_sid,
+        t.location_code,
+        t.address,
+        t.remark,
+        t.status,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t5.storehouse_name,
+        t6.location_name,
+
+        t2.nick_name AS creator_account_name,
+        t3.nick_name AS updater_account_name,
+        t4.nick_name AS confirmer_account_name
+
+        from s_bas_goods_shelf t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+        LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t3.client_id
+        LEFT JOIN s_bas_storehouse t5 ON t5.storehouse_sid = t.storehouse_sid
+        LEFT JOIN s_bas_storehouse_location t6 ON t6.storehouse_location_sid = t.storehouse_location_sid
+    </sql>
+
+    <select id="selectBasGoodsShelfById" parameterType="Long" resultMap="BasGoodsShelfResult">
+        <include refid="selectBasGoodsShelfVo"/>
+        where t.goods_shelf_sid = #{goodsShelfSid}
+    </select>
+
+    <select id="selectBasGoodsShelfList" parameterType="com.platform.ems.domain.BasGoodsShelf"
+            resultMap="BasGoodsShelfResult">
+        <include refid="selectBasGoodsShelfVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="goodsShelfCode != null and goodsShelfCode != ''">and
+                t.goods_shelf_code like concat('%', #{goodsShelfCode}, '%')
+            </if>
+            <if test="storehouseCode != null and storehouseCode != ''">
+                and t.storehouse_code = #{storehouseCode}
+            </if>
+            <if test="goodsShelfName != null and goodsShelfName != ''">and
+                t.goods_shelf_name like concat('%', #{goodsShelfName}, '%')
+            </if>
+            <if test="locationCode != null and locationCode != ''">
+                and t.location_code = #{locationCode}
+            </if>
+            <if test="address != null and address != ''">
+                and t.address = #{address}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="storehouseSidList != null and storehouseSidList.length >0 ">
+                and t.storehouse_sid in
+                (<foreach collection="storehouseSidList" item="storehouseSid" separator=",">#{storehouseSid}</foreach>)
+            </if>
+            <if test="storehouseLocationSidList != null and storehouseLocationSidList.length >0 ">
+                and t.storehouse_location_sid in
+                (<foreach collection="storehouseLocationSidList" item="storehouseLocationSid" separator=",">
+                #{storehouseLocationSid}</foreach>)
+            </if>
+        </where>
+        order by t.goods_shelf_code asc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_goods_shelf
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            goods_shelf_sid,
+            goods_shelf_code,
+            storehouse_sid,
+            storehouse_code,
+            goods_shelf_name,
+            storehouse_location_sid,
+            location_code,
+            address,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.goodsShelfCode},
+                #{item.storehouseSid},
+                #{item.storehouseCode},
+                #{item.goodsShelfName},
+                #{item.storehouseLocationSid},
+                #{item.locationCode},
+                #{item.address},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_goods_shelf
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            goods_shelf_code = #{goodsShelfCode},
+            storehouse_sid = #{storehouseSid},
+            storehouse_code = #{storehouseCode},
+            goods_shelf_name = #{goodsShelfName},
+            storehouse_location_sid = #{storehouseLocationSid},
+            location_code = #{locationCode},
+            address = #{address},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where goods_shelf_sid = #{goodsShelfSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_goods_shelf
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                goods_shelf_code = #{goodsShelfCode},
+                storehouse_sid = #{storehouseSid},
+                storehouse_code = #{storehouseCode},
+                goods_shelf_name = #{goodsShelfName},
+                storehouse_location_sid = #{storehouseLocationSid},
+                location_code = #{locationCode},
+                address = #{address},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+            </trim>
+            where goods_shelf_sid = #{goodsShelfSid}
+        </foreach>
+    </update>
+
+</mapper>

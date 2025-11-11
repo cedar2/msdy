@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinClearLogReceiptEstimationMapper">
+
+    <resultMap type="com.platform.ems.domain.FinClearLogReceiptEstimation" id="FinClearLogReceiptEstimationResult">
+        <result property="clientId" column="client_id"/>
+        <result property="inventoryDocumentCode" column="inventory_document_code"/>
+        <result property="clearLogReceiptEstimationSid" column="clear_log_receipt_estimation_sid"/>
+        <result property="receivableBillSid" column="receivable_bill_sid"/>
+        <result property="receivableBillCode" column="receivable_bill_code"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="companyName" column="company_name"/>
+        <result property="bookReceiptEstimationSid" column="book_receipt_estimation_sid"/>
+        <result property="bookReceiptEstimationCode" column="book_receipt_estimation_code"/>
+        <result property="isTuihuo" column="is_tuihuo"/>
+        <result property="bookReceiptEstimationItemSid" column="book_receipt_estimation_item_sid"/>
+        <result property="shengxiaoStatus" column="shengxiao_status"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="sku1Name" column="sku1Name"/>
+        <result property="sku2Name" column="sku2Name"/>
+    </resultMap>
+
+    <sql id="selectFinClearLogReceiptEstimationVo">
+        select t.client_id,
+               t.clear_log_receipt_estimation_sid,
+               t.receivable_bill_sid,
+               t.receivable_bill_code,
+               t.customer_sid,
+               t.customer_code,
+               t3.short_name AS customer_name,
+               t.company_sid,
+               t.company_code,
+               t2.short_name AS company_name,
+               t.book_receipt_estimation_sid,
+               t.book_receipt_estimation_code,
+               t.is_tuihuo,
+               t.book_receipt_estimation_item_sid,
+               t.shengxiao_status,
+               t.currency_amount_tax,
+               t.remark,
+               t.creator_account,
+               t7.nick_name AS creator_account_name,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t8.inventory_document_code,
+               t4.material_code,
+               t4.material_name,
+               t5.sku_name AS sku1Name,
+               t6.sku_name AS sku2Name
+        from s_fin_clear_log_receipt_estimation t
+        LEFT JOIN s_fin_book_receipt_estimation_item t1 ON t.book_receipt_estimation_item_sid = t1.book_receipt_estimation_item_sid
+        LEFT JOIN s_bas_company t2 ON t.company_sid = t2.company_sid
+        LEFT JOIN s_bas_customer t3 ON t.customer_sid = t3.customer_sid
+        LEFT JOIN s_bas_material t4 ON t1.material_sid = t4.material_sid
+        LEFT JOIN s_bas_sku t5 ON t1.sku1_sid = t5.sku_sid
+        LEFT JOIN s_bas_sku t6 ON t1.sku2_sid = t6.sku_sid
+        LEFT JOIN sys_user t7 ON t.creator_account = t7.user_name AND t.client_id = t7.client_id
+        LEFT JOIN s_inv_inventory_document t8 ON t1.refer_doc_sid = t8.inventory_document_sid
+    </sql>
+
+    <select id="selectFinClearLogReceiptEstimationById" parameterType="Long"
+            resultMap="FinClearLogReceiptEstimationResult">
+        <include refid="selectFinClearLogReceiptEstimationVo"/>
+        where t.clear_log_receipt_estimation_sid = #{clearLogReceiptEstimationSid}
+        ORDER BY t.create_date DESC, t8.inventory_document_code DESC
+    </select>
+
+    <select id="selectFinClearLogReceiptEstimationList"
+            parameterType="com.platform.ems.domain.FinClearLogReceiptEstimation"
+            resultMap="FinClearLogReceiptEstimationResult">
+        <include refid="selectFinClearLogReceiptEstimationVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="inventoryDocumentCode != null and inventoryDocumentCode != ''">
+                and t8.inventory_document_code like concat('%', #{inventoryDocumentCode},'%')
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and t4.material_code like concat('%', #{materialCode},'%')
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and t4.material_name like concat('%', #{materialName},'%')
+            </if>
+            <if test="sku1Name != null and sku1Name != ''">
+                and t5.sku_name like concat('%',#{sku1Name},'%')
+            </if>
+            <if test="sku2Name != null and sku2Name != ''">
+                and t6.sku_name like concat('%',#{sku2Name},'%')
+            </if>
+            <if test="receivableBillSid != null ">
+                and t.receivable_bill_sid = #{receivableBillSid}
+            </if>
+            <if test="receivableBillCode != null ">
+                and t.receivable_bill_code like concat('%', #{receivableBillCode},'%')
+            </if>
+            <if test="customerSid != null ">
+                and t.customer_sid = #{customerSid}
+            </if>
+            <if test="customerCode != null ">
+                and t.customer_code = #{customerCode}
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and t.customer_sid in
+                (<foreach collection="customerSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companyCode != null ">
+                and t.company_code = #{companyCode}
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="bookReceiptEstimationSid != null ">
+                and t.book_receipt_estimation_sid = #{bookReceiptEstimationSid}
+            </if>
+            <if test="bookReceiptEstimationCode != null ">
+                and t.book_receipt_estimation_code like concat('%',#{bookReceiptEstimationCode},'%')
+            </if>
+            <if test="isTuihuo != null and isTuihuo != ''">
+                and t.is_tuihuo = #{isTuihuo}
+            </if>
+            <if test="bookReceiptEstimationItemSid != null ">
+                and t.book_receipt_estimation_item_sid = #{bookReceiptEstimationItemSid}
+            </if>
+            <if test="shengxiaoStatus != null and shengxiaoStatus != ''">
+                and t.shengxiao_status = #{shengxiaoStatus}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        ORDER BY t.create_date DESC, t8.inventory_document_code DESC
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_clear_log_receipt_estimation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            clear_log_receipt_estimation_sid,
+            receivable_bill_sid,
+            receivable_bill_code,
+            customer_sid,
+            customer_code,
+            company_sid,
+            company_code,
+            book_receipt_estimation_sid,
+            book_receipt_estimation_code,
+            is_tuihuo,
+            book_receipt_estimation_item_sid,
+            shengxiao_status,
+            currency_amount_tax,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.clearLogReceiptEstimationSid},
+                #{item.receivableBillSid},
+                #{item.receivableBillCode},
+                #{item.customerSid},
+                #{item.customerCode},
+                #{item.companySid},
+                #{item.companyCode},
+                #{item.bookReceiptEstimationSid},
+                #{item.bookReceiptEstimationCode},
+                #{item.isTuihuo},
+                #{item.bookReceiptEstimationItemSid},
+                #{item.shengxiaoStatus},
+                #{item.currencyAmountTax},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+</mapper>

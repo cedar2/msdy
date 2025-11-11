@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecProductZipperMapper">
+
+    <resultMap type="com.platform.ems.domain.TecProductZipper" id="TecProductZipperResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="productZipperSid" column="product_zipper_sid"/>
+                    <result property="productSid" column="product_sid"/>
+                    <result property="materialSid" column="material_sid"/>
+                    <result property="remark" column="remark"/>
+                    <result property="handleStatus" column="handle_status"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="confirmerAccount" column="confirmer_account"/>
+                    <result property="confirmDate" column="confirm_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+            </resultMap>
+
+    <sql id="selectTecProductZipperVo">
+        select t.client_id, t.product_zipper_sid, t.product_sid, t.material_sid, t.remark, t.handle_status, t.creator_account, t.create_date, t.updater_account, t.update_date, t.confirmer_account, t.confirm_date, t.data_source_sys from s_tec_product_zipper t
+    </sql>
+
+    <select id="selectTecProductZipperById" parameterType="Long" resultMap="TecProductZipperResult">
+        <include refid="selectTecProductZipperVo"/>
+        where t.product_zipper_sid = #{productZipperSid}
+    </select>
+
+
+    <select id="selectTecProductZipperList" parameterType="com.platform.ems.domain.TecProductZipper"
+            resultMap="TecProductZipperResult">
+        <include refid="selectTecProductZipperVo"/>
+        <where>
+                                                                                                    <if test="clientId != null  and clientId != ''">
+                               and (<foreach collection="clientId.split(';')" item="item" separator="or"> t.client_id like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                            <if test="productSid != null ">
+                                and t.product_sid =#{productSid}
+                            </if>
+                                                                                                                                                                <if test="materialSid != null ">
+                                and t.material_sid =#{materialSid}
+                            </if>
+                                                                                                                                                                                            <if test="handleStatus != null  and handleStatus != ''">
+                               and (<foreach collection="handleStatus.split(';')" item="item" separator="or"> t.handle_status like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="creatorAccount != null  and creatorAccount != ''">
+                               and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t.creator_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="beginTime != null and beginTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                                </if>
+                                <if test="endTime != null and endTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                                </if>
+                                                                                                                                                                                            <if test="updaterAccount != null  and updaterAccount != ''">
+                               and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="updateDate != null ">
+                                    and t.update_date = #{updateDate}
+                                </if>
+                                                                                                                                                                                            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                               and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or"> t.confirmer_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="confirmDate != null ">
+                                    and t.confirm_date = #{confirmDate}
+                                </if>
+                                                                                                                                                                                            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                               and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or"> t.data_source_sys like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                    <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_tec_product_zipper
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                                client_id,
+                                                                product_zipper_sid,
+                                                                product_sid,
+                                                                material_sid,
+                                                                remark,
+                                                                handle_status,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                confirmer_account,
+                                                                confirm_date,
+                                                                data_source_sys,
+                                    </trim>
+        values
+            <foreach collection="list" item="item" separator=",">
+                <trim prefix=" (" suffix=")" suffixOverrides=",">
+                                                                                #{item.clientId},
+                                                                                #{item.productZipperSid},
+                                                                                #{item.productSid},
+                                                                                #{item.materialSid},
+                                                                                #{item.remark},
+                                                                                #{item.handleStatus},
+                                                                                #{item.creatorAccount},
+                                                                                #{item.createDate},
+                                                                                #{item.updaterAccount},
+                                                                                #{item.updateDate},
+                                                                                #{item.confirmerAccount},
+                                                                                #{item.confirmDate},
+                                                                                #{item.dataSourceSys},
+                                                    </trim>
+            </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_tec_product_zipper
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                product_zipper_sid = #{productZipperSid},
+                                                                product_sid = #{productSid},
+                                                                material_sid = #{materialSid},
+                                                                remark = #{remark},
+                                                                handle_status = #{handleStatus},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                confirmer_account = #{confirmerAccount},
+                                                                confirm_date = #{confirmDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where product_zipper_sid = #{productZipperSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_tec_product_zipper
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                product_zipper_sid = #{productZipperSid},
+                                                                                product_sid = #{productSid},
+                                                                                material_sid = #{materialSid},
+                                                                                remark = #{remark},
+                                                                                handle_status = #{handleStatus},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                confirmer_account = #{confirmerAccount},
+                                                                                confirm_date = #{confirmDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where product_zipper_sid = #{productZipperSid}
+        </foreach>
+    </update>
+
+</mapper>

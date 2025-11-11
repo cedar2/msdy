@@ -1,0 +1,1018 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.InvInventoryDocumentItemMapper">
+
+    <resultMap type="com.platform.ems.domain.InvInventoryDocumentItem" id="InvInventoryDocumentItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="inventoryDocumentItemSid" column="inventory_document_item_sid"/>
+        <result property="inventoryDocumentSid" column="inventory_document_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="barcodeSid" column="barcode_sid"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="quantity" column="quantity"/>
+        <result property="price" column="price"/>
+        <result property="storehouseSid" column="storehouse_sid"/>
+        <result property="storehouseLocationSid" column="storehouse_location_sid"/>
+        <result property="destStorehouseSid" column="dest_storehouse_sid"/>
+        <result property="destStorehouseLocationSid" column="dest_storehouse_location_sid"/>
+        <result property="reasonType" column="reason_type"/>
+        <result property="currencyAmountBefore" column="currency_amount_before"/>
+        <result property="currencyAmountAfter" column="currency_amount_after"/>
+        <result property="tradeType" column="trade_type"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="priceQuantity" column="price_quantity"/>
+        <result property="unitConversionRate" column="unit_conversion_rate"/>
+        <result property="totalQuantityBefore" column="total_quantity_before"/>
+        <result property="priceBefore" column="price_before"/>
+        <result property="totalQuantityAfter" column="total_quantity_after"/>
+        <result property="priceAfter" column="price_after"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="sku1Code" column="sku1_code"/>
+        <result property="sku1Name" column="sku1_name"/>
+        <result property="sku2Code" column="sku2_code"/>
+        <result property="sku2Name" column="sku2_name"/>
+        <result property="storehouseCode" column="storehouse_code"/>
+        <result property="storehouseName" column="storehouse_name"/>
+        <result property="locationCode" column="location_code"/>
+        <result property="locationName" column="location_name"/>
+        <result property="destStorehouseCode" column="dest_storehouse_code"/>
+        <result property="destStorehouseName" column="dest_storehouse_name"/>
+        <result property="destLocationCode" column="dest_location_code"/>
+        <result property="destLocationName" column="dest_location_name"/>
+        <result property="purchaseOrderItemNum" column="purchase_order_item_num"/>
+        <result property="manufactureOrderProcessNum" column="manufacture_order_process_num"/>
+    </resultMap>
+
+    <sql id="selectInvInventoryDocumentItemVo">
+       SELECT
+	t.client_id,
+	t.inventory_document_item_sid,
+	t.inventory_document_sid,
+	t.material_sid,
+	t.sku1_sid,
+	t.sku2_sid,
+	t.barcode_sid,
+	t.unit_base,
+	t.quantity,
+	t.price,
+	t.storehouse_sid,
+    t9.storehouse_code as storehouse_code,
+	t.storehouse_location_sid,
+    t10.location_code as location_code,
+    t.dest_storehouse_sid,
+    t11.storehouse_code as storehouse_code,
+    t.dest_storehouse_location_sid,
+    t12.location_code as location_code,
+	t.reason_type,
+	t.currency_amount_before,
+	t.currency_amount_after,
+	t.trade_type,
+	t.unit_price,
+	t.price_quantity,
+	t.unit_conversion_rate,
+	t.total_quantity_before,
+	t.stock_count_result,
+	t.price_before,
+	t.total_quantity_after,
+	t.sample_usage,
+	t.price_after,
+    t.tax_rate,
+    t.refer_document_sid,
+    t.refer_document_code,
+    t.refer_document_item_sid,
+    t.refer_document_item_num,
+    t.refer_doc_category,
+	t.item_num,
+	t.product_codes,
+	t.product_sku1_names,
+	t.product_sku2_names,
+	t.product_quantity_remark,
+	t.usage_remark,
+	t.source_remark,
+	t.remark,
+	t.unit_price,
+	t.unit_conversion_rate,
+	t.creator_account,
+	t.create_date,
+	t.paichan_batch,
+	t.updater_account,
+	t.update_date,
+	t.data_source_sys,
+	t1.material_name,
+	t1.material_code,
+    t1.specification_size,
+	t2.sku_code AS sku1_code,
+	t2.sku_name AS sku1_name,
+	t3.sku_code AS sku2_code,
+	t3.sku_name AS sku2_name,
+    t4.name as unit_base_name,
+    t7.name as unit_price_name,
+    t5.nick_name as creator_account_name,
+    t6.barcode,
+    t6.barcode2,
+    t6.status,
+    t.free_flag,
+    t8.name as sample_usage_name,
+    t9.storehouse_name,
+    t10.location_name,
+    t11.storehouse_name as dest_storehouse_name,
+    t12.location_name as dest_location_name,
+    ta.sort as sort1,
+    tb.sort as sort2
+FROM
+	s_inv_inventory_document_item t
+    LEFT JOIN s_inv_inventory_document t0 ON t.inventory_document_sid = t0.inventory_document_sid
+	LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+	LEFT JOIN s_bas_sku t2 ON t2.sku_sid = t.sku1_sid
+	LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t.sku2_sid
+    left join s_con_measure_unit t4 on t4.code=t.unit_base
+    LEFT JOIN sys_user t5 ON t5.user_name = t.creator_account AND t5.client_id = t.client_id
+    left join s_bas_material_barcode t6 on t6.barcode_sid=t.barcode_sid
+    left join s_con_measure_unit t7 on t7.code=t.unit_price
+    left join s_con_sample_requisition_usage t8 on t8.code =t.sample_usage
+    LEFT JOIN s_bas_storehouse t9 on t.storehouse_sid = t9.storehouse_sid
+    LEFT JOIN s_bas_storehouse_location t10 on t.storehouse_location_sid = t10.storehouse_location_sid
+    LEFT JOIN s_bas_storehouse t11 on t11.storehouse_sid = t.dest_storehouse_sid
+    LEFT JOIN s_bas_storehouse_location t12 on t12.storehouse_location_sid = t.dest_storehouse_location_sid
+    LEFT JOIN s_bas_material_sku ta on t.material_sid = ta.material_sid and t.sku1_sid = ta.sku_sid
+    LEFT JOIN s_bas_material_sku tb on t.material_sid = tb.material_sid and t.sku2_sid = tb.sku_sid
+    </sql>
+    <sql id="selectInvInventoryDocumentItemVoReport">
+       SELECT
+	t.client_id,
+	t.inventory_document_item_sid,
+	t.inventory_document_sid,
+	t.material_sid,
+	t.sku1_sid,
+	t.sku2_sid,
+	t.barcode_sid,
+	t.unit_base,
+	t.quantity,
+	t.stock_count_result,
+	t.price,
+	t.storehouse_sid,
+	t.storehouse_location_sid,
+	t.reason_type,
+	t.currency_amount_before,
+	t.currency_amount_after,
+	t.trade_type,
+	t.free_flag,
+	t.unit_price,
+	t.price_quantity,
+	t.unit_conversion_rate,
+	t.total_quantity_before,
+	t.price_before,
+	t.total_quantity_after,
+	t.price_after,
+    t.refer_document_sid,
+    t.refer_document_code,
+    t.refer_document_item_sid,
+    t.refer_document_item_num,
+	t.item_num,
+	t.remark,
+	t.creator_account,
+	t.create_date,
+	t.paichan_batch,
+	t.updater_account,
+	t.update_date,
+	t.data_source_sys,
+	t1.material_name,
+	t1.material_code,
+	t2.sku_code AS sku1_code,
+	t2.sku_name AS sku1_name,
+	t3.sku_code AS sku2_code,
+	t3.sku_name AS sku2_name,
+	c.vendor_sid,
+	c.storehouse_sid,
+	c.storehouse_location_sid,
+	c.dest_storehouse_sid,
+	c.dest_storehouse_location_sid,
+	c.customer_sid,
+	c.movement_type,
+	c.inventory_document_code,
+	c.account_date,
+	t12.storehouse_name,
+	t4.location_name,
+	t5.storehouse_name as dest_storehouse_name,
+	t6.location_name as dest_location_name,
+	t7.vendor_name,
+	t8.customer_name,
+	t11.name as movement_type_name,
+	t9.name as unit_price_name,
+    ta.sort as sort1,
+    tb.sort as sort2
+FROM
+	s_inv_inventory_document_item t
+	LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+	LEFT JOIN s_bas_sku t2 ON t2.sku_sid = t.sku1_sid
+	LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t.sku2_sid
+	left join s_inv_inventory_document c on c.inventory_document_sid=t.inventory_document_sid
+    LEFT JOIN s_bas_storehouse t12 on t12.storehouse_sid=c.storehouse_sid
+    LEFT JOIN s_bas_storehouse_location t4 on t4.storehouse_location_sid=t.storehouse_location_sid
+    LEFT JOIN s_bas_storehouse t5 on t5.storehouse_sid=c.dest_storehouse_sid
+    LEFT JOIN s_bas_storehouse_location t6 on t6.storehouse_location_sid=t.dest_storehouse_location_sid
+    LEFT JOIN s_bas_vendor t7 on t7.vendor_sid=c.vendor_sid
+    LEFT JOIN s_bas_customer t8 on t8.customer_sid=c.customer_sid
+    LEFT JOIN s_con_movement_type t11 on t11.code=c.movement_type
+    LEFT JOIN s_con_measure_unit t9 ON t9.code = t.unit_price
+    LEFT JOIN s_bas_material_sku ta on t.material_sid = ta.material_sid and t.sku1_sid = ta.sku_sid
+    LEFT JOIN s_bas_material_sku tb on t.material_sid = tb.material_sid and t.sku2_sid = tb.sku_sid
+    </sql>
+
+    <select id="selectInvInventoryDocumentItemById" parameterType="Long" resultMap="InvInventoryDocumentItemResult">
+        <include refid="selectInvInventoryDocumentItemVo"/>
+        where t.inventory_document_sid = #{inventoryDocumentSid}
+    </select>
+
+    <select id="selectReport"  resultType="com.platform.ems.domain.InvInventoryDocumentItem" parameterType="com.platform.ems.domain.InvInventoryDocumentItem">
+        <include refid="selectInvInventoryDocumentItemVoReport"/>
+            where t.inventory_document_sid in
+        <foreach collection="ids"  item="item"  open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ORDER BY t.create_date DESC
+        limit  #{pageNum},#{pageSize}
+    </select>
+
+    <sql id="selectDocumentReportVo">
+       SELECT
+	t.material_sid,
+	t.sku1_sid,
+	t.sku2_sid,
+	t.barcode_sid,
+	t.inventory_document_item_sid,
+	t.unit_base,
+	t.quantity,
+	t.price,
+	t.storehouse_sid,
+	t.free_flag,
+	t.storehouse_location_sid,
+	t.reason_type,
+	t.currency_amount_before,
+	t.currency_amount_after,
+	t.trade_type,
+	t.unit_price,
+	t.price_quantity,
+    if(t.price_quantity is not null, t.price_quantity * t.price, t.quantity * t.price) as currency_amount,
+	t.unit_conversion_rate,
+	t.stock_count_result,
+	t.total_quantity_before,
+	t.price_before,
+	t.total_quantity_after,
+	t.price_after,
+    t.refer_document_sid,
+    t.refer_document_code,
+    if(c.movement_type = 'SR01' or c.movement_type = 'SC03', t.refer_document_code, t23.purchase_order_code ) as purchase_order_code,
+    if(c.movement_type = 'SC01' or c.movement_type = 'SR03', t.refer_document_code, t23.sales_order_code ) as sales_order_code,
+    t.refer_document_item_sid,
+    t.refer_document_item_num,
+	t.item_num,
+	t.tax_rate,
+	t.remark,
+	t.product_codes,
+    t.product_sku1_names,
+    t.product_sku2_names,
+    t.product_quantity_remark,
+	t.creator_account,
+	t.create_date,
+	t.updater_account,
+	t.update_date,
+	t.data_source_sys,
+	t1.material_name,
+	t1.material_code,
+    t1.sample_code_self,
+    t1.material_type,
+    t1.material_category,
+    t22.name as material_type_name,
+	t1.specification_size,
+	t1.model_size,
+    t1.composition,
+    t1.retail_price,
+    t1.simple_code,
+	t2.sku_code AS sku1_code,
+	t2.sku_name AS sku1_name,
+	t3.sku_code AS sku2_code,
+	t3.sku_name AS sku2_name,
+	c.inventory_document_code,
+	c.document_category,
+	c.movement_type,
+	c.inventory_document_code,
+    c.supplier_delivery_code,
+    c.carrier_note_code,
+	c.account_date,
+	c.document_date,
+    c.year,
+    c.month,
+    c.product_season_sid,
+    c.product_season_code,
+    t9.product_season_name,
+    c.in_out_stock_status,
+    c.handle_status,
+    c.business_type,
+    c.business_flag,
+    t10.name as business_type_name,
+	t12.storehouse_name,
+	t4.location_name,
+	t5.storehouse_name as dest_storehouse_name,
+	t6.location_name as dest_location_name,
+	t7.short_name as vendor_name,
+	ifnull(t8.short_name, t8.customer_name) as customer_name,
+	t11.name as movement_type_name,
+	t13.name as refer_doc_category_name,
+	t14.name as unit_base_name,
+    t15.barcode,
+    t16.name as document_category_name,
+    t17.nick_name as creator_account_name,
+    t18.nick_name as storehouse_operator_name,
+    t19.name as unit_price_name,
+    t20.name as special_stock_name,
+    t21.short_name as company_name,
+    t24.node_name AS material_class_name,
+    t25.model_name,
+    t26.dict_label as season_name,
+    ta.sort as sort1,
+    tb.sort as sort2
+FROM
+	s_inv_inventory_document_item t
+	LEFT JOIN s_bas_material t1 ON t1.material_sid = t.material_sid
+	LEFT JOIN s_bas_sku t2 ON t2.sku_sid = t.sku1_sid
+	LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t.sku2_sid
+	left join s_inv_inventory_document c on c.inventory_document_sid=t.inventory_document_sid
+    LEFT JOIN s_bas_storehouse t12 on t12.storehouse_sid=t.storehouse_sid
+    LEFT JOIN s_bas_storehouse_location t4 on t4.storehouse_location_sid=t.storehouse_location_sid
+    LEFT JOIN s_bas_storehouse t5 on t5.storehouse_sid=t.dest_storehouse_sid
+    LEFT JOIN s_bas_storehouse_location t6 on t6.storehouse_location_sid=t.dest_storehouse_location_sid
+    LEFT JOIN s_bas_vendor t7 on t7.vendor_sid=c.vendor_sid
+    LEFT JOIN s_bas_customer t8 on t8.customer_sid=c.customer_sid
+    LEFT JOIN s_bas_product_season t9 on c.product_season_sid = t9.product_season_sid
+    LEFT JOIN s_con_bu_type_inout t10 on c.business_type = t10.code
+    LEFT JOIN s_con_movement_type t11 on t11.code=c.movement_type
+    LEFT JOIN s_con_doc_category t13 on t13.code=c.refer_doc_category
+    left join s_con_measure_unit t14 on t14.code=t.unit_base
+    left join s_bas_material_barcode t15 on t15.barcode_sid=t.barcode_sid
+    left join s_con_inventory_document_category t16 on t16.code=c.document_category
+    LEFT JOIN sys_user t17 ON t17.user_name = c.creator_account AND t17.client_id = c.client_id
+    LEFT JOIN sys_user t18 ON t18.user_name = c.storehouse_operator AND t18.client_id = c.client_id
+    LEFT JOIN s_con_measure_unit t19 ON t19.code = t.unit_price
+    left join s_con_special_stock t20 on t20.code =c.special_stock
+    left join s_bas_company t21 on t21.company_sid=c.company_sid
+    left join s_con_material_type t22 on t1.material_type = t22.code
+    left join s_del_delivery_note t23 on t.refer_document_sid = t23.delivery_note_sid
+    LEFT JOIN s_con_material_class t24 ON t1.material_class_sid = t24.material_class_sid
+    LEFT JOIN s_tec_model t25 ON t1.model_sid = t25.model_sid
+    LEFT JOIN sys_dict_data t26 ON t26.dict_type = 's_season' and t1.season = t26.dict_value
+    LEFT JOIN s_bas_material_sku ta on t.material_sid = ta.material_sid and t.sku1_sid = ta.sku_sid
+    LEFT JOIN s_bas_material_sku tb on t.material_sid = tb.material_sid and t.sku2_sid = tb.sku_sid
+    </sql>
+
+    <select id="selectDocumentReport" parameterType="com.platform.ems.domain.dto.request.InvInventoryDocumentReportRequest" resultType="com.platform.ems.domain.dto.response.InvInventoryDocumentReportResponse">
+        <include refid="selectDocumentReportVo"/>
+        <where>
+            <if test="sku1Name != null and sku1Name !=''">
+                and (<foreach collection="sku1Name.split(';')" item="item" separator="or">t2.sku_name like
+                concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="sku2Name != null and sku2Name !=''">
+                and (<foreach collection="sku2Name.split(';')" item="item" separator="or">t3.sku_name like
+                concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="sku1Sid != null">
+                and t.sku1_sid = #{sku1Sid}
+            </if>
+            <if test="sku1SidList != null and sku1SidList.length >0">
+                and t.sku1_sid in
+                (<foreach collection="sku1SidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="sku2Sid != null">
+                and t.sku2_sid = #{sku2Sid}
+            </if>
+            <if test="sku2SidList != null and sku2SidList.length >0">
+                and t.sku2_sid in
+                (<foreach collection="sku2SidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="inventoryDocumentCode != null and inventoryDocumentCode !=''">
+                and (<foreach collection="inventoryDocumentCode.split(';')" item="item" separator="or">c.inventory_document_code like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and c.company_sid in
+                (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="supplierDeliveryCode != null and supplierDeliveryCode !=''">
+                and (<foreach collection="supplierDeliveryCode.split(';')" item="item" separator="or">
+                c.supplier_delivery_code like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="carrierNoteCode != null and carrierNoteCode !=''">
+                and (<foreach collection="carrierNoteCode.split(';')" item="item" separator="or">
+                c.carrier_note_code like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="businessFlag != null and businessFlag !=''">
+                and c.business_flag = #{businessFlag}
+            </if>
+            <if test="businessFlagList != null and businessFlagList.length >0">
+                and c.business_flag in
+                (<foreach collection="businessFlagList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="businessType != null and businessType !=''">
+                and c.business_type = #{businessType}
+            </if>
+            <if test="businessTypeList != null and businessTypeList.length >0">
+                and c.business_type in
+                (<foreach collection="businessTypeList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="productSeasonSid != null">
+                and c.product_season_sid = #{productSeasonSid}
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">
+                and c.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="documentCategory != null and documentCategory !=''">
+                and c.document_category =#{documentCategory}
+            </if>
+            <if test="documentCategoryList != null and documentCategoryList.length >0">
+                and c.document_category in
+                (<foreach collection="documentCategoryList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="productCodes != null and productCodes !=''">
+                and t.product_codes like
+                concat('%',
+                #{productCodes}, '%')
+            </if>
+            <if test="referDocumentCode != null and referDocumentCode !=''">
+                and (<foreach collection="referDocumentCode.split(';')" item="item" separator="or">t.refer_document_code like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialCode != null and materialCode !=''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator="or">t1.material_code like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialName != null and materialName !=''">
+                and (<foreach collection="materialName.split(';')" item="item" separator="or">t1.material_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount !=''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t17.nick_name  like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="inOutStockStatus != null and inOutStockStatus !=''">
+                and c.in_out_stock_status=#{inOutStockStatus}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and c.vendor_sid in
+                (<foreach collection="vendorSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and c.customer_sid in
+                (<foreach collection="customerSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="inventoryDocumentItemSidList != null and inventoryDocumentItemSidList.length >0">
+                and t.inventory_document_item_sid in
+                (<foreach collection="inventoryDocumentItemSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+
+            <if test="storehouseSid != null and storehouseSid != '' ">
+                and t.storehouse_sid =#{storehouseSid}
+            </if>
+            <if test="destStorehouseSid != null and destStorehouseSid != '' ">
+                and t.dest_storehouse_sid =#{destStorehouseSid}
+            </if>
+            <if test="storehouseLocationSidList != null and storehouseLocationSidList.length >0">
+                and t.storehouse_location_sid in
+                (<foreach collection="storehouseLocationSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="destStorehouseLocationSidList != null and destStorehouseLocationSidList.length >0">
+                and t.dest_storehouse_location_sid in
+                (<foreach collection="destStorehouseLocationSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="accountDate != null and accountDate!=''">
+                and date_format(c.account_date,'%y%m%d') = #{accountDate}
+            </if>
+            <if test="accountDateBeginTime != null and accountDateBeginTime!=''">
+                and date_format(c.account_date,'%y%m%d') &gt;= date_format(#{accountDateBeginTime},'%y%m%d')
+            </if>
+            <if test="accountDateEndTime != null and accountDateEndTime!=''">
+                and date_format(c.account_date,'%y%m%d') &lt;= date_format(#{accountDateEndTime},'%y%m%d')
+            </if>
+            <if test="movementTypeList != null and movementTypeList.length >0">
+                and c.movement_type in
+                (<foreach collection="movementTypeList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''" >
+                and c.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0" >
+                and (<foreach collection="handleStatusList" item="item" separator="or">c.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="stockCountResultList != null  and stockCountResultList.length >0" >
+                and t.stock_count_result in
+                (<foreach collection="stockCountResultList" item="item" separator=",">#{item}</foreach>)
+
+            </if>
+            <if test="specialStockList != null  and specialStockList.length >0" >
+                and c.special_stock in
+                (<foreach collection="specialStockList" item="item" separator=",">#{item}</foreach>)
+            </if>
+
+            <if test="storehouseOperatorList != null  and storehouseOperatorList.length >0" >
+                and c.storehouse_operator in
+                (<foreach collection="storehouseOperatorList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="referDocCategoryList != null  and referDocCategoryList.length >0" >
+                and (<foreach collection="referDocCategoryList" item="item" separator="or">c.refer_doc_category like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+        </where>
+        order by c.inventory_document_code desc
+    </select>
+
+    <select id="selectInvInventoryDocumentItemList" parameterType="com.platform.ems.domain.InvInventoryDocumentItem"
+            resultMap="InvInventoryDocumentItemResult">
+        <include refid="selectInvInventoryDocumentItemVo"/>
+        <where>
+            <if test="inventoryDocumentSid != null ">
+                and t.inventory_document_sid = #{inventoryDocumentSid}
+            </if>
+            <if test="inventoryDocumentSids != null and inventoryDocumentSids.length >0">
+                and t.inventory_document_sid in
+                (<foreach collection="inventoryDocumentSids" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="referDocumentItemSid != null ">
+                and t.refer_document_item_sid = #{referDocumentItemSid}
+            </if>
+            <if test="referDocumentItemSidList != null and referDocumentItemSidList.length >0">
+                and t.refer_document_item_sid in
+                (<foreach collection="referDocumentItemSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="documentType != null and documentType != ''">
+                and t0.document_type = #{documentType}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t0.handle_status = #{handleStatus}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+
+    <insert id="inserts">
+
+        insert into s_inv_inventory_document_item
+
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            client_id,
+
+            inventory_document_item_sid,
+
+            inventory_document_sid,
+
+            material_sid,
+
+            sku1_sid,
+
+            sku2_sid,
+
+            barcode_sid,
+
+            unit_base,
+
+            quantity,
+
+            price,
+
+            storehouse_sid,
+
+            storehouse_location_sid,
+
+            dest_storehouse_sid,
+
+            dest_storehouse_location_sid,
+
+            reason_type,
+
+            trade_type,
+
+            total_quantity_before,
+
+            currency_amount_before,
+
+            price_before,
+
+            total_quantity_after,
+
+            currency_amount_after,
+
+            price_after,
+
+            item_num,
+
+            unit_price,
+
+            price_quantity,
+
+            unit_conversion_rate,
+
+            remark,
+
+            creator_account,
+
+            create_date,
+
+            updater_account,
+
+            update_date,
+
+            data_source_sys,
+
+            refer_document_sid,
+
+            refer_document_code,
+
+            refer_document_item_sid,
+
+            refer_document_item_num,
+
+            refer_doc_category,
+
+            free_flag,
+
+            stock_count_result,
+            sample_usage,
+            product_codes,
+            product_sku1_names,
+            product_sku2_names,
+            product_quantity_remark,
+            usage_remark,
+            source_remark,
+            tax_rate,
+            paichan_batch,
+        </trim>
+
+        values
+
+        <foreach collection="list" item="item" separator=",">
+
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+
+                #{item.clientId},
+
+                #{item.inventoryDocumentItemSid},
+
+                #{item.inventoryDocumentSid},
+
+                #{item.materialSid},
+
+                #{item.sku1Sid},
+
+                #{item.sku2Sid},
+
+                #{item.barcodeSid},
+
+                #{item.unitBase},
+
+                #{item.quantity},
+
+                #{item.price},
+
+                #{item.storehouseSid},
+
+                #{item.storehouseLocationSid},
+
+                #{item.destStorehouseSid},
+
+                #{item.destStorehouseLocationSid},
+
+                #{item.reasonType},
+
+                #{item.tradeType},
+
+                #{item.totalQuantityBefore},
+
+                #{item.currencyAmountBefore},
+
+                #{item.priceBefore},
+
+                #{item.totalQuantityAfter},
+
+                #{item.currencyAmountAfter},
+
+                #{item.priceAfter},
+
+                #{item.itemNum},
+
+                #{item.unitPrice},
+
+                #{item.priceQuantity},
+
+                #{item.unitConversionRate},
+
+                #{item.remark},
+
+                #{item.creatorAccount},
+
+                #{item.createDate},
+
+                #{item.updaterAccount},
+
+                #{item.updateDate},
+
+                #{item.dataSourceSys},
+
+                #{item.referDocumentSid},
+
+                #{item.referDocumentCode},
+
+                #{item.referDocumentItemSid},
+
+                #{item.referDocumentItemNum},
+
+                #{item.referDocCategory},
+
+                #{item.freeFlag},
+
+                #{item.stockCountResult},
+
+                #{item.sampleUsage},
+
+                #{item.productCodes},
+
+                #{item.productSku1Names},
+
+                #{item.productSku2Names},
+
+                #{item.productQuantityRemark},
+
+                #{item.usageRemark},
+
+                #{item.sourceRemark},
+
+                #{item.taxRate},
+                #{item.paichanBatch},
+            </trim>
+
+        </foreach>
+
+    </insert>
+
+
+
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_inv_inventory_document_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            inventory_document_sid = #{inventoryDocumentSid},
+            material_sid = #{materialSid},
+            sku1_sid = #{sku1Sid},
+            sku2_sid = #{sku2Sid},
+            barcode_sid = #{barcodeSid},
+            unit_base = #{unitBase},
+            quantity = #{quantity},
+            price = #{price},
+            currency_amount = #{currencyAmount},
+            storehouse_sid = #{storehouseSid},
+            storehouse_location_sid = #{storehouseLocationSid},
+            dest_storehouse_sid = #{destStorehouseSid},
+            dest_storehouse_location_sid = #{destStorehouseLocationSid},
+            reason_type = #{reasonType},
+            stock_type = #{stockType},
+            special_stock = #{specialStock},
+            delivery_note_sid = #{deliveryNoteSid},
+            delivery_note_item_sid = #{deliveryNoteItemSid},
+            sales_order_sid = #{salesOrderSid},
+            sales_order_item_sid = #{salesOrderItemSid},
+            purchase_order_sid = #{purchaseOrderSid},
+            purchase_order_item_sid = #{purchaseOrderItemSid},
+            manufacture_order_sid = #{manufactureOrderSid},
+            delivery_note_code = #{deliveryNoteCode},
+            sales_order_code = #{salesOrderCode},
+            manufacture_order_code = #{manufactureOrderCode},
+            purchase_order_code = #{purchaseOrderCode},
+            movement_type = #{movementType},
+            business_type = #{businessType},
+            trade_type = #{tradeType},
+            unit_price = #{unitPrice},
+            price_quantity = #{priceQuantity},
+            unit_conversion_rate = #{unitConversionRate},
+            total_quantity_before = #{totalQuantityBefore},
+            amount_before = #{amountBefore},
+            price_before = #{priceBefore},
+            total_quantity_after = #{totalQuantityAfter},
+            amount_after = #{amountAfter},
+            price_after = #{priceAfter},
+            dest_location_total_quantity_before = #{destLocationTotalQuantityBefore},
+            dest_location_amount_before = #{destLocationAmountBefore},
+            dest_location_price_before = #{destLocationPriceBefore},
+            dest_location_total_quantity_after = #{destLocationTotalQuantityAfter},
+            dest_location_amount_after = #{destLocationAmountAfter},
+            dest_location_price_after = #{destLocationPriceAfter},
+            item_num = #{itemNum},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+            paichan_batch=#{paichanBatch},
+        </trim>
+        where inventory_document_item_sid = #{inventoryDocumentItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_inv_inventory_document_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                inventory_document_sid = #{inventoryDocumentSid},
+                material_sid = #{materialSid},
+                sku1_sid = #{sku1Sid},
+                sku2_sid = #{sku2Sid},
+                barcode_sid = #{barcodeSid},
+                unit_base = #{unitBase},
+                quantity = #{quantity},
+                price = #{price},
+                currency_amount = #{currencyAmount},
+                storehouse_sid = #{storehouseSid},
+                storehouse_location_sid = #{storehouseLocationSid},
+                dest_storehouse_sid = #{destStorehouseSid},
+                dest_storehouse_location_sid = #{destStorehouseLocationSid},
+                reason_type = #{reasonType},
+                stock_type = #{stockType},
+                special_stock = #{specialStock},
+                delivery_note_sid = #{deliveryNoteSid},
+                delivery_note_item_sid = #{deliveryNoteItemSid},
+                sales_order_sid = #{salesOrderSid},
+                sales_order_item_sid = #{salesOrderItemSid},
+                purchase_order_sid = #{purchaseOrderSid},
+                purchase_order_item_sid = #{purchaseOrderItemSid},
+                manufacture_order_sid = #{manufactureOrderSid},
+                delivery_note_code = #{deliveryNoteCode},
+                sales_order_code = #{salesOrderCode},
+                manufacture_order_code = #{manufactureOrderCode},
+                purchase_order_code = #{purchaseOrderCode},
+                movement_type = #{movementType},
+                business_type = #{businessType},
+                trade_type = #{tradeType},
+                unit_price = #{unitPrice},
+                price_quantity = #{priceQuantity},
+                unit_conversion_rate = #{unitConversionRate},
+                total_quantity_before = #{totalQuantityBefore},
+                amount_before = #{amountBefore},
+                price_before = #{priceBefore},
+                total_quantity_after = #{totalQuantityAfter},
+                amount_after = #{amountAfter},
+                price_after = #{priceAfter},
+                dest_location_total_quantity_before = #{destLocationTotalQuantityBefore},
+                dest_location_amount_before = #{destLocationAmountBefore},
+                dest_location_price_before = #{destLocationPriceBefore},
+                dest_location_total_quantity_after = #{destLocationTotalQuantityAfter},
+                dest_location_amount_after = #{destLocationAmountAfter},
+                dest_location_price_after = #{destLocationPriceAfter},
+                item_num = #{itemNum},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where inventory_document_item_sid = #{inventoryDocumentItemSid}
+        </foreach>
+    </update>
+
+    <delete id="deleteInvInventoryDocumentItemByIds" parameterType="long">
+        delete from s_inv_inventory_document_item where inventory_document_sid in
+        <foreach item="inventoryDocumentSid" collection="array" open="(" separator="," close=")">
+            #{inventoryDocumentSid}
+        </foreach>
+    </delete>
+
+    <select id="getInvInventoryDocumentItemNewPrice" parameterType="com.platform.ems.domain.InvInventoryDocumentItem"
+            resultMap="InvInventoryDocumentItemResult">
+        SELECT
+        t.client_id,
+        t.inventory_document_item_sid,
+        t.inventory_document_sid,
+        t.material_sid,
+        t.sku1_sid,
+        t.sku2_sid,
+        t.barcode_sid,
+        t.unit_base,
+        t.quantity,
+        t.price,
+        t.storehouse_sid,
+        t.storehouse_location_sid,
+        t.reason_type,
+        t.free_flag,
+        t.currency_amount_before,
+        t.currency_amount_after,
+        t.trade_type,
+        t.unit_price,
+        t.price_quantity,
+        t.unit_conversion_rate,
+        t.total_quantity_before,
+        t.stock_count_result,
+        t.price_before,
+        t.total_quantity_after,
+        t.sample_usage,
+        t.price_after,
+        t.refer_document_sid,
+        t.refer_document_code,
+        t.refer_document_item_sid,
+        t.refer_document_item_num,
+        t.refer_doc_category,
+        t.item_num,
+        t.product_codes,
+        t.product_sku1_names,
+        t.product_sku2_names,
+        t.product_quantity_remark,
+        t.usage_remark,
+        t.source_remark,
+        t.remark,
+        t.unit_price,
+        t.unit_conversion_rate,
+        t.creator_account,
+        t.create_date,
+        t.paichan_batch,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys
+        FROM s_inv_inventory_document_item t
+        LEFT JOIN s_inv_inventory_document t1 on t.inventory_document_sid = t1.inventory_document_sid
+        <where>
+            <if test="barcodeSid != null">
+                and t.barcode_sid = #{barcodeSid}
+            </if>
+            <if test="documentCategory != null and documentCategory != ''">
+                and t1.business_flag = #{businessFlag}
+            </if>
+            <if test="businessFlag != null and businessFlag != ''">
+                and t1.business_flag = #{businessFlag}
+            </if>
+            <if test="vendorSid != null">
+                and t1.vendor_sid = #{vendorSid}
+            </if>
+            <if test="customerSid">
+                and t1.customer_sid = #{customerSid}
+            </if>
+        </where>
+        ORDER BY t.create_date DESC
+        <if test="pageBegin != null and pageBegin != '' and pageSize != null and pageSize != ''">
+            LIMIT ${pageBegin}, ${pageSize}
+        </if>
+    </select>
+
+</mapper>

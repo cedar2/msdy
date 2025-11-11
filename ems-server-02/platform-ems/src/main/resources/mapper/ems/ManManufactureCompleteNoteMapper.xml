@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManManufactureCompleteNoteMapper">
+
+    <resultMap type="com.platform.ems.domain.ManManufactureCompleteNote" id="ManManufactureCompleteNoteResult">
+        <result property="clientId" column="client_id"/>
+        <result property="manufactureCompleteNoteSid" column="manufacture_complete_note_sid"/>
+        <result property="manufactureCompleteNoteCode" column="manufacture_complete_note_code"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="manufactureOrderSid" column="manufacture_order_sid"/>
+        <result property="manufactureOrderCode" column="manufacture_order_code"/>
+        <result property="documentType" column="document_type"/>
+        <result property="businessType" column="business_type"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="storehouseSid" column="storehouse_sid"/>
+        <result property="storehouseLocationSid" column="storehouse_location_sid"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="plantName" column="plant_name"/>
+        <result property="shortName" column="short_name"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="storehouseName" column="storehouse_name"/>
+        <result property="locationName" column="location_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="approvalNode" column="approval_node"/>
+        <result property="approvalUserName" column="approval_user_name"/>
+        <result property="submitDate" column="submit_date"/>
+        <result property="submitUserName" column="submit_user_name"/>
+        <result property="quantity" column="quantity"/>
+    </resultMap>
+
+    <sql id="selectManManufactureCompleteNoteVo">
+        select
+        t.client_id,
+        t.manufacture_complete_note_sid,
+        t.manufacture_complete_note_code,
+        t.document_date,
+        t.plant_sid,
+        t.manufacture_order_sid,
+        t.manufacture_order_code,
+        t.document_type,
+        t.business_type,
+        t.company_sid,
+        t.storehouse_sid,
+        t.storehouse_location_sid,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.plant_code,
+        t1.plant_name,
+        t1.short_name,
+        t2.material_sid,
+        t3.material_code,
+        t3.material_name,
+        t4.storehouse_name,
+        t5.location_name,
+		t6.nick_name as creator_account_name,
+		t7.nick_name as updater_account_name,
+		t8.nick_name as confirmer_account_name,
+		t9.approval_node,
+        t9.approval_user_name,
+        t9.create_date as submit_date,
+        t9.approval_user_id,
+        t10.nick_name as submit_user_name,
+        ifnull(sum( t11.complete_quantity ) ,0) AS quantity
+  from s_man_manufacture_complete_note t
+        LEFT JOIN s_bas_plant t1 ON t1.plant_sid = t.plant_sid
+        LEFT JOIN s_man_manufacture_order t2 ON t2.manufacture_order_sid = t.manufacture_order_sid
+        LEFT JOIN s_bas_material t3 ON t3.material_sid = t2.material_sid
+        LEFT JOIN s_bas_storehouse t4 ON t4.storehouse_sid = t.storehouse_sid
+	    LEFT JOIN s_bas_storehouse_location t5 ON t5.storehouse_location_sid = t.storehouse_location_sid
+		LEFT JOIN sys_user t6 on t6.user_name=t.creator_account
+		LEFT JOIN sys_user t7 on t7.user_name=t.updater_account
+		LEFT JOIN sys_user t8 on t8.user_name=t.confirmer_account
+		LEFT JOIN s_sys_form_process t9 ON t9.form_id = t.manufacture_complete_note_sid
+        LEFT JOIN sys_user t10 ON t10.user_id = t9.create_by_id
+        LEFT JOIN s_man_manufacture_complete_note_item t11 ON t11.manufacture_complete_note_sid = t.manufacture_complete_note_sid
+    </sql>
+
+    <select id="selectManManufactureCompleteNoteById" parameterType="Long" resultMap="ManManufactureCompleteNoteResult">
+        <include refid="selectManManufactureCompleteNoteVo"/>
+        where t.manufacture_complete_note_sid = #{manufactureCompleteNoteSid}
+    </select>
+
+
+    <select id="selectManManufactureCompleteNoteList" parameterType="com.platform.ems.domain.ManManufactureCompleteNote"
+            resultMap="ManManufactureCompleteNoteResult">
+        <include refid="selectManManufactureCompleteNoteVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="manufactureCompleteNoteSid != null ">
+                and t.manufacture_complete_note_sid =#{manufactureCompleteNoteSid}
+            </if>
+            <if test="manufactureCompleteNoteSidList != null and manufactureCompleteNoteSidList.length >0 ">
+                and t.manufacture_complete_note_sid in
+                (<foreach collection="manufactureCompleteNoteSidList" item="manufactureCompleteNoteSid" separator=",">
+                #{manufactureCompleteNoteSid}</foreach>)
+            </if>
+            <if test="manufactureCompleteNoteCode != null ">
+                and t.manufacture_complete_note_code like concat('%',#{manufactureCompleteNoteCode}, '%')
+            </if>
+            <if test="documentDate != null ">
+                and t.document_date = #{documentDate}
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid =#{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="manufactureOrderSid != null ">
+                and t.manufacture_order_sid =#{manufactureOrderSid}
+            </if>
+            <if test="manufactureOrderCode != null ">
+                and t.manufacture_order_code like concat('%',#{manufactureOrderCode}, '%')
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator="or">t3.material_code like
+                concat('%',#{item}, '%')</foreach>)
+            </if>
+            <if test="documentType != null  and documentType != ''">
+                and (<foreach collection="documentType.split(';')" item="item" separator="or">t.document_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="businessType != null  and businessType != ''">
+                and (<foreach collection="businessType.split(';')" item="item" separator="or">t.business_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="storehouseSid != null ">
+                and t.storehouse_sid =#{storehouseSid}
+            </if>
+            <if test="storehouseLocationSid != null ">
+                and t.storehouse_location_sid =#{storehouseLocationSid}
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        group by t.manufacture_complete_note_sid
+        order by t.manufacture_complete_note_code desc, t.create_date desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_manufacture_complete_note
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            manufacture_complete_note_sid,
+            manufacture_complete_note_code,
+            document_date,
+            plant_sid,
+            manufacture_order_sid,
+            manufacture_order_code,
+            document_type,
+            business_type,
+            company_sid,
+            remark,
+            storehouse_sid,
+            handle_status,
+            storehouse_location_sid,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.manufactureCompleteNoteSid},
+                #{item.manufactureCompleteNoteCode},
+                #{item.documentDate},
+                #{item.plantSid},
+                #{item.manufactureOrderSid},
+                #{item.manufactureOrderCode},
+                #{item.documentType},
+                #{item.businessType},
+                #{item.companySid},
+                #{item.remark},
+                #{item.storehouseSid},
+                #{item.handleStatus},
+                #{item.storehouseLocationSid},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_manufacture_complete_note
+        <trim prefix="SET" suffixOverrides=",">
+            manufacture_complete_note_code = #{manufactureCompleteNoteCode},
+            document_date = #{documentDate},
+            plant_sid = #{plantSid},
+            manufacture_order_sid = #{manufactureOrderSid},
+            manufacture_order_code = #{manufactureOrderCode},
+            document_type = #{documentType},
+            business_type = #{businessType},
+            company_sid = #{companySid},
+            remark = #{remark},
+            storehouse_sid = #{storehouseSid},
+            handle_status = #{handleStatus},
+            storehouse_location_sid = #{storehouseLocationSid},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where manufacture_complete_note_sid = #{manufactureCompleteNoteSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_manufacture_complete_note
+            <trim prefix="SET" suffixOverrides=",">
+                manufacture_complete_note_code = #{manufactureCompleteNoteCode},
+                document_date = #{documentDate},
+                plant_sid = #{plantSid},
+                manufacture_order_sid = #{manufactureOrderSid},
+                manufacture_order_code = #{manufactureOrderCode},
+                document_type = #{documentType},
+                business_type = #{businessType},
+                company_sid = #{companySid},
+                remark = #{remark},
+                storehouse_sid = #{storehouseSid},
+                handle_status = #{handleStatus},
+                storehouse_location_sid = #{storehouseLocationSid},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where manufacture_complete_note_sid = #{manufactureCompleteNoteSid}
+        </foreach>
+    </update>
+
+</mapper>

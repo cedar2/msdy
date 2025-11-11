@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasMaterialSaleStationMapper">
+
+    <resultMap type="com.platform.ems.domain.BasMaterialSaleStation" id="BasMaterialSaleStationResult">
+        <result property="clientId" column="client_id"/>
+        <result property="materialSaleStationSid" column="material_sale_station_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="saleStationSid" column="sale_station_sid"/>
+        <result property="saleStationCode" column="sale_station_code"/>
+        <result property="operateStatus" column="operate_status"/>
+        <result property="operateLevel" column="operate_level"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectBasMaterialSaleStationVo">
+        select t.client_id,
+               t.material_sale_station_sid,
+               t.material_sid,
+               t.sale_station_sid,
+               ifnull(t.sale_station_code, t2.code) as sale_station_code,
+               t.operate_status,
+               t.operate_level,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t1.material_code,
+               t1.material_name,
+               t1.sample_code_self,
+               t2.name as sale_station_name,
+               t2.region,
+               t2.platform_dianshang,
+               t3.nick_name AS creator_account_name,
+               t4.nick_name AS updater_account_name
+        from s_bas_material_sale_station t
+         LEFT JOIN s_bas_material t1 ON t.material_sid = t1.material_sid
+         LEFT JOIN s_con_sale_station t2 ON t.sale_station_sid = t2.sid
+         LEFT JOIN sys_user t3 ON t.creator_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN sys_user t4 ON t.updater_account = t4.user_name AND t.client_id = t4.client_id
+    </sql>
+
+    <select id="selectBasMaterialSaleStationById" parameterType="Long" resultMap="BasMaterialSaleStationResult">
+        <include refid="selectBasMaterialSaleStationVo"/>
+        where t.material_sale_station_sid = #{materialSaleStationSid}
+    </select>
+
+    <select id="selectBasMaterialSaleStationList" parameterType="com.platform.ems.domain.BasMaterialSaleStation"
+            resultMap="BasMaterialSaleStationResult">
+        <include refid="selectBasMaterialSaleStationVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="saleStationSid != null ">
+                and t.sale_station_sid = #{saleStationSid}
+            </if>
+            <if test="saleStationCode != null and saleStationCode != ''">
+                and t.sale_station_code = #{saleStationCode}
+            </if>
+            <if test="operateStatus != null and operateStatus != ''">
+                and t.operate_status = #{operateStatus}
+            </if>
+            <if test="operateLevel != null and operateLevel != ''">
+                and t.operate_level = #{operateLevel}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t3.nick_name = #{creatorAccountName}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+            <if test="bigClassSid != null ">
+                and t1.big_class_sid = #{bigClassSid}
+            </if>
+            <if test="middleClassSid != null ">
+                and t1.middle_class_sid = #{middleClassSid}
+            </if>
+            <if test="smallClassSid != null ">
+                and t1.small_class_sid = #{smallClassSid}
+            </if>
+            <if test="groupType != null and groupType != ''">
+                and t1.group_type = #{groupType}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_material_sale_station
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            material_sale_station_sid,
+            material_sid,
+            sale_station_sid,
+            sale_station_code,
+            operate_status,
+            operate_level,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.materialSaleStationSid},
+                #{item.materialSid},
+                #{item.saleStationSid},
+                #{item.saleStationCode},
+                #{item.operateStatus},
+                #{item.operateLevel},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_material_sale_station
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            material_sid = #{materialSid},
+            sale_station_sid = #{saleStationSid},
+            sale_station_code = #{saleStationCode},
+            operate_status = #{operateStatus},
+            operate_level = #{operateLevel},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where material_sale_station_sid = #{materialSaleStationSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_material_sale_station
+            <trim prefix="SET" suffixOverrides=",">
+                operate_status = #{o.operateStatus},
+                operate_level = #{o.operateLevel},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where material_sale_station_sid = #{o.materialSaleStationSid}
+        </foreach>
+    </update>
+
+    <select id="selectMaterialSaleStationCategoryForm" parameterType="com.platform.ems.domain.dto.response.form.BasMaterialSaleStationCategoryForm"
+            resultType="com.platform.ems.domain.dto.response.form.BasMaterialSaleStationCategoryForm">
+        SELECT t.spu_count, t.sale_station_sid, t.small_class_sid, t.middle_class_sid, t.big_class_sid, t.group_type,
+            SUM(IF(t.operate_status ='CL',t.spu,0)) as spu_stock,
+            SUM(IF(t.operate_status ='JHZL',t.spu,0)) as spu_plan_inc,
+            SUM(IF(t.operate_status ='GH',t.spu,0)) as spu_plan,
+            SUM(IF(t.operate_status ='QZ',t.spu,0)) as spu_discard,
+            t2.name as sale_station_name,
+            t2.region,
+            t2.platform_dianshang,
+            t3.node_name as small_class_name,
+            t4.node_name as middle_class_name,
+            t5.node_name as big_class_name
+        FROM (
+            SELECT t.spu_count, t.sale_station_sid, t.small_class_sid, t.middle_class_sid, t.big_class_sid, t.group_type, t1.operate_status, t1.spu
+            FROM (
+                SELECT COUNT(DISTINCT(t.material_sid)) as spu_count, t.sale_station_sid, t1.small_class_sid, t1.middle_class_sid, t1.big_class_sid, t1.group_type
+                FROM s_bas_material_sale_station t
+                LEFT JOIN s_bas_material t1 ON t.material_sid = t1.material_sid
+                <where>
+                    <if test="clientId != null and clientId != ''">
+                        and t.client_id = #{clientId}
+                    </if>
+                </where>
+                GROUP BY t.sale_station_sid, t1.small_class_sid, t1.middle_class_sid, t1.big_class_sid, t1.group_type
+            ) t
+            LEFT JOIN (
+                SELECT COUNT(DISTINCT(t.material_sid)) as spu, t.operate_status, t.sale_station_sid, t1.small_class_sid, t1.middle_class_sid, t1.big_class_sid, t1.group_type
+                FROM s_bas_material_sale_station t
+                LEFT JOIN s_bas_material t1 ON t.material_sid = t1.material_sid
+                <where>
+                    <if test="clientId != null and clientId != ''">
+                        and t.client_id = #{clientId}
+                    </if>
+                </where>
+                GROUP BY t.sale_station_sid, t.operate_status, t1.small_class_sid, t1.middle_class_sid, t1.big_class_sid, t1.group_type
+            ) t1 ON t.sale_station_sid = t1.sale_station_sid and t.group_type &lt;=&gt; t1.group_type
+                and t.small_class_sid &lt;=&gt; t1.small_class_sid and t.middle_class_sid &lt;=&gt; t1.middle_class_sid and t.big_class_sid &lt;=&gt; t1.big_class_sid
+        ) t
+        LEFT JOIN s_con_sale_station t2 ON t.sale_station_sid = t2.sid
+        LEFT JOIN s_con_material_class t3 ON t.small_class_sid = t3.material_class_sid
+        LEFT JOIN s_con_material_class t4 ON t.middle_class_sid = t4.material_class_sid
+        LEFT JOIN s_con_material_class t5 ON t.big_class_sid = t5.material_class_sid
+        <where>
+            <if test="smallClassSid != null ">
+                and t.small_class_sid = #{smallClassSid}
+            </if>
+            <if test="middleClassSid != null ">
+                and t.middle_class_sid = #{middleClassSid}
+            </if>
+            <if test="bigClassSid != null ">
+                and t.big_class_sid = #{bigClassSid}
+            </if>
+            <if test="groupType != null ">
+                and t.group_type = #{groupType}
+            </if>
+            <if test="groupTypeList != null and groupTypeList.length >0">
+                and t.group_type in
+                (<foreach collection="groupTypeList" item="groupType" separator=",">#{groupType}</foreach>)
+            </if>
+            <if test="saleStationSidList != null and saleStationSidList.length >0">
+                and t.sale_station_sid in
+                (<foreach collection="saleStationSidList" item="saleStationSid" separator=",">#{saleStationSid}</foreach>)
+            </if>
+            <if test="platformDianshangList != null and platformDianshangList.length >0">
+                and t2.platform_dianshang in
+                (<foreach collection="platformDianshangList" item="platformDianshang" separator=",">#{platformDianshang}</foreach>)
+            </if>
+            <if test="regionList != null and regionList.length >0">
+                and t2.region in
+                (<foreach collection="regionList" item="region" separator=",">#{region}</foreach>)
+            </if>
+        </where>
+        GROUP BY t.sale_station_sid, t.small_class_sid, t.middle_class_sid, t.big_class_sid, t.group_type
+        <if test="pageNum != null and pageSize != null">LIMIT ${pageBegin},${pageSize}</if>
+    </select>
+</mapper>

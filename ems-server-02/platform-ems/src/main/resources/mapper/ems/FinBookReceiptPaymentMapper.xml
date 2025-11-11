@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinBookReceiptPaymentMapper">
+
+    <resultMap type="com.platform.ems.domain.FinBookReceiptPayment" id="FinBookReceiptPaymentResult">
+        <result property="clientId" column="client_id"/>
+        <result property="bookReceiptPaymentSid" column="book_receipt_payment_sid"/>
+        <result property="bookReceiptPaymentItemSid" column="book_receipt_payment_item_sid"/>
+        <result property="bookReceiptPaymentCode" column="book_receipt_payment_code"/>
+        <result property="bookType" column="book_type"/>
+        <result property="bookSourceCategory" column="book_source_category"/>
+        <result property="bookTypeName" column="book_type_name"/>
+        <result property="bookSourceCategoryName" column="book_source_category_name"/>
+        <result property="agentName" column="agent_name"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="paymentYear" column="payment_year"/>
+        <result property="paymentMonth" column="payment_month"/>
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="businessChannel" column="business_channel"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="referDocCategory" column="refer_doc_category"/>
+        <result property="referDocSid" column="refer_doc_sid"/>
+        <result property="referDocCode" column="refer_doc_code"/>
+        <result property="receivableDate" column="receivable_date"/>
+        <result property="receiptPaymentStatus" column="receipt_payment_status"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="currencyAmountTaxDhx" column="currency_amount_tax_dhx"/>
+        <result property="receivableBillCode" column="receivable_bill_code"/>
+        <result property="payMethodName" column="pay_method_name"/>
+        <result property="monthAccountPeriod" column="month_account_period"/>
+        <result property="accountCategoryName" column="account_category_name"/>
+        <result property="businessTypeName" column="business_type_name"/>
+        <result property="receivableCompanySid" column="receivable_company_sid"/>
+        <result property="receivableCompanyName" column="receivable_company_name"/>
+        <result property="saleDepartment" column="sale_department"/>
+        <result property="saleDepartmentName" column="sale_department_name"/>
+        <result property="saleOrgName" column="sale_org_name"/>
+        <result property="isFinanceVerify" column="is_finance_verify"/>
+    </resultMap>
+
+    <sql id="selectFinBookReceiptPaymentVo">
+        select t.client_id,
+               t.book_receipt_payment_sid,
+               t.book_receipt_payment_code,
+               t.book_type,
+               t.book_source_category,
+               t.customer_sid,
+               t.customer_code,
+               t.company_sid,
+               t.company_code,
+               t.document_date,
+               t.payment_year,
+               t.payment_month,
+               t.company_brand_sid,
+               t.business_channel,
+               t.currency,
+               t.currency_unit,
+               t.refer_doc_category,
+               t.refer_doc_sid,
+               t.refer_doc_code,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys
+        from s_fin_book_receipt_payment t
+    </sql>
+
+    <select id="selectFinBookReceiptPaymentById" parameterType="Long" resultMap="FinBookReceiptPaymentResult">
+        <include refid="selectFinBookReceiptPaymentVo"/>
+        where t.book_receipt_payment_sid = #{bookReceiptPaymentSid}
+    </select>
+
+    <select id="selectFinBookReceiptPaymentList" parameterType="com.platform.ems.domain.FinBookReceiptPayment"
+            resultMap="FinBookReceiptPaymentResult">
+        <include refid="selectFinBookReceiptPaymentVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="bookReceiptPaymentCode != null ">
+                and t.book_receipt_payment_code like concat('%', #{bookReceiptPaymentCode}, '%')
+            </if>
+            <if test="bookType != null  and bookType != ''">
+                and t.book_type = #{bookType}
+            </if>
+            <if test="bookSourceCategory != null  and bookSourceCategory != ''">
+                and t.book_source_category = {bookSourceCategory}
+            </if>
+            <if test="customerSid != null ">
+                and t.customer_sid =#{customerSid}
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="documentDate != null ">
+                and t.document_date = #{documentDate}
+            </if>
+            <if test="paymentYear != null ">
+                and t.payment_year =#{paymentYear}
+            </if>
+            <if test="paymentMonth != null ">
+                and t.payment_month =#{paymentMonth}
+            </if>
+            <if test="companyBrandSid != null ">
+                and t.company_brand_sid =#{companyBrandSid}
+            </if>
+            <if test="businessChannel != null  and businessChannel != ''">
+                and t.business_channel = #{businessChannel}
+            </if>
+            <if test="referDocCategory != null  and referDocCategory != ''">
+                and t.refer_doc_category = #{referDocCategory}
+            </if>
+            <if test="referDocSid != null ">
+                and t.refer_doc_sid =#{referDocSid}
+            </if>
+            <if test="referDocCode != null ">
+                and t.refer_doc_code =#{referDocCode}
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_book_receipt_payment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            book_receipt_payment_sid,
+            book_receipt_payment_code,
+            book_type,
+            book_source_category,
+            customer_sid,
+            customer_code,
+            company_sid,
+            company_code,
+            document_date,
+            payment_year,
+            payment_month,
+            company_brand_sid,
+            business_channel,
+            currency,
+            currency_unit,
+            refer_doc_category,
+            refer_doc_sid,
+            refer_doc_code,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.bookReceiptPaymentSid},
+                #{item.bookReceiptPaymentCode},
+                #{item.bookType},
+                #{item.bookSourceCategory},
+                #{item.customerSid},
+                #{item.customerCode},
+                #{item.companySid},
+                #{item.companyCode},
+                #{item.documentDate},
+                #{item.paymentYear},
+                #{item.paymentMonth},
+                #{item.companyBrandSid},
+                #{item.businessChannel},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.referDocCategory},
+                #{item.referDocSid},
+                #{item.referDocCode},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_book_receipt_payment
+        <trim prefix="SET" suffixOverrides=",">
+            book_type = #{bookType},
+            book_source_category = #{bookSourceCategory},
+            customer_sid = #{customerSid},
+            customer_code = #{customerCode},
+            company_sid = #{companySid},
+            company_code = #{companyCode},
+            document_date = #{documentDate},
+            payment_year = #{paymentYear},
+            payment_month = #{paymentMonth},
+            company_brand_sid = #{companyBrandSid},
+            business_channel = #{businessChannel},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where book_receipt_payment_sid = #{bookReceiptPaymentSid}
+    </update>
+
+    <select id="getReportForm" parameterType="com.platform.ems.domain.FinBookReceiptPayment"
+            resultMap="FinBookReceiptPaymentResult">
+        SELECT
+        t.book_receipt_payment_code,
+        t.book_receipt_payment_sid,
+        t2.book_receipt_payment_item_sid,
+        t5.receivable_bill_code,
+        t2.refer_doc_sid,
+        t5.receivable_bill_code as refer_doc_code,
+        t.customer_sid,
+        t.customer_code,
+        t3.customer_name,
+        ifnull(t3.short_name,t3.customer_name) as customer_short_name,
+        t.company_sid,
+        t.company_code,
+        t4.company_name,
+        ifnull(t4.short_name,t4.company_name) as company_short_name,
+        t5.agent,
+        t5.pay_method,
+        t2.clear_status,
+        t2.currency_amount_tax_sk,
+        t2.currency_amount_tax_hxz,
+        t19.currency_amount_tax_yhx,
+        t19.currency_amount_tax_dhx,
+        t5.receivable_date,
+        t2.tax_rate,
+        t2.is_finance_verify,
+        t2.item_num,
+        t.handle_status,
+        t.remark,
+        t.currency,
+        t.currency_unit,
+        t.create_date,
+        t.creator_account,
+        t11.nick_name AS creator_account_name,
+        t5.product_season_sid,
+        t10.product_season_name,
+        t5.receipt_payment_status,
+        t.book_type,
+        t.book_source_category,
+        t8.nick_name AS agent_name,
+        t12.name AS book_type_name,
+        t13.name AS book_source_category_name,
+        t6.name AS pay_method_name,
+        t5.month_account_period,
+        t14.name AS account_category_name,
+        t15.name AS business_type_name,
+        t16.name AS sale_org_name,
+        t5.receivable_company_sid,
+        t17.company_name AS receivable_company_name,
+        t5.sale_department,
+        t18.department_name AS sale_department_name
+        FROM
+        s_fin_book_receipt_payment t
+        LEFT JOIN s_fin_book_receipt_payment_item t2 on t.book_receipt_payment_sid = t2.book_receipt_payment_sid
+        LEFT JOIN s_bas_customer t3 on t.customer_sid = t3.customer_sid
+        LEFT JOIN s_bas_company t4 on t.company_sid = t4.company_sid
+        LEFT JOIN s_fin_receivable_bill t5 on t2.refer_doc_sid = t5.receivable_bill_sid
+        LEFT JOIN s_con_payment_method t6 on t5.pay_method = t6.code
+        LEFT JOIN sys_user t8 on t5.agent = t8.user_name
+        LEFT JOIN s_bas_product_season t10 on t5.product_season_sid = t10.product_season_sid
+        LEFT JOIN sys_user t11 on t.creator_account = t11.user_name
+        LEFT JOIN s_con_book_type t12 on t.book_type = t12.code
+        LEFT JOIN s_con_book_source_category t13 on t.book_source_category = t13.code
+        LEFT JOIN s_con_account_category t14 ON t14.code = t5.account_category
+        LEFT JOIN s_con_bu_type_receivable_bill t15 ON t5.business_type = t15.code
+        LEFT JOIN s_con_sale_org t16 ON t16.code = t5.sale_org
+        LEFT JOIN s_bas_company t17 ON t5.receivable_company_sid = t17.company_sid
+        LEFT JOIN s_bas_department t18 ON t5.sale_department = t18.department_sid
+        LEFT JOIN (<include refid="com.platform.ems.mapper.FinBookReceiptPaymentItemMapper.selectFinBookReceiptPaymentItemVo"/>)
+            t19 ON t2.book_receipt_payment_item_sid = t19.book_receipt_payment_item_sid
+        <where>
+            <if test="clientId != null  and clientId != ''">and t.client_id =#{clientId}</if>
+            <if test="bookTypeList != null and bookTypeList.length >0">and t.book_type in
+                (<foreach collection="bookTypeList" item="bookType" separator=",">#{bookType}</foreach>)
+            </if>
+            <if test="bookSourceCategoryList != null and bookSourceCategoryList.length >0">and t.book_source_category in
+                (<foreach collection="bookSourceCategoryList" item="bookSourceCategory" separator=",">
+                    #{bookSourceCategory}</foreach>)
+            </if>
+            <if test="clearStatusList != null and clearStatusList.length >0">and t2.clear_status in
+                (<foreach collection="clearStatusList" item="clearStatus" separator=",">#{clearStatus}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">and t.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">and t5.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=",">
+                    #{productSeasonSid}</foreach>)
+            </if>
+            <if test="agentList != null and agentList.length >0">and t5.agent in
+                (<foreach collection="agentList" item="agent" separator=",">#{agent}</foreach>)
+            </if>
+            <if test="payMethodList != null and payMethodList.length >0">and t5.pay_method in
+                (<foreach collection="payMethodList" item="payMethod" separator=",">#{payMethod}</foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0">and t.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">
+                    #{creatorAccount}</foreach>)
+            </if>
+            <if test="isFinanceVerify != null and isFinanceVerify != ''">
+                and t2.is_finance_verify = #{isFinanceVerify}
+            </if>
+            <if test="referDocSid != null and referDocSid != ''">and t2.refer_doc_sid =#{referDocSid}</if>
+            <if test="customerSid != null and customerSid != ''">and t.customer_sid =#{customerSid}</if>
+            <if test="companySid != null and companySid != ''">and t.company_sid =#{companySid}</if>
+            <if test="businessType != null  and businessType != ''">and t5.business_type =#{businessType}</if>
+            <if test="payMethod != null  and payMethod != ''">and t5.pay_method =#{payMethod}</if>
+            <if test="agent != null  and agent != ''">and t5.agent =#{agent}</if>
+            <if test="saleDepartment != null  and saleDepartment != ''">and t5.sale_department =#{saleDepartment}</if>
+            <if test="clearStatusNot != null  and clearStatusNot != ''">and t2.clear_status != #{clearStatusNot}</if>
+            <if test="clearStatus != null  and clearStatus != ''">and t2.clear_status =#{clearStatus}</if>
+            <if test="productSeasonSid != null  and productSeasonSid != ''">and t5.product_season_sid
+                =#{productSeasonSid}
+            </if>
+            <if test="bookType != null  and bookType != ''">and t.book_type =#{bookType}</if>
+            <if test="bookSourceCategory != null  and bookSourceCategory != ''">and t.book_source_category
+                =#{bookSourceCategory}
+            </if>
+            <if test="documentType != null  and documentType != ''">and t5.document_type =#{documentType}</if>
+            <if test="receivableBillCode != null and receivableBillCode != ''">and t5.receivable_bill_code like
+                concat('%', #{receivableBillCode}, '%')
+            </if>
+            <if test="handleStatusNot != null and handleStatusNot != '' ">and t.handle_status != #{handleStatusNot}</if>
+            <if test="handleStatus != null  and handleStatus != ''">and t.handle_status = #{handleStatus}</if>
+            <if test="handleStatusList != null and handleStatusList.length >0">and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and (
+                <foreach collection="creatorAccount.split(';')" item="item" separator=" or ">t11.nick_name like
+                    concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;=
+                date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;=
+                date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">${params.dataScope}</if>
+        </where>
+        order by t.book_receipt_payment_code desc
+    </select>
+
+</mapper>

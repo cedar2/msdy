@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.InvCusSpecialInventoryMapper">
+
+    <resultMap type="com.platform.ems.domain.InvCusSpecialInventory" id="InvCusSpecialInventoryResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="customerSpecialStockSid" column="customer_special_stock_sid"/>
+                    <result property="materialSid" column="material_sid"/>
+                    <result property="sku1Sid" column="sku1_sid"/>
+                    <result property="sku2Sid" column="sku2_sid"/>
+                    <result property="barcodeSid" column="barcode_sid"/>
+                    <result property="customerSid" column="customer_sid"/>
+                    <result property="unitBase" column="unit_base"/>
+                    <result property="storehouseSid" column="storehouse_sid"/>
+                    <result property="storehouseLocationSid" column="storehouse_location_sid"/>
+                    <result property="specialStock" column="special_stock"/>
+                    <result property="totalQuantity" column="total_quantity"/>
+                    <result property="unlimitedQuantity" column="unlimited_quantity"/>
+                    <result property="qualityTestedQuantity" column="quality_tested_quantity"/>
+                    <result property="freezedQuantity" column="freezed_quantity"/>
+                    <result property="firstUpdateStockDate" column="first_update_stock_date"/>
+                    <result property="latestUpdateStockDate" column="latest_update_stock_date"/>
+                    <result property="latestCountDate" column="latest_count_date"/>
+                    <result property="remark" column="remark"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="confirmerAccount" column="confirmer_account"/>
+                    <result property="confirmDate" column="confirm_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+            </resultMap>
+
+    <sql id="selectInvCusSpecialInventoryVo">
+        select t.client_id,
+        t.customer_special_stock_sid,
+        t.material_sid,
+        t.sku1_sid,
+        t.sku2_sid,
+        t.barcode_sid,
+        t.customer_sid,
+        t.unit_base,
+        t.storehouse_sid,
+        t.storehouse_location_sid,
+        t.special_stock,
+        t.total_quantity,
+        t.unlimited_quantity,
+        t.quality_tested_quantity,
+        t.freezed_quantity,
+        t.first_update_stock_date,
+        t.latest_update_stock_date,
+        t.latest_count_date,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t3.storehouse_name,
+	    t3.storehouse_code,
+	    t4.location_name,
+	    t4.location_code,
+        t4.location_code as storehouse_location_code,
+	    t5.material_name,
+        t5.material_code,
+        t6.sku_code AS sku1_code,
+        t6.sku_name AS sku1_name,
+        t7.sku_code AS sku2_code,
+        t7.sku_name AS sku2_name,
+        t8.customer_code,
+        t8.customer_name,
+        t9.name as special_stock_name,
+        t10.name as unit_base_name,
+        t11.barcode,
+        t12.usage_frequency_flag
+        from s_inv_cus_special_inventory t
+         LEFT JOIN s_bas_storehouse t3 on t3.storehouse_sid=t.storehouse_sid
+         LEFT JOIN s_bas_storehouse_location t4 on t4.storehouse_location_sid=t.storehouse_location_sid
+         LEFT JOIN s_bas_material t5 ON t5.material_sid = t.material_sid
+	     LEFT JOIN s_bas_sku t6 ON t6.sku_sid = t.sku1_sid
+	     LEFT JOIN s_bas_sku t7 ON t7.sku_sid = t.sku2_sid
+	     LEFT JOIN s_bas_customer t8 on t8.customer_sid=t.customer_sid
+         LEFT JOIN s_con_special_stock t9 on t9.code=t.special_stock
+         LEFT JOIN s_con_measure_unit t10 on t10.code=t.unit_base
+         LEFT JOIN s_bas_material_barcode t11 on t11.barcode_sid=t.barcode_sid
+         LEFT JOIN s_inv_storehouse_material t12 on t.barcode_sid = t12.barcode_sid and t.storehouse_sid = t12.storehouse_sid
+    </sql>
+
+    <select id="selectInvCusSpecialInventoryById" parameterType="Long" resultMap="InvCusSpecialInventoryResult">
+        <include refid="selectInvCusSpecialInventoryVo"/>
+        where t.customer_special_stock_sid = #{customerSpecialStockSid}
+    </select>
+    <select id="getInvCusSpecialInventory" parameterType="com.platform.ems.domain.InvCusSpecialInventory" resultType="com.platform.ems.domain.InvCusSpecialInventory">
+        <include refid="selectInvCusSpecialInventoryVo"/>
+        where t.storehouse_sid = #{storehouseSid} and t.storehouse_location_sid=#{storehouseLocationSid} and t.customer_sid=#{customerSid}and  t.special_stock=#{specialStock}
+    </select>
+    <select id="getLocationAble" parameterType="com.platform.ems.domain.InvInventoryLocation" resultType="com.platform.ems.domain.InvInventoryLocation">
+       select
+       t.customer_special_stock_sid,
+       t.unlimited_quantity,
+       sum(t2.quantity) as obligate_quantity ,
+       IFNULL(t.unlimited_quantity-sum(t2.quantity),t.unlimited_quantity)  as able_quantity
+       from s_inv_cus_special_inventory t
+       left join s_inv_reserve_inventory t2 on t2.storehouse_sid =t.storehouse_sid
+       and t2.storehouse_location_sid=t.storehouse_location_sid and t2.barcode_sid=t.barcode_sid
+       and t2.customer_sid=t.customer_sid and t2.special_stock =t.special_stock
+        <if test="businessOrderSid != null">
+            and t2.business_order_sid !=#{businessOrderSid}
+        </if>
+       where t.storehouse_sid = #{storehouseSid} and t.storehouse_location_sid=#{storehouseLocationSid} and t.barcode_sid=#{barcodeSid} and t.customer_sid=#{customerSid}and  t.special_stock=#{specialStock}
+       group  by t.storehouse_sid,t.storehouse_sid,t.barcode_sid,t.customer_sid,t.special_stock
+    </select>
+
+
+    <select id="selectInvCusSpecialInventoryList" parameterType="com.platform.ems.domain.InvCusSpecialInventory"
+            resultMap="InvCusSpecialInventoryResult">
+        <include refid="selectInvCusSpecialInventoryVo"/>
+        <where>
+            <if test="materialCode != null and materialCode !=''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator="or">t5.material_code like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="unlimitedQuantity != null and unlimitedQuantity != '' ">
+                and t.unlimited_quantity =#{unlimitedQuantity}
+            </if>
+            <if test="materialName != null and materialName !=''">
+                and (<foreach collection="materialName.split(';')" item="item" separator="or">t5.material_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and t.customer_sid in
+                (<foreach collection="customerSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="storehouseSid != null and storehouseSid != '' ">
+                and t.storehouse_sid =#{storehouseSid}
+            </if>
+            <if test="storehouseLocationSidList != null and storehouseLocationSidList.length >0">
+                and t.storehouse_location_sid in
+                (<foreach collection="storehouseLocationSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="specialStockList != null  and specialStockList.length >0" >
+                and (<foreach collection="specialStockList" item="item" separator="or">t.special_stock like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialClassSidList != null  and materialClassSidList.length >0" >
+                and (<foreach collection="materialClassSidList" item="item" separator="or">t5.material_class_sid like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="materialTypeList != null  and materialTypeList.length >0" >
+                and (<foreach collection="materialTypeList" item="item" separator="or">t5.material_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_inv_cus_special_inventory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                customer_special_stock_sid,
+                                                                material_sid,
+                                                                sku1_sid,
+                                                                sku2_sid,
+                                                                barcode_sid,
+                                                                customer_sid,
+                                                                unit_base,
+                                                                storehouse_sid,
+                                                                storehouse_location_sid,
+                                                                special_stock,
+                                                                total_quantity,
+                                                                unlimited_quantity,
+                                                                quality_tested_quantity,
+                                                                freezed_quantity,
+                                                                first_update_stock_date,
+                                                                latest_update_stock_date,
+                                                                latest_count_date,
+                                                                remark,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                confirmer_account,
+                                                                confirm_date,
+                                                                data_source_sys,
+                                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                                                            #{clientId},
+                                                                                #{customerSpecialStockSid},
+                                                                                #{materialSid},
+                                                                                #{sku1Sid},
+                                                                                #{sku2Sid},
+                                                                                #{barcodeSid},
+                                                                                #{customerSid},
+                                                                                #{unitBase},
+                                                                                #{storehouseSid},
+                                                                                #{storehouseLocationSid},
+                                                                                #{specialStock},
+                                                                                #{totalQuantity},
+                                                                                #{unlimitedQuantity},
+                                                                                #{qualityTestedQuantity},
+                                                                                #{freezedQuantity},
+                                                                                #{firstUpdateStockDate},
+                                                                                #{latestUpdateStockDate},
+                                                                                #{latestCountDate},
+                                                                                #{remark},
+                                                                                #{creatorAccount},
+                                                                                #{createDate},
+                                                                                #{updaterAccount},
+                                                                                #{updateDate},
+                                                                                #{confirmerAccount},
+                                                                                #{confirmDate},
+                                                                                #{dataSourceSys},
+                                                </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_inv_cus_special_inventory
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                                            material_sid = #{materialSid},
+                                                                sku1_sid = #{sku1Sid},
+                                                                sku2_sid = #{sku2Sid},
+                                                                barcode_sid = #{barcodeSid},
+                                                                customer_sid = #{customerSid},
+                                                                unit_base = #{unitBase},
+                                                                storehouse_sid = #{storehouseSid},
+                                                                storehouse_location_sid = #{storehouseLocationSid},
+                                                                special_stock = #{specialStock},
+                                                                total_quantity = #{totalQuantity},
+                                                                unlimited_quantity = #{unlimitedQuantity},
+                                                                quality_tested_quantity = #{qualityTestedQuantity},
+                                                                freezed_quantity = #{freezedQuantity},
+                                                                first_update_stock_date = #{firstUpdateStockDate},
+                                                                latest_update_stock_date = #{latestUpdateStockDate},
+                                                                latest_count_date = #{latestCountDate},
+                                                                remark = #{remark},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                confirmer_account = #{confirmerAccount},
+                                                                confirm_date = #{confirmDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where customer_special_stock_sid = #{customerSpecialStockSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_inv_cus_special_inventory
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    material_sid = #{materialSid},
+                                                                                sku1_sid = #{sku1Sid},
+                                                                                sku2_sid = #{sku2Sid},
+                                                                                barcode_sid = #{barcodeSid},
+                                                                                customer_sid = #{customerSid},
+                                                                                unit_base = #{unitBase},
+                                                                                storehouse_sid = #{storehouseSid},
+                                                                                storehouse_location_sid = #{storehouseLocationSid},
+                                                                                special_stock = #{specialStock},
+                                                                                total_quantity = #{totalQuantity},
+                                                                                unlimited_quantity = #{unlimitedQuantity},
+                                                                                quality_tested_quantity = #{qualityTestedQuantity},
+                                                                                freezed_quantity = #{freezedQuantity},
+                                                                                first_update_stock_date = #{firstUpdateStockDate},
+                                                                                latest_update_stock_date = #{latestUpdateStockDate},
+                                                                                latest_count_date = #{latestCountDate},
+                                                                                remark = #{remark},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                confirmer_account = #{confirmerAccount},
+                                                                                confirm_date = #{confirmDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where customer_special_stock_sid = #{customerSpecialStockSid}
+        </foreach>
+    </update>
+
+</mapper>

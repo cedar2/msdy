@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinCustomerFundsFreezeBillItemMapper">
+
+    <resultMap type="com.platform.ems.domain.FinCustomerFundsFreezeBillItem" id="FinCustomerFundsFreezeBillItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="fundsFreezeBillItemSid" column="funds_freeze_bill_item_sid"/>
+        <result property="fundsFreezeBillSid" column="funds_freeze_bill_sid"/>
+        <result property="freezeType" column="freeze_type"/>
+        <result property="currencyAmount" column="currency_amount"/>
+        <result property="currencyAmountYsf" column="currency_amount_ysf"/>
+        <result property="currencyAmountSfz" column="currency_amount_sfz"/>
+        <result property="unfreezeStatus" column="unfreeze_status"/>
+        <result property="preFundsFreezeBillSid" column="pre_funds_freeze_bill_sid"/>
+        <result property="preFundsFreezeBillCode" column="pre_funds_freeze_bill_code"/>
+        <result property="preFundsFreezeBillItemSid" column="pre_funds_freeze_bill_item_sid"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="saleContractSid" column="sale_contract_sid"/>
+        <result property="saleContractCode" column="sale_contract_code"/>
+        <result property="salesOrderSid" column="sales_order_sid"/>
+        <result property="salesOrderCode" column="sales_order_code"/>
+        <result property="deliveryNoteSid" column="delivery_note_sid"/>
+        <result property="deliveryNoteCode" column="delivery_note_code"/>
+        <result property="paperContractCode" column="paper_contract_code"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="fundsFreezeBillCode" column="funds_freeze_bill_code"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="companyName" column="company_name"/>
+        <result property="documentTypeName" column="document_type_name"/>
+        <result property="freezeTypeName" column="freeze_type_name"/>
+        <result property="freezeAmount" column="freeze_amount"/>
+        <result property="currencyAmountDsf" column="currency_amount_dsf"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="documentType" column="document_type"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="salePersonName" column="sale_person_name"/>
+        <result property="preDocumentDate" column="pre_document_date"/>
+        <result property="preDocumentType" column="pre_document_type"/>
+        <result property="preDocumentTypeName" column="pre_document_type_name"/>
+        <result property="preUnfreezeStatus" column="pre_unfreeze_status"/>
+        <result property="preCurrencyAmountYsf" column="pre_currency_amount_ysf"/>
+        <result property="preCurrencyAmountSfz" column="pre_currency_amount_sfz"/>
+        <result property="preCurrencyAmountDsf" column="pre_currency_amount_dsf"/>
+        <result property="preItemNum" column="pre_item_num"/>
+    </resultMap>
+
+    <sql id="selectFinCustomerFundsFreezeBillItemVo">
+        select t.client_id,
+               t.funds_freeze_bill_item_sid,
+               t.funds_freeze_bill_sid,
+               t.freeze_type,
+               t.currency_amount,
+               t.currency_amount_ysf,
+               t9.currency_amount_ysf AS pre_currency_amount_ysf,
+               t.currency_amount_sfz,
+               t9.currency_amount_sfz AS pre_currency_amount_sfz,
+               t.unfreeze_status,
+               t9.unfreeze_status AS pre_unfreeze_status,
+               t.pre_funds_freeze_bill_sid,
+               t.pre_funds_freeze_bill_code,
+               t.pre_funds_freeze_bill_item_sid,
+               t9.item_num AS pre_item_num,
+               t.item_num,
+               t.sale_contract_sid,
+               t.sale_contract_code,
+               t.sales_order_sid,
+               t.sales_order_code,
+               t.delivery_note_sid,
+               t.delivery_note_code,
+               t.paper_contract_code,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.funds_freeze_bill_code,
+               t4.document_date,
+               t10.document_date AS pre_document_date,
+               t4.document_type,
+               t10.document_type AS pre_document_type,
+               t4.handle_status,
+               t5.company_name,
+               ifnull(t5.short_name,t5.company_name) as company_short_name,
+               t6.customer_name,
+               ifnull(t6.short_name,t6.customer_name) as customer_short_name,
+               t7.name AS document_type_name,
+               t13.name AS pre_document_type_name,
+               t8.name AS freeze_type_name,
+               t11.product_season_name,
+               t12.nick_name AS sale_person_name,
+               if(t.pre_funds_freeze_bill_item_sid is null, t.currency_amount, t9.currency_amount) AS freeze_amount,
+               if(t.pre_funds_freeze_bill_item_sid is null, (t.currency_amount - t.currency_amount_ysf - t.currency_amount_sfz),
+                  null) AS currency_amount_dsf,
+               if(t.pre_funds_freeze_bill_item_sid is null, (t.currency_amount - t.currency_amount_ysf - t.currency_amount_sfz),
+                  (t9.currency_amount - t9.currency_amount_ysf - t9.currency_amount_sfz + t.currency_amount)) AS pre_currency_amount_dsf
+        from s_fin_customer_funds_freeze_bill_item t
+        left join sys_user t2 on t.creator_account = t2.user_name
+        left join sys_user t3 on t.updater_account = t3.user_name
+        left join s_fin_customer_funds_freeze_bill t4 on t.funds_freeze_bill_sid = t4.funds_freeze_bill_sid
+        left join s_bas_company t5 on t4.company_sid = t5.company_sid
+        left join s_bas_customer t6 on t4.customer_sid = t6.customer_sid
+        left join s_con_funds_freeze_type_customer t8 on t.freeze_type = t8.code
+        left join s_fin_customer_funds_freeze_bill_item t9 on t.pre_funds_freeze_bill_item_sid = t9.funds_freeze_bill_item_sid
+        left join s_fin_customer_funds_freeze_bill t10 on t9.funds_freeze_bill_sid = t10.funds_freeze_bill_sid
+        left join s_con_doc_type_customer_funds_freeze t7 on t4.document_type = t7.code
+        left join s_bas_product_season t11 on t4.product_season_sid = t11.product_season_sid
+        left join sys_user t12 on t4.sale_person = t12.user_name
+        left join s_con_doc_type_customer_funds_freeze t13 on t10.document_type = t13.code
+    </sql>
+
+    <select id="selectFinCustomerFundsFreezeBillItemById" parameterType="Long"
+            resultMap="FinCustomerFundsFreezeBillItemResult">
+        <include refid="selectFinCustomerFundsFreezeBillItemVo"/>
+        where t.funds_freeze_bill_item_sid = #{fundsFreezeBillItemSid}
+    </select>
+
+    <select id="selectFinCustomerFundsFreezeBillItemList"
+            parameterType="com.platform.ems.domain.FinCustomerFundsFreezeBillItem"
+            resultMap="FinCustomerFundsFreezeBillItemResult">
+        <include refid="selectFinCustomerFundsFreezeBillItemVo"/>
+        <where>
+            <if test="fundsFreezeBillCode != null and fundsFreezeBillCode != ''">
+                and t4.funds_freeze_bill_code like concat('%',#{fundsFreezeBillCode}, '%')
+            </if>
+            <if test="documentType != null and documentType != ''">
+                and t4.document_type =#{documentType}
+            </if>
+            <if test="customerSid != null">
+                and t4.customer_sid =#{customerSid}
+            </if>
+            <if test="companySid != null ">
+                and t4.company_sid =#{companySid}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t4.handle_status =#{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t4.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length >0">
+                and t4.document_type in
+                (<foreach collection="documentTypeList" item="documentType" separator=",">#{documentType}</foreach>)
+            </if>
+            <if test="fundsFreezeBillSidList != null and fundsFreezeBillSidList.length >0">and t.funds_freeze_bill_sid in
+                (<foreach collection="fundsFreezeBillSidList" item="fundsFreezeBillSid" separator=","> #{fundsFreezeBillSid}</foreach>)
+            </if>
+            <if test="unfreezeStatusList != null and unfreezeStatusList.length >0">
+                and t.unfreeze_status in
+                (<foreach collection="unfreezeStatusList" item="unfreezeStatus" separator=",">#{unfreezeStatus}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and t4.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t4.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="fundsFreezeBillSid != null ">
+                and t.funds_freeze_bill_sid =#{fundsFreezeBillSid}
+            </if>
+            <if test="freezeType != null  and freezeType != ''">
+                and t.freeze_type = #{freezeType}
+            </if>
+            <if test="currencyAmount != null ">
+                and t.currency_amount = #{currencyAmount}
+            </if>
+            <if test="currencyAmountYsf != null ">
+                and t.currency_amount_ysf = #{currencyAmountYsf}
+            </if>
+            <if test="currencyAmountSfz != null ">
+                and t.currency_amount_sfz = #{currencyAmountSfz}
+            </if>
+            <if test="unfreezeStatus != null  and unfreezeStatus != ''">
+                and t.unfreeze_status = #{unfreezeStatus}
+            </if>
+            <if test="unfreezeStatusNot != null and unfreezeStatusNot != ''">
+                and t.unfreeze_status != #{unfreezeStatusNot}
+            </if>
+            <if test="preFundsFreezeBillSid != null ">
+                and t.pre_funds_freeze_bill_sid =#{preFundsFreezeBillSid}
+            </if>
+            <if test="preFundsFreezeBillCode != null ">
+                and t.pre_funds_freeze_bill_code =#{preFundsFreezeBillCode}
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num =#{itemNum}
+            </if>
+            <if test="saleContractSid != null ">
+                and t.sale_contract_sid =#{saleContractSid}
+            </if>
+            <if test="saleContractCode != null  and saleContractCode != ''">
+                and (<foreach collection="saleContractCode.split(';')" item="item" separator=" or ">t.sale_contract_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="salesOrderSid != null ">
+                and t.sales_order_sid =#{salesOrderSid}
+            </if>
+            <if test="salesOrderCode != null ">
+                and t.sales_order_code =#{salesOrderCode}
+            </if>
+            <if test="deliveryNoteSid != null ">
+                and t.delivery_note_sid =#{deliveryNoteSid}
+            </if>
+            <if test="deliveryNoteCode != null ">
+                and t.delivery_note_code =#{deliveryNoteCode}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or ">t2.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where> order by t4.funds_freeze_bill_code desc, t.item_num asc, t.create_date desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_customer_funds_freeze_bill_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            funds_freeze_bill_item_sid,
+            funds_freeze_bill_sid,
+            freeze_type,
+            currency_amount,
+            currency_amount_ysf,
+            currency_amount_sfz,
+            unfreeze_status,
+            pre_funds_freeze_bill_sid,
+            pre_funds_freeze_bill_code,
+            pre_funds_freeze_bill_item_sid,
+            item_num,
+            sale_contract_sid,
+            sale_contract_code,
+            sales_order_sid,
+            sales_order_code,
+            delivery_note_sid,
+            delivery_note_code,
+            paper_contract_code,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.fundsFreezeBillItemSid},
+                #{item.fundsFreezeBillSid},
+                #{item.freezeType},
+                #{item.currencyAmount},
+                #{item.currencyAmountYsf},
+                #{item.currencyAmountSfz},
+                #{item.unfreezeStatus},
+                #{item.preFundsFreezeBillSid},
+                #{item.preFundsFreezeBillCode},
+                #{item.preFundsFreezeBillItemSid},
+                #{item.itemNum},
+                #{item.saleContractSid},
+                #{item.saleContractCode},
+                #{item.salesOrderSid},
+                #{item.salesOrderCode},
+                #{item.deliveryNoteSid},
+                #{item.deliveryNoteCode},
+                #{item.paperContractCode},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_customer_funds_freeze_bill_item
+        <trim prefix="SET" suffixOverrides=",">
+            freeze_type = #{freezeType},
+            currency_amount = #{currencyAmount},
+            currency_amount_ysf = #{currencyAmountYsf},
+            currency_amount_sfz = #{currencyAmountSfz},
+            unfreeze_status = #{unfreezeStatus},
+            pre_funds_freeze_bill_sid = #{preFundsFreezeBillSid},
+            pre_funds_freeze_bill_code = #{preFundsFreezeBillCode},
+            item_num = #{itemNum},
+            sale_contract_sid = #{saleContractSid},
+            sale_contract_code = #{saleContractCode},
+            sales_order_sid = #{salesOrderSid},
+            sales_order_code = #{salesOrderCode},
+            delivery_note_sid = #{deliveryNoteSid},
+            delivery_note_code = #{deliveryNoteCode},
+            paper_contract_code = #{paperContractCode},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where funds_freeze_bill_item_sid = #{fundsFreezeBillItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_customer_funds_freeze_bill_item
+            <trim prefix="SET" suffixOverrides=",">
+                freeze_type = #{o.freezeType},
+                currency_amount = #{o.currencyAmount},
+                currency_amount_ysf = #{o.currencyAmountYsf},
+                currency_amount_sfz = #{o.currencyAmountSfz},
+                unfreeze_status = #{o.unfreezeStatus},
+                pre_funds_freeze_bill_sid = #{o.preFundsFreezeBillSid},
+                pre_funds_freeze_bill_code = #{o.preFundsFreezeBillCode},
+                item_num = #{o.itemNum},
+                sale_contract_sid = #{o.saleContractSid},
+                sale_contract_code = #{o.saleContractCode},
+                sales_order_sid = #{o.salesOrderSid},
+                sales_order_code = #{o.salesOrderCode},
+                delivery_note_sid = #{o.deliveryNoteSid},
+                delivery_note_code = #{o.deliveryNoteCode},
+                paper_contract_code = #{o.paperContractCode},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                data_source_sys = #{o.dataSourceSys},
+            </trim>
+            where funds_freeze_bill_item_sid = #{o.fundsFreezeBillItemSid}
+        </foreach>
+    </update>
+
+</mapper>

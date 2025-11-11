@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurOutsourcePurchasePriceAttachmentMapper">
+
+    <resultMap type="com.platform.ems.domain.PurOutsourcePurchasePriceAttachment"
+               id="PurOutsourcePurchasePriceAttachmentResult">
+        <result property="clientId" column="client_id"/>
+        <result property="outsourcePurchasePriceAttachmentSid" column="outsource_purchase_price_attachment_sid"/>
+        <result property="outsourcePurchasePriceSid" column="outsource_purchase_price_sid"/>
+        <result property="fileType" column="file_type"/>
+        <result property="fileName" column="file_name"/>
+        <result property="filePath" column="file_path"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectPurOutsourcePurchasePriceAttachmentVo">
+        select t.client_id,
+               t.outsource_purchase_price_attachment_sid,
+               t.outsource_purchase_price_sid,
+               t.file_type,
+               t.file_name,
+               t.file_path,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t1.name      AS file_type_name,
+               t2.nick_name AS creator_account_name
+        from s_pur_outsource_purchase_price_attachment t
+        LEFT JOIN s_con_file_type t1 on t1.code = t.file_type and t1.dataobject_category_code = 'OutsourcePurchasePrice'
+        LEFT JOIN sys_user t2 on t.creator_account = t2.user_name and t.client_id = t2.client_id
+    </sql>
+
+    <select id="selectPurOutsourcePurchasePriceAttachmentById" parameterType="long"
+            resultMap="PurOutsourcePurchasePriceAttachmentResult">
+        <include refid="selectPurOutsourcePurchasePriceAttachmentVo"/>
+        where t.outsource_purchase_price_attachment_sid = #{outsourcePurchasePriceAttachmentSid}
+    </select>
+
+    <select id="selectPurOutsourcePurchasePriceAttachmentList"
+            parameterType="com.platform.ems.domain.PurOutsourcePurchasePriceAttachment"
+            resultMap="PurOutsourcePurchasePriceAttachmentResult">
+        <include refid="selectPurOutsourcePurchasePriceAttachmentVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="outsourcePurchasePriceSid != null ">
+                and t.outsource_purchase_price_sid =#{outsourcePurchasePriceSid}
+            </if>
+            <if test="fileType != null and fileType != ''">
+                and t.file_type = #{fileType}
+            </if>
+            <if test="fileName != null and fileName != ''">
+                and t.file_name like concat('%', #{fileName}, '%')
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_outsource_purchase_price_attachment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            outsource_purchase_price_attachment_sid,
+            outsource_purchase_price_sid,
+            file_type,
+            file_name,
+            file_path,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.outsourcePurchasePriceAttachmentSid},
+                #{item.outsourcePurchasePriceSid},
+                #{item.fileType},
+                #{item.fileName},
+                #{item.filePath},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_outsource_purchase_price_attachment
+        <trim prefix="SET" suffixOverrides=",">
+            file_type = #{fileType},
+            file_name = #{fileName},
+            file_path = #{filePath},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where outsource_purchase_price_attachment_sid = #{outsourcePurchasePriceAttachmentSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_outsource_purchase_price_attachment
+            <trim prefix="SET" suffixOverrides=",">
+                file_type = #{o.fileType},
+                file_name = #{o.fileName},
+                file_path = #{o.filePath},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                data_source_sys = #{o.dataSourceSys},
+            </trim>
+            where outsource_purchase_price_attachment_sid = #{o.outsourcePurchasePriceAttachmentSid}
+        </foreach>
+    </update>
+
+</mapper>

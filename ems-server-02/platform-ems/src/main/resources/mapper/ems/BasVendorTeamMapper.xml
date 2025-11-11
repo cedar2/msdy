@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasVendorTeamMapper">
+
+    <resultMap type="com.platform.ems.domain.BasVendorTeam" id="BasVendorTeamResult">
+        <result property="clientId" column="client_id"/>
+        <result property="vendorTeamSid" column="vendor_team_sid"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="headcount" column="headcount"/>
+        <result property="numberDevelop" column="number_develop"/>
+        <result property="numberQuality" column="number_quality"/>
+        <result property="numberProduce" column="number_produce"/>
+        <result property="numberWorkerDirect" column="number_worker_direct"/>
+        <result property="numberManager" column="number_manager"/>
+        <result property="monthManHour" column="month_man_hour"/>
+        <result property="monthWage" column="month_wage"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="isProvideDormitory" column="is_provide_dormitory"/>
+        <result property="isProvideDining" column="is_provide_dining"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectBasVendorTeamVo">
+        select t.client_id,
+               t.vendor_team_sid,
+               t.vendor_sid,
+               t.headcount,
+               t.number_develop,
+               t.number_quality,
+               t.number_produce,
+               t.number_worker_direct,
+               t.number_manager,
+               t.month_man_hour,
+               t.month_wage,
+               t.currency,
+               t.currency_unit,
+               t.is_provide_dormitory,
+               t.is_provide_dining,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name
+        from s_bas_vendor_team t
+         left join sys_user t2 on t.creator_account = t2.user_name
+         left join sys_user t3 on t.updater_account = t3.user_name
+    </sql>
+
+    <select id="selectBasVendorTeamById" parameterType="Long" resultMap="BasVendorTeamResult">
+        <include refid="selectBasVendorTeamVo"/>
+        where t.vendor_team_sid = #{vendorTeamSid}
+    </select>
+
+
+    <select id="selectBasVendorTeamList" parameterType="com.platform.ems.domain.BasVendorTeam"
+            resultMap="BasVendorTeamResult">
+        <include refid="selectBasVendorTeamVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="vendorSid != null ">
+                and t.vendor_sid =#{vendorSid}
+            </if>
+            <if test="headcount != null ">
+                and t.headcount =#{headcount}
+            </if>
+            <if test="numberDevelop != null ">
+                and t.number_develop =#{numberDevelop}
+            </if>
+            <if test="numberQuality != null ">
+                and t.number_quality =#{numberQuality}
+            </if>
+            <if test="numberProduce != null ">
+                and t.number_produce =#{numberProduce}
+            </if>
+            <if test="numberWorkerDirect != null ">
+                and t.number_worker_direct =#{numberWorkerDirect}
+            </if>
+            <if test="numberManager != null ">
+                and t.number_manager =#{numberManager}
+            </if>
+            <if test="monthManHour != null ">
+                and t.month_man_hour = #{monthManHour}
+            </if>
+            <if test="monthWage != null ">
+                and t.month_wage = #{monthWage}
+            </if>
+            <if test="currency != null  and currency != ''">
+                and (<foreach collection="currency.split(';')" item="item" separator="or">t.currency like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">
+                and (<foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isProvideDormitory != null  and isProvideDormitory != ''">
+                and (<foreach collection="isProvideDormitory.split(';')" item="item" separator="or">
+                t.is_provide_dormitory like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isProvideDining != null  and isProvideDining != ''">
+                and (<foreach collection="isProvideDining.split(';')" item="item" separator="or">t.is_provide_dining
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_vendor_team
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            vendor_team_sid,
+            vendor_sid,
+            headcount,
+            number_develop,
+            number_quality,
+            number_produce,
+            number_worker_direct,
+            number_manager,
+            month_man_hour,
+            month_wage,
+            currency,
+            currency_unit,
+            is_provide_dormitory,
+            is_provide_dining,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.vendorTeamSid},
+                #{item.vendorSid},
+                #{item.headcount},
+                #{item.numberDevelop},
+                #{item.numberQuality},
+                #{item.numberProduce},
+                #{item.numberWorkerDirect},
+                #{item.numberManager},
+                #{item.monthManHour},
+                #{item.monthWage},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.isProvideDormitory},
+                #{item.isProvideDining},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_vendor_team
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            vendor_sid = #{vendorSid},
+            headcount = #{headcount},
+            number_develop = #{numberDevelop},
+            number_quality = #{numberQuality},
+            number_produce = #{numberProduce},
+            number_worker_direct = #{numberWorkerDirect},
+            number_manager = #{numberManager},
+            month_man_hour = #{monthManHour},
+            month_wage = #{monthWage},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            is_provide_dormitory = #{isProvideDormitory},
+            is_provide_dining = #{isProvideDining},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where vendor_team_sid = #{vendorTeamSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_vendor_team
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                vendor_sid = #{vendorSid},
+                headcount = #{headcount},
+                number_develop = #{numberDevelop},
+                number_quality = #{numberQuality},
+                number_produce = #{numberProduce},
+                number_worker_direct = #{numberWorkerDirect},
+                number_manager = #{numberManager},
+                month_man_hour = #{monthManHour},
+                month_wage = #{monthWage},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+                is_provide_dormitory = #{isProvideDormitory},
+                is_provide_dining = #{isProvideDining},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where vendor_team_sid = #{vendorTeamSid}
+        </foreach>
+    </update>
+
+</mapper>

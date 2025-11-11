@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasImageMapper">
+
+    <resultMap type="com.platform.ems.domain.BasImage" id="BasImageResult">
+        <result property="clientId" column="client_id"/>
+        <result property="imageSid" column="image_sid"/>
+        <result property="imageCode" column="image_code"/>
+        <result property="imageName" column="image_name"/>
+        <result property="imageType" column="image_type"/>
+        <result property="imageDescription" column="image_description"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectBasImageVo">
+        select t.client_id,
+        t.image_sid,
+        t.image_code,
+        t.image_name,
+        t.image_type,
+        t.image_description,
+        t.picture_path,
+        t.remark,
+        t.status,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t2.nick_name AS creator_account_name,
+        t3.nick_name AS updater_account_name,
+        t4.nick_name AS confirmer_account_name
+        from s_bas_image t
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+        LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t4.client_id
+    </sql>
+
+    <select id="selectBasImageById" parameterType="Long" resultMap="BasImageResult">
+        <include refid="selectBasImageVo"/>
+        where t.image_sid = #{imageSid}
+    </select>
+
+    <select id="selectBasImageList" parameterType="com.platform.ems.domain.BasImage"
+            resultMap="BasImageResult">
+        <include refid="selectBasImageVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="imageName != null and imageName != ''">and
+                t.image_name like concat('%', #{imageName}, '%')
+            </if>
+            <if test="imageType != null and imageType != ''">
+                and t.image_type = #{imageType}
+            </if>
+            <if test="imageDescription != null and imageDescription != ''">
+                and t.image_description = #{imageDescription}
+            </if>
+            <if test="picturePath != null and picturePath != ''">
+                and t.picture_path = #{picturePath}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+            <!-- 图案编码不支持模糊查询 -->
+            <if test="imageCode != null and imageCode != ''">
+                and t.image_code like concat('%', #{imageCode}, '%')
+            </if>
+            <!-- 创建人查询无效 -->
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <!-- 处理状态 -->
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length > 0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+        </where>
+        <!-- 列表按图案编码降序排列 -->
+        order by t.image_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_image
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            image_sid,
+            image_code,
+            image_name,
+            image_type,
+            image_description,
+            picture_path,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.imageCode},
+                #{item.imageName},
+                #{item.imageType},
+                #{item.imageDescription},
+                #{item.picturePath},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_image
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            image_code = #{imageCode},
+            image_name = #{imageName},
+            image_type = #{imageType},
+            image_description = #{imageDescription},
+            picture_path = #{picturePath},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where image_sid = #{imageSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_image
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                image_code = #{imageCode},
+                image_name = #{imageName},
+                image_type = #{imageType},
+                image_description = #{imageDescription},
+                picture_path = #{picturePath},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+            </trim>
+            where image_sid = #{imageSid}
+        </foreach>
+    </update>
+
+</mapper>

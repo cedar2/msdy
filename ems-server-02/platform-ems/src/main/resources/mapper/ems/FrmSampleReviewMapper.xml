@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FrmSampleReviewMapper">
+
+    <resultMap type="com.platform.ems.domain.FrmSampleReview" id="FrmSampleReviewResult">
+        <result property="clientId" column="client_id"/>
+        <result property="sampleReviewSid" column="sample_review_sid"/>
+        <result property="sampleReviewCode" column="sample_review_code"/>
+        <result property="developPlanSid" column="develop_plan_sid"/>
+        <result property="developPlanCode" column="develop_plan_code"/>
+        <result property="sampleSid" column="sample_sid"/>
+        <result property="sampleCode" column="sample_code"/>
+        <result property="projectSid" column="project_sid"/>
+        <result property="projectTaskSid" column="project_task_sid"/>
+        <result property="projectCode" column="project_code"/>
+        <result property="sku1Code" column="sku1_code"/>
+        <result property="reviewPhase" column="review_phase"/>
+        <result property="reviewResult" column="review_result"/>
+        <result property="sampleCost" column="sample_cost"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="designerSid" column="designer_sid"/>
+        <result property="designerCode" column="designer_code"/>
+        <result property="designerAssistantSid" column="designer_assistant_sid"/>
+        <result property="designerAssistantCode" column="designer_assistant_code"/>
+        <result property="specificationSize" column="specification_size"/>
+        <result property="packingSize" column="packing_size"/>
+        <result property="pureWeight" column="pure_weight"/>
+        <result property="packgeWeight" column="packge_weight"/>
+        <result property="sampleVendorSid" column="sample_vendor_sid"/>
+        <result property="sampleVendorCode" column="sample_vendor_code"/>
+        <result property="productVendorSid" column="product_vendor_sid"/>
+        <result property="productVendorCode" column="product_vendor_code"/>
+        <result property="reviewComment" column="review_comment"/>
+        <result property="otherComment" column="other_comment"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectFrmSampleReviewVo">
+        select t.client_id,
+               t.sample_review_sid,
+               t.sample_review_code,
+               t.project_sid,
+               t.project_code,
+               t.project_task_sid,
+               t.sku1_code,
+               t.review_phase,
+               t.review_result,
+               t.sample_cost,
+               t.currency,
+               t.currency_unit,
+               t.designer_sid,
+               t.designer_code,
+               t.designer_assistant_sid,
+               t.designer_assistant_code,
+               t.specification_size,
+               t.packing_size,
+               t.pure_weight,
+               t.packge_weight,
+               t.sample_vendor_sid,
+               t.sample_vendor_code,
+               t.product_vendor_sid,
+               t.product_vendor_code,
+               t.review_comment,
+               t.other_comment,
+               t.handle_status,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name,
+               t4.nick_name AS confirmer_account_name,
+               t5.project_name,
+               t5.product_code,
+               t5.material_barcode_code,
+               t5.develop_plan_sid,
+               t5.develop_plan_code,
+               t5.sample_sid,
+               t5.sample_code,
+               t5.yearmonth_project,
+               t6.develop_plan_name,
+               t7.staff_name as designer_name,
+               t8.staff_name as designer_assistant_name,
+               ifnull(t9.short_name, t9.vendor_name) as sample_vendor_name,
+               ifnull(t10.short_name, t10.vendor_name) as product_vendor_name,
+               t12.material_code,
+               t11.big_class_sid,
+               t11.middle_class_sid,
+               t11.small_class_sid,
+               t11.big_class_code,
+               t11.middle_class_code,
+               t11.small_class_code,
+               t11.group_type,
+               t13.node_name as big_class_name,
+               t14.node_name as middle_class_name,
+               t15.node_name as small_class_name,
+               t16.approval_node, t16.approval_user_id, t16.approval_user_name,
+               t16.create_date AS submit_date, t17.nick_name AS submit_user_name,
+               if(t19.erp_material_sku_enter_mode_project = 'XZ', t18.erp_material_sku_barcode, t5.erp_material_sku_barcode) AS erp_material_sku_barcode
+        from s_frm_sample_review t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+         LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name AND t.client_id = t4.client_id
+         LEFT JOIN s_prj_project t5 ON t.project_sid = t5.project_sid
+         LEFT JOIN s_dev_develop_plan t6 ON t5.develop_plan_sid = t6.develop_plan_sid
+         LEFT JOIN s_bas_staff t7 ON t.designer_sid = t7.staff_sid
+         LEFT JOIN s_bas_staff t8 ON t.designer_assistant_sid = t8.staff_sid
+         LEFT JOIN s_bas_vendor t9 ON t.sample_vendor_sid = t9.vendor_sid
+         LEFT JOIN s_bas_vendor t10 ON t.product_vendor_sid = t10.vendor_sid
+         LEFT JOIN s_dev_category_plan_item t11 ON t6.category_plan_item_sid = t11.category_plan_item_sid
+         LEFT JOIN s_bas_material t12 ON t5.sample_sid = t12.material_sid
+         LEFT JOIN s_con_material_class t13 ON t11.big_class_sid = t13.material_class_sid
+         LEFT JOIN s_con_material_class t14 ON t11.middle_class_sid = t14.material_class_sid
+         LEFT JOIN s_con_material_class t15 ON t11.small_class_sid = t15.material_class_sid
+         LEFT JOIN s_sys_form_process t16 ON t.sample_review_sid = t16.form_id
+         LEFT JOIN sys_user t17 ON t16.creator_account = t17.user_name
+         LEFT JOIN s_bas_material_barcode t18 ON t5.material_barcode_sid = t18.barcode_sid
+         LEFT JOIN s_sys_default_setting_client t19 ON t.client_id = t19.client_id
+    </sql>
+
+    <select id="selectFrmSampleReviewById" parameterType="Long" resultMap="FrmSampleReviewResult">
+        <include refid="selectFrmSampleReviewVo"/>
+        where t.sample_review_sid = #{sampleReviewSid}
+    </select>
+
+    <select id="selectFrmSampleReviewList" parameterType="com.platform.ems.domain.FrmSampleReview"
+            resultMap="FrmSampleReviewResult">
+        <include refid="selectFrmSampleReviewVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="sampleReviewSid != null ">
+                and t.sample_review_sid = #{sampleReviewSid}
+            </if>
+            <if test="sampleReviewSidList != null and sampleReviewSidList.length >0 ">
+                and t.sample_review_sid in
+                (<foreach collection="sampleReviewSidList" item="sampleReviewSid" separator=",">#{sampleReviewSid}</foreach>)
+            </if>
+            <if test="sampleReviewCode != null and sampleReviewCode != ''">
+                and t.sample_review_code like concat('%', #{sampleReviewCode}, '%')
+            </if>
+            <if test="developPlanSid != null ">
+                and t5.develop_plan_sid = #{developPlanSid}
+            </if>
+            <if test="developPlanSidList != null and developPlanSidList.length >0 ">
+                and t5.develop_plan_sid in
+                (<foreach collection="developPlanSidList" item="developPlanSid" separator=",">#{developPlanSid}</foreach>)
+            </if>
+            <if test="developPlanCode != null and developPlanCode != ''">
+                and t5.develop_plan_code like concat('%', #{developPlanCode}, '%')
+            </if>
+            <if test="developPlanName != null and developPlanName != ''">
+                and t6.develop_plan_name like concat('%', #{developPlanName}, '%')
+            </if>
+            <if test="yearmonthProjectBegin != null and yearmonthProjectBegin != ''">
+                and t5.yearmonth_project &gt;= #{yearmonthProjectBegin}
+            </if>
+            <if test="yearmonthProjectEnd != null and yearmonthProjectEnd != ''">
+                and t5.yearmonth_project &lt;= #{yearmonthProjectEnd}
+            </if>
+            <if test="sampleSid != null ">
+                and t5.sample_sid = #{sampleSid}
+            </if>
+            <if test="sampleSidList != null and sampleSidList.length >0 ">
+                and t5.sample_sid in
+                (<foreach collection="sampleSidList" item="sampleSid" separator=",">#{sampleSid}</foreach>)
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and t5.product_code like concat('%', #{productCode}, '%')
+            </if>
+            <if test="materialBarcodeCode != null and materialBarcodeCode != ''">
+                and t5.material_barcode_code like concat('%', #{materialBarcodeCode}, '%')
+            </if>
+            <if test="erpMaterialSkuBarcode != null and erpMaterialSkuBarcode != ''">
+                and if(t19.erp_material_sku_enter_mode_project = 'XZ', t18.erp_material_sku_barcode like concat('%', #{erpMaterialSkuBarcode}, '%'),
+                    t5.erp_material_sku_barcode like concat('%', #{erpMaterialSkuBarcode}, '%'))
+            </if>
+            <if test="sampleCode != null and sampleCode != ''">
+                and t5.sample_code like concat('%', #{sampleCode}, '%')
+            </if>
+            <if test="projectSid != null ">
+                and t.project_sid = #{projectSid}
+            </if>
+            <if test="projectSidList != null and projectSidList.length >0 ">
+                and t.project_sid in
+                (<foreach collection="projectSidList" item="projectSid" separator=",">#{projectSid}</foreach>)
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                and t.project_code like concat('%', #{projectCode}, '%')
+            </if>
+            <if test="projectTaskSid != null ">
+                and t.project_task_sid = #{projectTaskSid}
+            </if>
+            <if test="sku1Code != null and sku1Code != ''">
+                and t.sku1_code like concat('%', #{sku1Code}, '%')
+            </if>
+            <if test="reviewPhase != null and reviewPhase != ''">
+                and t.review_phase = #{reviewPhase}
+            </if>
+            <if test="reviewPhaseList != null and reviewPhaseList.length >0 ">
+                and t.review_phase in
+                (<foreach collection="reviewPhaseList" item="reviewPhase" separator=",">#{reviewPhase}</foreach>)
+            </if>
+            <if test="reviewResult != null and reviewResult != ''">
+                and t.review_result = #{reviewResult}
+            </if>
+            <if test="reviewResultList != null and reviewResultList.length >0 ">
+                and t.review_result in
+                (<foreach collection="reviewResultList" item="reviewResult" separator=",">#{reviewResult}</foreach>)
+            </if>
+            <if test="sampleCost != null ">
+                and t.sample_cost = #{sampleCost}
+            </if>
+            <if test="currency != null and currency != ''">
+                and t.currency = #{currency}
+            </if>
+            <if test="currencyUnit != null and currencyUnit != ''">
+                and t.currency_unit = #{currencyUnit}
+            </if>
+            <if test="designerSid != null ">
+                and t.designer_sid = #{designerSid}
+            </if>
+            <if test="designerSidList != null and designerSidList.length >0 ">
+                and t.designer_sid in
+                (<foreach collection="designerSidList" item="designerSid" separator=",">#{designerSid}</foreach>)
+            </if>
+            <if test="designerCode != null and designerCode != ''">
+                and t.designer_code like concat('%', #{designerCode}, '%')
+            </if>
+            <if test="designerAssistantSid != null ">
+                and t.designer_assistant_sid = #{designerAssistantSid}
+            </if>
+            <if test="designerAssistantSidList != null and designerAssistantSidList.length >0 ">
+                and t.designer_assistant_sid in
+                (<foreach collection="designerAssistantSidList" item="designerAssistantSid" separator=",">#{designerAssistantSid}</foreach>)
+            </if>
+            <if test="designerAssistantCode != null and designerAssistantCode != ''">
+                and t.designer_assistant_code = #{designerAssistantCode}
+            </if>
+            <if test="specificationSize != null and specificationSize != ''">
+                and t.specification_size = #{specificationSize}
+            </if>
+            <if test="packingSize != null and packingSize != ''">
+                and t.packing_size = #{packingSize}
+            </if>
+            <if test="pureWeight != null ">
+                and t.pure_weight = #{pureWeight}
+            </if>
+            <if test="packgeWeight != null ">
+                and t.packge_weight = #{packgeWeight}
+            </if>
+            <if test="sampleVendorSid != null ">
+                and t.sample_vendor_sid = #{sampleVendorSid}
+            </if>
+            <if test="sampleVendorSidList != null and sampleVendorSidList.length >0 ">
+                and t.sample_vendor_sid in
+                (<foreach collection="sampleVendorSidList" item="sampleVendorSid" separator=",">#{sampleVendorSid}</foreach>)
+            </if>
+            <if test="sampleVendorCode != null and sampleVendorCode != ''">
+                and t.sample_vendor_code = #{sampleVendorCode}
+            </if>
+            <if test="productVendorSid != null ">
+                and t.product_vendor_sid = #{productVendorSid}
+            </if>
+            <if test="productVendorSidList != null and productVendorSidList.length >0 ">
+                and t.product_vendor_sid in
+                (<foreach collection="productVendorSidList" item="productVendorSid" separator=",">#{productVendorSid}</foreach>)
+            </if>
+            <if test="productVendorCode != null and productVendorCode != ''">
+                and t.product_vendor_code = #{productVendorCode}
+            </if>
+            <if test="reviewComment != null and reviewComment != ''">
+                and t.review_comment = #{reviewComment}
+            </if>
+            <if test="otherComment != null and otherComment != ''">
+                and t.other_comment = #{otherComment}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="groupType != null and groupType != ''">
+                and t11.group_type = #{groupType}
+            </if>
+            <if test="groupTypeList != null and groupTypeList.length >0 ">
+                and t11.group_type in
+                (<foreach collection="groupTypeList" item="groupType" separator=",">
+                #{groupType}</foreach>)
+            </if>
+            <if test="approvalUserId != null and approvalUserId != '' ">
+                and (t16.approval_user_id = #{approvalUserId}  or t16.approval_user_id like concat('%, ', #{approvalUserId}, ',%')
+                or t16.approval_user_id like concat('%, ', #{approvalUserId}) or t16.approval_user_id like concat(#{approvalUserId}, ',%')
+                or t16.approval_user_id like concat('%,', #{approvalUserId}, ',%') or t16.approval_user_id like concat('%,', #{approvalUserId}))
+            </if>
+            <if test="approvalUserIdList != null and approvalUserIdList.length >0 ">
+                and (<foreach collection="approvalUserIdList" item="approvalUserId" separator=" or ">
+                (t16.approval_user_id = #{approvalUserId}  or t16.approval_user_id like concat('%, ', #{approvalUserId}, ',%')
+                or t16.approval_user_id like concat('%, ', #{approvalUserId}) or t16.approval_user_id like concat(#{approvalUserId}, ',%')
+                or t16.approval_user_id like concat('%,', #{approvalUserId}, ',%') or t16.approval_user_id like concat('%,', #{approvalUserId}))</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName},'%')
+            </if>
+            <if test="createDate != null ">
+                and date_format(t.create_date,'%y%m%d') = date_format(#{createDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">
+                and t.confirmer_account = #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="bigClassSid != null">
+                and t11.big_class_sid = #{bigClassSid}
+            </if>
+            <if test="bigClassSidList != null and bigClassSidList.length >0 ">
+                and t11.big_class_sid in
+                (<foreach collection="bigClassSidList" item="bigClassSid" separator=",">#{bigClassSid}</foreach>)
+            </if>
+            <if test="middleClassSid != null">
+                and t11.middle_class_sid = #{middleClassSid}
+            </if>
+            <if test="middleClassSidList != null and middleClassSidList.length >0 ">
+                and t11.middle_class_sid in
+                (<foreach collection="middleClassSidList" item="middleClassSid" separator=",">#{middleClassSid}</foreach>)
+            </if>
+            <if test="smallClassSid != null">
+                and t11.small_class_sid = #{smallClassSid}
+            </if>
+            <if test="smallClassSidList != null and smallClassSidList.length >0 ">
+                and t11.small_class_sid in
+                (<foreach collection="smallClassSidList" item="smallClassSid" separator=",">#{smallClassSid}</foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.sample_review_code desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_frm_sample_review
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sample_review_sid,
+            sample_review_code,
+            project_sid,
+            project_code,
+            project_task_sid,
+            sku1_code,
+            review_phase,
+            review_result,
+            sample_cost,
+            currency,
+            currency_unit,
+            designer_sid,
+            designer_code,
+            designer_assistant_sid,
+            designer_assistant_code,
+            specification_size,
+            packing_size,
+            pure_weight,
+            packge_weight,
+            sample_vendor_sid,
+            sample_vendor_code,
+            product_vendor_sid,
+            product_vendor_code,
+            review_comment,
+            other_comment,
+            handle_status,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.sampleReviewSid},
+                #{item.sampleReviewCode},
+                #{item.projectSid},
+                #{item.projectCode},
+                #{item.projectTaskSid},
+                #{item.sku1Code},
+                #{item.reviewPhase},
+                #{item.reviewResult},
+                #{item.sampleCost},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.designerSid},
+                #{item.designerCode},
+                #{item.designerAssistantSid},
+                #{item.designerAssistantCode},
+                #{item.specificationSize},
+                #{item.packingSize},
+                #{item.pureWeight},
+                #{item.packgeWeight},
+                #{item.sampleVendorSid},
+                #{item.sampleVendorCode},
+                #{item.productVendorSid},
+                #{item.productVendorCode},
+                #{item.reviewComment},
+                #{item.otherComment},
+                #{item.handleStatus},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_frm_sample_review
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            sample_review_code = #{sampleReviewCode},
+            project_sid = #{projectSid},
+            project_code = #{projectCode},
+            project_task_sid = #{projectTaskSid},
+            sku1_code = #{sku1Code},
+            review_phase = #{reviewPhase},
+            review_result = #{reviewResult},
+            sample_cost = #{sampleCost},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            designer_sid = #{designerSid},
+            designer_code = #{designerCode},
+            designer_assistant_sid = #{designerAssistantSid},
+            designer_assistant_code = #{designerAssistantCode},
+            specification_size = #{specificationSize},
+            packing_size = #{packingSize},
+            pure_weight = #{pureWeight},
+            packge_weight = #{packgeWeight},
+            sample_vendor_sid = #{sampleVendorSid},
+            sample_vendor_code = #{sampleVendorCode},
+            product_vendor_sid = #{productVendorSid},
+            product_vendor_code = #{productVendorCode},
+            review_comment = #{reviewComment},
+            other_comment = #{otherComment},
+            handle_status = #{handleStatus},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+        </trim>
+        where sample_review_sid = #{sampleReviewSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_frm_sample_review
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{o.clientId},
+                sample_review_code = #{o.sampleReviewCode},
+                project_sid = #{o.projectSid},
+                project_code = #{o.projectCode},
+                project_task_sid = #{o.projectTaskSid},
+                sku1_code = #{o.sku1Code},
+                review_phase = #{o.reviewPhase},
+                review_result = #{o.reviewResult},
+                sample_cost = #{o.sampleCost},
+                currency = #{o.currency},
+                currency_unit = #{o.currencyUnit},
+                designer_sid = #{o.designerSid},
+                designer_code = #{o.designerCode},
+                designer_assistant_sid = #{o.designerAssistantSid},
+                designer_assistant_code = #{o.designerAssistantCode},
+                specification_size = #{o.specificationSize},
+                packing_size = #{o.packingSize},
+                pure_weight = #{o.pureWeight},
+                packge_weight = #{o.packgeWeight},
+                sample_vendor_sid = #{o.sampleVendorSid},
+                sample_vendor_code = #{o.sampleVendorCode},
+                product_vendor_sid = #{o.productVendorSid},
+                product_vendor_code = #{o.productVendorCode},
+                review_comment = #{o.reviewComment},
+                other_comment = #{o.otherComment},
+                handle_status = #{o.handleStatus},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                confirmer_account = #{o.confirmerAccount},
+                confirm_date = #{o.confirmDate},
+            </trim>
+            where sample_review_sid = #{o.sampleReviewSid}
+        </foreach>
+    </update>
+
+</mapper>

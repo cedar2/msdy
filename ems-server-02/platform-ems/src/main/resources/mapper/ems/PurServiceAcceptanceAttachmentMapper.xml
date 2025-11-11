@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurServiceAcceptanceAttachmentMapper">
+
+    <resultMap type="com.platform.ems.domain.PurServiceAcceptanceAttachment" id="PurServiceAcceptanceAttachmentResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="serviceAcceptanceAttachmentSid" column="service_acceptance_attachment_sid"/>
+                    <result property="serviceAcceptanceSid" column="service_acceptance_sid"/>
+                    <result property="fileType" column="file_type"/>
+                    <result property="fileName" column="file_name"/>
+                    <result property="filePath" column="file_path"/>
+                    <result property="remark" column="remark"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+            </resultMap>
+
+    <sql id="selectPurServiceAcceptanceAttachmentVo">
+        select t.client_id, t.service_acceptance_attachment_sid, t.service_acceptance_sid, t.file_type, t.file_name, t.file_path, t.remark, t.creator_account, t.create_date, t.updater_account, t.update_date, t.data_source_sys from s_pur_service_acceptance_attachment t
+    </sql>
+
+    <select id="selectPurServiceAcceptanceAttachmentById" parameterType="Long" resultMap="PurServiceAcceptanceAttachmentResult">
+        <include refid="selectPurServiceAcceptanceAttachmentVo"/>
+        where t.service_acceptance_attachment_sid = #{serviceAcceptanceAttachmentSid}
+    </select>
+
+
+    <select id="selectPurServiceAcceptanceAttachmentList" parameterType="com.platform.ems.domain.PurServiceAcceptanceAttachment"
+            resultMap="PurServiceAcceptanceAttachmentResult">
+        <include refid="selectPurServiceAcceptanceAttachmentVo"/>
+        <where>
+                                                                                                    <if test="clientId != null  and clientId != ''">
+                               and (<foreach collection="clientId.split(';')" item="item" separator="or"> t.client_id like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                            <if test="serviceAcceptanceAttachmentSid != null ">
+                                and t.service_acceptance_attachment_sid = #{serviceAcceptanceAttachmentSid}
+                            </if>
+                            <if test="serviceAcceptanceSid != null ">
+                                and t.service_acceptance_sid = #{serviceAcceptanceSid}
+                            </if>
+                                                                                                                                                                <if test="fileType != null  and fileType != ''">
+                               and (<foreach collection="fileType.split(';')" item="item" separator="or"> t.file_type like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                    <if test="fileName != null  and fileName != ''">and
+                            t.file_name like concat('%', #{fileName}, '%')
+                        </if>
+                                                                                                                                        <if test="filePath != null  and filePath != ''">
+                               and (<foreach collection="filePath.split(';')" item="item" separator="or"> t.file_path like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                            <if test="creatorAccount != null  and creatorAccount != ''">
+                               and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t.creator_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="beginTime != null and beginTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                                </if>
+                                <if test="endTime != null and endTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                                </if>
+                                                                                                                                                                                            <if test="updaterAccount != null  and updaterAccount != ''">
+                               and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="updateDate != null ">
+                                    and t.update_date = #{updateDate}
+                                </if>
+                                                                                                                                                                                            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                               and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or"> t.data_source_sys like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_service_acceptance_attachment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                service_acceptance_attachment_sid,
+                                                                service_acceptance_sid,
+                                                                file_type,
+                                                                file_name,
+                                                                file_path,
+                                                                remark,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                data_source_sys,
+                                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                                                            #{clientId},
+                                                                                #{serviceAcceptanceAttachmentSid},
+                                                                                #{serviceAcceptanceSid},
+                                                                                #{fileType},
+                                                                                #{fileName},
+                                                                                #{filePath},
+                                                                                #{remark},
+                                                                                #{creatorAccount},
+                                                                                #{createDate},
+                                                                                #{updaterAccount},
+                                                                                #{updateDate},
+                                                                                #{dataSourceSys},
+                                                </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_service_acceptance_attachment
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                                            service_acceptance_sid = #{serviceAcceptanceSid},
+                                                                file_type = #{fileType},
+                                                                file_name = #{fileName},
+                                                                file_path = #{filePath},
+                                                                remark = #{remark},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where service_acceptance_attachment_sid = #{serviceAcceptanceAttachmentSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_service_acceptance_attachment
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    service_acceptance_sid = #{serviceAcceptanceSid},
+                                                                                file_type = #{fileType},
+                                                                                file_name = #{fileName},
+                                                                                file_path = #{filePath},
+                                                                                remark = #{remark},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where service_acceptance_attachment_sid = #{serviceAcceptanceAttachmentSid}
+        </foreach>
+    </update>
+
+    <delete id="deletePurServiceAcceptanceAttachmentByIds" parameterType="long">
+        delete from s_pur_service_acceptance_attachment where service_acceptance_sid in
+        <foreach item="serviceAcceptanceSid" collection="array" open="(" separator="," close=")">
+            #{serviceAcceptanceSid}
+        </foreach>
+    </delete>
+
+</mapper>

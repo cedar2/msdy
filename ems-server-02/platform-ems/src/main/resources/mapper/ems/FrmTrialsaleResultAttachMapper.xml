@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FrmTrialsaleResultAttachMapper">
+
+    <resultMap type="com.platform.ems.domain.FrmTrialsaleResultAttach" id="FrmTrialsaleResultAttachResult">
+        <result property="clientId" column="client_id"/>
+        <result property="trialsaleResultAttachSid" column="trialsale_result_attach_sid"/>
+        <result property="trialsaleResultSid" column="trialsale_result_sid"/>
+        <result property="trialsaleResultCode" column="trialsale_result_code"/>
+        <result property="fileType" column="file_type"/>
+        <result property="fileName" column="file_name"/>
+        <result property="filePath" column="file_path"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+    </resultMap>
+
+    <sql id="selectFrmTrialsaleResultAttachVo">
+        select t.client_id,
+               t.trialsale_result_attach_sid,
+               t.trialsale_result_sid,
+               t.trialsale_result_code,
+               t.file_type,
+               t.file_name,
+               t.file_path,
+               t.remark,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t2.nick_name AS creator_account_name,
+               t3.nick_name AS updater_account_name
+        from s_frm_trialsale_result_attach t
+         LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+         LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+    </sql>
+
+    <select id="selectFrmTrialsaleResultAttachById" parameterType="Long" resultMap="FrmTrialsaleResultAttachResult">
+        <include refid="selectFrmTrialsaleResultAttachVo"/>
+        where t.trialsale_result_attach_sid = #{trialsaleResultAttachSid}
+    </select>
+
+    <select id="selectFrmTrialsaleResultAttachList" parameterType="com.platform.ems.domain.FrmTrialsaleResultAttach"
+            resultMap="FrmTrialsaleResultAttachResult">
+        <include refid="selectFrmTrialsaleResultAttachVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="trialsaleResultAttachSid != null ">
+                and t.trialsale_result_attach_sid = #{trialsaleResultAttachSid}
+            </if>
+            <if test="trialsaleResultSid != null ">
+                and t.trialsale_result_sid = #{trialsaleResultSid}
+            </if>
+            <if test="trialsaleResultCode != null and trialsaleResultCode != ''">
+                and t.trialsale_result_code = #{trialsaleResultCode}
+            </if>
+            <if test="fileType != null and fileType != ''">
+                and t.file_type = #{fileType}
+            </if>
+            <if test="fileName != null and fileName != ''">and
+                t.file_name like concat('%', #{fileName}, '%')
+            </if>
+            <if test="filePath != null and filePath != ''">
+                and t.file_path = #{filePath}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                and t2.nick_name like concat('%', #{creatorAccountName}, '%')
+            </if>
+            <if test="createDate != null ">
+                and date_format(t.create_date,'%y%m%d') = date_format(#{createDate},'%y%m%d')
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_frm_trialsale_result_attach
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            trialsale_result_attach_sid,
+            trialsale_result_sid,
+            trialsale_result_code,
+            file_type,
+            file_name,
+            file_path,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.trialsaleResultAttachSid},
+                #{item.trialsaleResultSid},
+                #{item.trialsaleResultCode},
+                #{item.fileType},
+                #{item.fileName},
+                #{item.filePath},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_frm_trialsale_result_attach
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            trialsale_result_sid = #{trialsaleResultSid},
+            trialsale_result_code = #{trialsaleResultCode},
+            file_type = #{fileType},
+            file_name = #{fileName},
+            file_path = #{filePath},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where trialsale_result_attach_sid = #{trialsaleResultAttachSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_frm_trialsale_result_attach
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                trialsale_result_sid = #{trialsaleResultSid},
+                trialsale_result_code = #{trialsaleResultCode},
+                file_type = #{fileType},
+                file_name = #{fileName},
+                file_path = #{filePath},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+            </trim>
+            where trialsale_result_attach_sid = #{trialsaleResultAttachSid}
+        </foreach>
+    </update>
+
+</mapper>

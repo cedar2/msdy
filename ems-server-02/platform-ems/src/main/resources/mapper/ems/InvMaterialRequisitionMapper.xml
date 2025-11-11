@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.InvMaterialRequisitionMapper">
+
+    <resultMap type="com.platform.ems.domain.InvMaterialRequisition" id="InvMaterialRequisitionResult">
+        <result property="clientId" column="client_id"/>
+        <result property="materialRequisitionSid" column="material_requisition_sid"/>
+        <result property="materialRequisitionCode" column="material_requisition_code"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="movementType" column="movement_type"/>
+        <result property="documentType" column="document_type"/>
+        <result property="businessType" column="business_type"/>
+        <result property="requireDepartment" column="require_department"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="manufactureOrderSid" column="manufacture_order_sid"/>
+        <result property="manufactureOrderCode" column="manufacture_order_code"/>
+        <result property="isReserveStock" column="is_reserve_stock"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="departmentCode" column="department_code"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="companyName" column="company_name"/>
+    </resultMap>
+
+    <sql id="selectInvMaterialRequisitionVo">
+        select t.client_id,
+        t.material_requisition_sid,
+        t.material_requisition_code,
+        t.document_date,
+        t.account_date,
+        t.in_out_stock_status,
+        t.require_usage,
+        t.movement_type,
+        t.work_center_sid,
+        t.document_type,
+        t.business_type,
+        t.special_stock,
+        t.require_department,
+        t.refer_document,
+        t.company_sid,
+        t.manufacture_order_sid,
+        t.manufacture_order_code,
+        t.is_reserve_stock,
+        t.remark,
+        t.handle_status,
+        t.material_receiver,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.refer_doc_category,
+        t.demand_date,
+        t.data_source_sys,
+        t1.department_code,
+        t1.department_name,
+        t.storehouse_location_sid,
+        t.storehouse_sid,
+        t2.company_code,
+        t2.company_name,
+        t3.vendor_name,
+        t3.vendor_code ,
+        t3.vendor_sid,
+        t4.storehouse_name,
+        t4.storehouse_code,
+        t5.location_name,
+        t5.location_code,
+        t6.customer_code,
+	    t6.customer_name,
+	    t6.customer_sid,
+	    t7.department_name as require_department_name,
+	    t8.name as document_type_name,
+	    t9.name as business_type_name,
+	    t10.nick_name as creator_account_name,
+-- 	    t11.inventory_document_code,
+	    t12.name as special_stock_name,
+	    t13.work_center_name,
+	    t14.name as movement_type_name,
+	    t15.nick_name as material_receiver_name,
+	    t16.nick_name as updater_account_name,
+	    t19.approval_node,
+      	t19.approval_user_id,
+	    t19.approval_user_name,
+	    t19.create_date AS submit_date,
+	    t20.nick_name AS submit_user_name
+        from s_inv_material_requisition t
+        LEFT JOIN s_bas_department t1 ON t1.department_sid = t.require_department
+        LEFT JOIN s_bas_company t2 ON t2.company_sid = t.company_sid
+	    LEFT JOIN s_bas_vendor t3 ON t3.vendor_sid = t.vendor_sid
+        LEFT JOIN s_bas_storehouse t4 on t4.storehouse_sid=t.storehouse_sid
+        LEFT JOIN s_bas_storehouse_location t5 on t5.storehouse_location_sid=t.storehouse_location_sid
+        LEFT JOIN s_bas_customer t6 on t6.customer_sid=t.customer_sid
+        left join s_bas_department t7 on t7.department_sid=t.require_department
+        left  join s_con_doc_type_material_requisition t8 on  t8.code=t.document_type
+        left  join s_con_bu_type_material_requisition t9 on  t9.code=t.business_type
+        LEFT JOIN sys_user t10 ON t10.user_name = t.creator_account
+--         left join s_inv_inventory_document  t11 on t11.refer_document_sid=t.material_requisition_sid
+        left join s_con_special_stock t12 on t12.code=t.special_stock
+        left join s_man_work_center t13 on t13.work_center_sid=t.work_center_sid
+        LEFT JOIN s_con_movement_type t14 on t14.code=t.movement_type
+        LEFT JOIN sys_user t15 ON t15.user_name = t.material_receiver
+        LEFT JOIN sys_user t16 ON t16.user_name = t.updater_account
+        left join s_sys_form_process t19 on t19.form_id=t.material_requisition_sid
+        LEFT JOIN sys_user t20 ON t19.creator_account = t20.user_name
+        left join s_con_doc_type_material_requisition t21 on t21.code=t.document_type
+    </sql>
+
+    <select id="selectInvMaterialRequisitionById" parameterType="Long" resultType="com.platform.ems.domain.InvMaterialRequisition">
+        <include refid="selectInvMaterialRequisitionVo"/>
+        where t.material_requisition_sid = #{materialRequisitionSid}
+    </select>
+
+
+    <select id="selectInvMaterialRequisitionList" parameterType="com.platform.ems.domain.InvMaterialRequisition"
+            resultType="com.platform.ems.domain.InvMaterialRequisition">
+        <include refid="selectInvMaterialRequisitionVo"/>
+        <where>
+            <if test="approvalUserId != null and approvalUserId != ''">
+                and t19.approval_user_id = #{approvalUserId}
+            </if>
+            <if test="businessFlag != null and businessFlag != ''">
+                and t21.business_flag = #{businessFlag}
+            </if>
+            <if test="materialRequisitionCode != null and materialRequisitionCode !='' ">
+                and t.material_requisition_code like concat('%',#{materialRequisitionCode}, '%')
+            </if>
+            <if test="itemSidList != null  and itemSidList.size> 0">and t.material_requisition_sid in
+                <foreach collection="itemSidList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="documentType != null  and documentType != ''">
+                and  t.document_type=#{documentType}
+            </if>
+            <if test="workCenterSidList != null and workCenterSidList.length >0">
+                and t.work_center_sid in
+                (<foreach collection="workCenterSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and t6.customer_sid in
+                (<foreach collection="customerSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="inOutStockStatusList != null and inOutStockStatusList.length >0">
+                and t.in_out_stock_status in
+                (<foreach collection="inOutStockStatusList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="storehouseSid != null and storehouseSid != '' ">
+                and t.storehouse_sid =#{storehouseSid}
+            </if>
+            <if test="storehouseLocationSidList != null and storehouseLocationSidList.length >0">
+                and t.storehouse_location_sid in
+                (<foreach collection="storehouseLocationSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="movementTypeList != null and movementTypeList.length >0">
+                and t.movement_type in
+                (<foreach collection="movementTypeList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="businessType != null  and businessType != ''">
+               and  t.business_type =#{businessType}
+            </if>
+            <if test="requireDepartment != null ">
+                and t.require_department = #{requireDepartment}
+            </if>
+            <if test="referDocument != null  and referDocument != ''">
+                and (<foreach collection="referDocument.split(';')" item="item" separator="or">t.refer_document
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="manufactureOrderSid != null ">
+                and t.manufacture_order_sid = #{manufactureOrderSid}
+            </if>
+            <if test="manufactureOrderCode != null and manufactureOrderCode !='' ">
+
+                and t.manufacture_order_code like concat('%',#{manufactureOrderCode}, '%')
+            </if>
+            <if test="isReserveStock != null  and isReserveStock != ''">
+                and (<foreach collection="isReserveStock.split(';')" item="item" separator="or">t.is_reserve_stock like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t10.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="demandDateBeginTime != null and demandDateBeginTime!=''">
+                and date_format(t.demand_date,'%y%m%d') &gt;= date_format(#{demandDateBeginTime},'%y%m%d')
+            </if>
+            <if test="demandDateEndTime != null and demandDateEndTime!=''">
+                and date_format(t.demand_date,'%y%m%d') &lt;= date_format(#{demandDateEndTime},'%y%m%d')
+            </if>
+            <if test="materialReceiver != null  and materialReceiver != ''">
+                and (<foreach collection="materialReceiver.split(';')" item="item" separator="or">t.material_receiver like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+        </where>
+        order by t.material_requisition_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_inv_material_requisition
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            material_requisition_sid,
+            material_requisition_code,
+            document_date,
+            movement_type,
+            document_type,
+            business_type,
+            require_department,
+            reference_document,
+            company_sid,
+            manufacture_order_sid,
+            manufacture_order_code,
+            is_reserve_stock,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{clientId},
+                #{materialRequisitionSid},
+                #{materialRequisitionCode},
+                #{documentDate},
+                #{movementType},
+                #{documentType},
+                #{businessType},
+                #{requireDepartment},
+                #{referenceDocument},
+                #{companySid},
+                #{manufactureOrderSid},
+                #{manufactureOrderCode},
+                #{isReserveStock},
+                #{remark},
+                #{handleStatus},
+                #{creatorAccount},
+                #{createDate},
+                #{updaterAccount},
+                #{updateDate},
+                #{confirmerAccount},
+                #{confirmDate},
+                #{dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_inv_material_requisition
+        <trim prefix="SET" suffixOverrides=",">
+            material_requisition_code = #{materialRequisitionCode},
+            material_receiver=#{materialReceiver},
+            product_season_sid=#{productSeasonSid},
+            refer_doc_category=#{referDocCategory},
+            storehouse_sid=#{storehouseSid},
+            storehouse_location_sid=#{storehouseLocationSid},
+            in_out_stock_status=#{inOutStockStatus},
+            document_date = #{documentDate},
+            require_usage=#{requireUsage},
+            movement_type = #{movementType},
+            document_type = #{documentType},
+            work_center_sid=#{workCenterSid},
+            business_type = #{businessType},
+            require_department = #{requireDepartment},
+            refer_document = #{referDocument},
+            company_sid = #{companySid},
+            manufacture_order_sid = #{manufactureOrderSid},
+            manufacture_order_code = #{manufactureOrderCode},
+            is_reserve_stock = #{isReserveStock},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where material_requisition_sid = #{materialRequisitionSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_inv_material_requisition
+            <trim prefix="SET" suffixOverrides=",">
+                material_requisition_code = #{materialRequisitionCode},
+                document_date = #{documentDate},
+                movement_type = #{movementType},
+                document_type = #{documentType},
+                business_type = #{businessType},
+                require_department = #{requireDepartment},
+                reference_document = #{referenceDocument},
+                company_sid = #{companySid},
+                manufacture_order_sid = #{manufactureOrderSid},
+                manufacture_order_code = #{manufactureOrderCode},
+                is_reserve_stock = #{isReserveStock},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where material_requisition_sid = #{materialRequisitionSid}
+        </foreach>
+    </update>
+
+    <select id="countByDomain" resultType="java.lang.Integer">
+        select count(1) from s_inv_material_requisition
+        <where>
+            <if test="materialRequisitionSids != null  and materialRequisitionSids.length > 0">
+                and material_requisition_sid in (
+                <foreach collection="materialRequisitionSids" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and handle_status in (
+                <foreach collection="handleStatus.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteInvMaterialRequisitionByIds" parameterType="long">
+        delete from s_inv_material_requisition where material_requisition_sid in
+        <foreach item="materialRequisitionSid" collection="array" open="(" separator="," close=")">
+            #{materialRequisitionSid}
+        </foreach>
+    </delete>
+
+    <update id="confirm" parameterType="com.platform.ems.domain.InvMaterialRequisition">
+        update s_inv_material_requisition
+        <set>
+            <if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>
+            <if test="confirmerAccount != null and confirmerAccount != ''">confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmDate != null">confirm_date = #{confirmDate},</if>
+        </set>
+        where material_requisition_sid in
+        (<foreach collection="materialRequisitionSids" item="materialRequisitionSid" separator=",">
+        #{materialRequisitionSid}</foreach>)
+    </update>
+
+    <select id="getName" parameterType="Long" resultType="com.platform.ems.domain.InvMaterialRequisition">
+        select
+        t1.department_code,
+        t1.department_name,
+        t2.company_code,
+        t2.company_name
+        from s_inv_material_requisition t
+        LEFT JOIN s_bas_department t1 ON t1.department_sid = t.require_department
+        LEFT JOIN s_bas_company t2 ON t2.company_sid = t.company_sid
+        where
+        material_requisition_sid =#{materialRequisitionSid}
+    </select>
+
+</mapper>

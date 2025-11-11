@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FunFundRecordMapper">
+
+    <resultMap type="com.platform.ems.domain.FunFundRecord" id="FunFundRecordResult">
+        <result property="clientId" column="client_id"/>
+        <result property="fundRecordSid" column="fund_record_sid"/>
+        <result property="fundRecordCode" column="fund_record_code"/>
+        <result property="fundType" column="fund_type"/>
+        <result property="fundAccountSid" column="fund_account_sid"/>
+        <result property="fundAccountCode" column="fund_account_code"/>
+        <result property="accountName" column="account_name"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="companyName" column="company_name"/>
+        <result property="paymentMethod" column="payment_method"/>
+        <result property="paymentMethodName" column="payment_method_name"/>
+        <result property="paymentBankBranchName" column="payment_bank_branch_name"/>
+        <result property="acquirer" column="acquirer"/>
+        <result property="liquidationInstitution" column="liquidation_institution"/>
+        <result property="fundRecordRemark" column="fund_record_remark"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="paymentType" column="payment_type"/>
+        <result property="currencyAmount" column="currency_amount"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="flowOperator" column="flow_operator"/>
+        <result property="transactionDate" column="transaction_date"/>
+        <result property="flowCategory" column="flow_category"/>
+        <result property="businessType" column="business_type"/>
+        <result property="referBusinessNote" column="refer_business_note"/>
+        <result property="paymentName" column="payment_name"/>
+        <result property="paymentBankName" column="payment_bank_name"/>
+        <result property="paymentAccountNumber" column="payment_account_number"/>
+        <result property="fundAccountNumber" column="fund_account_number"/>
+        <result property="transactionNumber" column="transaction_number"/>
+        <result property="transactionAccountDate" column="transaction_account_date"/>
+        <result property="transactionBillNumber" column="transaction_bill_number"/>
+        <result property="fundAccountBankName" column="fund_account_bank_name"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="approvalNode" column="approval_node"/>
+        <result property="approvalUserName" column="approval_user_name"/>
+        <result property="submitUserName" column="submit_user_name"/>
+        <result property="submitDate" column="submit_date"/>
+        <result property="approvalUserId" column="approval_user_id"/>
+        <result property="huipiaoCode" column="huipiao_code"/>
+        <result property="accountCategory" column="account_category"/>
+        <result property="shoufukuanCode" column="shoufukuan_code"/>
+    </resultMap>
+
+    <sql id="selectFunFundRecordVo">
+        select t.client_id,
+               t.fund_record_sid,
+               t.fund_record_code,
+               t.fund_type,
+               t.fund_account_sid,
+               t.company_sid,
+               t.payment_method,
+               t.payment_bank_branch_name,
+               t.acquirer,
+               t.liquidation_institution,
+               t.fund_record_remark,
+               t.picture_path,
+               t.payment_type,
+               t.currency_amount,
+               t.currency,
+               t.currency_unit,
+               t.flow_operator,
+               t.transaction_date,
+               t.flow_category,
+               t.business_type,
+               t.refer_business_note,
+               t.payment_name,
+               t.payment_bank_name,
+               t.payment_account_number,
+               t.fund_account_number,
+               t.transaction_number,
+               t.transaction_account_date,
+               t.transaction_bill_number,
+               t.fund_account_bank_name,
+               t.remark,
+               t.huipiao_code,
+               t.account_category,
+               t.shoufukuan_code,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.confirmer_account,
+               t.confirm_date,
+               t.data_source_sys,
+               t2.nick_name AS   creator_account_name,
+               t3.nick_name AS   updater_account_name,
+               t4.nick_name AS   confirmer_account_name,
+               t5.company_code,
+               t5.company_name,
+               t6.fund_account_code,
+               t6.account_name,
+               t7.approval_node,t7.approval_user_id,t7.approval_user_name,t7.create_date AS submit_date,t8.nick_name AS submit_user_name,
+               t9.name As payment_method_name
+        from s_fun_fund_record t
+                 LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name
+                 LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name
+                 LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name
+                 LEFT JOIN s_bas_company t5 ON t.company_sid = t5.company_sid
+                 LEFT JOIN s_fun_fund_account t6 ON t.fund_account_sid = t6.fund_account_sid
+                 LEFT JOIN s_sys_form_process t7 ON t.fund_record_sid = t7.form_id
+                 LEFT JOIN sys_user t8 ON t7.creator_account = t8.user_name
+                 LEFT JOIN s_con_payment_method t9 ON t.payment_method = t9.code
+
+    </sql>
+
+    <select id="selectFunFundRecordById" parameterType="Long" resultMap="FunFundRecordResult">
+        <include refid="selectFunFundRecordVo"/>
+        where t.fund_record_sid = #{fundRecordSid}
+    </select>
+
+
+    <select id="selectFunFundRecordList" parameterType="com.platform.ems.domain.FunFundRecord"
+            resultMap="FunFundRecordResult">
+        <include refid="selectFunFundRecordVo"/>
+        <where>
+            <if test="approvalUserId != null  and approvalUserId != ''">
+                and t7.approval_user_id = #{approvalUserId}
+            </if>
+            <if test="approvalUserIdList != null  and approvalUserIdList.length >0">
+                and t7.approval_user_id in (<foreach collection="approvalUserIdList" item="approvalUserId" separator=",">#{approvalUserId}</foreach>)
+            </if>
+            <if test="fundAccountSid != null">
+                and t.fund_account_sid =#{fundAccountSid}
+            </if>
+            <if test="fundAccountSidList != null and fundAccountSidList.length > 0">
+                and t.fund_account_sid in
+                (<foreach collection="fundAccountSidList" item="fundAccountSid" separator=",">#{fundAccountSid}</foreach>)
+            </if>
+            <if test="fundAccountBankName != null and fundAccountBankName != ''">
+                and t.fund_account_bank_name =#{fundAccountBankName}
+            </if>
+            <if test="fundAccountBankNameList != null and fundAccountBankNameList.length > 0">
+                and t.fund_account_bank_name in
+                (<foreach collection="fundAccountBankNameList" item="fundAccountBankName" separator=",">#{fundAccountBankName}</foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length > 0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">#{companySid}</foreach>)
+            </if>
+            <if test="fundType != null and fundType != ''">
+                and t.fund_type = #{fundType}
+            </if>
+            <if test="fundTypeList != null and fundTypeList.length > 0">
+                and t.fund_type in
+                (<foreach collection="fundTypeList" item="fundType" separator=",">#{fundType}</foreach>)
+            </if>
+            <if test="businessType != null and businessType != ''">
+                and t.business_type = #{businessType}
+            </if>
+            <if test="businessTypeList != null and businessTypeList.length > 0">
+                and t.business_type in
+                (<foreach collection="businessTypeList" item="businessType" separator=",">#{businessType}</foreach>)
+            </if>
+            <if test="flowCategory != null and flowCategory != ''">
+                and t.flow_category = #{flowCategory}
+            </if>
+            <if test="flowCategoryList != null and flowCategoryList.length > 0">
+                and t.flow_category in
+                (<foreach collection="flowCategoryList" item="flowCategory" separator=",">#{flowCategory}</foreach>)
+            </if>
+            <if test="paymentType != null and paymentType != ''">
+                and t.payment_type = #{paymentType}
+            </if>
+            <if test="paymentTypeList != null and paymentTypeList.length > 0">
+                and t.payment_type in
+                (<foreach collection="paymentTypeList" item="paymentType" separator=",">#{paymentType}</foreach>)
+            </if>
+            <if test="paymentMethodList != null and paymentMethodList.length > 0">
+                and t.payment_method in
+                (<foreach collection="paymentMethodList" item="paymentMethod" separator=",">#{paymentMethod}</foreach>)
+            </if>
+            <if test="paymentBankNameList != null and paymentBankNameList.length > 0">
+                and t.payment_bank_name in
+                (<foreach collection="paymentBankNameList" item="paymentBankName" separator=",">#{paymentBankName}</foreach>)
+            </if>
+            <if test="accountName != null and accountName != ''">
+                and t6.account_name = #{accountName}
+            </if>
+            <if test="accountNameList != null and accountNameList.length > 0">
+                and t6.account_name in
+                (<foreach collection="accountNameList" item="accountName" separator=",">#{accountName}</foreach>)
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccountName != null  and creatorAccountName != ''">
+                and (<foreach collection="creatorAccountName.split(';')" item="item" separator="or">t2.nick_name like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="fundRecordSid != null">
+                and t.fund_record_sid = #{fundRecordSid}
+            </if>
+            <if test="fundRecordCode != null ">
+                and t.fund_record_code like concat('%', #{fundRecordCode}, '%')
+            </if>
+            <if test="currencyAmount != null ">
+                and t.currency_amount = #{currencyAmount}
+            </if>
+            <if test="currency != null  and currency != ''">
+                and (<foreach collection="currency.split(';')" item="item" separator="or">t.currency
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="currencyUnit != null  and currencyUnit != ''">
+                and (<foreach collection="currencyUnit.split(';')" item="item" separator="or">t.currency_unit
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="flowOperator != null  and flowOperator != ''">
+                and (<foreach collection="flowOperator.split(';')" item="item" separator="or">t.flow_operator like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="transactionDate != null ">
+                and t.transaction_date = #{transactionDate}
+            </if>
+            <if test="businessType != null  and businessType != ''">
+                and (<foreach collection="businessType.split(';')" item="item" separator="or">t.business_type
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="referBusinessNote != null  and referBusinessNote != ''">
+                and (<foreach collection="referBusinessNote.split(';')" item="item" separator="or">t.refer_business_note
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="paymentName != null  and paymentName != ''">and
+                t.payment_name like concat('%', #{paymentName}, '%')
+            </if>
+            <if test="paymentBankName != null  and paymentBankName != ''">and
+                t.payment_bank_name like concat('%', #{paymentBankName}, '%')
+            </if>
+            <if test="paymentAccountNumber != null and paymentAccountNumber != ''">
+                and (<foreach collection="paymentAccountNumber.split(';')" item="item" separator="or">t.payment_account_number
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="fundAccountNumber != null  and fundAccountNumber != ''">
+                and (<foreach collection="fundAccountNumber.split(';')" item="item" separator="or">t.fund_account_number
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="transactionNumber != null  and transactionNumber != ''">
+                and (<foreach collection="transactionNumber.split(';')" item="item" separator="or">t.transaction_number
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="transactionAccountDate != null ">
+                and t.transaction_account_date = #{transactionAccountDate}
+            </if>
+            <if test="transactionBillNumber != null  and transactionBillNumber != ''">
+                and (<foreach collection="transactionBillNumber.split(';')" item="item" separator="or">
+                t.transaction_bill_number
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="fundAccountBankName != null  and fundAccountBankName != ''">and
+                t.fund_account_bank_name like concat('%', #{fundAccountBankName}, '%')
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="transactionDateBegin != null and transactionDateBegin!=''">
+                and date_format(t.transaction_date,'%y%m%d') &gt;= date_format(#{transactionDateBegin},'%y%m%d')
+            </if>
+            <if test="transactionDateEnd != null and transactionDateEnd!=''">
+                and date_format(t.transaction_date,'%y%m%d') &lt;= date_format(#{transactionDateEnd},'%y%m%d')
+            </if>
+            <if test="transactionAccountDateBegin != null and transactionAccountDateBegin!=''">
+                and date_format(t.transaction_account_date,'%y%m%d') &gt;= date_format(#{transactionAccountDateBegin},'%y%m%d')
+            </if>
+            <if test="transactionAccountDateEnd != null and transactionAccountDateEnd!=''">
+                and date_format(t.transaction_account_date,'%y%m%d') &lt;= date_format(#{transactionAccountDateEnd},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where> order by t.fund_record_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fun_fund_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            fund_record_sid,
+            fund_record_code,
+            fund_type,
+            fund_account_sid,
+            company_sid,
+            payment_method,
+            payment_method_name,
+            acquirer,
+            liquidation_institution,
+            fund_record_remark,
+            huipiao_code,
+            account_category,
+            shoufukuan_code,
+            picture_path
+            payment_type,
+            currency_amount,
+            currency,
+            currency_unit,
+            flow_operator,
+            transaction_date,
+            flow_category,
+            business_type,
+            refer_business_note,
+            payment_name,
+            payment_bank_name,
+            payment_account_number,
+            fund_account_number,
+            transaction_number,
+            transaction_account_date,
+            transaction_bill_number,
+            fund_account_bank_name,
+            remark,
+            huipiao_code,
+            account_category,
+            shoufukuan_code,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.fundRecordSid},
+                #{item.fundRecordCode},
+                #{item.fundType},
+                #{item.fundAccountSid},
+                #{item.companySid},
+                #{item.paymentMethod},
+                #{item.paymentBankBranchName},
+                #{item.acquirer},
+                #{item.liquidationInstitution},
+                #{item.fundRecordRemark},
+                #{item.picturePath},
+                #{item.paymentType},
+                #{item.currencyAmount},
+                #{item.currency},
+                #{item.currencyUnit},
+                #{item.flowOperator},
+                #{item.transactionDate},
+                #{item.flowCategory},
+                #{item.businessType},
+                #{item.referBusinessNote},
+                #{item.paymentName},
+                #{item.paymentBankName},
+                #{item.paymentAccountNumber},
+                #{item.fundAccountNumber},
+                #{item.transactionNumber},
+                #{item.transactionAccountDate},
+                #{item.transactionBillNumber},
+                #{item.fundAccountBankName},
+                #{item.remark},
+                #{item.huipiaoCode},
+                #{item.accountCategory},
+                #{item.shoufukuanCode},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fun_fund_record
+        <trim prefix="SET" suffixOverrides=",">
+            fund_record_code = #{fundRecordCode},
+            fund_type = #{fundType},
+            fund_account_sid = #{fundAccountSid},
+            company_sid = #{companySid},
+            payment_method = #{paymentMethod},
+            payment_bank_branch_name = #{paymentBankBranchName},
+            acquirer = #{acquirer},
+            liquidation_institution = #{liquidationInstitution},
+            fund_record_remark = #{fundRecordRemark},
+            picture_path = #{picturePath},
+            payment_type = #{paymentType},
+            currency_amount = #{currencyAmount},
+            currency = #{currency},
+            currency_unit = #{currencyUnit},
+            flow_operator = #{flowOperator},
+            transaction_date = #{transactionDate},
+            flow_category = #{flowCategory},
+            business_type = #{businessType},
+            refer_business_note = #{referBusinessNote},
+            payment_name = #{paymentName},
+            payment_bank_name = #{paymentBankName},
+            payment_account_number = #{paymentAccountNumber},
+            fund_account_number = #{fundAccountNumber},
+            transaction_number = #{transactionNumber},
+            transaction_account_date = #{transactionAccountDate},
+            transaction_bill_number = #{transactionBillNumber},
+            fund_account_bank_name = #{fundAccountBankName},
+            remark = #{remark},
+            huipiao_code = #{huipiaoCode},
+            account_category = #{accountCategory},
+            shoufukuan_code = #{shoufukuanCode},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where fund_record_sid = #{fundRecordSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fun_fund_record
+            <trim prefix="SET" suffixOverrides=",">
+                fund_record_code = #{fundRecordCode},
+                fund_type = #{fundType},
+                fund_account_sid = #{fundAccountSid},
+                company_sid = #{companySid},
+                payment_method = #{paymentMethod},
+                payment_bank_branch_name = #{paymentBankBranchName},
+                acquirer = #{acquirer},
+                liquidation_institution = #{liquidationInstitution},
+                fund_record_remark = #{fundRecordRemark},
+                picture_path = #{picturePath},
+                payment_type = #{paymentType},
+                currency_amount = #{currencyAmount},
+                currency = #{currency},
+                currency_unit = #{currencyUnit},
+                flow_operator = #{flowOperator},
+                transaction_date = #{transactionDate},
+                flow_category = #{flowCategory},
+                business_type = #{businessType},
+                refer_business_note = #{referBusinessNote},
+                payment_name = #{paymentName},
+                payment_bank_name = #{paymentBankName},
+                payment_account_number = #{paymentAccountNumber},
+                fund_account_number = #{fundAccountNumber},
+                transaction_number = #{transactionNumber},
+                transaction_account_date = #{transactionAccountDate},
+                transaction_bill_number = #{transactionBillNumber},
+                fund_account_bank_name = #{fundAccountBankName},
+                remark = #{remark},
+                huipiao_code = #{huipiaoCode},
+                account_category = #{accountCategory},
+                shoufukuan_code = #{shoufukuanCode},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where fund_record_sid = #{fundRecordSid}
+        </foreach>
+    </update>
+
+</mapper>

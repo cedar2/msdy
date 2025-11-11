@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.FinVendorAccountBalanceBillItemMapper">
+
+    <resultMap type="com.platform.ems.domain.FinVendorAccountBalanceBillItem"
+               id="FinVendorAccountBalanceBillItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="accountBalanceBillItemSid" column="account_balance_bill_item_sid"/>
+        <result property="accountBalanceBillSid" column="account_balance_bill_sid"/>
+        <result property="accountDocumentSid" column="account_document_sid"/>
+        <result property="accountDocumentCode" column="account_document_code"/>
+        <result property="bookTypeName" column="book_type_name"/>
+        <result property="bookType" column="book_type"/>
+        <result property="bookSourceCategory" column="book_source_category"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="accountItemSid" column="account_item_sid"/>
+        <result property="accountItemCode" column="account_item_code"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="accountBalanceBillCode" column="account_balance_bill_code"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="materialType" column="material_type"/>
+        <result property="buyer" column="buyer"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyName" column="company_name"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="bookSourceCategoryName" column="book_source_category_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="buyerName" column="buyer_name"/>
+    </resultMap>
+
+    <sql id="selectFinVendorAccountBalanceBillItemVo">
+        SELECT
+	t.client_id,
+	t.account_balance_bill_item_sid,
+	t.account_balance_bill_sid,
+	t.account_document_sid,
+	t.account_document_code,
+	t.book_type,
+	t.book_source_category,
+	t.currency_amount_tax,
+	t.account_item_sid,
+	t.account_item_code,
+	t.item_num,
+	t.remark,
+	t.creator_account,
+	t.create_date,
+	t.updater_account,
+	t.update_date,
+	t.data_source_sys,
+	t1.account_balance_bill_code,
+	t1.vendor_sid,
+	t2.vendor_name,
+	t2.vendor_code,
+	t1.product_season_sid,
+	t3.product_season_name,
+	t3.product_season_code,
+	t1.material_type,
+	t1.buyer,
+	t1.company_sid,
+	t4.company_name,
+	t4.company_code,
+	t1.document_date,
+	t1.handle_status,
+	t1.currency,
+	t1.currency_unit,
+	t5.name AS book_source_category_name,
+	t6.nick_name AS creator_account_name,
+	t8.nick_name AS buyer_name,
+	t9.name AS book_type_name
+FROM
+	s_fin_vendor_account_balance_bill_item t
+	LEFT JOIN s_fin_vendor_account_balance_bill t1 ON t1.account_balance_bill_sid = t.account_balance_bill_sid
+	LEFT JOIN s_bas_vendor t2 ON t2.vendor_sid = t1.vendor_sid
+	LEFT JOIN s_bas_product_season t3 ON t3.product_season_sid = t1.product_season_sid
+	LEFT JOIN s_bas_company t4 ON t4.company_sid = t1.company_sid
+	LEFT JOIN s_con_book_source_category t5 on t.book_source_category = t5.code
+	LEFT JOIN sys_user t6 on t.creator_account = t6.user_name
+	LEFT JOIN s_con_material_type t7 on t1.material_type = t7.code
+	LEFT JOIN sys_user t8 on t1.buyer = t8.user_name
+	LEFT JOIN s_con_book_type t9 on t.book_type = t9.code
+    </sql>
+
+    <select id="selectFinVendorAccountBalanceBillItemById" parameterType="Long"
+            resultMap="FinVendorAccountBalanceBillItemResult">
+        <include refid="selectFinVendorAccountBalanceBillItemVo"/>
+        where t.account_balance_bill_item_sid = #{accountBalanceBillItemSid}
+    </select>
+
+
+    <select id="selectFinVendorAccountBalanceBillItemList"
+            parameterType="com.platform.ems.domain.FinVendorAccountBalanceBillItem"
+            resultMap="FinVendorAccountBalanceBillItemResult">
+        <include refid="selectFinVendorAccountBalanceBillItemVo"/>
+        <where>
+            <if test="materialTypeList != null and materialTypeList.length >0">
+                and t1.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=","> #{materialType}</foreach>)
+            </if>
+            <if test="buyerList != null and buyerList.length >0">
+                and t1.buyer in
+                (<foreach collection="buyerList" item="buyer" separator=","> #{buyer}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">
+                and t1.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=","> #{productSeasonSid}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t1.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=","> #{companySid}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0">
+                and t1.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=","> #{vendorSid}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=","> #{handleStatus}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus!=''">
+                and t1.handle_status =#{handleStatus}
+            </if>
+            <if test="materialType != null and materialType!=''">
+                and t1.material_type =#{materialType}
+            </if>
+            <if test="buyer != null and buyer!=''">
+                and t1.buyer =#{buyer}
+            </if>
+            <if test="companySid != null ">
+                and t1.company_sid =#{companySid}
+            </if>
+            <if test="productSeasonSid != null ">
+                and t1.product_season_sid =#{productSeasonSid}
+            </if>
+            <if test="vendorSid != null ">
+                and t1.vendor_sid =#{vendorSid}
+            </if>
+            <if test="accountBalanceBillCode != null  and accountBalanceBillCode != ''">
+                and t1.account_balance_bill_code like concat('%', #{accountBalanceBillCode}, '%')
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="accountBalanceBillSid != null ">
+                and t.account_balance_bill_sid =#{accountBalanceBillSid}
+            </if>
+            <if test="accountDocumentSid != null ">
+                and t.account_document_sid =#{accountDocumentSid}
+            </if>
+            <if test="accountDocumentCode != null ">
+                and t.account_document_code =#{accountDocumentCode}
+            </if>
+            <if test="bookType != null  and bookType != ''">
+                and (<foreach collection="bookType.split(';')" item="item" separator="or">t.book_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="bookSourceCategory != null  and bookSourceCategory != ''">
+                and (<foreach collection="bookSourceCategory.split(';')" item="item" separator="or">
+                t.book_source_category like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="currencyAmountTax != null ">
+                and t.currency_amount_tax = #{currencyAmountTax}
+            </if>
+            <if test="accountItemSid != null ">
+                and t.account_item_sid =#{accountItemSid}
+            </if>
+            <if test="accountItemCode != null ">
+                and t.account_item_code =#{accountItemCode}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t6.nick_name like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where> order by t.create_date desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_vendor_account_balance_bill_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            account_balance_bill_item_sid,
+            account_balance_bill_sid,
+            account_document_sid,
+            account_document_code,
+            book_type,
+            book_source_category,
+            currency_amount_tax,
+            account_item_sid,
+            account_item_code,
+            item_num,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.accountBalanceBillItemSid},
+                #{item.accountBalanceBillSid},
+                #{item.accountDocumentSid},
+                #{item.accountDocumentCode},
+                #{item.bookType},
+                #{item.bookSourceCategory},
+                #{item.currencyAmountTax},
+                #{item.accountItemSid},
+                #{item.accountItemCode},
+                #{item.itemNum},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_vendor_account_balance_bill_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            account_balance_bill_sid = #{accountBalanceBillSid},
+            account_document_sid = #{accountDocumentSid},
+            account_document_code = #{accountDocumentCode},
+            book_type = #{bookType},
+            book_source_category = #{bookSourceCategory},
+            currency_amount_tax = #{currencyAmountTax},
+            account_item_sid = #{accountItemSid},
+            account_item_code = #{accountItemCode},
+            item_num = #{itemNum},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where account_balance_bill_item_sid = #{accountBalanceBillItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_vendor_account_balance_bill_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                account_balance_bill_sid = #{accountBalanceBillSid},
+                account_document_sid = #{accountDocumentSid},
+                account_document_code = #{accountDocumentCode},
+                book_type = #{bookType},
+                book_source_category = #{bookSourceCategory},
+                currency_amount_tax = #{currencyAmountTax},
+                account_item_sid = #{accountItemSid},
+                account_item_code = #{accountItemCode},
+                item_num = #{itemNum},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where account_balance_bill_item_sid = #{accountBalanceBillItemSid}
+        </foreach>
+    </update>
+
+
+</mapper>

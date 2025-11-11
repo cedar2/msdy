@@ -1,0 +1,1063 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PayProcessStepCompleteItemMapper">
+
+    <resultMap type="com.platform.ems.domain.PayProcessStepCompleteItem" id="PayProcessStepCompleteItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="stepCompleteItemSid" column="step_complete_item_sid"/>
+        <result property="stepCompleteSid" column="step_complete_sid"/>
+        <result property="workerSid" column="worker_sid"/>
+        <result property="workerCode" column="worker_code"/>
+        <result property="manufactureOrderSid" column="manufacture_order_sid"/>
+        <result property="manufactureOrderCode" column="manufacture_order_code"/>
+        <result property="productSid" column="product_sid"/>
+        <result property="productCode" column="product_code"/>
+        <result property="processStepItemSid" column="process_step_item_sid"/>
+        <result property="processStepSid" column="process_step_sid"/>
+        <result property="processStepCode" column="process_step_code"/>
+        <result property="processStepName" column="process_step_name"/>
+        <result property="completeQuantity" column="complete_quantity"/>
+        <result property="completeQuantitySys" column="complete_quantity_sys"/>
+        <result property="wangongPriceRate" column="wangong_price_rate"/>
+        <result property="jixinWangongType" column="jixin_wangong_type"/>
+        <result property="paichanBatch" column="paichan_batch"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="sort" column="sort"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="workerName" column="worker_name"/>
+        <result property="materialName" column="material_name"/>
+        <result property="processCode" column="process_code"/>
+        <result property="processName" column="process_name"/>
+        <result property="price" column="price"/>
+        <result property="priceRate" column="price_rate"/>
+        <result property="departmentName" column="department_name"/>
+    </resultMap>
+
+    <sql id="selectPayProcessStepCompleteItemVo">
+        select
+        t.client_id,
+        t.step_complete_item_sid,
+        t.step_complete_sid,
+        t.worker_sid,
+        t.worker_code,
+        t.manufacture_order_sid,
+        t.manufacture_order_code,
+        t.product_sid,
+        t.product_code,
+        t.process_step_item_sid,
+        t.process_step_code,
+        t.process_step_name,
+        t.complete_quantity,
+        t.complete_quantity_sys,
+        t.price,
+        t.price_rate,
+        t.wangong_price_rate,
+        t.paichan_batch,
+        t.item_num,
+        t.sort,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+        t1.staff_name as worker_name,
+        t2.material_name,
+        t3.process_step_sid,
+        t3.process_sid,
+        t3.step_category,
+        t4.process_code,
+        t4.process_name,
+        t5.step_complete_code,
+        t5.jixin_wangong_type,
+        t5.report_date,
+        t5.handle_status,
+        t5.department,
+        t7.name as department_name
+  from s_pay_process_step_complete_item t
+        LEFT JOIN s_bas_staff t1 ON t1.staff_sid = t.worker_sid
+        LEFT JOIN s_bas_material t2 ON t2.material_sid = t.product_sid
+        LEFT JOIN s_pay_product_process_step_item t3 ON t3.step_item_sid = t.process_step_item_sid
+        LEFT JOIN s_man_process t4 ON t4.process_sid = t3.process_sid
+        LEFT JOIN s_pay_process_step_complete t5 ON t5.step_complete_sid = t.step_complete_sid
+        LEFT JOIN s_con_manufacture_department t7 ON t5.department = t7.code
+    </sql>
+
+    <select id="selectPayProcessStepCompleteItemById" parameterType="Long" resultMap="PayProcessStepCompleteItemResult">
+        <include refid="selectPayProcessStepCompleteItemVo"/>
+        where t.step_complete_item_sid = #{stepCompleteItemSid}
+    </select>
+
+    <select id="selectPayProcessStepCompleteItemList" parameterType="com.platform.ems.domain.PayProcessStepCompleteItem"
+            resultMap="PayProcessStepCompleteItemResult">
+        <include refid="selectPayProcessStepCompleteItemVo"/>
+        <include refid="wherePayProcessStepCompleteItemVo"/>
+    </select>
+
+    <select id="selectPayProcessStepCompleteItemJoinList" parameterType="com.platform.ems.domain.PayProcessStepCompleteItem"
+            resultMap="PayProcessStepCompleteItemResult">
+        <include refid="selectPayProcessStepCompleteItemJoinVo"/>
+        <include refid="wherePayProcessStepCompleteItemVo"/>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pay_process_step_complete_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            step_complete_item_sid,
+            step_complete_sid,
+            worker_sid,
+            worker_code,
+            manufacture_order_sid,
+            manufacture_order_code,
+            product_sid,
+            product_code,
+            process_step_item_sid,
+            process_step_code,
+            process_step_name,
+            complete_quantity,
+            complete_quantity_sys,
+            price,
+            price_rate,
+            wangong_price_rate,
+            paichan_batch,
+            item_num,
+            sort,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.stepCompleteItemSid},
+                #{item.stepCompleteSid},
+                #{item.workerSid},
+                #{item.workerCode},
+                #{item.manufactureOrderSid},
+                #{item.manufactureOrderCode},
+                #{item.productSid},
+                #{item.productCode},
+                #{item.processStepItemSid},
+                #{item.processStepCode},
+                #{item.processStepName},
+                #{item.completeQuantity},
+                #{item.completeQuantitySys},
+                #{item.price},
+                #{item.priceRate},
+                #{item.wangongPriceRate},
+                #{item.paichanBatch},
+                #{item.itemNum},
+                #{item.sort},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pay_process_step_complete_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            step_complete_item_sid = #{stepCompleteItemSid},
+            step_complete_sid = #{stepCompleteSid},
+            worker_sid = #{workerSid},
+            worker_code = #{workerCode},
+            manufacture_order_sid = #{manufactureOrderSid},
+            manufacture_order_code = #{manufactureOrderCode},
+            product_sid = #{productSid},
+            product_code = #{productCode},
+            process_step_item_sid = #{processStepItemSid},
+            process_step_code = #{processStepCode},
+            process_step_name = #{processStepName},
+            complete_quantity = #{completeQuantity},
+            complete_quantity_sys = #{completeQuantitySys},
+            price = #{price},
+            price_rate = #{priceRate},
+            wangong_price_rate = #{wangongPriceRate},
+            paichan_batch = #{paichanBatch},
+            item_num = #{itemNum},
+            sort = #{sort},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where step_complete_item_sid = #{stepCompleteItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pay_process_step_complete_item
+            <trim prefix="SET" suffixOverrides=",">
+                complete_quantity = #{o.completeQuantity},
+                complete_quantity_sys = #{o.completeQuantitySys},
+                price = #{o.price},
+                price_rate = #{o.priceRate},
+                wangong_price_rate = #{o.wangongPriceRate},
+                paichan_batch = #{o.paichanBatch},
+                item_num = #{o.itemNum},
+                sort = #{o.sort},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                data_source_sys = #{o.dataSourceSys},
+            </trim>
+            where step_complete_item_sid = #{o.stepCompleteItemSid}
+        </foreach>
+    </update>
+
+    <!--更新”更新工价/倍率“多个-->
+    <update id="updatesPriceById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pay_process_step_complete_item
+            <trim prefix="SET" suffixOverrides=",">
+                price = #{o.price},
+                price_rate = #{o.priceRate},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                data_source_sys = #{o.dataSourceSys},
+            </trim>
+            where step_complete_item_sid = #{o.stepCompleteItemSid}
+        </foreach>
+    </update>
+
+    <select id="getProcessStepCompleteWageItem" parameterType="com.platform.ems.domain.PayProcessStepCompleteItem" resultType="com.platform.ems.domain.PayProcessStepCompleteItem">
+        SELECT
+            t1.step_complete_item_sid,
+            t1.step_complete_sid,
+            t1.manufacture_order_sid,
+            t1.worker_sid,
+            t1.product_sid,
+            t1.product_code,
+            t1.process_step_item_sid,
+            t1.complete_quantity,
+            t1.price,
+            t1.price_rate,
+            t1.paichan_batch,
+            t1.wangong_price_rate,
+            t1.sort,
+            t1.remark,
+            t2.step_complete_code,
+            t2.jixin_wangong_type,
+            t2.yearmonth,
+            t2.plant_sid,
+            t2.product_price_type,
+            t2.report_date,
+            t2.enter_mode,
+            t3.step_item_sid,
+            t3.process_step_sid,
+            t3.process_sid,
+            t3.step_category,
+            t4.product_process_step_sid,
+            t5.manufacture_order_code,
+            t6.material_name,
+            t7.process_step_code,
+            t7.process_step_name,
+            (t1.complete_quantity * t1.price * (ifnull(t1.price_rate,0) + ifnull(t1.wangong_price_rate,0))) AS money,
+            t8.staff_code as worker_code,
+            t8.staff_name as worker_name,
+            t9.process_code,
+            t9.process_name
+        FROM s_pay_process_step_complete_item t1
+         LEFT JOIN s_pay_process_step_complete t2 ON t1.step_complete_sid = t2.step_complete_sid AND t2.handle_status = '5'
+         LEFT JOIN s_pay_product_process_step_item t3 ON t1.process_step_item_sid = t3.step_item_sid
+         LEFT JOIN s_pay_product_process_step t4 ON t3.product_process_step_sid = t4.product_process_step_sid
+                AND t1.product_sid = t4.product_sid AND t2.plant_sid = t4.plant_sid AND t2.product_price_type = t4.product_price_type
+         LEFT JOIN s_man_manufacture_order t5 ON t1.manufacture_order_sid = t5.manufacture_order_sid
+         LEFT JOIN s_bas_material t6 ON t1.product_sid = t6.material_sid
+         LEFT JOIN s_pay_process_step t7 ON t3.process_step_sid = t7.process_step_sid
+         LEFT JOIN s_bas_staff t8 ON t1.worker_sid = t8.staff_sid
+        LEFT JOIN s_man_process t9 ON t3.process_sid = t9.process_sid
+        <where>
+                AND t2.jixin_wangong_type IN ('JXCG','JXFG')
+            <if test="yearmonth != null and yearmonth != ''">
+                AND t2.yearmonth = #{yearmonth}
+            </if>
+            <if test="workerSidList != null and workerSidList.length > 0">
+                AND t1.worker_sid IN
+                (<foreach collection="workerSidList" item="workerSid" separator=",">#{workerSid}</foreach>)
+            </if>
+        </where>
+        ORDER BY t2.jixin_wangong_type,t2.report_date,t5.manufacture_order_code
+    </select>
+
+    <sql id="getProcessStepCompleteWageFormVo">
+        SELECT
+        t1.worker_sid AS staff_sid,t1.step_complete_item_sid,t1.manufacture_order_code,t1.product_sid,t1.product_code,t1.process_step_code,t1.process_step_name,
+               t1.process_step_item_sid, t1.paichan_batch, t1.create_date,t2.jixin_wangong_type,
+        0 + CAST(ROUND(t1.sort*1,2) AS CHAR) AS sort,
+        0 + CAST(ROUND(t1.complete_quantity*1,3) AS CHAR) AS complete_quantity,
+        0 + CAST(ROUND(if(t2.jixin_wangong_type = 'WXFG', 0,(t1.complete_quantity * t1.price * (ifnull(t1.price_rate,0) + ifnull(t1.wangong_price_rate,0)))),2) AS CHAR) AS money,
+        0 + CAST(ROUND(t1.wangong_price_rate*1,3) AS CHAR) AS wangong_price_rate,
+        0 + CAST(ROUND(t1.price*1,4) AS CHAR) AS price,
+        0 + CAST(ROUND(t1.price_rate*1,3) AS CHAR) AS price_rate,
+        t2.step_complete_sid,t2.step_complete_code,t2.yearmonth,t2.plant_sid,t2.work_center_sid,t2.report_date,t2.product_price_type,t2.handle_status,t3.process_sid,t4.process_name,t4.process_code,
+        t5.staff_code,t5.staff_name,t5.work_center_sid as staff_work_center_sid,t6.plant_code,t6.plant_name,t7.work_center_code,t7.work_center_name,t8.material_name, (concat(t1.product_code,'-',t8.material_name)) as material_code_name,
+        (concat(t1.worker_sid,t2.work_center_sid)) as staff_and_work_sid, t9.department,t10.work_center_name as staff_work_center_name,t11.nick_name as creator_account_name,
+        t12.name as department_name
+        FROM s_pay_process_step_complete_item t1
+        LEFT JOIN s_pay_process_step_complete t2 ON t1.step_complete_sid = t2.step_complete_sid
+        LEFT JOIN s_pay_product_process_step_item t3 ON t1.process_step_item_sid = t3.step_item_sid
+        LEFT JOIN s_man_process t4 ON t3.process_sid = t4.process_sid
+        LEFT JOIN s_bas_staff t5 ON t1.worker_sid = t5.staff_sid
+        LEFT JOIN s_bas_plant t6 ON t2.plant_sid = t6.plant_sid
+        LEFT JOIN s_man_work_center t7 ON t2.work_center_sid = t7.work_center_sid
+        LEFT JOIN s_bas_material t8 ON t1.product_sid = t8.material_sid
+        LEFT JOIN s_pay_product_process_step t9 ON t3.product_process_step_sid = t9.product_process_step_sid
+        LEFT JOIN s_man_work_center t10 ON t5.work_center_sid = t10.work_center_sid
+        LEFT JOIN sys_user t11 ON t1.creator_account = t11.user_name and t1.client_id = t11.client_id
+        LEFT JOIN s_con_manufacture_department t12 ON t9.department = t12.code
+        <where>
+            <if test="stepCompleteItemSid != null">
+                AND t1.step_complete_item_sid = #{stepCompleteItemSid}
+            </if>
+            <if test="stepCompleteItemSidList != null and stepCompleteItemSidList.size() > 0">
+                AND t1.step_complete_item_sid IN
+                (<foreach collection="stepCompleteItemSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="clientId != null and clientId != ''">
+                AND t1.client_id like concat('%',#{clientId}, '%')
+            </if>
+            <if test="productCode != null and productCode != ''">
+                AND t1.product_code like concat('%',#{productCode}, '%')
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                AND t1.product_code like concat('%',#{materialCode}, '%')
+            </if>
+            <if test="manufactureOrderCode != null">
+                AND t1.manufacture_order_code like concat('%',#{manufactureOrderCode}, '%')
+            </if>
+            <if test="processStepName != null and processStepName != ''">
+                AND t1.process_step_name like concat('%',#{processStepName}, '%')
+            </if>
+            <if test="sort != null and sort != ''">
+                AND t1.sort = #{sort}
+            </if>
+            <if test="staffSidList != null and staffSidList.length > 0">
+                AND t1.worker_sid IN
+                (<foreach collection="staffSidList" item="staffSid" separator=",">#{staffSid}</foreach>)
+            </if>
+            <if test="staffSidList != null and staffSidList.length > 0">
+                AND t1.worker_sid IN
+                (<foreach collection="staffSidList" item="staffSid" separator=",">#{staffSid}</foreach>)
+            </if>
+            <if test="reportDateBegin != null and reportDateBegin!=''">
+                and date_format(t2.report_date,'%y%m%d') &gt;= date_format(#{reportDateBegin},'%y%m%d')
+            </if>
+            <if test="reportDateEnd != null and reportDateEnd!=''">
+                and date_format(t2.report_date,'%y%m%d') &lt;= date_format(#{reportDateEnd},'%y%m%d')
+            </if>
+            <if test="yearmonth != null and yearmonth != ''">
+                AND t2.yearmonth = #{yearmonth}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                AND t2.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length > 0">
+                AND t2.handle_status IN
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="productPriceTypeList != null and productPriceTypeList.length > 0">
+                AND t2.product_price_type IN
+                (<foreach collection="productPriceTypeList" item="productPriceType" separator=",">#{productPriceType}</foreach>)
+            </if>
+            <if test="stepCompleteCode != null">
+                AND t2.step_complete_code like concat('%', #{stepCompleteCode} ,'%')
+            </if>
+            <if test="plantSid != null">
+                AND t2.plant_sid = #{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length > 0">
+                AND t2.plant_sid IN
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="workCenterSidList != null and workCenterSidList.length > 0">
+                AND t2.work_center_sid IN
+                (<foreach collection="workCenterSidList" item="workCenterSid" separator=",">#{workCenterSid}</foreach>)
+            </if>
+            <if test="staffWorkCenterSid != null">
+                AND t5.work_center_sid = #{staffWorkCenterSid}
+            </if>
+            <if test="staffWorkCenterSidList != null and staffWorkCenterSidList.length > 0">
+                AND t5.work_center_sid IN
+                (<foreach collection="staffWorkCenterSidList" item="staffWorkCenterSid" separator=",">#{staffWorkCenterSid}</foreach>)
+            </if>
+            <if test="jixinWangongType != null and jixinWangongType != ''">
+                AND t2.jixin_wangong_type = #{jixinWangongType}
+            </if>
+            <if test="department != null and department != ''">
+                AND t9.department = #{department}
+            </if>
+            <if test="departmentList != null and departmentList.length > 0">
+                AND t9.department IN
+                (<foreach collection="departmentList" item="department" separator=",">#{department}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                AND t11.nick_name like concat('%', #{creatorAccountName} ,'%')
+            </if>
+        </where>
+    </sql>
+
+    <select id="getProcessStepCompleteWageForm" parameterType="com.platform.ems.domain.dto.response.form.PaySalaryWageFormResponse"
+            resultType="com.platform.ems.domain.dto.response.form.PaySalaryWageFormResponse">
+        <include refid="getProcessStepCompleteWageFormVo"/>
+        <if test="sortType != null and sortType == 'YG'">
+            order by t2.yearmonth desc,
+             <!---        CONVERT (t6.plant_name USING gbk) asc, CONVERT (t10.work_center_name USING gbk) asc, CONVERT (t5.staff_name USING gbk) asc, CONVERT (t1.product_code USING gbk) asc,
+                     -->
+                     t9.department asc, t1.sort asc, t1.step_complete_item_sid asc
+        </if>
+        <if test="sortType != null and sortType == 'KUAN'">
+            order by t2.yearmonth desc,
+            <!---                 CONVERT (t6.plant_name USING gbk) asc, CONVERT (t1.product_code USING gbk) asc,
+            -->
+                     t9.department asc, t1.sort asc
+            <!---                 CONVERT (t10.work_center_name USING gbk) asc, CONVERT (t5.staff_name USING gbk) asc, t1.step_complete_item_sid asc
+                        -->
+        </if>
+        <if test="sortType == null">
+            order by t2.yearmonth desc,
+            <!---             CONVERT (t6.plant_name USING gbk) asc, CONVERT (t10.work_center_name USING gbk) asc, CONVERT (t5.staff_name USING gbk) asc, CONVERT (t1.product_code USING gbk) asc,
+            -->
+                     t9.department asc, t1.sort asc, t1.step_complete_item_sid asc
+        </if>
+    </select>
+
+    <select id="getCollectProcessStepCompleteWageForm" parameterType="com.platform.ems.domain.dto.response.form.PaySalaryWageFormResponse"
+            resultType="com.platform.ems.domain.dto.response.form.PaySalaryWageFormResponse">
+        SELECT
+        t1.worker_sid AS staff_sid,t1.manufacture_order_code,t1.product_sid,t1.product_code,t1.process_step_code,t1.process_step_name,t2.jixin_wangong_type,
+        0 + CAST(ROUND(t1.sort*1,2) AS CHAR) AS sort,
+        0 + CAST(ROUND(SUM(t1.complete_quantity) * 1, 3) AS CHAR) AS complete_quantity,
+        0 + CAST(ROUND(if(t2.jixin_wangong_type = 'WXFG', 0, (SUM(t1.complete_quantity) * t1.price * (ifnull(t1.price_rate,0) + ifnull(t1.wangong_price_rate,0)))), 2) AS CHAR) AS money,
+        0 + CAST(ROUND(t1.wangong_price_rate*1,3) AS CHAR) AS wangong_price_rate,
+        0 + CAST(ROUND(t1.price*1,4) AS CHAR) AS price,
+        0 + CAST(ROUND(t1.price_rate*1,3) AS CHAR) AS price_rate,
+        t2.step_complete_sid,t2.step_complete_code,t2.yearmonth,t2.plant_sid,t2.work_center_sid,t2.report_date,t2.product_price_type,t2.department,t2.handle_status,t3.process_sid,t4.process_name,t4.process_code,
+        t5.staff_code,t5.staff_name,t6.plant_code,t6.plant_name,t7.work_center_code,t7.work_center_name,t8.material_name, (concat(t1.product_code,'-',t8.material_name)) as material_code_name,
+        (concat(t1.worker_sid,t2.work_center_sid)) as staff_and_work_sid,t5.work_center_sid as staff_work_center_sid,ifnull(t9.work_center_name,'') as staff_work_center_name,t10.nick_name as creator_account_name,
+        t11.name as department_name
+        FROM s_pay_process_step_complete_item t1
+        LEFT JOIN s_pay_process_step_complete t2 ON t1.step_complete_sid = t2.step_complete_sid
+        LEFT JOIN s_pay_product_process_step_item t3 ON t1.process_step_item_sid = t3.step_item_sid
+        LEFT JOIN s_man_process t4 ON t3.process_sid = t4.process_sid
+        LEFT JOIN s_bas_staff t5 ON t1.worker_sid = t5.staff_sid
+        LEFT JOIN s_bas_plant t6 ON t2.plant_sid = t6.plant_sid
+        LEFT JOIN s_man_work_center t7 ON t2.work_center_sid = t7.work_center_sid
+        LEFT JOIN s_bas_material t8 ON t1.product_sid = t8.material_sid
+        LEFT JOIN s_man_work_center t9 ON t5.work_center_sid = t9.work_center_sid
+        LEFT JOIN sys_user t10 ON t1.creator_account = t10.user_name and t1.client_id = t10.client_id
+        LEFT JOIN s_con_manufacture_department t11 ON t2.department = t11.code
+        <where>
+            <if test="clientId != null and clientId != ''">
+                AND t1.client_id like concat('%',#{clientId}, '%')
+            </if>
+            <if test="stepCompleteItemSid != null">
+                AND t1.step_complete_item_sid = #{stepCompleteItemSid}
+            </if>
+            <if test="stepCompleteItemSidList != null and stepCompleteItemSidList.size() > 0">
+                AND t1.step_complete_item_sid IN
+                (<foreach collection="stepCompleteItemSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="productCode != null and productCode != ''">
+                AND t1.product_code like concat('%',#{productCode}, '%')
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                AND t1.product_code like concat('%',#{materialCode}, '%')
+            </if>
+            <if test="manufactureOrderCode != null">
+                AND t1.manufacture_order_code like concat('%',#{manufactureOrderCode}, '%')
+            </if>
+            <if test="processStepName != null and processStepName != ''">
+                AND t1.process_step_name like concat('%',#{processStepName}, '%')
+            </if>
+            <if test="sort != null and sort != ''">
+                AND t1.sort = #{sort}
+            </if>
+            <if test="staffSidList != null and staffSidList.length > 0">
+                AND t1.worker_sid IN
+                (<foreach collection="staffSidList" item="staffSid" separator=",">#{staffSid}</foreach>)
+            </if>
+            <if test="staffSidList != null and staffSidList.length > 0">
+                AND t1.worker_sid IN
+                (<foreach collection="staffSidList" item="staffSid" separator=",">#{staffSid}</foreach>)
+            </if>
+            <if test="reportDateBegin != null and reportDateBegin!=''">
+                and date_format(t2.report_date,'%y%m%d') &gt;= date_format(#{reportDateBegin},'%y%m%d')
+            </if>
+            <if test="reportDateEnd != null and reportDateEnd!=''">
+                and date_format(t2.report_date,'%y%m%d') &lt;= date_format(#{reportDateEnd},'%y%m%d')
+            </if>
+            <if test="yearmonth != null and yearmonth != ''">
+                AND t2.yearmonth = #{yearmonth}
+            </if>
+            <if test="stepCompleteCode != null">
+                AND t2.step_complete_code like concat('%', #{stepCompleteCode} ,'%')
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                AND t2.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length > 0">
+                AND t2.handle_status IN
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="productPriceTypeList != null and productPriceTypeList.length > 0">
+                AND t2.product_price_type IN
+                (<foreach collection="productPriceTypeList" item="productPriceType" separator=",">#{productPriceType}</foreach>)
+            </if>
+            <if test="plantSid != null">
+                AND t2.plant_sid = #{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length > 0">
+                AND t2.plant_sid IN
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="department != null and department != ''">
+                AND t2.department = #{department}
+            </if>
+            <if test="departmentList != null and departmentList.length > 0">
+                AND t2.department IN
+                (<foreach collection="departmentList" item="department" separator=",">#{department}</foreach>)
+            </if>
+            <if test="workCenterSid != null">
+                AND t2.work_center_sid = #{workCenterSid}
+            </if>
+            <if test="workCenterSidList != null and workCenterSidList.length > 0">
+                AND t2.work_center_sid IN
+                (<foreach collection="workCenterSidList" item="workCenterSid" separator=",">#{workCenterSid}</foreach>)
+            </if>
+            <if test="jixinWangongType != null and jixinWangongType != ''">
+                AND t2.jixin_wangong_type = #{jixinWangongType}
+            </if>
+            <if test="staffWorkCenterSid != null">
+                AND t5.work_center_sid = #{staffWorkCenterSid}
+            </if>
+            <if test="staffWorkCenterSidList != null and staffWorkCenterSidList.length > 0">
+                AND t5.work_center_sid IN
+                (<foreach collection="staffWorkCenterSidList" item="staffWorkCenterSid" separator=",">#{staffWorkCenterSid}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                AND t10.nick_name like concat('%', #{creatorAccountName} ,'%')
+            </if>
+        </where>
+        GROUP BY t2.plant_sid,t5.work_center_sid,t1.worker_sid,t1.product_sid,t1.process_step_code,t1.sort,t1.price,t1.price_rate,t1.wangong_price_rate
+        order by CONVERT (t6.plant_name USING gbk) asc, CONVERT (t9.work_center_name USING gbk) asc, CONVERT (t5.staff_name USING gbk) asc,
+        CONVERT (t1.product_code USING gbk) asc, t1.process_step_code asc, t1.sort asc, t1.price asc, t1.price_rate asc, t1.wangong_price_rate asc
+    </select>
+
+    <select id="getCollectProcessStepCompleteWageProcessForm" parameterType="com.platform.ems.domain.dto.response.form.PaySalaryWageFormResponse"
+            resultType="com.platform.ems.domain.dto.response.form.PaySalaryWageFormResponse">
+        SELECT
+        t1.worker_sid AS staff_sid,t1.manufacture_order_code,t1.product_sid,t1.product_code,t1.process_step_code,t1.process_step_name,t2.jixin_wangong_type,
+        0 + CAST(ROUND(t1.sort*1,2) AS CHAR) AS sort,
+        0 + CAST(ROUND(SUM(t1.complete_quantity) * 1, 3) AS CHAR) AS complete_quantity,
+        0 + CAST(ROUND(if(t2.jixin_wangong_type = 'WXFG', 0, (SUM(t1.complete_quantity) * t1.price * (ifnull(t1.price_rate,0) + ifnull(t1.wangong_price_rate,0)))), 2) AS CHAR) AS money,
+        0 + CAST(ROUND(t1.wangong_price_rate*1,3) AS CHAR) AS wangong_price_rate,
+        0 + CAST(ROUND(t1.price*1,4) AS CHAR) AS price,
+        0 + CAST(ROUND(t1.price_rate*1,3) AS CHAR) AS price_rate,
+        t2.step_complete_sid,t2.step_complete_code,t2.yearmonth,t2.plant_sid,t2.work_center_sid,t2.report_date,t2.product_price_type,t2.department,t2.handle_status,t3.process_sid,t4.process_name,t4.process_code,
+        t5.staff_code,t5.staff_name,t6.plant_code,t6.plant_name,
+               t7.work_center_code,t7.work_center_name,
+               t8.material_name, (concat(t1.product_code,'-',t8.material_name)) as material_code_name,
+        (concat(t1.worker_sid,t2.work_center_sid)) as staff_and_work_sid,
+               t5.work_center_sid as staff_work_center_sid,ifnull(t9.work_center_name,'') as staff_work_center_name,t10.nick_name as creator_account_name,
+        t11.name as department_name
+        FROM s_pay_process_step_complete_item t1
+        LEFT JOIN s_pay_process_step_complete t2 ON t1.step_complete_sid = t2.step_complete_sid
+        LEFT JOIN s_pay_product_process_step_item t3 ON t1.process_step_item_sid = t3.step_item_sid
+        LEFT JOIN s_man_process t4 ON t3.process_sid = t4.process_sid
+        LEFT JOIN s_bas_staff t5 ON t1.worker_sid = t5.staff_sid
+        LEFT JOIN s_bas_plant t6 ON t2.plant_sid = t6.plant_sid
+        LEFT JOIN s_man_work_center t7 ON t2.work_center_sid = t7.work_center_sid
+        LEFT JOIN s_bas_material t8 ON t1.product_sid = t8.material_sid
+        LEFT JOIN s_man_work_center t9 ON t5.work_center_sid = t9.work_center_sid
+        LEFT JOIN sys_user t10 ON t1.creator_account = t10.user_name and t1.client_id = t10.client_id
+        LEFT JOIN s_con_manufacture_department t11 ON t2.department = t11.code
+        <where>
+            <if test="clientId != null and clientId != ''">
+                AND t1.client_id like concat('%',#{clientId}, '%')
+            </if>
+            <if test="stepCompleteItemSid != null">
+                AND t1.step_complete_item_sid = #{stepCompleteItemSid}
+            </if>
+            <if test="stepCompleteItemSidList != null and stepCompleteItemSidList.size() > 0">
+                AND t1.step_complete_item_sid IN
+                (<foreach collection="stepCompleteItemSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="productCode != null and productCode != ''">
+                AND t1.product_code like concat('%',#{productCode}, '%')
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                AND t1.product_code like concat('%',#{materialCode}, '%')
+            </if>
+            <if test="manufactureOrderCode != null">
+                AND t1.manufacture_order_code like concat('%',#{manufactureOrderCode}, '%')
+            </if>
+            <if test="processStepName != null and processStepName != ''">
+                AND t1.process_step_name like concat('%',#{processStepName}, '%')
+            </if>
+            <if test="sort != null and sort != ''">
+                AND t1.sort = #{sort}
+            </if>
+            <if test="staffSidList != null and staffSidList.length > 0">
+                AND t1.worker_sid IN
+                (<foreach collection="staffSidList" item="staffSid" separator=",">#{staffSid}</foreach>)
+            </if>
+            <if test="staffSidList != null and staffSidList.length > 0">
+                AND t1.worker_sid IN
+                (<foreach collection="staffSidList" item="staffSid" separator=",">#{staffSid}</foreach>)
+            </if>
+            <if test="reportDateBegin != null and reportDateBegin!=''">
+                and date_format(t2.report_date,'%y%m%d') &gt;= date_format(#{reportDateBegin},'%y%m%d')
+            </if>
+            <if test="reportDateEnd != null and reportDateEnd!=''">
+                and date_format(t2.report_date,'%y%m%d') &lt;= date_format(#{reportDateEnd},'%y%m%d')
+            </if>
+            <if test="yearmonth != null and yearmonth != ''">
+                AND t2.yearmonth = #{yearmonth}
+            </if>
+            <if test="stepCompleteCode != null">
+                AND t2.step_complete_code like concat('%', #{stepCompleteCode} ,'%')
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                AND t2.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length > 0">
+                AND t2.handle_status IN
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="productPriceTypeList != null and productPriceTypeList.length > 0">
+                AND t2.product_price_type IN
+                (<foreach collection="productPriceTypeList" item="productPriceType" separator=",">#{productPriceType}</foreach>)
+            </if>
+            <if test="plantSid != null">
+                AND t2.plant_sid = #{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length > 0">
+                AND t2.plant_sid IN
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="department != null and department != ''">
+                AND t2.department = #{department}
+            </if>
+            <if test="departmentList != null and departmentList.length > 0">
+                AND t2.department IN
+                (<foreach collection="departmentList" item="department" separator=",">#{department}</foreach>)
+            </if>
+            <if test="workCenterSid != null">
+                AND t2.work_center_sid = #{workCenterSid}
+            </if>
+            <if test="workCenterSidList != null and workCenterSidList.length > 0">
+                AND t2.work_center_sid IN
+                (<foreach collection="workCenterSidList" item="workCenterSid" separator=",">#{workCenterSid}</foreach>)
+            </if>
+            <if test="jixinWangongType != null and jixinWangongType != ''">
+                AND t2.jixin_wangong_type = #{jixinWangongType}
+            </if>
+            <if test="staffWorkCenterSid != null">
+                AND t5.work_center_sid = #{staffWorkCenterSid}
+            </if>
+            <if test="staffWorkCenterSidList != null and staffWorkCenterSidList.length > 0">
+                AND t5.work_center_sid IN
+                (<foreach collection="staffWorkCenterSidList" item="staffWorkCenterSid" separator=",">#{staffWorkCenterSid}</foreach>)
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != ''">
+                AND t10.nick_name like concat('%', #{creatorAccountName} ,'%')
+            </if>
+        </where>
+        GROUP BY t2.plant_sid,t2.work_center_sid,t1.worker_sid,t1.product_sid,t1.process_step_code,t1.sort,t1.price,t1.price_rate,t1.wangong_price_rate
+        order by CONVERT (t6.plant_name USING gbk) asc, CONVERT (t7.work_center_name USING gbk) asc, CONVERT (t5.staff_name USING gbk) asc,
+        CONVERT (t1.product_code USING gbk) asc, t1.process_step_code asc, t1.sort asc, t1.price asc, t1.price_rate asc, t1.wangong_price_rate asc
+    </select>
+
+    <select id="countCompleteQuantity" parameterType="com.platform.ems.domain.PayProcessStepCompleteItem"
+            resultType="java.lang.Double">
+        select ifnull(sum(t.complete_quantity), 0) as complete_quantity from s_pay_process_step_complete_item t
+        left join s_pay_process_step_complete t1 on t.step_complete_sid = t1.step_complete_sid
+        <where>
+            <if test="productSid != null ">
+                and t.product_sid = #{productSid}
+            </if>
+            <if test="paichanBatch != null ">
+                and t.paichan_batch = #{paichanBatch}
+            </if>
+            <if test="paichanBatch == null ">
+                and t.paichan_batch is null
+            </if>
+            <if test="sort != null ">
+                and t.sort = #{sort}
+            </if>
+            <if test="stepCompleteSid != null ">
+                and t.step_complete_sid != #{stepCompleteSid}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t1.handle_status = #{handleStatus}
+            </if>
+            <if test="plantSid != null ">
+                and t1.plant_sid = #{plantSid}
+            </if>
+            <if test="productPriceType != null and productPriceType != ''">
+                and t1.product_price_type = #{productPriceType}
+            </if>
+            <if test="jixinWangongType != null and jixinWangongType != ''">
+                and t1.jixin_wangong_type = #{jixinWangongType}
+            </if>
+            <if test="department != null and department != ''">
+                and t1.department = #{department}
+            </if>
+            <if test="yearmonth != null and yearmonth != ''">
+                and t1.yearmonth = #{yearmonth}
+            </if>
+        </where>
+    </select>
+
+    <sql id="selectPayProcessStepCompleteItemJoinVo">
+        select
+            t.client_id,
+            t.step_complete_item_sid,
+            t.step_complete_sid,
+            t.worker_sid,
+            t.worker_code,
+            t.manufacture_order_sid,
+            t.manufacture_order_code,
+            t.product_sid,
+            t.product_code,
+            t.process_step_item_sid,
+            t.process_step_code,
+            t.process_step_name,
+            t.complete_quantity,
+            t.complete_quantity_sys,
+            t.price,
+            t.price_rate,
+            t.wangong_price_rate,
+            t.paichan_batch,
+            t.item_num,
+            t.sort,
+            t.remark,
+            t.creator_account,
+            t.create_date,
+            t.updater_account,
+            t.update_date,
+            t.data_source_sys,
+            t1.staff_name as worker_name,
+            t2.material_name,
+            t3.process_step_sid,
+            t3.process_sid,
+            t3.step_category,
+            t4.process_code,
+            t4.process_name,
+            t5.step_complete_code,
+            t5.jixin_wangong_type,
+            t5.report_date,
+            t5.handle_status,
+            t5.department,
+            t7.name as department_name,
+            if(t5.handle_status != '5', t9.complete_quantity + IFNULL(t8.complete_quantity,0), t8.complete_quantity) as cumulative_quantity
+        from s_pay_process_step_complete_item t
+                 LEFT JOIN s_bas_staff t1 ON t1.staff_sid = t.worker_sid
+                 LEFT JOIN s_bas_material t2 ON t2.material_sid = t.product_sid
+                 LEFT JOIN s_pay_product_process_step_item t3 ON t3.step_item_sid = t.process_step_item_sid
+                 LEFT JOIN s_man_process t4 ON t4.process_sid = t3.process_sid
+                 LEFT JOIN s_pay_process_step_complete t5 ON t5.step_complete_sid = t.step_complete_sid
+                 LEFT JOIN s_con_manufacture_department t7 ON t5.department = t7.code
+                 LEFT JOIN (
+            select t.product_sid,t.sort,t.paichan_batch,t1.plant_sid,t1.department,t1.jixin_wangong_type,t1.product_price_type,ifnull(sum(t.complete_quantity), 0) as complete_quantity
+            from s_pay_process_step_complete_item t
+                     left join s_pay_process_step_complete t1 on t.step_complete_sid = t1.step_complete_sid
+            WHERE t1.handle_status = '5'
+            GROUP BY t.product_sid,t.sort,t.paichan_batch,t1.plant_sid,t1.department,t1.jixin_wangong_type,t1.product_price_type
+        ) t8 ON t.product_sid = t8.product_sid and t.sort = t8.sort and (t.paichan_batch = t8.paichan_batch or (t.paichan_batch is null and t8.paichan_batch is null))
+            and t5.plant_sid = t8.plant_sid and t5.department = t8.department and t5.jixin_wangong_type = t8.jixin_wangong_type and t5.product_price_type = t8.product_price_type
+        LEFT JOIN (
+            SELECT t.step_complete_sid,t.product_sid,t.sort,t.paichan_batch,ifnull(sum(t.complete_quantity), 0) as complete_quantity FROM s_pay_process_step_complete_item t
+            GROUP BY t.step_complete_sid,t.product_sid,t.sort,t.paichan_batch
+        ) t9 ON t.step_complete_sid = t9.step_complete_sid AND t.product_sid = t9.product_sid AND t.sort = t9.sort
+                    AND (t.paichan_batch = t9.paichan_batch or (t.paichan_batch is null and t9.paichan_batch is null))
+    </sql>
+
+    <sql id="wherePayProcessStepCompleteItemVo">
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="stepCompleteSid != null ">
+                and t.step_complete_sid =#{stepCompleteSid}
+            </if>
+            <if test="workerSid != null ">
+                and t.worker_sid =#{workerSid}
+            </if>
+            <if test="workerCode != null and workerCode != ''">
+                and (<foreach collection="workerCode.split(';')" item="item" separator="or">t.worker_code like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="manufactureOrderSid != null ">
+                and t.manufacture_order_sid =#{manufactureOrderSid}
+            </if>
+            <if test="manufactureOrderCode != null and manufactureOrderCode != ''">
+                and (<foreach collection="manufactureOrderCode.split(';')" item="item" separator="or">
+                t.manufacture_order_code like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="productSid != null ">
+                and t.product_sid =#{productSid}
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and (<foreach collection="productCode.split(';')" item="item" separator="or">t.product_code like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="processStepItemSid != null ">
+                and t.process_step_item_sid =#{processStepItemSid}
+            </if>
+            <if test="processStepCode != null and processStepCode != ''">
+                and (<foreach collection="processStepCode.split(';')" item="item" separator="or">t.process_step_code
+                like concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="processStepName != null and processStepName != ''">and
+                t.process_step_name like concat('%', #{processStepName}, '%')
+            </if>
+            <if test="completeQuantity != null ">
+                and t.complete_quantity = #{completeQuantity}
+            </if>
+            <if test="jixinWangongType != null and jixinWangongType != ''">
+                and t5.jixin_wangong_type = #{jixinWangongType}
+            </if>
+            <if test="department != null and department != ''">
+                and t5.department = #{department}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t5.handle_status = #{handleStatus}
+            </if>
+            <if test="plantSid != null">
+                and t5.plant_sid = #{plantSid}
+            </if>
+            <if test="workCenterSid != null">
+                and t5.work_center_sid = #{workCenterSid}
+            </if>
+            <if test="paichanBatch != null ">
+                and t.paichan_batch = #{paichanBatch}
+            </if>
+            <if test="paichanBatch == null and isPaichanPre == 'Y'.toString() ">
+                and t.paichan_batch is null
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num =#{itemNum}
+            </if>
+            <if test="sort != null ">
+                and t.sort = #{sort}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%', #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="yearmonth != null and yearmonth != ''">
+                and t5.yearmonth like concat('%',#{yearmonth}, '%')
+            </if>
+            <if test="reportDate != null and reportDate != ''">
+                and t5.report_date like concat('%',#{reportDate}, '%')
+            </if>
+            <if test="jixinWangongTypeList != null and jixinWangongTypeList.length >0 ">
+                and t5.jixin_wangong_type in
+                (<foreach collection="jixinWangongTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </sql>
+
+    <select id="countProcessStepCompleteItemForm" parameterType="com.platform.ems.domain.PayProcessStepComplete"
+            resultType="java.lang.Integer">
+        select count(*) from (
+        <include refid="selectProcessStepCompleteItemFormVo"/>) temp
+    </select>
+
+    <sql id="selectProcessStepCompleteItemFormVo">
+        SELECT
+            t.product_sid,t.product_code, t.paichan_batch, t.sort,t.process_step_code,t.process_step_name,t.price, t.price_rate, t.wangong_price_rate,
+            SUM(t.complete_quantity) as complete_quantity, (SUM(t.complete_quantity) * t.price * (ifnull(t.price_rate,0) + ifnull(t.wangong_price_rate,0))) as money,
+            t1.plant_sid,t1.product_price_type, t1.jixin_wangong_type, t1.yearmonth,
+            t2.material_name as product_name,
+            t3.name as department_name,
+            t4.plant_code, t4.plant_name, t4.short_name as plant_short_name, t5.shicai_quantity
+        FROM s_pay_process_step_complete_item t
+        LEFT JOIN s_pay_process_step_complete t1 ON t.step_complete_sid = t1.step_complete_sid
+        LEFT JOIN s_bas_material t2 ON t.product_sid = t2.material_sid
+        LEFT JOIN s_con_manufacture_department t3 ON t1.department = t3.code
+        LEFT JOIN s_bas_plant t4 ON t1.plant_sid = t4.plant_sid
+        LEFT JOIN s_man_product_produce_batch_infor t5 ON t1.plant_sid = t5.plant_sid and t.product_sid = t5.product_sid
+             and ((t.paichan_batch is null and t5.paichan_batch is null) or t.paichan_batch = t5.paichan_batch)
+        <where>
+            <if test="paichanBatch != null">
+                and t.paichan_batch = #{paichanBatch}
+            </if>
+            <if test="plantSid != null">
+                and t1.plant_sid = #{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length > 0">
+                and t1.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and t.product_code like concat('%', #{productCode}, '%')
+            </if>
+            <if test="sort != null and sort != ''">
+                and t.sort = #{sort}
+            </if>
+            <if test="processStepName != null and processStepName != ''">
+                AND t.process_step_name like concat('%',#{processStepName}, '%')
+            </if>
+            <if test="department != null and department != ''">
+                and t1.department = #{department}
+            </if>
+            <if test="departmentList != null and departmentList.length > 0">
+                AND t1.department IN
+                (<foreach collection="departmentList" item="department" separator=",">#{department}</foreach>)
+            </if>
+            <if test="productPriceType != null and productPriceType != ''">
+                and t1.product_price_type = #{productPriceType}
+            </if>
+            <if test="productPriceTypeList != null and productPriceTypeList.length > 0">
+                AND t1.product_price_type IN
+                (<foreach collection="productPriceTypeList" item="productPriceType" separator=",">#{productPriceType}</foreach>)
+            </if>
+            <if test="jixinWangongType != null and jixinWangongType != ''">
+                AND t1.jixin_wangong_type = #{jixinWangongType}
+            </if>
+            <if test="jixinWangongTypeList != null and jixinWangongTypeList.length >0 ">
+                and t1.jixin_wangong_type in
+                (<foreach collection="jixinWangongTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="yearmonthBegin != null and yearmonthBegin != ''">
+                AND t1.yearmonth &gt;= #{yearmonthBegin}
+            </if>
+            <if test="yearmonthEnd != null and yearmonthEnd != ''">
+                AND t1.yearmonth &lt;= #{yearmonthEnd}
+            </if>
+        </where>
+        GROUP BY t1.plant_sid, t.product_sid, t.paichan_batch, t.sort, t.price, t.price_rate, t.wangong_price_rate, t1.department, t1.product_price_type, t1.jixin_wangong_type
+    </sql>
+
+    <select id="selectProcessStepCompleteItemForm" parameterType="com.platform.ems.domain.PayProcessStepComplete"
+            resultType="com.platform.ems.domain.PayProcessStepCompleteItem">
+        <include refid="selectProcessStepCompleteItemFormVo"/>
+        ORDER BY CONVERT (t4.short_name USING gbk) asc, t1.department asc, t1.product_price_type asc, t1.jixin_wangong_type asc,
+            CONVERT (t2.material_code USING gbk) asc, t.paichan_batch asc, t.sort asc, t.price asc, t.price_rate asc, t.wangong_price_rate asc
+        <if test="pageNum != null and pageSize != null">LIMIT ${pageBegin},${pageSize}</if>
+    </select>
+
+    <select id="selectCompleteStatisticsSalaryList" parameterType="com.platform.ems.domain.dto.response.form.ProductProcessCompleteStatisticsSalary"
+            resultType="com.platform.ems.domain.dto.response.form.ProductProcessCompleteStatisticsSalary">
+        SELECT
+        <if test="pageNum == null or pageSize == null">
+            count(0) as page_size FROM ( SELECT count(0)
+        </if>
+        <if test="pageNum != null and pageSize != null">
+            t.* , SUM(t.item_amount_total) as amount_total, CONCAT(date_format(MIN(t.report_date_begin),'%Y/%m/%d'), '~', date_format(MAX(t.report_date_end),'%Y/%m/%d')) as interval_yearmonth
+        </if>
+        FROM (
+         SELECT t.product_sid, t.paichan_batch, t1.yearmonth, t1.plant_sid, t1.department, t1.product_price_type, t1.jixin_wangong_type,
+                MIN(report_date) AS report_date_begin, MAX(report_date) AS report_date_end,
+                t2.material_code as product_code, t2.material_name as product_name,
+                t3.plant_code, t3.plant_name, IFNULL(t3.short_name,t3.plant_name) as plant_short_name,
+                t4.customer_code, t4.customer_name, IFNULL(t4.short_name,t4.customer_name) as customer_short_name,
+                t5.product_season_code, t5.product_season_name, t6.name as department_name,
+                ROUND(SUM(t.complete_quantity * t.price * (IFNULL(t.price_rate,0) + IFNULL(t.wangong_price_rate,0))),2) as item_amount_total
+         FROM s_pay_process_step_complete_item t
+                  LEFT JOIN s_pay_process_step_complete t1 ON t.step_complete_sid = t1.step_complete_sid
+                  LEFT JOIN s_bas_material t2 ON t.product_sid = t2.material_sid
+                  LEFT JOIN s_bas_plant t3 ON t1.plant_sid = t3.plant_sid
+                  LEFT JOIN s_bas_customer t4 ON t2.customer_sid = t4.customer_sid
+                  LEFT JOIN s_bas_product_season t5 ON t2.product_season_sid = t5.product_season_sid
+                  LEFT JOIN s_con_manufacture_department t6 ON t1.department = t6.code
+        <where>
+            and t1.handle_status = '5'
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="paichanBatch != null and paichanBatch !=''">
+                and t.paichan_batch = #{paichanBatch}
+            </if>
+            <if test="plantSid != null">
+                and t1.plant_sid = #{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length > 0">
+                and t1.plant_sid in
+                (<foreach collection="plantSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="department != null and department != ''">
+                and t1.department = #{department}
+            </if>
+            <if test="departmentList != null and departmentList.length > 0">
+                and t1.department in
+                (<foreach collection="departmentList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="productPriceType != null and productPriceType != ''">
+                and t1.product_price_type = #{productPriceType}
+            </if>
+            <if test="jixinWangongType != null and jixinWangongType != ''">
+                and t1.jixin_wangong_type = #{jixinWangongType}
+            </if>
+            <if test="yearmonthBegin != null and yearmonthBegin != ''">
+                and t1.yearmonth &gt;= #{yearmonthBegin}
+            </if>
+            <if test="yearmonthEnd != null and yearmonthEnd != ''">
+                and t1.yearmonth &lt;= #{yearmonthEnd}
+            </if>
+            <if test="productCode != null and productCode != ''">
+                and t2.material_code like concat('%', #{productCode}, '%')
+            </if>
+        </where>
+         GROUP BY t1.yearmonth, t1.plant_sid, t.product_sid, t.paichan_batch, t1.department, t1.product_price_type, t1.jixin_wangong_type
+        ) t
+        GROUP BY t.plant_sid, t.product_sid, t.paichan_batch, t.department, t.product_price_type, t.jixin_wangong_type
+        <if test="pageNum == null or pageSize == null">
+            ) t
+        </if>
+        <if test="pageNum != null and pageSize != null">
+            ORDER BY CONVERT (t.plant_short_name USING gbk) ASC, t.product_code ASC, t.paichan_batch ASC, t.department ASC, t.product_price_type ASC, t.jixin_wangong_type ASC
+            LIMIT ${pageBegin},${pageSize}
+        </if>
+    </select>
+</mapper>

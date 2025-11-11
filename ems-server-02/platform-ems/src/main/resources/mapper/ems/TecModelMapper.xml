@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.TecModelMapper">
+
+    <resultMap type="com.platform.ems.domain.TecModel" id="TecModelResult">
+        <result property="clientId" column="client_id"/>
+        <result property="modelSid" column="model_sid"/>
+        <result property="modelCode" column="model_code"/>
+        <result property="modelName" column="model_name"/>
+        <result property="modelType" column="model_type"/>
+        <result property="skuGroupSid" column="sku_group_sid"/>
+        <result property="skuGroupName" column="sku_group_name"/>
+        <result property="standardSku" column="standard_sku"/>
+        <result property="skuName" column="sku_name"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="upDownSuit" column="up_down_suit"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyName" column="company_name"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerModelCode" column="customer_model_code"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="maleFemaleFlag" column="male_female_flag"/>
+        <result property="oldYoungFlag" column="old_young_flag"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="companyBrandSid" column="company_brand_sid"/>
+        <result property="companyBrandName" column="company_brand_name"/>
+        <result property="customerBrandSid" column="customer_brand_sid"/>
+        <result property="companyBrandName" column="company_brand_name"/>
+        <result property="skuGroupCode" column="sku_group_code"/>
+        <result property="skuCode" column="sku_code"/>
+        <result property="downSkuGroupSid" column="down_sku_group_sid"/>
+        <result property="downSkuGroupCode" column="down_sku_group_code"/>
+        <result property="downSkuGroupName" column="down_sku_group_name"/>
+        <result property="downStandardSku" column="down_standard_sku"/>
+        <result property="downSkuName" column="down_sku_name"/>
+        <result property="downSkuCode" column="down_sku_code"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="isCreateModelLine" column="is_create_model_line"/>
+        <result property="disableRemark" column="disable_remark"/>
+    </resultMap>
+
+    <sql id="selectTecModelVo">
+          SELECT
+    t.client_id,
+    t.model_sid,
+    t.model_code,
+    t.model_name,
+    t.customer_model_code,
+    t.model_type,
+    t.sku_group_sid,
+    t5.sku_group_name ,
+		t5.sku_group_code,
+    t.standard_sku,
+		t6.sku_code,
+    t6.sku_name ,
+    t.picture_path,
+		t.down_sku_group_sid,
+		t7.sku_group_code AS down_sku_group_code,
+		t7.sku_group_name AS down_sku_group_name,
+		t.down_standard_sku,
+		t8.sku_name AS down_sku_name,
+		t8.sku_code AS down_sku_code,
+    t.up_down_suit,
+    t.company_sid,
+    t2.company_name,
+    t.customer_sid,
+    t1.customer_name,
+    t.male_female_flag,
+    t.old_young_flag,
+    t.is_create_model_line,
+    t.remark,
+    t.disable_remark,
+    t.STATUS,
+    t.handle_status,
+    t.creator_account,
+    t.create_date,
+    t.updater_account,
+    t.update_date,
+    t.confirmer_account,
+    t.confirm_date,
+    t.data_source_sys,
+    t.company_brand_sid,
+    t3.brand_name as company_brand_name,
+    t.customer_brand_sid,
+    t4.brand_name as customer_brand_name,
+    t9.nick_name AS creator_account_name,
+    t10.nick_name AS updater_account_name,
+    t11.nick_name AS confirmer_account_name
+    FROM
+    s_tec_model t
+    LEFT JOIN s_bas_customer t1 on t1.customer_sid=t.customer_sid
+    LEFT JOIN s_bas_company t2 on t2.company_sid=t.company_sid
+    LEFT JOIN s_bas_company_brand t3 on t3.company_brand_sid=t.company_brand_sid
+    LEFT JOIN s_bas_customer_brand t4 ON t4.customer_brand_sid = t.customer_brand_sid
+    left join s_bas_sku_group t5 on t5.sku_group_sid =t.sku_group_sid
+    left join s_bas_sku t6 on t6.sku_sid =t.standard_sku
+    left join s_bas_sku_group t7 on t7.sku_group_sid =t.down_sku_group_sid
+    left join s_bas_sku t8 on t8.sku_sid =t.down_standard_sku
+    LEFT JOIN sys_user t9 ON t.creator_account = t9.user_name
+    LEFT JOIN sys_user t10 ON t.updater_account = t10.user_name
+    LEFT JOIN sys_user t11 ON t.confirmer_account = t11.user_name
+    </sql>
+
+    <resultMap type="com.platform.ems.domain.TecModel" id="ModelListResult">
+        <result property="modelSid" column="model_sid"/>
+        <result property="modelCode" column="model_code"/>
+        <result property="modelName" column="model_name"/>
+        <result property="skuGroupSid" column="sku_group_sid"/>
+        <result property="skuGroupName" column="sku_group_name"/>
+        <result property="downSkuGroupSid" column="down_sku_group_sid"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+    </resultMap>
+
+    <select id="getList" parameterType="com.platform.ems.domain.TecModel" resultMap="ModelListResult">
+        SELECT
+        t.model_sid,
+        t.model_code,
+        t.model_name,
+        t.sku_group_sid,
+        t.down_sku_group_sid,
+        t.is_create_model_line,
+        t.status,
+        t.handle_status,
+        t1.sku_group_name
+        FROM s_tec_model t
+        LEFT JOIN s_bas_sku_group t1 ON t.sku_group_sid = t1.sku_group_sid
+        <where>
+            <if test="upDownSuit != null  and upDownSuit != ''">
+                and t.up_down_suit = #{upDownSuit}
+            </if>
+            <if test="maleFemaleFlag != null  and maleFemaleFlag != ''">
+                and t.male_female_flag = #{maleFemaleFlag}
+            </if>
+            <if test="status != null  and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="handleStatus != null  and handleStatus != '' ">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="isCreateModelLine != null and isCreateModelLine != '' ">
+                and t.is_create_model_line = #{isCreateModelLine}
+            </if>
+        </where>
+        ORDER BY t.model_name ASC
+    </select>
+
+    <resultMap type="com.platform.ems.domain.TecModelPosInfor" id="ModelDetailResult">
+        <result property="serialNum" column="serial_num"/>
+        <result property="modelPositionSid" column="model_position_sid"/>
+        <result property="modelPositionCode" column="model_position_code"/>
+        <result property="modelPositionName" column="model_position_name"/>
+        <result property="measureDescription" column="measure_description"/>
+        <result property="deviation" column="deviation"/>
+        <result property="deviationMinus" column="deviation_minus"/>
+        <collection property="posSizeList" ofType="com.platform.ems.domain.TecModelPosSize">
+            <result property="skuSid" column="sku_sid"/>
+            <result property="skuName" column="sku_name"/>
+            <result property="sizeValue" column="size_value"/>
+        </collection>
+    </resultMap>
+
+    <select id="getDetail" resultMap="ModelDetailResult">
+        SELECT
+        t.serial_num,
+        t.model_position_sid,
+        t3.model_position_code,
+        t3.model_position_name,
+        t3.measure_description,
+        t.deviation,
+        t.deviation_minus,
+        t4.sku_name,
+        t2.size_value,
+        t4.sku_sid
+        FROM
+        s_tec_model_pos_infor t
+        LEFT JOIN s_tec_model_pos_size t2 ON t2.model_position_infor_sid = t.model_position_infor_sid
+        LEFT JOIN s_tec_model_position t3 ON t3.model_position_sid = t.model_position_sid
+        LEFT JOIN s_bas_sku t4 ON t4.sku_sid = t2.sku_sid
+        <where>
+            <if test="modelSid != null  and modelSid != ''">and t.model_sid = #{modelSid}</if>
+        </where>
+        order by t.serial_num is null, t.serial_num asc , t3.model_position_code asc, t4.sku_name ASC
+    </select>
+
+    <resultMap type="com.platform.ems.domain.TecModelPosInforDown" id="ModelDownDetailResult">
+        <result property="serialNum" column="serial_num"/>
+        <result property="modelPositionSid" column="model_position_sid"/>
+        <result property="modelPositionCode" column="model_position_code"/>
+        <result property="modelPositionName" column="model_position_name"/>
+        <result property="measureDescription" column="measure_description"/>
+        <result property="deviation" column="deviation"/>
+        <result property="deviationMinus" column="deviation_minus"/>
+        <collection property="posSizeDownList" ofType="com.platform.ems.domain.TecModelPosSize">
+            <result property="skuSid" column="sku_sid"/>
+            <result property="skuName" column="sku_name"/>
+            <result property="sizeValue" column="size_value"/>
+        </collection>
+    </resultMap>
+
+    <select id="getDownDetail" resultMap="ModelDownDetailResult">
+        SELECT
+        t.serial_num,
+        t.model_position_sid,
+        t3.model_position_code,
+        t3.model_position_name,
+        t3.measure_description,
+        t.deviation,
+        t.deviation_minus,
+        t4.sku_name,
+        t2.size_value,
+        t4.sku_sid
+        FROM
+        s_tec_model_pos_infor_down t
+        LEFT JOIN s_tec_model_pos_size_down t2 ON t2.model_position_infor_sid = t.model_position_infor_sid
+        LEFT JOIN s_tec_model_position t3 ON t3.model_position_sid = t.model_position_sid
+        LEFT JOIN s_bas_sku t4 ON t4.sku_sid = t2.sku_sid
+        <where>
+            <if test="modelSid != null  and modelSid != ''">and t.model_sid = #{modelSid}</if>
+        </where>
+        order by t.serial_num is null, t.serial_num asc , t3.model_position_code asc, t4.sku_name ASC
+    </select>
+
+
+    <select id="selectTecModelList" parameterType="com.platform.ems.domain.TecModel"
+            resultType="com.platform.ems.domain.TecModel">
+        <include refid="selectTecModelVo"/>
+        <where>
+            <if test="isCreateModelLine != null  and isCreateModelLine != ''">
+                and t.is_create_model_line = #{isCreateModelLine}
+            </if>
+            <if test="modelCode != null  and modelCode != ''">
+                and (<foreach collection="modelCode.split(';')" item="modelCode" separator="or">t.model_code like
+                concat('%', #{modelCode}, '%')</foreach>)
+            </if>
+            <if test="modelName != null  and modelName != ''">
+                and (<foreach collection="modelName.split(';')" item="modelName" separator="or">t.model_name like
+                concat('%', #{modelName}, '%')</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="creatorAccount" separator="or">
+                t.creator_account like concat('%', #{creatorAccount}, '%')</foreach>)
+            </if>
+            <if test="modelName != null  and modelName != ''">
+                and (<foreach collection="modelName.split(';')" item="modelName" separator="or">t.model_name like
+                concat('%', #{modelName}, '%')</foreach>)
+            </if>
+            <if test="skuGroupSid != null  and skuGroupSid != ''">and t.sku_group_sid in (
+                <foreach collection="skuGroupSid.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>)
+            </if>
+            <if test="upDownSuitList != null  and upDownSuitList.length > 0 ">and t.up_down_suit in (
+                <foreach collection="upDownSuitList" item="item" separator=",">
+                    #{item}
+                </foreach>)
+            </if>
+            <if test="maleFemaleFlagList != null  and maleFemaleFlagList.length >0 ">and t.male_female_flag in (
+                <foreach collection="maleFemaleFlagList" item="item" separator=",">
+                    #{item}
+                </foreach>)
+            </if>
+
+            <if test="modelTypeList != null  and modelTypeList.length >0 ">and t.model_type in (
+                <foreach collection="modelTypeList" item="item" separator=",">
+                    #{item}
+                </foreach>)
+            </if>
+            <if test="oldYoungFlag != null  and oldYoungFlag != ''">and t.old_young_flag in (
+                <foreach collection="oldYoungFlag.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>)
+            </if>
+            <if test="customerSidList != null  and customerSidList.length >0 ">and t.customer_sid in (
+                <foreach collection="customerSidList" item="item" separator=",">
+                    #{item}
+                </foreach>)
+            </if>
+            <if test="customerName != null  and customerName != ''">
+                and (<foreach collection="customerName.split(';')" item="item" separator="or">t1.customer_name like
+                concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="customerModelCode != null  and customerModelCode != ''">
+                and (<foreach collection="customerModelCode.split(';')" item="item" separator="or">t.customer_model_code like
+                concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="companySid != null  and companySid != ''">and t.company_sid in (
+                <foreach collection="companySid.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>)
+            </if>
+            <if test="status != null  and status != ''">and t.status in (
+                <foreach collection="status.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>)
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0 ">and t.handle_status in (
+                <foreach collection="handleStatusList" item="item" separator=",">
+                    #{item}
+                </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                <foreach collection="creatorAccount.split(';')" item="item">or t9.nick_name like concat('%',
+                #{item}, '%')
+            </foreach>
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and t.data_source_sys = #{dataSourceSys}</if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.create_date desc, t.model_code desc
+    </select>
+
+    <select id="selectTecModelById" parameterType="long" resultMap="TecModelResult">
+        <include refid="selectTecModelVo"/>
+        where model_sid = #{modelSid}
+    </select>
+
+    <insert id="insertTecModel" parameterType="com.platform.ems.domain.TecModel">
+        insert into s_tec_model
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">client_id,</if>
+            <if test="modelSid != null and modelSid != ''">model_sid,</if>
+            <if test="modelCode != null">model_code,</if>
+            <if test="modelName != null and modelName != ''">model_name,</if>
+            <if test="modelType != null">model_type,</if>
+            <if test="skuGroupSid != null">sku_group_sid,</if>
+            <if test="standardSku != null">standard_sku,</if>
+            <if test="picturePath != null">picture_path,</if>
+            <if test="upDownSuit != null">up_down_suit,</if>
+            <if test="customerSid != null">customer_sid,</if>
+            <if test="companySid != null">company_sid,</if>
+            <if test="maleFemaleFlag != null">male_female_flag,</if>
+            <if test="oldYoungFlag != null">old_young_flag,</if>
+            <if test="isCreateModelLine != null">is_create_model_line,</if>
+            <if test="remark != null">remark,</if>
+            <if test="disableRemark != null">disable_remark,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="handleStatus != null and handleStatus != ''">handle_status,</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updaterAccount != null">updater_account,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="confirmerAccount != null">confirmer_account,</if>
+            <if test="confirmDate != null">confirm_date,</if>
+            <if test="dataSourceSys != null">data_source_sys,</if>
+            <if test="customerModelCode != null">customer_model_code,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">#{clientId},</if>
+            <if test="modelSid != null and modelSid != ''">#{modelSid},</if>
+            <if test="modelCode != null">#{modelCode},</if>
+            <if test="modelName != null and modelName != ''">#{modelName},</if>
+            <if test="modelType != null">#{modelType},</if>
+            <if test="skuGroupSid != null">#{skuGroupSid},</if>
+            <if test="standardSku != null">#{standardSku},</if>
+            <if test="picturePath != null">#{picturePath},</if>
+            <if test="upDownSuit != null">#{upDownSuit},</if>
+            <if test="customerSid != null">#{customerSid},</if>
+            <if test="companySid != null">#{companySid},</if>
+            <if test="maleFemaleFlag != null">#{maleFemaleFlag},</if>
+            <if test="oldYoungFlag != null">#{oldYoungFlag},</if>
+            <if test="isCreateModelLine != null">#{isCreateModelLine},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="disableRemark != null">#{disableRemark},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="handleStatus != null and handleStatus != ''">#{handleStatus},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">#{creatorAccount},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updaterAccount != null">#{updaterAccount},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="confirmerAccount != null">#{confirmerAccount},</if>
+            <if test="confirmDate != null">#{confirmDate},</if>
+            <if test="dataSourceSys != null">#{dataSourceSys},</if>
+            <if test="customerModelCode != null">#{customerModelCode},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTecModel" parameterType="com.platform.ems.domain.TecModel">
+        update s_tec_model
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="modelCode != null">model_code = #{modelCode},</if>
+            <if test="modelName != null and modelName != ''">model_name = #{modelName},</if>
+            <if test="modelType != null">model_type = #{modelType},</if>
+            sku_group_sid = #{skuGroupSid},
+            <if test="standardSku != null">standard_sku = #{standardSku},</if>
+            <if test="picturePath != null">picture_path = #{picturePath},</if>
+            <if test="upDownSuit != null">up_down_suit = #{upDownSuit},</if>
+            customer_sid = #{customerSid},
+            customer_model_code = #{customerModelCode},
+            company_brand_sid = #{companyBrandSid},
+            company_sid = #{companySid},
+            customer_brand_sid = #{customerBrandSid},
+            <if test="maleFemaleFlag != null">male_female_flag = #{maleFemaleFlag},</if>
+            <if test="oldYoungFlag != null">old_young_flag = #{oldYoungFlag},</if>
+            <if test="isCreateModelLine != null">is_create_model_line = #{isCreateModelLine},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="disableRemark != null">disable_remark = #{disableRemark},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account = #{creatorAccount},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updaterAccount != null">updater_account = #{updaterAccount},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="confirmerAccount != null">confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmDate != null">confirm_date = #{confirmDate},</if>
+            <if test="dataSourceSys != null">data_source_sys = #{dataSourceSys},</if>
+        </trim>
+        where model_sid = #{modelSid}
+    </update>
+
+    <delete id="deleteTecModelById" parameterType="String">
+        delete
+        from s_tec_model
+        where model_sid = #{clientId}
+    </delete>
+
+    <delete id="deleteTecModelByIds" parameterType="string">
+        delete from s_tec_model where model_sid in
+        <foreach item="item" collection="modelSidList" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="getHandleStatus" parameterType="String" resultType="String">
+        select handle_status
+        from s_tec_model
+        where model_sid = #{sId}
+    </select>
+
+    <update id="putHandleStatus" parameterType="String">
+        update s_tec_model
+        set handle_status = #{handleStatus}
+        where model_sid = #{sId};
+    </update>
+
+    <select id="getStatus" parameterType="String" resultType="Long">
+        select status
+        from s_tec_model
+        where model_sid = #{sId}
+    </select>
+
+    <update id="putStatus" parameterType="Long">
+        update s_tec_model
+        set status = #{status}
+        where model_sid = #{sId};
+    </update>
+
+    <select id="countByDomain" resultType="java.lang.Integer">
+        select count(1) from s_tec_model
+        <where>
+            <if test="modelSid != null  and modelSid != ''">
+                and model_sid in (
+                <foreach collection="modelSid.split(';')" item="modelSid" separator=",">
+                    #{modelSid}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and handle_status in (
+                <foreach collection="handleStatus.split(';')" item="handleStatus" separator=",">
+                    #{handleStatus}
+                </foreach>
+                )
+            </if>
+            <if test="status != null  and status != ''">
+                and status in (
+                <foreach collection="status.split(';')" item="status" separator=",">
+                    #{status}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+
+    <select id="checkNameUnique" resultType="java.lang.Integer">
+        select count(*) from s_tec_model where model_name = #{modelName} limit 1
+    </select>
+
+    <select id="checkCodeUnique" resultType="java.lang.Integer">
+        select count(*) from s_tec_model where model_code = #{modelCode} limit 1
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_tec_model
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            model_sid,
+            model_code,
+            model_name,
+            model_type,
+            sku_group_sid,
+            standard_sku,
+            picture_path,
+            up_down_suit,
+            company_sid,
+            customer_sid,
+            male_female_flag,
+            old_young_flag,
+            is_create_model_line,
+            remark,
+            disable_remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+            company_brand_sid,
+            customer_brand_sid,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{clientId},
+                #{modelSid},
+                #{modelCode},
+                #{modelName},
+                #{modelType},
+                #{skuGroupSid},
+                #{standardSku},
+                #{picturePath},
+                #{upDownSuit},
+                #{companySid},
+                #{customerSid},
+                #{maleFemaleFlag},
+                #{oldYoungFlag},
+                #{isCreateModelLine},
+                #{remark},
+                #{disableRemark},
+                #{status},
+                #{handleStatus},
+                #{creatorAccount},
+                #{createDate},
+                #{updaterAccount},
+                #{updateDate},
+                #{confirmerAccount},
+                #{confirmDate},
+                #{dataSourceSys},
+                #{companyBrandSid},
+                #{customerBrandSid},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_tec_model
+        <trim prefix="SET" suffixOverrides=",">
+            model_code = #{modelCode},
+            model_name = #{modelName},
+            model_type = #{modelType},
+            sku_group_sid = #{skuGroupSid},
+            standard_sku = #{standardSku},
+            picture_path = #{picturePath},
+            up_down_suit = #{upDownSuit},
+            company_sid = #{companySid},
+            customer_sid = #{customerSid},
+            male_female_flag = #{maleFemaleFlag},
+            old_young_flag = #{oldYoungFlag},
+            is_create_model_line = #{isCreateModelLine},
+            remark = #{remark},
+            disable_remark = #{disableRemark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            company_brand_sid = #{companyBrandSid},
+            customer_brand_sid = #{customerBrandSid},
+        </trim>
+        where model_sid = #{modelSid};
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_tec_model
+            <trim prefix="SET" suffixOverrides=",">
+                model_sid = #{modelSid},
+                model_code = #{modelCode},
+                model_name = #{modelName},
+                model_type = #{modelType},
+                sku_group_sid = #{skuGroupSid},
+                standard_sku = #{standardSku},
+                picture_path = #{picturePath},
+                up_down_suit = #{upDownSuit},
+                company_sid = #{companySid},
+                customer_sid = #{customerSid},
+                male_female_flag = #{maleFemaleFlag},
+                old_young_flag = #{oldYoungFlag},
+                is_create_model_line = #{isCreateModelLine},
+                remark = #{remark},
+                disable_remark = #{disableRemark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+                company_brand_sid = #{companyBrandSid},
+                customer_brand_sid = #{customerBrandSid},
+            </trim>
+            where model_sid = #{modelSid};
+        </foreach>
+    </update>
+
+
+</mapper>

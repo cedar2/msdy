@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManMonthManufacturePlanMapper">
+
+    <resultMap type="com.platform.ems.domain.ManMonthManufacturePlan" id="ManMonthManufacturePlanResult">
+        <result property="clientId" column="client_id"/>
+        <result property="monthManufacturePlanSid" column="month_manufacture_plan_sid"/>
+        <result property="monthManufacturePlanCode" column="month_manufacture_plan_code"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="documentType" column="document_type"/>
+        <result property="businessType" column="business_type"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="referDocCategory" column="refer_doc_category"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="plantName" column="plant_name"/>
+        <result property="workCenterName" column="work_center_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="approvalNode" column="approval_node"/>
+        <result property="approvalUserName" column="approval_user_name"/>
+        <result property="submitDate" column="submit_date"/>
+        <result property="submitUserName" column="submit_user_name"/>
+    </resultMap>
+
+    <sql id="selectManMonthManufacturePlanVo">
+        select t.client_id,
+        t.month_manufacture_plan_sid,
+        t.month_manufacture_plan_code,
+        t.plant_sid,
+        t.company_sid,
+        t.refer_doc_category,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.plant_name,
+        t3.nick_name as creator_account_name,
+        t4.nick_name as updater_account_name,
+        t5.nick_name as confirmer_account_name,
+        t6.approval_node,
+        t6.approval_user_name,
+        t6.create_date as submit_date,
+        t6.approval_user_id,
+        t.department,
+        t.yearmonth,
+        t7.nick_name as submit_user_name,
+        t8.name as department_name,
+        t.process_route_sid,
+        t.process_route_code,
+        t.concern_task_group_sid,
+        t.concern_task_group_code,
+        t.month_remark
+  from s_man_month_manufacture_plan t
+        LEFT JOIN s_bas_plant t1 ON t1.plant_sid = t.plant_sid
+        LEFT JOIN sys_user t3 ON t3.user_name = t.creator_account
+        LEFT JOIN sys_user t4 ON t4.user_name = t.updater_account
+        LEFT JOIN sys_user t5 ON t5.user_name = t.confirmer_account
+        LEFT JOIN s_sys_form_process t6 ON t6.form_id = t.month_manufacture_plan_sid
+        LEFT JOIN sys_user t7 ON t7.user_id = t6.create_by_id
+        left join s_con_manufacture_department t8 on t8.code=t.department
+    </sql>
+
+    <select id="selectManMonthManufacturePlanById" parameterType="Long" resultMap="ManMonthManufacturePlanResult">
+        <include refid="selectManMonthManufacturePlanVo"/>
+        where t.month_manufacture_plan_sid = #{monthManufacturePlanSid}
+    </select>
+
+
+    <select id="selectManMonthManufacturePlanList" parameterType="com.platform.ems.domain.ManMonthManufacturePlan"
+            resultMap="ManMonthManufacturePlanResult">
+        <include refid="selectManMonthManufacturePlanVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="monthManufacturePlanSid != null ">
+                and t.month_manufacture_plan_sid =#{monthManufacturePlanSid}
+            </if>
+            <if test="monthManufacturePlanSidList != null and monthManufacturePlanSidList.length >0 ">
+                and t.month_manufacture_plan_sid in
+                (<foreach collection="monthManufacturePlanSidList" item="monthManufacturePlanSid" separator=",">#{monthManufacturePlanSid}</foreach>)
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid =#{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="departmentList != null and departmentList.length >0 ">
+                and t.department in
+                (<foreach collection="departmentList" item="department" separator=",">#{department}</foreach>)
+            </if>
+            <if test="yearmonth != null ">
+                and t.yearmonth =#{yearmonth}
+            </if>
+            <if test="yearMonthBeginTime != null and yearMonthBeginTime!=''">
+                and t.yearmonth &gt;= #{yearMonthBeginTime}
+            </if>
+            <if test="yearMonthEndTime != null and yearMonthEndTime!=''">
+                and t.yearmonth &lt;= #{yearMonthEndTime}
+            </if>
+            <if test="businessType != null  and businessType != ''">
+                and (<foreach collection="businessType.split(';')" item="item" separator="or">t.business_type like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="referDocCategory != null  and referDocCategory != ''">
+                and (<foreach collection="referDocCategory.split(';')" item="item" separator="or">t.refer_doc_category
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="monthManufacturePlanCode != null  and monthManufacturePlanCode != ''">
+                and t.month_manufacture_plan_code like
+                concat('%',
+                #{monthManufacturePlanCode}, '%')
+
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">
+                #{creatorAccount}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.month_manufacture_plan_code desc, t.create_date desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_month_manufacture_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            month_manufacture_plan_sid,
+            month_manufacture_plan_code,
+            plant_sid,
+            document_type,
+            business_type,
+            company_sid,
+            refer_doc_category,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.monthManufacturePlanSid},
+                #{item.monthManufacturePlanCode},
+                #{item.plantSid},
+                #{item.documentType},
+                #{item.businessType},
+                #{item.companySid},
+                #{item.referDocCategory},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_month_manufacture_plan
+        <trim prefix="SET" suffixOverrides=",">
+            plant_sid = #{plantSid},
+            plant_code = #{plantCode},
+            yearmonth = #{yearmonth},
+            business_type = #{businessType},
+            company_sid = #{companySid},
+            refer_doc_category = #{referDocCategory},
+            process_route_sid = #{processRouteSid},
+            remark = #{remark},
+            process_route_code = #{processRouteCode},
+            handle_status = #{handleStatus},
+            concern_task_group_sid = #{concernTaskGroupSid},
+            concern_task_group_code = #{concernTaskGroupCode},
+            month_remark = #{monthRemark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            department = #{department},
+        </trim>
+        where month_manufacture_plan_sid = #{monthManufacturePlanSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_month_manufacture_plan
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                month_manufacture_plan_code = #{monthManufacturePlanCode},
+                plant_sid = #{plantSid},
+                document_type = #{documentType},
+                business_type = #{businessType},
+                company_sid = #{companySid},
+                refer_doc_category = #{referDocCategory},
+                remark = #{remark},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where month_manufacture_plan_sid = #{monthManufacturePlanSid}
+        </foreach>
+    </update>
+
+</mapper>

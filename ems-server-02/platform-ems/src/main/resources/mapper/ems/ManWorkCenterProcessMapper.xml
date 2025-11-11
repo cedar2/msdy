@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManWorkCenterProcessMapper">
+
+    <resultMap type="com.platform.ems.domain.ManWorkCenterProcess" id="ManWorkCenterProcessResult">
+        <result property="clientId" column="client_id"/>
+        <result property="workCenterProcessSid" column="work_center_process_sid"/>
+        <result property="workCenterSid" column="work_center_sid"/>
+        <result property="processSid" column="process_sid"/>
+        <result property="sort" column="sort"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectManWorkCenterProcessVo">
+        select t.client_id,
+         t.work_center_process_sid,
+         t.work_center_sid,
+         t.process_sid,
+         t.sort,
+         t.remark,
+         t.creator_account,
+         t.create_date,
+         t.updater_account,
+         t.update_date,
+         t.data_source_sys,
+         t1.process_name,
+         t1.process_code
+         from s_man_work_center_process t
+         left join s_man_process t1 on t1.process_sid=t.process_sid
+    </sql>
+
+
+    <select id="selectManWorkCenterProcessById" parameterType="Long" resultMap="ManWorkCenterProcessResult">
+        <include refid="selectManWorkCenterProcessVo"/>
+        where t.work_center_sid = #{workCenterSid}
+    </select>
+
+
+    <select id="selectManWorkCenterProcessList" parameterType="com.platform.ems.domain.ManWorkCenterProcess"
+            resultMap="ManWorkCenterProcessResult">
+        <include refid="selectManWorkCenterProcessVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid = #{workCenterSid}
+            </if>
+            <if test="processSid != null ">
+                and t.process_sid = #{processSid}
+            </if>
+            <if test="sort != null ">
+                and t.sort = #{sort}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_work_center_process
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            work_center_process_sid,
+            work_center_sid,
+            process_sid,
+            sort,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.workCenterProcessSid},
+                #{item.workCenterSid},
+                #{item.processSid},
+                #{item.sort},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_work_center_process
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            work_center_sid = #{workCenterSid},
+            process_sid = #{processSid},
+            sort = #{sort},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where work_center_process_sid = #{workCenterProcessSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_work_center_process
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                work_center_sid = #{workCenterSid},
+                process_sid = #{processSid},
+                sort = #{sort},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where work_center_process_sid = #{workCenterProcessSid}
+        </foreach>
+    </update>
+
+</mapper>

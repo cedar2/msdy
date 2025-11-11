@@ -1,0 +1,243 @@
+package ${packageName}.service.impl;
+
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ArrayUtil;
+
+import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
+
+    #foreach ($column in $columns)
+        #if($column.javaField == 'createTime' || $column.javaField == 'updateTime')
+        import com.platform.common.core.utils.DateUtils;
+            #break
+        #end
+    #end
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.platform.common.exception.CheckedException;
+import com.platform.common.log.enums.BusinessType;
+import com.platform.ems.util.MongodbDeal;
+import com.platform.ems.util.MongodbUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.platform.common.core.domain.document.OperMsg;
+import com.platform.common.redis.thread.ApiThreadLocalUtil;
+import org.springframework.stereotype.Service;
+import com.platform.common.constant.ConstantsEms;
+import com.platform.common.utils.bean.BeanUtils;
+import org.springframework.transaction.annotation.Transactional;
+import ${packageName}.mapper.${ClassName}Mapper;
+import ${packageName}.domain.${ClassName};
+import ${packageName}.service.I${ClassName}Service;
+
+/**
+ * ${functionName}Service业务层处理
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Service
+@SuppressWarnings("all" )
+public class ${ClassName}ServiceImpl extends ServiceImpl<${ClassName}Mapper,${ClassName}> implements I${ClassName}Service {
+    @Autowired
+    private ${ClassName}Mapper ${className}Mapper;
+
+    private static final String TITLE = "${functionName}" ;
+
+    /**
+     * 查询${functionName}
+     *
+     * @param ${pkColumn.javaField} ${functionName}ID
+     * @return ${functionName}
+     */
+    @Override
+    public ${ClassName} select${ClassName}ById(${pkColumn.javaType} ${pkColumn.javaField}) {
+        ${ClassName} ${className} =${className}Mapper.select${ClassName}ById(${pkColumn.javaField});
+        MongodbUtil.find(${className});
+        return ${className};
+    }
+
+    /**
+     * 查询${functionName}列表
+     *
+     * @param ${className} ${functionName}
+     * @return ${functionName}
+     */
+    @Override
+    public List<${ClassName}> select${ClassName}List(${ClassName} ${className}) {
+        return ${className}Mapper.select${ClassName}List(${className});
+    }
+
+    /**
+     * 新增${functionName}
+     * 需要注意编码重复校验
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int insert${ClassName}(${ClassName} ${className}) {
+        #foreach ($column in $columns)
+        #end
+        #set($AttrName=$pkColumn.javaField.substring(0,1).toUpperCase() + ${pkColumn.javaField.substring(1)})
+        // 写入确认人
+        if (ConstantsEms.CHECK_STATUS.equals(${className}.getHandleStatus())) {
+            ${className}.setConfirmDate(new Date()).setConfirmerAccount(ApiThreadLocalUtil.get().getUsername());
+        }
+        int row = ${className}Mapper.insert(${className});
+        if (row > 0){
+            //插入日志
+            List<OperMsg> msgList = new ArrayList<>();
+            msgList = BeanUtils.eq(new ${ClassName}(), ${className});
+            MongodbDeal.insert(${className}.get${AttrName}(), ${className}.getHandleStatus(), msgList, TITLE, null);
+        }
+        return row;
+    }
+
+    /**
+     * 修改${functionName}
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int update${ClassName}(${ClassName} ${className}) {
+        #set($AttrName=$pkColumn.javaField.substring(0,1).toUpperCase() + ${pkColumn.javaField.substring(1)})
+        ${ClassName} original = ${className}Mapper.select${ClassName}ById(${className}.get${AttrName}());
+        #foreach ($column in $columns)
+            #if($column.javaField == 'updateTime')
+                ${className}.setUpdateTime(DateUtils.getNowDate());
+            #end
+        #end
+        // 写入确认人
+        if (ConstantsEms.CHECK_STATUS.equals(${className}.getHandleStatus())) {
+            ${className}.setConfirmDate(new Date()).setConfirmerAccount(ApiThreadLocalUtil.get().getUsername());
+        }
+        // 更新人更新日期
+        List<OperMsg> msgList;
+        msgList = BeanUtils.eq(original, ${className});
+        if (CollectionUtil.isNotEmpty(msgList)) {
+            ${className}.setUpdateDate(new Date()).setUpdaterAccount(ApiThreadLocalUtil.get().getUsername());
+        }
+        int row = ${className}Mapper.updateAllById(${className});
+        if (row > 0){
+            //插入日志
+            MongodbDeal.update(${className}.get${AttrName}(), original.getHandleStatus(),
+            ${className}.getHandleStatus(), msgList, TITLE, null);
+        }
+        return row;
+    }
+
+    /**
+     * 变更${functionName}
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int change${ClassName}(${ClassName} ${className}) {
+        #set($AttrName=$pkColumn.javaField.substring(0,1).toUpperCase() + ${pkColumn.javaField.substring(1)})
+        ${ClassName} response = ${className}Mapper.select${ClassName}ById(${className}.get${AttrName}());
+        #foreach ($column in $columns)
+            #if($column.javaField == 'updateTime')
+                ${className}.setUpdateTime(DateUtils.getNowDate());
+            #end
+        #end
+        // 更新人更新日期
+        List<OperMsg> msgList;
+        msgList = BeanUtils.eq(response, ${className});
+        if (CollectionUtil.isNotEmpty(msgList)) {
+            ${className}.setUpdateDate(new Date()).setUpdaterAccount(ApiThreadLocalUtil.get().getUsername());
+        }
+        int row = ${className}Mapper.updateAllById(${className});
+        if (row > 0){
+            //插入日志
+            MongodbUtil.insertUserLog(${className}.get${AttrName}(), BusinessType.CHANGE.getValue(), response, ${className}, TITLE);
+        }
+        return row;
+    }
+
+    /**
+     * 批量删除${functionName}
+     *
+     * @param ${pkColumn.javaField}s 需要删除的${functionName}ID
+     * @return 结果
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int delete${ClassName}ByIds(List<${pkColumn.javaType}> ${pkColumn.javaField}s) {
+        #set($AttrName=$pkColumn.javaField.substring(0,1).toUpperCase() + ${pkColumn.javaField.substring(1)})
+        List<${ClassName}> list = ${className}Mapper.selectList(new QueryWrapper<${ClassName}>()
+                .lambda().in(${ClassName}::get${AttrName}, ${pkColumn.javaField}s));
+        int row = ${className}Mapper.deleteBatchIds(${pkColumn.javaField}s);
+        if (row > 0){
+            list.forEach(o -> {
+                List<OperMsg> msgList = new ArrayList<>();
+                msgList = BeanUtils.eq(o, new ${ClassName}());
+                MongodbUtil.insertUserLog(o.get${AttrName}(), BusinessType.DELETE.getValue(), msgList, TITLE);
+            });
+        }
+        return row;
+    }
+
+    /**
+     * 启用/停用
+     * @param ${className}
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int changeStatus(${ClassName} ${className}) {
+        #set($AttrName=$pkColumn.javaField.substring(0,1).toUpperCase() + ${pkColumn.javaField.substring(1)})
+        int row = 0;
+        Long[] sids =${className}.get${AttrName}List();
+        if (sids != null && sids.length > 0) {
+            row = ${className}Mapper.update(null, new UpdateWrapper<${ClassName}>().lambda()
+                    .set(${ClassName}::getStatus,${className}.getStatus() )
+                    .in(${ClassName}::get${AttrName}, sids));
+            if (row == 0) {
+                throw new CheckedException("更改状态失败,请联系管理员" );
+            }
+            for (Long id : sids) {
+                //插入日志
+                MongodbDeal.status(id, ${className}.getStatus(), null, TITLE, null);
+            }
+        }
+        return row;
+    }
+
+    /**
+     *更改确认状态
+     * @param ${className}
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int check(${ClassName} ${className}) {
+        #set($AttrName=$pkColumn.javaField.substring(0,1).toUpperCase() + ${pkColumn.javaField.substring(1)})
+        Long[] sids =${className}.get${AttrName}List();
+        if (ArrayUtil.isEmpty(sids)) {
+            return 0;
+        }
+        LambdaUpdateWrapper<${ClassName}> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.in(${ClassName}::get${AttrName}, sids);
+        updateWrapper.set(${ClassName}::getHandleStatus, ${className}.getHandleStatus());
+        if (ConstantsEms.CHECK_STATUS.equals(${className}.getHandleStatus())) {
+            updateWrapper.set(${ClassName}::getConfirmDate, new Date());
+            updateWrapper.set(${ClassName}::getConfirmerAccount, ApiThreadLocalUtil.get().getUsername());
+        }
+        int row = ${className}Mapper.update(null, updateWrapper);
+        if (row > 0) {
+            for (Long id : sids) {
+                //插入日志
+                MongodbDeal.check(id, ${className}.getHandleStatus(), null, TITLE, null);
+            }
+        }
+        return row;
+    }
+
+}

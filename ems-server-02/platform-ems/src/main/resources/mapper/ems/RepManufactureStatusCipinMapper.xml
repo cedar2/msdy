@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.RepManufactureStatusCipinMapper">
+
+    <resultMap type="com.platform.ems.domain.RepManufactureStatusCipin" id="RepManufactureStatusCipinResult">
+        <result property="clientId" column="client_id"/>
+        <result property="dataRecordSid" column="data_record_sid"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="plantShortName" column="plant_short_name"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="repairType" column="repair_type"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="sku1Sid" column="sku1_sid"/>
+        <result property="sku1Code" column="sku1_code"/>
+        <result property="sku2Sid" column="sku2_sid"/>
+        <result property="sku2Code" column="sku2_code"/>
+        <result property="quantityCipin" column="quantity_cipin"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="customerShortName" column="customer_short_name"/>
+        <result property="manufactureOrderSid" column="manufacture_order_sid"/>
+        <result property="manufactureOrderCode" column="manufacture_order_code"/>
+        <result property="moBusinessType" column="mo_business_type"/>
+        <result property="createDate" column="create_date"/>
+    </resultMap>
+
+    <sql id="selectRepManufactureStatusCipinVo">
+        select t.client_id,
+               t.data_record_sid,
+               t.plant_sid,
+               t.plant_code,
+               t.plant_short_name,
+               t.product_season_code,
+               t.repair_type,
+               t.material_sid,
+               t.material_code,
+               t.sku1_sid,
+               t.sku1_code,
+               t.sku2_sid,
+               t.sku2_code,
+               t.quantity_cipin,
+               t.customer_sid,
+               t.customer_code,
+               t.customer_short_name,
+               t.manufacture_order_sid,
+               t.manufacture_order_code,
+               t.mo_business_type,
+               t.create_date
+        from s_rep_manufacture_status_cipin t
+    </sql>
+
+    <select id="selectRepManufactureStatusCipinById" parameterType="Long" resultMap="RepManufactureStatusCipinResult">
+        <include refid="selectRepManufactureStatusCipinVo"/>
+        where t.data_record_sid = #{dataRecordSid}
+    </select>
+
+    <select id="getRepManufactureStatusCipinList" parameterType="com.platform.ems.domain.RepManufactureStatusCipin"
+            resultType="com.platform.ems.domain.RepManufactureStatusCipin">
+        select
+        t.plant_sid,
+        t.manufacture_order_sid,
+        t.product_sid as material_sid,
+        t.sku1_sid,
+        t.sku2_sid,
+        t.quantity_defective as quantity_fanx,
+        t2.manufacture_order_code,
+        t2.business_type as mo_business_type,
+        t3.plant_code,
+        t3.plant_name,
+        t3.short_name as plant_short_name,
+        t7.material_code,
+        t8.sku_code as sku1_code,
+        t9.sku_code as sku2_code,
+        'SCCP' as repair_type,
+        '0' as quantity_cipin
+        from s_man_manufacture_defective t
+        left join s_man_manufacture_order t2 on t.manufacture_order_sid = t2.manufacture_order_sid
+        left join s_bas_plant t3 on t.plant_sid = t3.plant_sid
+        left join s_bas_material t7 on t.product_sid = t7.material_sid
+        left join s_bas_sku t8 on t.sku1_sid = t8.sku_sid
+        left join s_bas_sku t9 on t.sku2_sid = t9.sku_sid
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectRepManufactureStatusCipinList" parameterType="com.platform.ems.domain.RepManufactureStatusCipin"
+            resultMap="RepManufactureStatusCipinResult">
+        <include refid="selectRepManufactureStatusCipinVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id = #{item}</foreach>)
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid =#{plantSid}
+            </if>
+            <if test="plantCode != null  and plantCode != ''">
+                and (<foreach collection="plantCode.split(';')" item="item" separator="or">t.plant_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="plantShortName != null  and plantShortName != ''">and
+                t.plant_short_name like concat('%', #{plantShortName}, '%')
+            </if>
+            <if test="productSeasonCode != null  and productSeasonCode != ''">
+                and (<foreach collection="productSeasonCode.split(';')" item="item" separator="or">t.product_season_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="repairType != null  and repairType != ''">
+                and (<foreach collection="repairType.split(';')" item="item" separator="or">t.repair_type
+                = #{item}</foreach>)
+            </if>
+            <if test="materialSid != null ">
+                and t.material_sid =#{materialSid}
+            </if>
+            <if test="materialCode != null  and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="item" separator="or">t.material_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sku1Sid != null ">
+                and t.sku1_sid =#{sku1Sid}
+            </if>
+            <if test="sku1Code != null  and sku1Code != ''">
+                and (<foreach collection="sku1Code.split(';')" item="item" separator="or">t.sku1_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="sku2Sid != null ">
+                and t.sku2_sid =#{sku2Sid}
+            </if>
+            <if test="sku2Code != null  and sku2Code != ''">
+                and (<foreach collection="sku2Code.split(';')" item="item" separator="or">t.sku2_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="quantityCipin != null ">
+                and t.quantity_cipin = #{quantityCipin}
+            </if>
+            <if test="customerSid != null ">
+                and t.customer_sid =#{customerSid}
+            </if>
+            <if test="customerCode != null  and customerCode != ''">
+                and (<foreach collection="customerCode.split(';')" item="item" separator="or">t.customer_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="customerShortName != null  and customerShortName != ''">and
+                t.customer_short_name like concat('%', #{customerShortName}, '%')
+            </if>
+            <if test="manufactureOrderSid != null ">
+                and t.manufacture_order_sid =#{manufactureOrderSid}
+            </if>
+            <if test="manufactureOrderCode != null ">
+                and t.manufacture_order_code =#{manufactureOrderCode}
+            </if>
+            <if test="moBusinessType != null  and moBusinessType != ''">
+                and (<foreach collection="moBusinessType.split(';')" item="item" separator="or">t.mo_business_type
+                = #{item}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_rep_manufacture_status_cipin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            data_record_sid,
+            plant_sid,
+            plant_code,
+            plant_short_name,
+            product_season_code,
+            repair_type,
+            material_sid,
+            material_code,
+            sku1_sid,
+            sku1_code,
+            sku2_sid,
+            sku2_code,
+            quantity_cipin,
+            customer_sid,
+            customer_code,
+            customer_short_name,
+            manufacture_order_sid,
+            manufacture_order_code,
+            mo_business_type,
+            create_date,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.dataRecordSid},
+                #{item.plantSid},
+                #{item.plantCode},
+                #{item.plantShortName},
+                #{item.productSeasonCode},
+                #{item.repairType},
+                #{item.materialSid},
+                #{item.materialCode},
+                #{item.sku1Sid},
+                #{item.sku1Code},
+                #{item.sku2Sid},
+                #{item.sku2Code},
+                #{item.quantityCipin},
+                #{item.customerSid},
+                #{item.customerCode},
+                #{item.customerShortName},
+                #{item.manufactureOrderSid},
+                #{item.manufactureOrderCode},
+                #{item.moBusinessType},
+                #{item.createDate},
+            </trim>
+        </foreach>
+    </insert>
+
+</mapper>

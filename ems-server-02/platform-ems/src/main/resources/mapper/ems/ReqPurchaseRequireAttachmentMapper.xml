@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ReqPurchaseRequireAttachmentMapper">
+
+    <resultMap type="com.platform.ems.domain.ReqPurchaseRequireAttachment" id="ReqPurchaseRequireAttachmentResult">
+        <result property="clientId" column="client_id"/>
+        <result property="purchaseRequireAttachmentSid" column="purchase_require_attachment_sid"/>
+        <result property="purchaseRequireSid" column="purchase_require_sid"/>
+        <result property="fileType" column="file_type"/>
+        <result property="fileName" column="file_name"/>
+        <result property="filePath" column="file_path"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="fileTypeName" column="file_type_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+    </resultMap>
+
+    <sql id="selectReqPurchaseRequireAttachmentVo">
+        select
+        t.client_id,
+        t.purchase_require_attachment_sid,
+        t.purchase_require_sid,
+        t.file_type,
+        t.file_name,
+        t.file_path,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys,
+        t1.name as file_type_name,
+        t2.nick_name as creator_account_name
+  from s_req_purchase_require_attachment t
+        LEFT JOIN s_con_file_type t1 ON t1.code = t.file_type
+        LEFT JOIN sys_user t2 ON t2.user_name = t.creator_account
+    </sql>
+
+    <select id="selectReqPurchaseRequireAttachmentById" parameterType="Long"
+            resultMap="ReqPurchaseRequireAttachmentResult">
+        <include refid="selectReqPurchaseRequireAttachmentVo"/>
+        where t.purchase_require_attachment_sid = #{purchaseRequireAttachmentSid}
+    </select>
+
+
+    <select id="selectReqPurchaseRequireAttachmentList"
+            parameterType="com.platform.ems.domain.ReqPurchaseRequireAttachment"
+            resultMap="ReqPurchaseRequireAttachmentResult">
+        <include refid="selectReqPurchaseRequireAttachmentVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="purchaseRequireAttachmentSid != null ">
+                and t.purchase_require_attachment_sid = #{purchaseRequireAttachmentSid}
+            </if>
+            <if test="purchaseRequireSid != null ">
+                and t.purchase_require_sid = #{purchaseRequireSid}
+            </if>
+            <if test="fileType != null  and fileType != ''">
+                and (<foreach collection="fileType.split(';')" item="item" separator="or">t.file_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="fileName != null  and fileName != ''">and
+                t.file_name like concat('%', #{fileName}, '%')
+            </if>
+            <if test="filePath != null  and filePath != ''">
+                and (<foreach collection="filePath.split(';')" item="item" separator="or">t.file_path like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_req_purchase_require_attachment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            purchase_require_attachment_sid,
+            purchase_require_sid,
+            file_type,
+            file_name,
+            file_path,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                #{clientId},
+                #{purchaseRequireAttachmentSid},
+                #{purchaseRequireSid},
+                #{fileType},
+                #{fileName},
+                #{filePath},
+                #{remark},
+                #{creatorAccount},
+                #{createDate},
+                #{updaterAccount},
+                #{updateDate},
+                #{dataSourceSys},
+            </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_req_purchase_require_attachment
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            purchase_require_sid = #{purchaseRequireSid},
+            file_type = #{fileType},
+            file_name = #{fileName},
+            file_path = #{filePath},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where purchase_require_attachment_sid = #{purchaseRequireAttachmentSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_req_purchase_require_attachment
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                purchase_require_sid = #{purchaseRequireSid},
+                file_type = #{fileType},
+                file_name = #{fileName},
+                file_path = #{filePath},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where purchase_require_attachment_sid = #{purchaseRequireAttachmentSid}
+        </foreach>
+    </update>
+
+    <delete id="deleteReqPurchaseRequireAttachmentByIds" parameterType="long">
+        delete from s_req_purchase_require_attachment where purchase_require_sid in
+        <foreach item="purchaseRequireSid" collection="array" open="(" separator="," close=")">
+            #{purchaseRequireSid}
+        </foreach>
+    </delete>
+</mapper>

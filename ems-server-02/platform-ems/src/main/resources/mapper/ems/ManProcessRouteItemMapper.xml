@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManProcessRouteItemMapper">
+
+    <resultMap type="com.platform.ems.domain.ManProcessRouteItem" id="ManProcessRouteItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="processRouteProcessSid" column="process_route_process_sid"/>
+        <result property="processRouteSid" column="process_route_sid"/>
+        <result property="processSid" column="process_sid"/>
+        <result property="serialNum" column="serial_num"/>
+        <result property="processName" column="process_name"/>
+        <result property="directorSid" column="director_sid"/>
+        <result property="directorCode" column="director_code"/>
+        <result property="workCenterSid" column="work_center_sid"/>
+        <result property="workCenterCode" column="work_center_code"/>
+        <result property="milestone" column="milestone"/>
+        <result property="outputPerUnit" column="output_per_unit"/>
+        <result property="productionMode" column="production_mode"/>
+        <result property="worktimeUnit" column="worktime_unit"/>
+        <result property="timePerUnit" column="time_per_unit"/>
+        <result property="timeMeasureUnit" column="time_measure_unit"/>
+        <result property="remark" column="remark"/>
+        <result property="isStageComplete" column="is_stage_complete"/>
+        <result property="quantityReferProcessSid" column="quantity_refer_process_sid"/>
+        <result property="quantityReferProcessCode" column="quantity_refer_process_code"/>
+        <result property="quantityTypeReferProcess" column="quantity_type_refer_process"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="isProduceComplete" column="is_produce_complete"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="isFirstProcess" column="is_first_process"/>
+    </resultMap>
+
+    <sql id="selectManProcessRouteItemVo">
+        select
+        t.client_id,
+        t.process_route_process_sid,
+        t.process_route_sid,
+        t.process_sid,
+        t1.department as department,
+        t2.sid  as departmentSid,
+        t2.name as departmentName,
+        0 + CAST(ROUND(t.serial_num*1,2) AS CHAR) AS serial_num,
+        t1.process_name,
+        t.director_sid,
+        t.director_code,
+        t.work_center_sid,
+        t.work_center_code,
+        t.milestone,
+        t.output_per_unit,
+        t.production_mode,
+        t.worktime_unit,
+        t.time_per_unit,
+        t.time_measure_unit,
+        t.remark,
+        t.is_stage_complete,
+        t.quantity_refer_process_sid,
+        t.quantity_refer_process_code,
+        t.quantity_type_refer_process,
+        t.creator_account,
+        t.is_produce_complete,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys ,
+        t3.staff_name as director_name,
+        t4.work_center_name,
+        t1.process_code,
+        t1.special_flag,
+        t1.is_first_process
+  from s_man_process_route_item t
+        LEFT JOIN s_man_process t1 ON t1.process_sid = t.process_sid
+        LEFT JOIN s_con_manufacture_department t2 ON t2.code = t1.department
+        LEFT JOIN s_bas_staff t3 ON t.director_sid = t3.staff_sid
+        LEFT JOIN s_man_work_center t4 ON t.work_center_sid = t4.work_center_sid
+    </sql>
+
+    <select id="selectManProcessRouteItemById" parameterType="Long" resultMap="ManProcessRouteItemResult">
+        <include refid="selectManProcessRouteItemVo"/>
+        where t.process_route_process_sid = #{processRouteProcessSid}
+    </select>
+
+
+    <select id="selectManProcessRouteItemList" parameterType="com.platform.ems.domain.ManProcessRouteItem"
+            resultMap="ManProcessRouteItemResult">
+        <include refid="selectManProcessRouteItemVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="processRouteSid != null ">
+                and t.process_route_sid =#{processRouteSid}
+            </if>
+            <if test="processSid != null ">
+                and t.process_sid =#{processSid}
+            </if>
+            <if test="serialNum != null ">
+                and t.serial_num =#{serialNum}
+            </if>
+            <if test="processName != null and processName != ''">and
+                t.process_name like concat('%', #{processName}, '%')
+            </if>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid =#{workCenterSid}
+            </if>
+            <if test="outputPerUnit != null ">
+                and t.output_per_unit = #{outputPerUnit}
+            </if>
+            <if test="productionMode != null and productionMode != ''">
+                and t.production_mode = #{productionMode}
+            </if>
+            <if test="worktimeUnit != null and worktimeUnit != ''">
+                and t.worktime_unit = #{worktimeUnit}
+            </if>
+            <if test="timePerUnit != null ">
+                and t.time_per_unit = #{timePerUnit}
+            </if>
+            <if test="timeMeasureUnit != null and timeMeasureUnit != ''">
+                and t.time_measure_unit = #{timeMeasureUnit}
+            </if>
+            <if test="isStageComplete != null and isStageComplete != ''">
+                and t.is_stage_complete = #{isStageComplete}
+            </if>
+            <if test="quantityReferProcessSid != null">
+                and t.quantity_refer_process_sid = #{quantityReferProcessSid}
+            </if>
+            <if test="quantityReferProcessCode != null">
+                and t.quantity_refer_process_code  like concat('%', #{quantityReferProcessCode}, '%')
+            </if>
+            <if test="quantityTypeReferProcess != null and quantityTypeReferProcess != ''">
+                and t.quantity_type_refer_process = #{quantityTypeReferProcess}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isProduceComplete != null and isProduceComplete != ''">
+                and t.is_produce_complete = #{isProduceComplete}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t1.process_code asc,t.serial_num asc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_process_route_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            process_route_process_sid,
+            process_route_sid,
+            process_sid,
+            serial_num,
+            process_name,
+            director_sid,
+            director_code,
+            work_center_sid,
+            work_center_code,
+            milestone,
+            production_mode,
+            output_per_unit,
+            worktime_unit,
+            time_per_unit,
+            time_measure_unit,
+            remark,
+            is_stage_complete,
+            quantity_refer_process_sid,
+            quantity_refer_process_code,
+            quantity_type_refer_process,
+            is_produce_complete,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.processRouteProcessSid},
+                #{item.processRouteSid},
+                #{item.processSid},
+                #{item.serialNum},
+                #{item.processName},
+                #{item.directorSid},
+                #{item.directorCode},
+                #{item.workCenterSid},
+                #{item.workCenterCode},
+                #{item.milestone},
+                #{item.productionMode},
+                #{item.outputPerUnit},
+                #{item.worktimeUnit},
+                #{item.timePerUnit},
+                #{item.timeMeasureUnit},
+                #{item.remark},
+                #{item.isStageComplete},
+                #{item.quantityReferProcessSid},
+                #{item.quantityReferProcessCode},
+                #{item.quantityTypeReferProcess},
+                #{item.isProduceComplete},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_process_route_item
+        <trim prefix="SET" suffixOverrides=",">
+            process_route_sid = #{processRouteSid},
+            process_sid = #{processSid},
+            process_name = #{processName},
+            director_sid = #{directorSid},
+            director_code = #{directorCode},
+            work_center_sid = #{workCenterSid},
+            work_center_code = #{workCenterCode},
+            milestone = #{milestone},
+            output_per_unit = #{outputPerUnit},
+            production_mode = #{productionMode},
+            worktime_unit = #{worktimeUnit},
+            time_per_unit = #{timePerUnit},
+            time_measure_unit = #{timeMeasureUnit},
+            is_produce_complete = #{isProduceComplete},
+            is_stage_complete = #{isStageComplete},
+            quantity_refer_process_sid = #{quantityReferProcessSid},
+            quantity_refer_process_code = #{quantityReferProcessCode},
+            quantity_type_refer_process = #{quantityTypeReferProcess},
+            serial_num = #{serialNum},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where process_route_process_sid = #{processRouteProcessSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_process_route_item
+            <trim prefix="SET" suffixOverrides=",">
+                process_route_sid = #{processRouteSid},
+                process_sid = #{processSid},
+                process_name = #{processName},
+                director_sid = #{o.directorSid},
+                director_code = #{o.directorCode},
+                work_center_sid = #{o.workCenterSid},
+                work_center_code = #{o.workCenterCode},
+                milestone = #{o.milestone},
+                output_per_unit = #{outputPerUnit},
+                production_mode = #{productionMode},
+                worktime_unit = #{worktimeUnit},
+                time_per_unit = #{timePerUnit},
+                time_measure_unit = #{timeMeasureUnit},
+                is_produce_complete = #{isProduceComplete},
+                is_stage_complete = #{isStageComplete},
+                quantity_refer_process_sid = #{quantityReferProcessSid},
+                quantity_refer_process_code = #{quantityReferProcessCode},
+                quantity_type_refer_process = #{quantityTypeReferProcess},
+                serial_num = #{serialNum},
+                remark = #{remark},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where process_route_process_sid = #{processRouteProcessSid}
+        </foreach>
+    </update>
+
+    <sql id="getItemVo">
+        select
+        t.client_id,
+        t.process_route_process_sid,
+        t.process_route_sid,
+        t.process_sid,
+        t1.department as department,
+        t6.sid  as departmentSid,
+        t6.name as departmentName,
+        0 + CAST(ROUND(t.serial_num*1,2) AS CHAR) AS serial_num,
+        t1.process_name,
+        t.director_sid,
+        t.director_code,
+        t.work_center_sid,
+        t.work_center_code,
+        t.milestone,
+        t.output_per_unit,
+        t.production_mode,
+        t.worktime_unit,
+        t.time_per_unit,
+        t.time_measure_unit,
+        t.remark,
+        t.is_stage_complete,
+        t.quantity_refer_process_sid,
+        t.quantity_refer_process_code,
+        t.quantity_type_refer_process,
+        t.creator_account,
+        t.is_produce_complete,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys ,
+        t1.process_code,
+        t2.process_route_code,
+        t2.process_route_name,
+        t2.company_sid,
+        t2.process_route_category,
+        t2.status,
+        t2.handle_status,
+        t3.company_name,
+        t4.nick_name as creator_account_name,
+        t7.staff_name as director_name,
+        t8.work_center_name,
+        t5.customer_name,
+        t2.plant_sid,
+        t2.plant_code,
+        t9.plant_name,
+        t9.short_name as plant_short_name
+  from s_man_process_route_item t
+        LEFT JOIN s_man_process t1 ON t1.process_sid = t.process_sid
+        LEFT JOIN s_man_process_route t2 ON t2.process_route_sid = t.process_route_sid
+        LEFT JOIN s_bas_company t3 ON t3.company_sid = t2.company_sid
+        LEFT JOIN sys_user t4 ON t4.user_name = t.creator_account
+        left join s_bas_customer t5 on t5.customer_sid=t2.customer_sid
+        LEFT JOIN s_con_manufacture_department t6 ON t6.code = t1.department
+        LEFT JOIN s_bas_staff t7 ON t.director_sid = t7.staff_sid
+        LEFT JOIN s_man_work_center t8 ON t.work_center_sid = t8.work_center_sid
+        left join s_bas_plant t9 on t9.plant_sid = t2.plant_sid
+    </sql>
+
+    <select id="getItemList" parameterType="com.platform.ems.domain.ManProcessRouteItem"
+            resultMap="ManProcessRouteItemResult">
+        <include refid="getItemVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="processRouteSid != null ">
+                and t.process_route_sid =#{processRouteSid}
+            </if>
+            <if test="processSid != null ">
+                and t.process_sid =#{processSid}
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0 ">
+                and t2.customer_sid in
+                (<foreach collection="customerSidList" item="customer" separator=",">
+                #{customer}</foreach>)
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t2.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">
+                #{plantSid}</foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">
+                #{creatorAccount}</foreach>)
+            </if>
+            <if test="serialNum != null ">
+                and t.serial_num =#{serialNum}
+            </if>
+            <if test="processName != null and processName != ''">and
+                t.process_name like concat('%', #{processName}, '%')
+            </if>
+            <if test="workCenterSid != null ">
+                and t.work_center_sid =#{workCenterSid}
+            </if>
+            <if test="outputPerUnit != null ">
+                and t.output_per_unit = #{outputPerUnit}
+            </if>
+            <if test="productionMode != null and productionMode != ''">
+                and t.production_mode = #{productionMode}
+            </if>
+            <if test="worktimeUnit != null and worktimeUnit != ''">
+                and t.worktime_unit = #{worktimeUnit}
+            </if>
+            <if test="timePerUnit != null ">
+                and t.time_per_unit = #{timePerUnit}
+            </if>
+            <if test="timeMeasureUnit != null  and timeMeasureUnit != ''">
+                and t.time_measure_unit = #{timeMeasureUnit}
+            </if>
+            <if test="isStageComplete != null and isStageComplete != ''">
+                and t.is_stage_complete = #{isStageComplete}
+            </if>
+            <if test="isProduceComplete != null and isProduceComplete != ''">
+                and t.is_produce_complete = #{isProduceComplete}
+            </if>
+            <if test="quantityReferProcessSid != null">
+                and t.quantity_refer_process_sid = #{quantityReferProcessSid}
+            </if>
+            <if test="quantityReferProcessCode != null">
+                and t.quantity_refer_process_code  like concat('%', #{quantityReferProcessCode}, '%')
+            </if>
+            <if test="quantityTypeReferProcess != null and quantityTypeReferProcess != ''">
+                and t.quantity_type_refer_process = #{quantityTypeReferProcess}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="processRouteCode != null and processRouteCode != ''">
+                and (<foreach collection="processRouteCode.split(';')" item="item" separator="or">
+                t2.process_route_code like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="processRouteName != null and processRouteName != ''">
+                and (<foreach collection="processRouteName.split(';')" item="item" separator="or">t2.process_route_name
+                like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="processRouteCategoryList != null and processRouteCategoryList.length >0 ">
+                and t2.process_route_category in
+                (<foreach collection="processRouteCategoryList" item="processRouteCategory" separator=",">
+                #{processRouteCategory}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0 ">
+                and t2.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=",">
+                #{companySid}</foreach>)
+            </if>
+            <if test="processCode != null and processCode != ''">
+                and (<foreach collection="processCode.split(';')" item="item" separator="or">t1.process_code
+                like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="status != null and status != ''">
+                and t2.status = #{status}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t2.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">
+                #{handleStatus}</foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t2.process_route_code desc, t.create_date desc
+    </select>
+</mapper>

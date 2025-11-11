@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurPurchasePriceAttachmentMapper">
+
+    <resultMap type="com.platform.ems.domain.PurPurchasePriceAttachment" id="PurPurchasePriceAttachmentResult">
+        <result property="clientId" column="client_id"/>
+        <result property="purchasePriceAttachmentSid" column="purchase_price_attachment_sid"/>
+        <result property="purchasePriceSid" column="purchase_price_sid"/>
+        <result property="fileType" column="file_type"/>
+        <result property="fileName" column="file_name"/>
+        <result property="filePath" column="file_path"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectPurPurchasePriceAttachmentVo">
+        select client_id,
+        purchase_price_attachment_sid,
+        purchase_price_sid,
+        file_type,
+        file_name,
+        file_path,
+        remark,
+        creator_account,
+        create_date,
+        updater_account,
+        update_date,
+        data_source_sys,
+        t1.name AS file_type_name,
+        t2.nick_name AS creator_account_name
+        from s_pur_purchase_price_attachment
+          LEFT JOIN s_con_file_type t1 on t1.code = t.file_type and t1.dataobject_category_code = 'PurchasePrice'
+        LEFT JOIN sys_user t2 on t.creator_account = t2.user_name
+    </sql>
+
+    <select id="selectPurPurchasePriceAttachmentList" parameterType="com.platform.ems.domain.PurPurchasePriceAttachment"
+            resultType="com.platform.ems.domain.dto.response.PurPurchasePriceAttachmentResponse">
+        <include refid="selectPurPurchasePriceAttachmentVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">and client_id = #{clientId}</if>
+            <if test="purchasePriceSid != null  and purchasePriceSid != ''">and purchase_price_sid =
+                #{purchasePriceSid}
+            </if>
+            <if test="fileType != null  and fileType != ''">and file_type = #{fileType}</if>
+            <if test="fileName != null  and fileName != ''">and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="filePath != null  and filePath != ''">and file_path = #{filePath}</if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and creator_account = #{creatorAccount}</if>
+            <if test="createDate != null ">and create_date = #{createDate}</if>
+            <if test="updaterAccount != null  and updaterAccount != ''">and updater_account = #{updaterAccount}</if>
+            <if test="updateDate != null ">and update_date = #{updateDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and data_source_sys = #{dataSourceSys}</if>
+        </where>
+    </select>
+
+    <select id="selectPurPurchasePriceAttachmentById" parameterType="Long" resultMap="PurPurchasePriceAttachmentResult">
+        <include refid="selectPurPurchasePriceAttachmentVo"/>
+        where purchase_price_attachment_sid = #{purchasePriceAttachmentSid}
+    </select>
+
+    <insert id="insertPurPurchasePriceAttachment" parameterType="com.platform.ems.domain.PurPurchasePriceAttachment">
+        insert into s_pur_purchase_price_attachment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientId != null and clientId != ''">client_id,</if>
+            <if test="purchasePriceAttachmentSid != null">purchase_price_attachment_sid,</if>
+            <if test="purchasePriceSid != null and purchasePriceSid != ''">purchase_price_sid,</if>
+            <if test="fileType != null and fileType != ''">file_type,</if>
+            <if test="fileName != null and fileName != ''">file_name,</if>
+            <if test="filePath != null and filePath != ''">file_path,</if>
+            <if test="remark != null">remark,</if>
+            <if test="creatorAccount != null">creator_account,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updaterAccount != null">updater_account,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="dataSourceSys != null">data_source_sys,</if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientId != null and clientId != ''">#{clientId},</if>
+            <if test="purchasePriceAttachmentSid != null">#{purchasePriceAttachmentSid},</if>
+            <if test="purchasePriceSid != null and purchasePriceSid != ''">#{purchasePriceSid},</if>
+            <if test="fileType != null and fileType != ''">#{fileType},</if>
+            <if test="fileName != null and fileName != ''">#{fileName},</if>
+            <if test="filePath != null and filePath != ''">#{filePath},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="creatorAccount != null">#{creatorAccount},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updaterAccount != null">#{updaterAccount},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="dataSourceSys != null">#{dataSourceSys},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePurPurchasePriceAttachment" parameterType="com.platform.ems.domain.PurPurchasePriceAttachment">
+        update s_pur_purchase_price_attachment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="clientId != null and clientId != ''">client_id = #{clientId},</if>
+            <if test="purchasePriceSid != null and purchasePriceSid != ''">purchase_price_sid = #{purchasePriceSid},
+            </if>
+            <if test="fileType != null and fileType != ''">file_type = #{fileType},</if>
+            <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
+            <if test="filePath != null and filePath != ''">file_path = #{filePath},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="creatorAccount != null">creator_account = #{creatorAccount},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updaterAccount != null">updater_account = #{updaterAccount},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="dataSourceSys != null">data_source_sys = #{dataSourceSys},</if>
+        </trim>
+        where purchase_price_attachment_sid = #{purchasePriceAttachmentSid}
+    </update>
+
+    <delete id="deletePurPurchasePriceAttachmentById" parameterType="Long">
+        delete from s_pur_purchase_price_attachment where purchase_price_attachment_sid = #{purchasePriceAttachmentSid}
+    </delete>
+
+    <delete id="deletePurPurchasePriceAttachmentByIds" parameterType="Long">
+        delete from s_pur_purchase_price_attachment where purchase_price_attachment_sid in
+        <foreach item="purchasePriceAttachmentSid" collection="array" open="(" separator="," close=")">
+            #{purchasePriceAttachmentSid}
+        </foreach>
+    </delete>
+
+</mapper>

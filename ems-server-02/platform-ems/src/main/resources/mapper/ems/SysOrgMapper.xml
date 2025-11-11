@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.SysOrgMapper">
+
+    <resultMap type="com.platform.common.core.domain.entity.SysOrg" id="SysOrgResult">
+        <result property="clientId" column="client_id"/>
+        <result property="nodeSid" column="node_sid"/>
+        <result property="nodeCode" column="node_code"/>
+        <result property="nodeName" column="node_name"/>
+        <result property="nodeShortName" column="node_short_name"/>
+        <result property="nodeType" column="node_type"/>
+        <result property="level" column="level"/>
+        <result property="parentNodeSid" column="parent_node_sid"/>
+        <result property="isDefaultDepartment" column="is_default_department"/>
+        <result property="superiorLeaders" column="superior_leaders"/>
+        <result property="serialNum" column="serial_num"/>
+        <result property="defaultPosition" column="default_position"/>
+        <result property="hasNextNode" column="has_next_node"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="staffSid" column="staff_sid"/>
+        <result property="departmentSid" column="department_sid"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="pertainPosition" column="pertain_position"/>
+        <result property="parentNodeType" column="parent_node_type"/>
+        <result property="parentNodeName" column="parent_node_name"/>
+    </resultMap>
+
+    <sql id="selectSysOrgVo">
+        select t.client_id, t.node_sid, t.node_code, t.node_name, t.node_short_name, t.node_type, t.level,
+               t.parent_node_sid, t.is_default_department, t.superior_leaders, t.serial_num, t.default_position,
+               t.has_next_node, t.remark, t.creator_account, t.create_date, t.updater_account, t.update_date,
+               t.confirmer_account, t.confirm_date, t.data_source_sys, t.staff_sid, t.department_sid, t.company_sid,
+               t.pertain_position, t2.node_type AS parent_node_type, t2.node_name AS parent_node_name
+        from s_sys_org t
+        left join s_sys_org t2 on t.parent_node_sid = t2.node_sid
+    </sql>
+
+    <select id="selectSysOrgById" parameterType="Long" resultMap="SysOrgResult">
+        <include refid="selectSysOrgVo"/>
+        where t.node_sid = #{nodeSid}
+    </select>
+
+
+    <select id="selectSysOrgList" parameterType="com.platform.common.core.domain.entity.SysOrg"
+            resultMap="SysOrgResult">
+        <include refid="selectSysOrgVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or"> t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="nodeCode != null ">
+                and t.node_code =#{nodeCode}
+            </if>
+            <if test="nodeName != null  and nodeName != ''">and
+                t.node_name like concat('%', #{nodeName}, '%')
+            </if>
+            <if test="nodeShortName != null  and nodeShortName != ''">and
+                t.node_short_name like concat('%', #{nodeShortName}, '%')
+            </if>
+            <if test="nodeType != null  and nodeType != ''">
+                and (<foreach collection="nodeType.split(';')" item="item" separator="or"> t.node_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="level != null ">
+                and t.level =#{level}
+            </if>
+            <if test="parentNodeSid != null ">
+                and t.parent_node_sid =#{parentNodeSid}
+            </if>
+            <if test="isDefaultDepartment != null  and isDefaultDepartment != ''">
+                and (<foreach collection="isDefaultDepartment.split(';')" item="item" separator="or"> t.is_default_department like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="superiorLeaders != null  and superiorLeaders != ''">
+                and (<foreach collection="superiorLeaders.split(';')" item="item" separator="or"> t.superior_leaders like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="serialNum != null ">
+                and t.serial_num =#{serialNum}
+            </if>
+            <if test="defaultPosition != null ">
+                and t.default_position =#{defaultPosition}
+            </if>
+            <if test="hasNextNode != null  and hasNextNode != ''">
+                and (<foreach collection="hasNextNode.split(';')" item="item" separator="or"> t.has_next_node like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t.creator_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or"> t.confirmer_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or"> t.data_source_sys like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="staffSid != null ">
+                and t.staff_sid =#{staffSid}
+            </if>
+            <if test="departmentSid != null ">
+                and t.department_sid =#{departmentSid}
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="pertainPosition != null ">
+                and t.pertain_position =#{pertainPosition}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_sys_org
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            node_sid,
+            node_code,
+            node_name,
+            node_short_name,
+            node_type,
+            level,
+            parent_node_sid,
+            is_default_department,
+            superior_leaders,
+            serial_num,
+            default_position,
+            has_next_node,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+            staff_sid,
+            department_sid,
+            company_sid,
+            pertain_position,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.nodeCode},
+                #{item.nodeName},
+                #{item.nodeShortName},
+                #{item.nodeType},
+                #{item.level},
+                #{item.parentNodeSid},
+                #{item.isDefaultDepartment},
+                #{item.superiorLeaders},
+                #{item.serialNum},
+                #{item.defaultPosition},
+                #{item.hasNextNode},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+                #{item.staffSid},
+                #{item.departmentSid},
+                #{item.companySid},
+                #{item.pertainPosition},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_sys_org
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            node_sid = #{nodeSid},
+            node_code = #{nodeCode},
+            node_name = #{nodeName},
+            node_short_name = #{nodeShortName},
+            node_type = #{nodeType},
+            level = #{level},
+            parent_node_sid = #{parentNodeSid},
+            is_default_department = #{isDefaultDepartment},
+            superior_leaders = #{superiorLeaders},
+            serial_num = #{serialNum},
+            default_position = #{defaultPosition},
+            has_next_node = #{hasNextNode},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            staff_sid = #{staffSid},
+            department_sid = #{departmentSid},
+            company_sid = #{companySid},
+            pertain_position = #{pertainPosition},
+        </trim>
+        where node_sid = #{nodeSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_sys_org
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                node_sid = #{nodeSid},
+                node_code = #{nodeCode},
+                node_name = #{nodeName},
+                node_short_name = #{nodeShortName},
+                node_type = #{nodeType},
+                level = #{level},
+                parent_node_sid = #{parentNodeSid},
+                is_default_department = #{isDefaultDepartment},
+                superior_leaders = #{superiorLeaders},
+                serial_num = #{serialNum},
+                default_position = #{defaultPosition},
+                has_next_node = #{hasNextNode},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+                staff_sid = #{staffSid},
+                department_sid = #{departmentSid},
+                company_sid = #{companySid},
+                pertain_position = #{pertainPosition},
+            </trim>
+            where node_sid = #{nodeSid}
+        </foreach>
+    </update>
+
+</mapper>

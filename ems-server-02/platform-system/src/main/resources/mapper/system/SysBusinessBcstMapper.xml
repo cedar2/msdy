@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.system.mapper.SysBusinessBcstMapper">
+
+    <resultMap type="com.platform.system.domain.SysBusinessBcst" id="SysBusinessBcstResult">
+        <result property="clientId" column="client_id"/>
+        <result property="businessBcstSid" column="business_bcst_sid"/>
+        <result property="businessCategory" column="business_category"/>
+        <result property="title" column="title"/>
+        <result property="documentSid" column="document_sid"/>
+        <result property="menuId" column="menu_id"/>
+        <result property="noticeDate" column="notice_date"/>
+        <result property="userId" column="user_id"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="documentCode" column="document_code"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="nickName" column="nick_name"/>
+    </resultMap>
+
+    <sql id="selectSysBusinessBcstVo">
+        select
+        t.client_id,
+        t.business_bcst_sid,
+        t.business_category,
+        t.title,
+        t.document_sid,
+        t.menu_id,
+        t.notice_date,
+        t.user_id,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t.document_code,
+        t1.nick_name as creator_account_name,
+        t2.nick_name
+  from s_sys_business_bcst t
+        LEFT JOIN sys_user t1 ON t1.user_name = t.creator_account
+        LEFT JOIN sys_user t2 ON t2.user_id = t.user_id
+    </sql>
+
+    <select id="selectSysBusinessBcstById" parameterType="Long" resultMap="SysBusinessBcstResult">
+        <include refid="selectSysBusinessBcstVo"/>
+        where t.business_bcst_sid = #{businessBcstSid}
+    </select>
+
+
+    <select id="selectSysBusinessBcstList" parameterType="com.platform.system.domain.SysBusinessBcst"
+            resultMap="SysBusinessBcstResult">
+        <include refid="selectSysBusinessBcstVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="businessCategory != null  and businessCategory != ''">
+                and (<foreach collection="businessCategory.split(';')" item="item" separator="or">t.business_category
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="title != null  and title != ''">
+                and (<foreach collection="title.split(';')" item="item" separator="or">t.title like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="documentSid != null  and documentSid != ''">
+                and (<foreach collection="documentSid.split(';')" item="item" separator="or">t.document_sid like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="menuId != null ">
+                and t.menu_id =#{menuId}
+            </if>
+            <if test="noticeDate != null ">
+                and t.notice_date = #{noticeDate}
+            </if>
+            <if test="userId != null ">
+                and t.user_id =#{userId}
+            </if>
+            <if test="userIdList != null  and userIdList.length >0">
+                and t.user_id in (<foreach collection="userIdList" item="userId" separator=",">#{userId}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="documentCode != null  and documentCode != ''">
+                and (<foreach collection="documentCode.split(';')" item="item" separator="or">t.document_code like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        order by t.notice_date desc, t.document_code asc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_sys_business_bcst
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            business_bcst_sid,
+            business_category,
+            title,
+            document_sid,
+            menu_id,
+            notice_date,
+            user_id,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+            document_code,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.businessBcstSid},
+                #{item.businessCategory},
+                #{item.title},
+                #{item.documentSid},
+                #{item.menuId},
+                #{item.noticeDate},
+                #{item.userId},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+                #{item.documentCode},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_sys_business_bcst
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            business_category = #{businessCategory},
+            title = #{title},
+            document_sid = #{documentSid},
+            menu_id = #{menuId},
+            notice_date = #{noticeDate},
+            user_id = #{userId},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            document_code = #{documentCode},
+        </trim>
+        where business_bcst_sid = #{businessBcstSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_sys_business_bcst
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                business_category = #{businessCategory},
+                title = #{title},
+                document_sid = #{documentSid},
+                menu_id = #{menuId},
+                notice_date = #{noticeDate},
+                user_id = #{userId},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+                document_code = #{documentCode},
+            </trim>
+            where business_bcst_sid = #{businessBcstSid}
+        </foreach>
+    </update>
+
+</mapper>

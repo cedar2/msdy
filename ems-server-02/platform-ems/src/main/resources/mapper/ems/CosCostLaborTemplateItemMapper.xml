@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.CosCostLaborTemplateItemMapper">
+
+    <resultMap type="com.platform.ems.domain.CosCostLaborTemplateItem" id="CosCostLaborTemplateItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="costLaborTemplateItemSid" column="cost_labor_template_item_sid"/>
+        <result property="costLaborTemplateSid" column="cost_labor_template_sid"/>
+        <result property="laborTypeItemSid" column="labor_type_item_sid"/>
+        <result property="laborTypeItemCode" column="labor_type_item_code"/>
+        <result property="laborTypeSid" column="labor_type_sid"/>
+        <result property="laborTypeCode" column="labor_type_code"/>
+        <result property="laborTypeItemName" column="labor_type_item_name"/>
+        <result property="itemName" column="item_name"/>
+        <result property="isIncludeTax" column="is_include_tax"/>
+        <result property="isEdit" column="is_edit"/>
+        <result property="isProfitRateProduct" column="is_profit_rate_product"/>
+        <result property="serialNum" column="serial_num"/>
+        <result property="isProfitProduct" column="is_profit_product"/>
+        <result property="isTaxRate" column="is_tax_rate"/>
+        <result property="isTax" column="is_tax"/>
+        <result property="isMaterialFormula" column="is_material_formula"/>
+        <result property="isOther" column="is_other"/>
+        <result property="subtotalFormulaInner" column="subtotal_formula_inner"/>
+        <result property="isPartyAMaterialFormula" column="is_party_a_material_formula"/>
+        <result property="subtotalFormulaQuote" column="subtotal_formula_quote"/>
+        <result property="isManageChargeRate" column="is_manage_charge_rate"/>
+        <result property="isManageCharge" column="is_manage_charge"/>
+        <result property="subtotalFormulaCheck" column="subtotal_formula_check"/>
+        <result property="subtotalFormulaConfirm" column="subtotal_formula_confirm"/>
+        <result property="processSid" column="process_sid"/>
+        <result property="isSubtotal" column="is_subtotal"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="remark" column="remark"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="processName" column="process_name"/>
+        <result property="processCode" column="process_code"/>
+        <result property="defaultValue" column="default_value"/>
+        <result property="purchaseType" column="purchase_type"/>
+        <result property="purchaseTypeName" column="purchase_type_name"/>
+        <result property="isEditFengxianxishu" column="is_edit_fengxianxishu"/>
+        <result property="isEditFuwufeilv" column="is_edit_fuwufeilv"/>
+        <result property="isEditShuilv" column="is_edit_shuilv"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+    </resultMap>
+
+    <sql id="selectCosCostLaborTemplateItemVo">
+        SELECT
+	t.client_id,
+	t.cost_labor_template_item_sid,
+	t.cost_labor_template_sid,
+	t.labor_type_item_sid,
+	t.labor_type_sid,
+    t.labor_type_code,
+	t.labor_type_item_name,
+    t.labor_type_item_code,
+    t.purchase_type,
+	t.is_include_tax,
+	t.is_edit,
+	t.is_profit_rate_product,
+	t.serial_num,
+	t.is_profit_product,
+	t.is_tax_rate,
+	t.is_tax,
+	t.is_material_formula,
+	t.is_other,
+    t.is_edit_fengxianxishu,t.is_edit_fuwufeilv,t.is_edit_shuilv,
+	t.subtotal_formula_inner,
+	t.is_party_a_material_formula,
+	t.subtotal_formula_quote,
+	t.is_manage_charge_rate,
+	t.is_manage_charge,
+	t.subtotal_formula_check,
+	t.subtotal_formula_confirm,
+	t.process_sid,
+	t.is_subtotal,
+    t.default_value,
+	t.updater_account,
+	t.update_date,
+	t.creator_account,
+	t.create_date,
+	t.remark,
+	t.data_source_sys,
+	t3.process_name,
+	t3.process_code,
+	t3.production_mode,
+	t1.labor_type_name,
+    t4.name AS purchase_type_name,
+    t5.nick_name AS creator_account_name,
+    t6.nick_name AS updater_account_name
+FROM
+	s_cos_cost_labor_template_item t
+	LEFT JOIN s_con_labor_type t1 ON t1.labor_type_sid = t.labor_type_sid
+	LEFT JOIN s_con_labor_type_item t2 ON t2.labor_type_item_sid = t.labor_type_item_sid
+	LEFT JOIN s_man_process t3 ON t3.process_sid = t.process_sid
+    LEFT JOIN s_con_purchase_type t4 ON t.purchase_type = t4.code
+    LEFT JOIN sys_user t5 ON t.creator_account = t5.user_name
+    LEFT JOIN sys_user t6 ON t.updater_account = t6.user_name
+    </sql>
+
+    <select id="selectCosCostLaborTemplateItemById" parameterType="Long" resultMap="CosCostLaborTemplateItemResult">
+        <include refid="selectCosCostLaborTemplateItemVo"/>
+        where t.cost_labor_template_item_sid = #{costLaborTemplateItemSid}
+    </select>
+
+
+    <select id="selectCosCostLaborTemplateItemList" parameterType="com.platform.ems.domain.CosCostLaborTemplateItem"
+            resultMap="CosCostLaborTemplateItemResult">
+        <include refid="selectCosCostLaborTemplateItemVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="costLaborTemplateSid != null ">
+                and t.cost_labor_template_sid =#{costLaborTemplateSid}
+            </if>
+            <if test="laborTypeItemSid != null ">
+                and t.labor_type_item_sid =#{laborTypeItemSid}
+            </if>
+            <if test="laborTypeSid != null ">
+                and t.labor_type_sid =#{laborTypeSid}
+            </if>
+            <if test="laborTypeItemName != null  and laborTypeItemName != ''">and
+                t.labor_type_item_name like concat('%', #{laborTypeItemName}, '%')
+            </if>
+            <if test="isIncludeTax != null  and isIncludeTax != ''">
+                and (<foreach collection="isIncludeTax.split(';')" item="item" separator="or">t.is_include_tax like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isEdit != null  and isEdit != ''">
+                and (<foreach collection="isEdit.split(';')" item="item" separator="or">t.is_edit like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isProfitRateProduct != null  and isProfitRateProduct != ''">
+                and (<foreach collection="isProfitRateProduct.split(';')" item="item" separator="or">
+                t.is_profit_rate_product like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="serialNum != null ">
+                and t.serial_num = #{serialNum}
+            </if>
+            <if test="isProfitProduct != null  and isProfitProduct != ''">
+                and (<foreach collection="isProfitProduct.split(';')" item="item" separator="or">t.is_profit_product
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isTaxRate != null  and isTaxRate != ''">
+                and (<foreach collection="isTaxRate.split(';')" item="item" separator="or">t.is_tax_rate like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isTax != null  and isTax != ''">
+                and (<foreach collection="isTax.split(';')" item="item" separator="or">t.is_tax like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isMaterialFormula != null  and isMaterialFormula != ''">
+                and (<foreach collection="isMaterialFormula.split(';')" item="item" separator="or">t.is_material_formula
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isOther != null  and isOther != ''">
+                and (<foreach collection="isOther.split(';')" item="item" separator="or">t.is_other like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="subtotalFormulaInner != null  and subtotalFormulaInner != ''">
+                and (<foreach collection="subtotalFormulaInner.split(';')" item="item" separator="or">
+                t.subtotal_formula_inner like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isPartyAMaterialFormula != null  and isPartyAMaterialFormula != ''">
+                and (<foreach collection="isPartyAMaterialFormula.split(';')" item="item" separator="or">
+                t.is_party_a_material_formula like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="subtotalFormulaQuote != null  and subtotalFormulaQuote != ''">
+                and (<foreach collection="subtotalFormulaQuote.split(';')" item="item" separator="or">
+                t.subtotal_formula_quote like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isManageChargeRate != null  and isManageChargeRate != ''">
+                and (<foreach collection="isManageChargeRate.split(';')" item="item" separator="or">
+                t.is_manage_charge_rate like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="isManageCharge != null  and isManageCharge != ''">
+                and (<foreach collection="isManageCharge.split(';')" item="item" separator="or">t.is_manage_charge like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="subtotalFormulaCheck != null  and subtotalFormulaCheck != ''">
+                and (<foreach collection="subtotalFormulaCheck.split(';')" item="item" separator="or">
+                t.subtotal_formula_check like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="subtotalFormulaConfirm != null  and subtotalFormulaConfirm != ''">
+                and (<foreach collection="subtotalFormulaConfirm.split(';')" item="item" separator="or">
+                t.subtotal_formula_confirm like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="processSid != null ">
+                and t.process_sid =#{processSid}
+            </if>
+            <if test="isSubtotal != null  and isSubtotal != ''">
+                and (<foreach collection="isSubtotal.split(';')" item="item" separator="or">t.is_subtotal like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>order by t.serial_num asc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_cos_cost_labor_template_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            cost_labor_template_item_sid,
+            cost_labor_template_sid,
+            labor_type_item_sid,
+            labor_type_item_code,
+            labor_type_sid,
+            labor_type_code,
+            labor_type_item_name,
+            purchase_type,
+            is_include_tax,
+            is_edit,
+            is_profit_rate_product,
+            serial_num,
+            is_profit_product,
+            is_tax_rate,
+            is_tax,
+            is_material_formula,
+            is_other,
+            is_edit_fengxianxishu,
+            is_edit_fuwufeilv,
+            is_edit_shuilv,
+            subtotal_formula_inner,
+            is_party_a_material_formula,
+            subtotal_formula_quote,
+            is_manage_charge_rate,
+            is_manage_charge,
+            subtotal_formula_check,
+            subtotal_formula_confirm,
+            process_sid,
+            is_subtotal,
+            default_value,
+            updater_account,
+            update_date,
+            creator_account,
+            create_date,
+            remark,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.costLaborTemplateItemSid},
+                #{item.costLaborTemplateSid},
+                #{item.laborTypeItemSid},
+                #{item.laborTypeItemCode},
+                #{item.laborTypeSid},
+                #{item.laborTypeCode},
+                #{item.laborTypeItemName},
+                #{item.purchaseType},
+                #{item.isIncludeTax},
+                #{item.isEdit},
+                #{item.isProfitRateProduct},
+                #{item.serialNum},
+                #{item.isProfitProduct},
+                #{item.isTaxRate},
+                #{item.isTax},
+                #{item.isMaterialFormula},
+                #{item.isOther},
+                #{item.isEditFengxianxishu},
+                #{item.isEditFuwufeilv},
+                #{item.isEditShuilv},
+                #{item.subtotalFormulaInner},
+                #{item.isPartyAMaterialFormula},
+                #{item.subtotalFormulaQuote},
+                #{item.isManageChargeRate},
+                #{item.isManageCharge},
+                #{item.subtotalFormulaCheck},
+                #{item.subtotalFormulaConfirm},
+                #{item.processSid},
+                #{item.isSubtotal},
+                #{item.defaultValue},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.remark},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_cos_cost_labor_template_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            cost_labor_template_sid = #{costLaborTemplateSid},
+            labor_type_item_sid = #{laborTypeItemSid},
+            labor_type_item_code = #{laborTypeItemCode},
+            labor_type_sid = #{laborTypeSid},
+            labor_type_code = #{laborTypeCode},
+            labor_type_item_name = #{laborTypeItemName},
+            purchase_type = #{purchaseType},
+            is_include_tax = #{isIncludeTax},
+            is_edit = #{isEdit},
+            is_profit_rate_product = #{isProfitRateProduct},
+            serial_num = #{serialNum},
+            is_profit_product = #{isProfitProduct},
+            is_tax_rate = #{isTaxRate},
+            is_tax = #{isTax},
+            is_material_formula = #{isMaterialFormula},
+            is_other = #{isOther},
+            is_edit_fengxianxishu = #{isEditFengxianxishu},
+            is_edit_fuwufeilv = #{isEditFuwufeilv},
+            is_edit_shuilv = #{isEditShuilv},
+            subtotal_formula_inner = #{subtotalFormulaInner},
+            is_party_a_material_formula = #{isPartyAMaterialFormula},
+            subtotal_formula_quote = #{subtotalFormulaQuote},
+            is_manage_charge_rate = #{isManageChargeRate},
+            is_manage_charge = #{isManageCharge},
+            subtotal_formula_check = #{subtotalFormulaCheck},
+            subtotal_formula_confirm = #{subtotalFormulaConfirm},
+            process_sid = #{processSid},
+            is_subtotal = #{isSubtotal},
+            default_value = #{defaultValue},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            remark = #{remark},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where cost_labor_template_item_sid = #{costLaborTemplateItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_cos_cost_labor_template_item
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                cost_labor_template_sid = #{costLaborTemplateSid},
+                labor_type_item_sid = #{laborTypeItemSid},
+                labor_type_item_code = #{laborTypeItemCode},
+                labor_type_sid = #{laborTypeSid},
+                labor_type_code = #{laborTypeCode},
+                labor_type_item_name = #{laborTypeItemName},
+                purchase_type = #{purchaseType},
+                is_include_tax = #{isIncludeTax},
+                is_edit = #{isEdit},
+                is_profit_rate_product = #{isProfitRateProduct},
+                serial_num = #{serialNum},
+                is_profit_product = #{isProfitProduct},
+                is_tax_rate = #{isTaxRate},
+                is_tax = #{isTax},
+                is_material_formula = #{isMaterialFormula},
+                is_other = #{isOther},
+                is_edit_fengxianxishu = #{isEditFengxianxishu},
+                is_edit_fuwufeilv = #{isEditFuwufeilv},
+                is_edit_shuilv = #{isEditShuilv},
+                subtotal_formula_inner = #{subtotalFormulaInner},
+                is_party_a_material_formula = #{isPartyAMaterialFormula},
+                subtotal_formula_quote = #{subtotalFormulaQuote},
+                is_manage_charge_rate = #{isManageChargeRate},
+                is_manage_charge = #{isManageCharge},
+                subtotal_formula_check = #{subtotalFormulaCheck},
+                subtotal_formula_confirm = #{subtotalFormulaConfirm},
+                process_sid = #{processSid},
+                is_subtotal = #{isSubtotal},
+                default_value = #{defaultValue},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                remark = #{remark},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where cost_labor_template_item_sid = #{costLaborTemplateItemSid}
+        </foreach>
+    </update>
+
+</mapper>

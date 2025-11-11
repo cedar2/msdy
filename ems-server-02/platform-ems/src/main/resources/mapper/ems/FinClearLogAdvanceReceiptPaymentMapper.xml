@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinClearLogAdvanceReceiptPaymentMapper">
+
+    <resultMap type="com.platform.ems.domain.FinClearLogAdvanceReceiptPayment"
+               id="FinClearLogAdvanceReceiptPaymentResult">
+        <result property="bookReceivableBillCode" column="refer_doc_code"/>
+        <result property="clientId" column="client_id"/>
+        <result property="clearLogAdvanceReceiptPaymentSid" column="clear_log_advance_receipt_payment_sid"/>
+        <result property="receivableBillSid" column="receivable_bill_sid"/>
+        <result property="receivableBillCode" column="receivable_bill_code"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="companyName" column="company_name"/>
+        <result property="bookReceiptPaymentSid" column="book_receipt_payment_sid"/>
+        <result property="bookReceiptPaymentCode" column="book_receipt_payment_code"/>
+        <result property="bookReceiptPaymentItemSid" column="book_receipt_payment_item_sid"/>
+        <result property="shengxiaoStatus" column="shengxiao_status"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectFinClearLogAdvanceReceiptPaymentVo">
+        select t.client_id,
+               t.clear_log_advance_receipt_payment_sid,
+               t.receivable_bill_sid,
+               t.receivable_bill_code,
+               t.customer_sid,
+               t.customer_code,
+               t3.short_name AS customer_name,
+               t.company_sid,
+               t.company_code,
+               t2.short_name AS company_name,
+               t.book_receipt_payment_sid,
+               t.book_receipt_payment_code,
+               t.book_receipt_payment_item_sid,
+               t.shengxiao_status,
+               t.currency_amount_tax,
+               t.remark,
+               t.creator_account,
+               t4.nick_name AS creator_account_name,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t1.refer_doc_code
+        from s_fin_clear_log_advance_receipt_payment t
+        LEFT JOIN s_fin_book_receipt_payment_item t1 ON t.book_receipt_payment_item_sid = t1.book_receipt_payment_item_sid
+        LEFT JOIN s_bas_company t2 ON t.company_sid = t2.company_sid
+        LEFT JOIN s_bas_customer t3 ON t.customer_sid = t3.customer_sid
+        LEFT JOIN sys_user t4 ON t.creator_account = t4.user_name AND t.client_id = t4.client_id
+    </sql>
+
+    <select id="selectFinClearLogAdvanceReceiptPaymentById" parameterType="Long"
+            resultMap="FinClearLogAdvanceReceiptPaymentResult">
+        <include refid="selectFinClearLogAdvanceReceiptPaymentVo"/>
+        where t.clear_log_advance_receipt_payment_sid = #{clearLogAdvanceReceiptPaymentSid}
+        ORDER BY t.create_date DESC, t1.refer_doc_code DESC
+    </select>
+
+    <select id="selectFinClearLogAdvanceReceiptPaymentList"
+            parameterType="com.platform.ems.domain.FinClearLogAdvanceReceiptPayment"
+            resultMap="FinClearLogAdvanceReceiptPaymentResult">
+        <include refid="selectFinClearLogAdvanceReceiptPaymentVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="bookReceivableBillCode != null and bookReceivableBillCode != ''">
+                and  t1.refer_doc_code like concat('%', #{bookReceivableBillCode},'%')
+            </if>
+            <if test="receivableBillSid != null ">
+                and t.receivable_bill_sid = #{receivableBillSid}
+            </if>
+            <if test="receivableBillCode != null ">
+                and t.receivable_bill_code  like concat('%', #{receivableBillCode},'%')
+            </if>
+            <if test="customerSid != null ">
+                and t.customer_sid = #{customerSid}
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and t.customer_sid in
+                (<foreach collection="customerSidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="customerCode != null ">
+                and t.customer_code = #{customerCode}
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid = #{companySid}
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t.company_sid in
+                (<foreach collection="companySidList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="companyCode != null ">
+                and t.company_code = #{companyCode}
+            </if>
+            <if test="bookReceiptPaymentSid != null ">
+                and t.book_receipt_payment_sid = #{bookReceiptPaymentSid}
+            </if>
+            <if test="bookReceiptPaymentCode != null ">
+                and t.book_receipt_payment_code like concat('%', #{bookReceiptPaymentCode},'%')
+            </if>
+            <if test="bookReceiptPaymentItemSid != null ">
+                and t.book_receipt_payment_item_sid = #{bookReceiptPaymentItemSid}
+            </if>
+            <if test="shengxiaoStatus != null and shengxiaoStatus != ''">
+                and t.shengxiao_status = #{shengxiaoStatus}
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t.creator_account = #{creatorAccount}
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        ORDER BY t.create_date DESC, t1.refer_doc_code DESC
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_clear_log_advance_receipt_payment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            clear_log_advance_receipt_payment_sid,
+            receivable_bill_sid,
+            receivable_bill_code,
+            customer_sid,
+            customer_code,
+            company_sid,
+            company_code,
+            book_receipt_payment_sid,
+            book_receipt_payment_code,
+            book_receipt_payment_item_sid,
+            shengxiao_status,
+            currency_amount_tax,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.clearLogAdvanceReceiptPaymentSid},
+                #{item.receivableBillSid},
+                #{item.receivableBillCode},
+                #{item.customerSid},
+                #{item.customerCode},
+                #{item.companySid},
+                #{item.companyCode},
+                #{item.bookReceiptPaymentSid},
+                #{item.bookReceiptPaymentCode},
+                #{item.bookReceiptPaymentItemSid},
+                #{item.shengxiaoStatus},
+                #{item.currencyAmountTax},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+</mapper>

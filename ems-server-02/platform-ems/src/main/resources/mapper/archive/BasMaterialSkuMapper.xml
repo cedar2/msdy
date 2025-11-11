@@ -1,0 +1,1036 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasMaterialSkuMapper">
+
+    <resultMap type="com.platform.ems.domain.BasMaterialSku" id="BasMaterialSkuResult">
+        <result property="clientId" column="client_id"/>
+        <result property="materialSkuSid" column="material_sku_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="skuSid" column="sku_sid"/>
+        <result property="skuSidDown" column="sku_sid_down"/>
+        <result property="skuType" column="sku_type"/>
+        <result property="sku1Type" column="sku1_type"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="sampleDetectResult" column="sample_detect_result"/>
+        <result property="productDetectResult" column="product_detect_result"/>
+        <result property="waistSize" column="waist_size"/>
+        <result property="sizeGroupKid" column="size_group_kid"/>
+        <result property="remark" column="remark"/>
+        <result property="skuStatus" column="sku_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="skuCode" column="sku_code"/>
+        <result property="skuName" column="sku_name"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="materialName" column="material_name"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="width" column="width"/>
+        <result property="gramWeight" column="gram_weight"/>
+        <result property="specificationSize" column="specification_size"/>
+        <result property="materialComposition" column="material_composition"/>
+        <result property="supplierProductCode" column="supplier_product_code"/>
+        <result property="materialType" column="material_type"/>
+        <result property="materialTypeName" column="material_type_name"/>
+        <result property="purchaseType" column="purchase_type"/>
+        <result property="purchaseTypeName" column="purchase_type_name"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="materialClassSid" column="material_class_sid"/>
+        <result property="materialClassName" column="material_class_name"/>
+        <result property="developer" column="developer"/>
+        <result property="skuDimension" column="sku_dimension"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="bottomsSkuCode" column="bottoms_sku_code"/>
+        <result property="bottomsSkuName" column="bottoms_sku_name"/>
+        <result property="quotePriceTax" column="quote_price_tax"/>
+        <result property="requestQuotationSid" column="request_quotation_sid"/>
+        <result property="priceInforItemSid" column="price_infor_item_sid"/>
+        <result property="taxRateName" column="tax_rate_name"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="designerAccount" column="designer_account"/>
+        <result property="sampleCodeSelf" column="sample_code_self"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="unitQuantity" column="unit_quantity"/>
+        <result property="unitQuantityName" column="unit_quantity_name"/>
+    </resultMap>
+
+
+    <sql id="selectBasMaterialSkuListVo">
+        SELECT
+	t.material_sid,
+	t.handle_status,
+	t.material_code,
+	t.material_name,
+    t.material_category,
+	t.picture_path,
+	t1.sku_sid AS sku1_sid,
+    t3.sku_code AS sku1_code,
+	t3.sku_name AS sku1_name,
+	t.sku1_type,
+	t2.sku_sid AS sku2_sid,
+    t4.sku_code AS sku2_code,
+	t4.sku_name AS sku2_name,
+	t.sku2_type,
+	t.developer,
+	t.status,
+	t1.status AS sku1_status,
+	t2.status AS sku2_status,
+	t.width,
+	t.gram_weight,
+	t.specification_size,
+	t.material_composition,
+	t.material_type,
+	t.material_class_sid,
+	t5.node_name AS material_class_name,
+	t.vendor_sid,
+	t6.vendor_code,
+	t6.vendor_name,
+	t.supplier_product_code,
+	t.remark,
+    t1.customer_sku_code,
+    t1.customer_sku_name,
+    t1.supplier_sku_code,
+    t1.supplier_sku_name
+FROM
+	s_bas_material t
+	LEFT JOIN s_bas_material_sku t1 ON t1.material_sid = t.material_sid
+	AND t1.sku_type = t.sku1_type
+	LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t1.sku_sid
+	LEFT JOIN s_bas_material_sku t2 ON t2.material_sid = t.material_sid
+	AND t2.sku_type = t.sku2_type
+	LEFT JOIN s_bas_sku t4 ON t4.sku_sid = t2.sku_sid
+	LEFT JOIN s_con_material_class t5 ON t5.material_class_sid = t.material_class_sid
+	LEFT JOIN s_bas_vendor t6 ON t6.vendor_sid = t.vendor_sid
+    </sql>
+
+    <sql id="selectBasMaterialSkuVo">
+       SELECT
+	t.client_id,
+	t.material_sku_sid,
+	t.material_sid,
+	t.sku_sid,
+	t.sku_sid_down,
+	t.sku_type,
+    t.sku_type AS sku1_type,
+	t.sample_detect_result,
+	t.product_detect_result,
+	t.waist_size,
+	t.size_group_kid,
+    t.sort,
+	t.remark,
+	t.STATUS,
+	t.creator_account,
+	t.create_date,
+	t.updater_account,
+	t.update_date,
+	t.data_source_sys,
+	t1.sku_code,
+	t1.sku_name,
+	t1.STATUS AS sku_status,
+    t2.status as material_status,
+	t2.unit_base,
+    t2.unit_quantity,
+	t2.material_code,
+	t2.material_name,
+	t2.width,
+	t2.gram_weight,
+	t2.specification_size,
+	t2.material_composition,
+	t2.material_category,
+    t2.composition,
+    t2.model_size,
+    t.picture_path,
+    t.item_num,
+	t2.supplier_product_code,
+	t2.material_type,
+	t2.purchase_type,
+	t2.model_sid,
+	t2.product_technique_type,
+	t2.customer_product_code,
+	t2.sample_code_customer,
+	t2.style,
+	t2.series,
+	t2.company_sid,
+	t2.company_brand_sid,
+	t2.vendor_sid,
+	t4.vendor_code,
+	t4.vendor_name,
+	t2.material_class_sid,
+	t2.customer_brand_sid,
+	t2.handle_status,
+	t2.developer,
+	t2.sku_dimension,
+	t3.node_name as material_class_name,
+	t2.customer_sid,
+	t5.customer_name,
+	t5.customer_code,
+	t2.designer_account,
+	t2.sample_code_self,
+	t2.sample_code_vendor,
+	t2.up_down_suit,
+	t2.product_season_sid,
+    t2.sku2_group_sid,
+    t7.sku_group_name as sku2_group_name,
+	t6.product_season_name,
+	t6.product_season_code,
+    t10.name AS material_type_name,
+    t11.name AS unit_base_name,
+    t12.nick_name AS creator_account_name,
+    t13.nick_name AS designer_account_name,
+    t14.model_name,
+	t14.model_code,
+	t15.company_name,
+	t15.company_code,
+	t16.brand_name AS company_brand_name,
+	t16.brand_code AS company_brand_code,
+	t17.name AS product_technique_type_name,
+	t18.brand_name AS customer_brand_name,
+	t19.sample_sid,
+	t19.fengyang_result,
+	t19.fengyang_type,
+	t19.record_fengyang_sid,
+	t20.record_techtransfer_sid,
+	t20.techtransfer_result,
+    t.quote_price_tax,
+    t.customer_sku_code,
+    t.customer_sku_name,
+    t.supplier_sku_code,
+    t.supplier_sku_name,
+    t21.name as unit_quantity_name,
+    t22.name as purchase_type_name,
+    t23.nick_name as updater_account_name,
+    if(t24.handle_status is null, 'N', 'Y') as is_create_bom,
+    t24.handle_status as bom_handle_status,
+    t24.status as bom_status
+    FROM
+	s_bas_material_sku t
+	LEFT JOIN s_bas_sku t1 ON t1.sku_sid = t.sku_sid
+	LEFT JOIN s_bas_material t2 on t2.material_sid = t.material_sid
+	LEFT JOIN s_con_material_class t3 on t3.material_class_sid = t2.material_class_sid
+	LEFT JOIN s_bas_vendor t4 on t4.vendor_sid = t2.vendor_sid
+	LEFT JOIN s_bas_customer t5 on t5.customer_sid=t2.customer_sid
+	left join s_bas_product_season t6 on t6.product_season_sid=t2.product_season_sid
+    left join s_bas_sku_group t7 on t2.sku2_group_sid = t7.sku_group_sid
+    LEFT JOIN s_con_material_type t10 ON t2.material_type = t10.code
+    LEFT JOIN s_con_measure_unit t11 ON t2.unit_base = t11.code
+    LEFT JOIN sys_user t12 ON t.creator_account = t12.user_name
+    LEFT JOIN sys_user t13 ON t13.user_name = t2.designer_account
+    LEFT JOIN s_tec_model t14 ON t14.model_sid = t2.model_sid
+    LEFT JOIN s_bas_company t15 ON t15.company_sid = t2.company_sid
+	LEFT JOIN s_bas_company_brand t16 ON t16.company_brand_sid = t2.company_brand_sid
+	LEFT JOIN s_con_product_technique_type t17 ON t17.code = t2.product_technique_type
+	LEFT JOIN s_bas_customer_brand t18 ON t18.customer_brand_sid = t2.customer_brand_sid
+	LEFT JOIN s_tec_record_fengyang t19 ON t19.sample_sid = t.material_sid
+	LEFT JOIN s_tec_record_techtransfer t20 ON t20.sample_sid = t.material_sid
+    LEFT JOIN s_con_measure_unit t21 ON t2.unit_quantity = t21.code
+    LEFT JOIN s_con_purchase_type t22 ON t2.purchase_type = t22.code
+    LEFT JOIN sys_user t23 ON t.updater_account = t23.user_name
+    LEFT JOIN s_tec_bom_head t24 on t.material_sid = t24.material_sid and t.sku_sid = t24.sku1_sid
+    </sql>
+
+    <select id="selectBasMaterialSkuList" parameterType="com.platform.ems.domain.BasMaterialSku"
+            resultMap="BasMaterialSkuResult">
+        <include refid="selectBasMaterialSkuVo"/>
+        <where>
+            <if test="skuCodeList != null and skuCodeList.length >0 ">
+                and t1.sku_code in
+                (<foreach collection="skuCodeList" item="skuCode" separator=",">#{skuCode}</foreach>)
+            </if>
+            <if test="purchaseType != null  and purchaseType != ''">
+                and (<foreach collection="purchaseType.split(';')" item="item" separator=" or ">
+                t2.purchase_type = #{item}</foreach>)
+            </if>
+            <if test="purchaseTypeList != null and purchaseTypeList.length >0 ">
+                and t2.purchase_type in
+                (<foreach collection="purchaseTypeList" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="sampleCodeCustomer != null  and sampleCodeCustomer != ''">
+                and (<foreach collection="sampleCodeCustomer.split(';')" item="sampleCodeCustomer" separator=" or ">
+                t2.sample_code_customer like concat('%', #{sampleCodeCustomer}, '%')</foreach>)
+            </if>
+            <if test="designerAccountList != null and designerAccountList.length >0 ">
+                and t2.designer_account in
+                (<foreach collection="designerAccountList" item="designerAccount" separator=",">#{designerAccount}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0 ">
+                and t2.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="isHasCreatedBom != null  and isHasCreatedBom != ''">
+                and t2.is_has_created_bom = #{isHasCreatedBom}
+            </if>
+            <if test="materialSidList != null and materialSidList.length >0 ">
+                and t2.material_sid in
+                (<foreach collection="materialSidList" item="materialSid" separator=",">#{materialSid}</foreach>)
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length >0 ">
+                and t2.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=",">#{materialType}</foreach>)
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0 ">
+                and t2.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and t2.handle_status = #{handleStatus}
+            </if>
+            <if test="vendorSid != null">
+                and t2.vendor_sid = #{vendorSid}
+            </if>
+            <if test="customerSid != null">
+                and t2.customer_sid = #{customerSid}
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and t2.material_code like concat('%', #{materialCode}, '%')
+            </if>
+            <if test="supplierProductCode != null  and supplierProductCode != ''">
+                and (<foreach collection="supplierProductCode.split(';')" item="supplierProductCode" separator=" or ">
+                t2.supplier_product_code like concat('%', #{supplierProductCode}, '%')</foreach>)
+            </if>
+            <if test="materialName != null  and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="materialName" separator=" or ">t2.material_name
+                like concat('%', #{materialName}, '%')</foreach>)
+            </if>
+            <if test="purchaseType != null  and purchaseType != ''">
+                and t2.purchase_type = #{purchaseType}
+            </if>
+            <if test="materialClassSid != null">
+                and t2.material_class_sid = #{materialClassSid}
+            </if>
+            <if test="materialType != null  and materialType != ''">
+                and t2.material_type = #{materialType}
+            </if>
+            <if test="developer != null and developer != ''">
+                and (<foreach collection="developer.split(';')" item="developer" separator=" or ">t2.developer like
+                concat('%', #{developer}, '%')</foreach>)
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and t.client_id in (
+                <foreach collection="clientId.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="materialSkuSid != null and materialSkuSid != ''">
+                and t.material_sku_sid = #{materialSkuSid}
+            </if>
+            <if test="materialSkuSidList != null and materialSkuSidList.length >0 ">
+                and t.material_sku_sid in
+                (<foreach collection="materialSkuSidList" item="materialSkuSid" separator=",">#{materialSkuSid}</foreach>)
+            </if>
+            <if test="skuStatus != null and skuStatus != ''">
+                and t1.status = #{skuStatus}
+            </if>
+            <if test="skuSid != null  and skuSid != ''">
+                and t.sku_sid = #{skuSid}
+            </if>
+            <if test="skuSidList != null and skuSidList.length > 0">
+                and t.sku_sid in(<foreach collection="skuSidList" item="item" separator=","> #{item}</foreach>)
+            </if>
+            <if test="skuSidDown != null">
+                and t.sku_sid_down = #{skuSidDown}
+            </if>
+            <if test="materialSid != null  and materialSid != ''">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="materialCategory != null  and materialCategory != ''">
+                and t2.material_category = #{materialCategory}
+            </if>
+            <if test="skuType != null  and skuType != ''">
+                and t.sku_type = #{skuType}
+            </if>
+            <if test="picturePath != null  and picturePath != ''">
+                and t.picture_path in (
+                <foreach collection="picturePath.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="sampleDetectResult != null  and sampleDetectResult != ''">
+                and t.sample_detect_result in (
+                <foreach collection="sampleDetectResult.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="productDetectResult != null  and productDetectResult != ''">
+                and t.product_detect_result in (
+                <foreach collection="productDetectResult.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="waistSize != null  and waistSize != ''">
+                and t.waist_size in (
+                <foreach collection="waistSize.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="sizeGroupKid != null  and sizeGroupKid != ''">
+                and t.size_group_kid in (
+                <foreach collection="sizeGroupKid.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="status != null  and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and t.creator_account in (
+                <foreach collection="creatorAccount.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="createDate != null ">and t.create_date = #{createDate}</if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and t.updater_account in (
+                <foreach collection="updaterAccount.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and t.data_source_sys in (
+                <foreach collection="dataSourceSys.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="designerAccount != null and designerAccount != ''">
+                and t2.designer_account = #{designerAccount}
+            </if>
+            <if test="fengyangResult != null and fengyangResult != ''">
+                and t19.fengyang_result = #{fengyangResult}
+            </if>
+            <if test="fengyangType != null and fengyangType != ''">
+                and t19.fengyang_type =#{fengyangType}
+            </if>
+            <if test="sampleCodeSelf != null and sampleCodeSelf != ''">
+                and (<foreach collection="sampleCodeSelf.split(';')" item="sampleCodeSelf" separator=" or ">
+                t2.sample_code_self like concat('%', #{sampleCodeSelf}, '%')</foreach>)
+            </if>
+            <if test="materialCategoryList != null and materialCategoryList.length >0">
+                and t2.material_category in(<foreach collection="materialCategoryList" item="materialCategory" separator=",">#{materialCategory}</foreach>)
+            </if>
+        </where>
+        group by t.material_sku_sid
+        order by t2.material_code desc
+    </select>
+
+    <select id="selectBasMaterialSku1List" parameterType="com.platform.ems.domain.BasMaterialSku"
+            resultType="com.platform.ems.domain.BasMaterial">
+        select
+            t1.*, t.*,
+            t.sku_sid as sku1_sid, t2.sku_code as sku1_code, t2.sku_name as sku1_name, t2.sku_type as sku1_type,
+            t3.node_name as material_class_name,
+            t4.product_season_name, t5.name as material_type_name, t6.nick_name as designer_account_name,
+            t7.model_name, t8.customer_name, ifnull(t8.short_name, t8.customer_name) as customer_short_name,
+            ifnull(t9.short_name, t9.company_name) as company_short_name,t10.brand_name AS company_brand_name,
+            t11.name AS product_technique_type_name,t12.name as unit_base_name
+        from s_bas_material_sku t
+        left join s_bas_material t1 on t.material_sid = t1.material_sid and t.sku_type = t1.sku1_type
+        left join s_bas_sku t2 on t.sku_sid = t2.sku_sid
+        LEFT JOIN s_con_material_class t3 on t1.material_class_sid = t3.material_class_sid
+        left join s_bas_product_season t4 on t1.product_season_sid=t4.product_season_sid
+        LEFT JOIN s_con_material_type t5 ON t1.material_type = t5.code
+        LEFT JOIN sys_user t6 ON t1.designer_account = t6.user_name and t1.client_id = t6.client_id
+        LEFT JOIN s_tec_model t7 ON t1.model_sid = t7.model_sid
+        LEFT JOIN s_bas_customer t8 ON t1.customer_sid = t8.customer_sid
+        LEFT JOIN s_bas_company t9 ON t1.company_sid = t9.company_sid
+        LEFT JOIN s_bas_company_brand t10 ON t1.company_brand_sid = t10.company_brand_sid
+        LEFT JOIN s_con_product_technique_type t11 ON t1.product_technique_type = t11.code
+        LEFT JOIN s_con_measure_unit t12 ON t12.code = t1.unit_base
+        <where>
+            <if test="sku1Type != null and sku1Type != ''">
+                and t.sku_type = #{sku1Type}
+            </if>
+            <if test="vendorSid != null ">
+                and t1.vendor_sid = #{vendorSid}
+            </if>
+            <if test="vendorSidList != null  and vendorSidList.length >0 ">
+                and t1.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="customerSid != null ">
+                and t1.customer_sid = #{customerSid}
+            </if>
+            <if test="customerSidList != null  and customerSidList.length >0 ">
+                and t1.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and t1.material_code like concat('%', #{materialCode}, '%')
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and t1.material_name like concat('%', #{materialName}, '%')
+            </if>
+            <if test="materialType != null and materialType != ''">
+                and t1.material_type like concat('%', #{materialType}, '%')
+            </if>
+            <if test="materialCategory != null and materialCategory != ''">
+                and t1.material_category = #{materialCategory}
+            </if>
+            <if test="materialType != null and materialType != ''">
+                and t1.material_type like concat('%', #{materialType}, '%')
+            </if>
+            <if test="materialTypeList != null  and materialTypeList.length >0 ">
+                and t1.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=",">#{materialType}</foreach>)
+            </if>
+            <if test="materialClassSid != null">
+                and t1.material_class_sid = #{materialClassSid}
+            </if>
+            <if test="designerAccount != null and designerAccount != ''">
+                and t1.designer_account like concat('%', #{designerAccount}, '%')
+            </if>
+            <if test="status != null  and status != ''">
+                and t1.status in (
+                <foreach collection="status.split(';')" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="statusList != null  and statusList.length >0 ">
+                and t1.status in
+                (<foreach collection="statusList" item="status" separator=",">#{status}</foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and t1.handle_status in (
+                <foreach collection="handleStatus.split(';')" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0 ">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+        </where>
+    </select>
+
+    <select id="selectBasMaterialSkuListByNameSort" parameterType="com.platform.ems.domain.BasMaterialSku"
+            resultMap="BasMaterialSkuResult">
+        <include refid="selectBasMaterialSkuVo"/>
+        <where>
+            <if test="status != null  and status != ''">
+                and t.STATUS = #{status}
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and t2.handle_status = #{handleStatus}
+            </if>
+            <if test="vendorSid != null">
+                and t2.vendor_sid = #{vendorSid}
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="materialCode" separator=" or ">t2.material_code
+                like concat('%', #{materialCode}, '%')</foreach>)
+            </if>
+            <if test="supplierProductCode != null  and supplierProductCode != ''">
+                and (<foreach collection="supplierProductCode.split(';')" item="supplierProductCode" separator=" or ">
+                t2.supplier_product_code like concat('%', #{supplierProductCode}, '%')</foreach>)
+            </if>
+            <if test="materialName != null  and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="materialName" separator=" or ">t2.material_name
+                like concat('%', #{materialName}, '%')</foreach>)
+            </if>
+            <if test="purchaseType != null  and purchaseType != ''">
+                and t2.purchase_type = #{purchaseType}
+            </if>
+            <if test="materialClassSid != null">
+                and t2.material_class_sid = #{materialClassSid}
+            </if>
+            <if test="materialType != null  and materialType != ''">
+                and t2.material_type = #{materialType}
+            </if>
+            <if test="developer != null and developer != ''">
+                and (<foreach collection="developer.split(';')" item="developer" separator=" or ">t2.developer like
+                concat('%', #{developer}, '%')</foreach>)
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and t.client_id in (
+                <foreach collection="clientId.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="materialSkuSid != null  and materialSkuSid != ''">
+                and t.material_sku_sid in (
+                <foreach collection="materialSkuSid.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="skuSid != null  and skuSid != ''">
+                and t.sku_sid = #{skuSid}
+            </if>
+            <if test="skuSidDown != null">
+                and t.sku_sid_down = #{skuSidDown}
+            </if>
+            <if test="materialSid != null  and materialSid != ''">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="materialCategory != null  and materialCategory != ''">
+                and t2.material_category = #{materialCategory}
+            </if>
+            <if test="skuType != null  and skuType != ''">
+                and t.sku_type in (
+                <foreach collection="skuType.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="picturePath != null  and picturePath != ''">
+                and t.picture_path in (
+                <foreach collection="picturePath.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="sampleDetectResult != null  and sampleDetectResult != ''">
+                and t.sample_detect_result in (
+                <foreach collection="sampleDetectResult.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="productDetectResult != null  and productDetectResult != ''">
+                and t.product_detect_result in (
+                <foreach collection="productDetectResult.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="waistSize != null  and waistSize != ''">
+                and t.waist_size in (
+                <foreach collection="waistSize.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="sizeGroupKid != null  and sizeGroupKid != ''">
+                and t.size_group_kid in (
+                <foreach collection="sizeGroupKid.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="status != null  and status != ''">
+                and t.status in (
+                <foreach collection="status.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and t.creator_account in (
+                <foreach collection="creatorAccount.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="createDate != null ">and t.create_date = #{createDate}</if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and t.updater_account in (
+                <foreach collection="updaterAccount.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="updateDate != null ">and t.update_date = #{updateDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and t.data_source_sys in (
+                <foreach collection="dataSourceSys.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+        group by t.material_sku_sid
+        order by t1.sku_name*1 ASC
+    </select>
+
+    <select id="selectBomBasMaterialSkuList" parameterType="Long" resultType="com.platform.ems.domain.BasMaterial">
+    select
+    t.material_sid,
+  	t.sku1_type,
+    t1.sku_sid AS sku1_sid,
+    t1.item_num,
+	t3.sku_name AS sku1_name
+	FROM
+	s_bas_material t
+	LEFT JOIN s_bas_material_sku t1 ON t1.material_sid = t.material_sid
+	AND t1.sku_type = t.sku1_type
+    LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t1.sku_sid
+    where t.material_sid=#{materialSid}
+    </select>
+
+    <select id="getBasMaterialSkuList" parameterType="com.platform.ems.domain.BasMaterial"
+            resultType="com.platform.ems.domain.BasMaterial">
+        <include refid="selectBasMaterialSkuListVo"/>
+        <where>
+            <if test="status != null  and status != ''">
+                and t.STATUS = #{status}
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="materialCode" separator=" or ">t.material_code
+                like concat('%', #{materialCode}, '%')</foreach>)
+            </if>
+            <if test="supplierProductCode != null  and supplierProductCode != ''">
+                and (<foreach collection="supplierProductCode.split(';')" item="supplierProductCode" separator=" or ">
+                t.supplier_product_code like concat('%', #{supplierProductCode}, '%')</foreach>)
+            </if>
+            <if test="materialName != null  and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="materialName" separator=" or ">t.material_name
+                like concat('%', #{materialName}, '%')</foreach>)
+            </if>
+            <if test="vendorSid != null">
+                and t.vendor_sid = #{vendorSid}
+            </if>
+            <if test="purchaseType != null  and purchaseType != ''">
+                and t.purchase_type = #{purchaseType}
+            </if>
+            <if test="materialClassSid != null">
+                and t.material_class_sid = #{materialClassSid}
+            </if>
+            <if test="materialSid != null">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="materialType != null  and materialType != ''">
+                and t.material_type = #{materialType}
+            </if>
+            <if test="developer != null and developer != ''">
+                and (<foreach collection="developer.split(';')" item="developer" separator=" or ">t.developer like
+                concat('%', #{developer}, '%')</foreach>)
+            </if>
+        </where>
+        ORDER BY t.material_sid desc,t.sku1_type ASC
+    </select>
+
+
+
+    <sql id="getBasMaterialSkuVo">
+       SELECT
+	t.material_sku_sid,
+	t.material_sid,
+	t.sku_type,
+	t.sku_sid,
+	t.status,
+	t.item_num,
+	t1.sku_code,
+	t1.sku_name
+FROM
+	s_bas_material_sku t
+	LEFT JOIN s_bas_sku t1 ON t1.sku_sid = t.sku_sid
+    </sql>
+    <select id="selectBasMaterialSkuById" parameterType="Long" resultMap="BasMaterialSkuResult">
+        <include refid="selectBasMaterialSkuVo"/>
+        where t.material_sku_sid = #{materialSkuSid}
+    </select>
+    <select id="getSkuByCode" parameterType="String" resultMap="BasMaterialSkuResult">
+        SELECT
+            t.material_sid,
+            t.sku_type,
+            t.sku_sid,
+            t3.sku_name
+        FROM
+            s_bas_material_sku t
+            left join s_bas_material t2 on t2.material_sid=t.material_sid
+            LEFT JOIN s_bas_sku t3 ON t3.sku_sid = t.sku_sid
+        where t2.material_code like concat('%', #{materialCode}, '%') and t.status='1'
+    </select>
+    <select id="getskuList" parameterType="Long" resultMap="BasMaterialSkuResult">
+        <include refid="getBasMaterialSkuVo"/>
+        where t.material_sid = #{materialSid}
+    </select>
+
+
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_material_sku
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            material_sku_sid,
+            material_sid,
+            sku_sid,
+            sku_type,
+            sku_sid_down,
+            picture_path,
+            item_num,
+            supplier_color_code,
+            sample_detect_result,
+            product_detect_result,
+            waist_size,
+            size_group_kid,
+            quote_price_tax,
+            sort,
+            remark,
+            status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+            supplier_sku_code,
+            supplier_sku_name,
+            customer_sku_code,
+            customer_sku_name,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.materialSkuSid},
+                #{item.materialSid},
+                #{item.skuSid},
+                #{item.skuType},
+                #{item.skuSidDown},
+                #{item.picturePath},
+                #{item.itemNum},
+                #{item.supplierColorCode},
+                #{item.sampleDetectResult},
+                #{item.productDetectResult},
+                #{item.waistSize},
+                #{item.sizeGroupKid},
+                #{item.quotePriceTax},
+                #{item.sort},
+                #{item.remark},
+                #{item.status},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+                #{item.supplierSkuCode},
+                #{item.supplierSkuName},
+                #{item.customerSkuCode},
+                #{item.customerSkuName}
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_material_sku
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            material_sid = #{materialSid},
+            sku_sid = #{skuSid},
+            sku_sid_down = #{skuSidDown},
+            sku_type = #{skuType},
+            picture_path = #{picturePath},
+            sample_detect_result = #{sampleDetectResult},
+            product_detect_result = #{productDetectResult},
+            waist_size = #{waistSize},
+            size_group_kid = #{sizeGroupKid},
+            actual_component = #{actualComponent},
+            bottoms_actual_component = #{bottomsActualComponent},
+            gram_weight_down = #{gramWeightDown},
+            remark_down = #{remarkDown},
+            remark_detect = #{remarkDetect},
+            quote_price_tax = #{quotePriceTax},
+            sort = #{sort},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+            supplier_sku_code = #{supplierSkuCode},
+            supplier_sku_name = #{supplierSkuName},
+            customer_sku_code = #{customerSkuCode},
+            customer_sku_name = #{customerSkuName},
+        </trim>
+        where material_sku_sid = #{materialSkuSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_material_sku
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{o.clientId},
+                material_sid = #{o.materialSid},
+                sku_sid = #{o.skuSid},
+                sku_sid_down = #{o.skuSidDown},
+                sku_type = #{o.skuType},
+                picture_path = #{o.picturePath},
+                sample_detect_result = #{o.sampleDetectResult},
+                product_detect_result = #{o.productDetectResult},
+                waist_size = #{o.waistSize},
+                size_group_kid = #{o.sizeGroupKid},
+                actual_component = #{o.actualComponent},
+                bottoms_actual_component = #{o.bottomsActualComponent},
+                gram_weight_down = #{o.gramWeightDown},
+                remark_down = #{o.remarkDown},
+                remark_detect = #{o.remarkDetect},
+                quote_price_tax = #{quotePriceTax},
+                sort = #{o.sort},
+                remark = #{o.remark},
+                status = #{o.status},
+                handle_status = #{o.handleStatus},
+                creator_account = #{o.creatorAccount},
+                create_date = #{o.createDate},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                data_source_sys = #{o.dataSourceSys},
+                supplier_sku_code = #{o.supplierSkuCode},
+                supplier_sku_name = #{supplierSkuName},
+                customer_sku_code = #{o.customerSkuCode},
+                customer_sku_name = #{o.customerSkuName},
+            </trim>
+            where material_sku_sid = #{materialSkuSid}
+        </foreach>
+    </update>
+
+    <delete id="deleteBasMaterialSkuByIds" parameterType="long">
+        delete from s_bas_material_sku where material_sid in
+        <foreach item="materialSid" collection="array" open="(" separator="," close=")">
+            #{materialSid}
+        </foreach>
+    </delete>
+
+    <sql id="getReportFormVo">
+        SELECT
+            t.client_id,
+            t.material_sku_sid,
+            t.material_sid,
+            t.sku_sid,
+            t.sku_sid_down,
+            t.sku_type,
+            t.picture_path,
+            t.supplier_sku_code,
+            t.supplier_sku_name,
+            t.customer_sku_code,
+            t.customer_sku_name,
+            t.item_num,
+            t.sort,
+            t.remark,
+            t.status,
+            t.creator_account,
+            t.create_date,
+            t.data_source_sys,
+            t1.sku_code,
+            t1.sku_name,
+            t1.sku_name2,
+            t1.sku_numeral_value,
+            t2.material_code,
+            t2.material_name,
+            t2.material_type,
+            t2.material_category,
+            t2.handle_status,
+            t3.nick_name AS creator_account_name,
+            t4.name AS material_type_name,
+            if(t5.handle_status is null, 'N', 'Y') as is_create_bom,
+            t5.handle_status as bom_handle_status,
+            t5.status as bom_status
+        FROM
+            s_bas_material_sku t
+        LEFT JOIN s_bas_sku t1 ON t1.sku_sid = t.sku_sid
+        LEFT JOIN s_bas_material t2 on t2.material_sid = t.material_sid
+        LEFT JOIN sys_user t3 ON t.creator_account = t3.user_name
+        LEFT JOIN s_con_material_type t4 on t2.material_type = t4.code
+        LEFT JOIN s_tec_bom_head t5 on t.material_sid = t5.material_sid and t.sku_sid = t5.sku1_sid
+    </sql>
+
+    <select id="getReportForm" parameterType="com.platform.ems.domain.BasMaterialSku"
+            resultMap="BasMaterialSkuResult">
+        <include refid="getReportFormVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id in (<foreach collection="clientId.split(';')" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length >0">and t2.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=",">#{materialType}</foreach>)
+            </if>
+            <if test="materialSkuSidList != null and materialSkuSidList.length >0">and t.material_sku_sid in
+                (<foreach collection="materialSkuSidList" item="materialSkuSid" separator=",">#{materialSkuSid}</foreach>)
+            </if>
+            <if test="status != null  and status != ''">
+                and t.status = #{status}
+            </if>
+            <if test="statusList != null and statusList.length >0">and t.status in
+                (<foreach collection="statusList" item="status" separator=",">#{status}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t2.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">and t2.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="skuType != null and skuType != ''">
+                and t.sku_type in (<foreach collection="skuType.split(';')" item="skuType" separator=",">#{skuType}</foreach>)
+            </if>
+            <if test="skuCode != null and skuCode != ''">
+                and (<foreach collection="skuCode.split(';')" item="skuCode" separator=" or ">t1.sku_code like concat('%', #{skuCode}, '%')</foreach>)
+            </if>
+            <if test="skuName != null and skuName != ''">
+                and (<foreach collection="skuName.split(';')" item="skuName" separator=" or ">t1.sku_name like concat('%', #{skuName}, '%')</foreach>)
+            </if>
+            <if test="materialCategoryList != null and materialCategoryList.length >0">and t2.material_category in
+                (<foreach collection="materialCategoryList" item="materialCategory" separator=",">#{materialCategory}</foreach>)
+            </if>
+            <if test="skuTypeList != null and skuTypeList.length >0">and t.sku_type in
+                (<foreach collection="skuTypeList" item="skuType" separator=",">#{skuType}</foreach>)
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="materialCode" separator=" or ">t2.material_code like concat('%', #{materialCode}, '%')</foreach>)
+            </if>
+            <if test="materialCodes != null and materialCodes != ''">
+                and (<foreach collection="materialCodes.split(';')" item="materialCode" separator=" or ">t2.material_code = #{materialCode}</foreach>)
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="materialName" separator=" or ">t2.material_name like concat('%', #{materialName}, '%')</foreach>)
+            </if>
+            <if test="materialCategory != null and materialCategory != ''">
+                and t2.material_category = #{materialCategory}
+            </if>
+            <if test="materialSid != null and materialSid != ''">
+                and t.material_sid = #{materialSid}
+            </if>
+            <if test="materialSkuSid != null and materialSkuSid != ''">
+                and t.material_sku_sid in (<foreach collection="materialSkuSid.split(';')" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="skuSid != null  and skuSid != ''">
+                and t.sku_sid = #{skuSid}
+            </if>
+            <if test="isCreateBom != null and isCreateBom == 'N'.toString()">
+                and t5.handle_status is null
+            </if>
+            <if test="isCreateBom != null and isCreateBom == 'Y'.toString()">
+                and t5.handle_status is not null
+            </if>
+            <if test="bomHandleStatus != null and bomHandleStatus != ''">
+                and t5.handle_status = #{bomHandleStatus}
+            </if>
+            <if test="bomHandleStatusList != null and bomHandleStatusList.length >0">and t5.handle_status in
+                (<foreach collection="bomHandleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and t3.nick_name in (<foreach collection="creatorAccount.split(';')" item="item" separator=",">#{item}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')</if>
+            <if test="endTime != null and endTime!=''">and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and t.data_source_sys in (<foreach collection="dataSourceSys.split(';')" item="item" separator=",">#{item}</foreach>)
+            </if>
+        </where> order by t.create_date desc
+    </select>
+
+</mapper>

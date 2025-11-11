@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ManMonthManufacturePlanItemMapper">
+
+    <resultMap type="com.platform.ems.domain.ManMonthManufacturePlanItem" id="ManMonthManufacturePlanItemResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="monthManufacturePlanItemSid" column="month_manufacture_plan_item_sid"/>
+                    <result property="monthManufacturePlanSid" column="month_manufacture_plan_sid"/>
+                    <result property="manufactureOrderSid" column="manufacture_order_sid"/>
+                    <result property="manufactureOrderCode" column="manufacture_order_code"/>
+                    <result property="materialSid" column="material_sid"/>
+                    <result property="materialCode" column="material_code"/>
+                    <result property="paichanBatch" column="paichan_batch"/>
+                    <result property=" daysNumberChayi" column=" days_number_chayi"/>
+                    <result property="itemNum" column="item_num"/>
+                    <result property=" daysNumberPlan" column=" days_number_plan"/>
+                    <result property="remark" column="remark"/>
+                    <result property="planQuantityDayBanzu" column="plan_quantity_day_banzu"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="endDateXishuiTg" column="end_date_xishui_tg"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="endDateXishuiSp" column="end_date_xishui_sp"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="jinduRemark" column="jindu_remark"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+                    <result property="jinduRemarkTg" column="jindu_remark_tg"/>
+                    <result property="jinduRemarkSp" column="jindu_remark_sp"/>
+                    <result property="workCenterSid" column="work_center_sid"/>
+                    <result property="workCenterCode" column="work_center_code"/>
+                <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+    </resultMap>
+
+    <sql id="selectManMonthManufacturePlanItemVo">
+select t.client_id,
+       t.month_manufacture_plan_item_sid,
+       t.month_manufacture_plan_sid,
+       t.manufacture_order_sid,
+       t.manufacture_order_code,
+       t.material_sid,
+       t.material_code,
+       t.paichan_batch,
+       t.days_number_chayi,
+       t.item_num,
+       t.days_number_plan,
+       t.remark,
+       t.plan_quantity_day_banzu,
+       t.creator_account,
+       t.end_date_xishui_tg,
+       t.create_date,
+       t.quantity_fenpei,
+       t.end_date_xishui_sp,
+       t.updater_account,
+       t.update_date,
+       t.jindu_remark,
+       t.data_source_sys,
+       t.jindu_remark_tg,
+       t.jindu_remark_sp,
+       t.work_center_sid,
+       t.sku1_sid,
+       t.sku1_code,
+       t.sku1_type,
+       t.enter_dimension,
+       t11.sku_name as sku1_name,
+       t.work_center_code,
+       t4.work_center_name,
+       t2.nick_name AS creator_account_name,
+       t3.nick_name AS updater_account_name,
+       t5.material_name,
+       t6.quantity,
+       t6.plan_end_date,
+       t8.distribution_quantity,
+       t10.is_caichuang_quantity
+       from s_man_month_manufacture_plan_item t
+        LEFT JOIN s_man_month_manufacture_plan t1 ON t.month_manufacture_plan_sid = t1.month_manufacture_plan_sid
+        LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name AND t.client_id = t2.client_id
+        LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name AND t.client_id = t3.client_id
+        LEFT JOIN s_man_work_center t4 on t4.work_center_sid=t.work_center_sid
+        LEFT JOIN s_bas_material t5 ON t5.material_sid = t.material_sid
+        left join  s_man_manufacture_order t6 on t6.manufacture_order_sid=t.manufacture_order_sid
+        left join (
+         select  t7.manufacture_order_sid ,t7.work_center_sid,max(t7.quantity) as distribution_quantity
+         from
+         s_man_manufacture_order_process t7
+        where t7.is_stage_complete='Y'
+         group by t7.manufacture_order_sid,t7.work_center_sid
+        ) t8 on t8.manufacture_order_sid=t.manufacture_order_sid and t8.work_center_sid=t.work_center_sid
+        LEFT JOIN (
+           SELECT t1.plant_sid, t.manufacture_order_sid, t.manufacture_order_process_sid,
+                  t.sku1_sid, sum(t.quantity) as is_caichuang_quantity
+           FROM s_man_day_manufacture_progress_item t
+                    LEFT JOIN s_man_day_manufacture_progress t1 ON t1.day_manufacture_progress_sid = t.day_manufacture_progress_sid
+                    LEFT JOIN s_man_manufacture_order_process t3 ON t3.manufacture_order_process_sid = t.manufacture_order_process_sid
+           WHERE t1.handle_status='5' AND t3.is_first_process='Y'
+           GROUP BY t.manufacture_order_sid, t.manufacture_order_process_sid, t1.plant_sid, t.sku1_sid
+       ) t10 ON t.manufacture_order_sid = t10.manufacture_order_sid AND ((t.sku1_sid IS NULL AND t10.sku1_sid IS NULL) OR t.sku1_sid = t10.sku1_sid)
+           AND t1.plant_sid = t10.plant_sid
+         left join s_bas_sku t11 on t11.sku_sid=t.sku1_sid
+    </sql>
+
+    <select id="selectManMonthManufacturePlanItemById" parameterType="Long" resultMap="ManMonthManufacturePlanItemResult">
+        <include refid="selectManMonthManufacturePlanItemVo"/>
+        where t.month_manufacture_plan_item_sid = #{monthManufacturePlanItemSid}
+    </select>
+
+    <select id="getQuantityFenpei" parameterType="com.platform.ems.domain.ManMonthManufacturePlanItem" resultType="com.platform.ems.domain.ManMonthManufacturePlanItem">
+                 select
+                 t.quantity_fenpei,t.manufacture_order_sid,t.work_center_sid,t.sku1_sid
+                 from
+                 s_man_month_manufacture_plan_item t
+                 left join s_man_month_manufacture_plan t2 on t2.month_manufacture_plan_sid=t.month_manufacture_plan_sid
+                 <where>
+                     t2.handle_status='5'
+                     <if test="manufactureOrderSid != null">
+                         and t.manufacture_order_sid = #{manufactureOrderSid}
+                     </if>
+                     <if test="workCenterSid != null">
+                         and t.work_center_sid = #{workCenterSid}
+                     </if>
+                     <if test="sku1Sid != null">
+                         and t.sku1_sid = #{sku1Sid}
+                     </if>
+                     <if test="sku1Sid == null">
+                         and t.sku1_sid is null
+                     </if>
+                 </where>
+                 order by  t2.yearmonth desc
+                 limit 1
+    </select>
+
+
+    <select id="selectManMonthManufacturePlanItemList" parameterType="com.platform.ems.domain.ManMonthManufacturePlanItem"
+            resultMap="ManMonthManufacturePlanItemResult">
+        <include refid="selectManMonthManufacturePlanItemVo"/>
+        <where>
+                                                                                                    <if test="clientId != null and clientId != ''">
+                                and t.client_id = #{clientId}
+                            </if>
+                                                                                                                                                                                            <if test="monthManufacturePlanSid != null ">
+                                and t.month_manufacture_plan_sid = #{monthManufacturePlanSid}
+                            </if>
+                                                                                                                                                                <if test="manufactureOrderSid != null ">
+                                and t.manufacture_order_sid = #{manufactureOrderSid}
+                            </if>
+                                                                                                                                                                <if test="manufactureOrderCode != null ">
+                                and t.manufacture_order_code = #{manufactureOrderCode}
+                            </if>
+                                                                                                                                                                <if test="materialSid != null ">
+                                and t.material_sid = #{materialSid}
+                            </if>
+                                                                                                                                                                <if test="materialCode != null and materialCode != ''">
+                                and t.material_code = #{materialCode}
+                            </if>
+                                                                                                                                                                <if test="paichanBatch != null ">
+                                and t.paichan_batch = #{paichanBatch}
+                            </if>
+                                                                                                                                                                <if test=" daysNumberChayi != null ">
+                                and t. days_number_chayi = #{ daysNumberChayi}
+                            </if>
+                                                                                                                                                                <if test="itemNum != null ">
+                                and t.item_num = #{itemNum}
+                            </if>
+                                                                                                                                                                <if test=" daysNumberPlan != null ">
+                                and t. days_number_plan = #{ daysNumberPlan}
+                            </if>
+                                                                                                                                                                                            <if test="planQuantityDayBanzu != null ">
+                                and t.plan_quantity_day_banzu = #{planQuantityDayBanzu}
+                            </if>
+                                                                                                                                                                <if test="creatorAccount != null and creatorAccount != ''">
+                                and t.creator_account = #{creatorAccount}
+                            </if>
+                                                                                                                                                                                                <if test="endDateXishuiTg != null ">
+                                    and t.end_date_xishui_tg = #{endDateXishuiTg}
+                                </if>
+                                                                                                                                                                                                                            <if test="beginTime != null and beginTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                                </if>
+                                <if test="endTime != null and endTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                                </if>
+                                                                                                                                                                                                                            <if test="endDateXishuiSp != null ">
+                                    and t.end_date_xishui_sp = #{endDateXishuiSp}
+                                </if>
+                                                                                                                                                                                            <if test="updaterAccount != null and updaterAccount != ''">
+                                and t.updater_account = #{updaterAccount}
+                            </if>
+                                                                                                                                                                                                <if test="updateDate != null ">
+                                    and t.update_date = #{updateDate}
+                                </if>
+                                                                                                                                                                                            <if test="jinduRemark != null and jinduRemark != ''">
+                                and t.jindu_remark = #{jinduRemark}
+                            </if>
+                                                                                                                                                                <if test="dataSourceSys != null and dataSourceSys != ''">
+                                and t.data_source_sys = #{dataSourceSys}
+                            </if>
+                                                                                                                                                                <if test="jinduRemarkTg != null and jinduRemarkTg != ''">
+                                and t.jindu_remark_tg = #{jinduRemarkTg}
+                            </if>
+                                                                                                                                                                <if test="jinduRemarkSp != null and jinduRemarkSp != ''">
+                                and t.jindu_remark_sp = #{jinduRemarkSp}
+                            </if>
+                                                                                                                                                                <if test="workCenterSid != null ">
+                                and t.work_center_sid = #{workCenterSid}
+                            </if>
+                                                                                                                                                                <if test="workCenterCode != null and workCenterCode != ''">
+                                and t.work_center_code = #{workCenterCode}
+                            </if>
+                                                                                    <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_man_month_manufacture_plan_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                month_manufacture_plan_item_sid,
+                                                                month_manufacture_plan_sid,
+                                                                manufacture_order_sid,
+                                                                manufacture_order_code,
+                                                                material_sid,
+                                                                material_code,
+                                                                paichan_batch,
+                                                                days_number_chayi,
+                                                                item_num,
+                                                                days_number_plan,
+                                                                remark,
+                                                                plan_quantity_day_banzu,
+                                                                creator_account,
+                                                                end_date_xishui_tg,
+                                                                create_date,
+                                                                end_date_xishui_sp,
+                                                                updater_account,
+                                                                update_date,
+                                                                jindu_remark,
+                                                                data_source_sys,
+                                                                jindu_remark_tg,
+                                                                jindu_remark_sp,
+                                                                work_center_sid,
+                                                                work_center_code,
+            sku1_sid,
+            sku1_code,
+            sku1_type,
+            enter_dimension,
+            quantity_fenpei,
+                                    </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                                                            #{item.clientId},
+                                                                                #{item.monthManufacturePlanItemSid},
+                                                                                #{item.monthManufacturePlanSid},
+                                                                                #{item.manufactureOrderSid},
+                                                                                #{item.manufactureOrderCode},
+                                                                                #{item.materialSid},
+                                                                                #{item.materialCode},
+                                                                                #{item.paichanBatch},
+                                                                                #{item.daysNumberChayi},
+                                                                                #{item.itemNum},
+                                                                                #{item.daysNumberPlan},
+                                                                                #{item.remark},
+                                                                                #{item.planQuantityDayBanzu},
+                                                                                #{item.creatorAccount},
+                                                                                #{item.endDateXishuiTg},
+                                                                                #{item.createDate},
+                                                                                #{item.endDateXishuiSp},
+                                                                                #{item.updaterAccount},
+                                                                                #{item.updateDate},
+                                                                                #{item.jinduRemark},
+                                                                                #{item.dataSourceSys},
+                                                                                #{item.jinduRemarkTg},
+                                                                                #{item.jinduRemarkSp},
+                                                                                #{item.workCenterSid},
+                                                                                #{item.workCenterCode},
+                #{item.sku1Sid},
+                #{item.sku1Code},
+                #{item.sku1Type},
+                #{item.enterDimension},
+                #{item.quantityFenpei},
+                                                </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_man_month_manufacture_plan_item
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                month_manufacture_plan_sid = #{monthManufacturePlanSid},
+                                                                manufacture_order_sid = #{manufactureOrderSid},
+                                                                manufacture_order_code = #{manufactureOrderCode},
+                                                                material_sid = #{materialSid},
+                                                                material_code = #{materialCode},
+                                                                paichan_batch = #{paichanBatch},
+                                                                days_number_chayi = #{daysNumberChayi},
+                                                                item_num = #{itemNum},
+                                                                days_number_plan = #{daysNumberPlan},
+                                                                remark = #{remark},
+                                                                plan_quantity_day_banzu = #{planQuantityDayBanzu},
+                                                                end_date_xishui_tg = #{endDateXishuiTg},
+                                                                end_date_xishui_sp = #{endDateXishuiSp},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                jindu_remark = #{jinduRemark},
+                                                                jindu_remark_tg = #{jinduRemarkTg},
+                                                                jindu_remark_sp = #{jinduRemarkSp},
+                                                                work_center_sid = #{workCenterSid},
+                                                                work_center_code = #{workCenterCode},
+            sku1_sid = #{sku1Sid},
+            sku1_code = #{sku1Code},
+            sku1_type = #{sku1Type},
+            enter_dimension = #{enterDimension},
+            quantity_fenpei=#{quantityFenpei},
+                                    </trim>
+        where month_manufacture_plan_item_sid = #{monthManufacturePlanItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_man_month_manufacture_plan_item
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    month_manufacture_plan_sid = #{monthManufacturePlanSid},
+                                                                                manufacture_order_sid = #{manufactureOrderSid},
+                                                                                manufacture_order_code = #{manufactureOrderCode},
+                                                                                material_sid = #{materialSid},
+                                                                                material_code = #{materialCode},
+                                                                                paichan_batch = #{paichanBatch},
+                                                                                 days_number_chayi = #{ daysNumberChayi},
+                                                                                item_num = #{itemNum},
+                                                                                 days_number_plan = #{ daysNumberPlan},
+                                                                                remark = #{remark},
+                                                                                plan_quantity_day_banzu = #{planQuantityDayBanzu},
+                                                                                                                    end_date_xishui_tg = #{endDateXishuiTg},
+                                                                                                                    end_date_xishui_sp = #{endDateXishuiSp},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                jindu_remark = #{jinduRemark},
+                                                                                                                    jindu_remark_tg = #{jinduRemarkTg},
+                                                                                jindu_remark_sp = #{jinduRemarkSp},
+                                                                                work_center_sid = #{workCenterSid},
+                                                                                work_center_code = #{workCenterCode},
+                                                </trim>
+            where month_manufacture_plan_item_sid = #{monthManufacturePlanItemSid}
+        </foreach>
+    </update>
+
+</mapper>

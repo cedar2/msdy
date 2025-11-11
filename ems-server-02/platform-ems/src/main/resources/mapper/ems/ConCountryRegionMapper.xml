@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.ems.mapper.ConCountryRegionMapper">
+    <resultMap type="com.platform.common.core.domain.entity.ConCountryRegion" id="ConCountryRegionResult">
+        <result property="clientId" column="client_id"/>
+        <result property="countryRegionSid" column="country_region_sid"/>
+        <result property="nodeId" column="node_id"/>
+        <result property="nodeName" column="node_name"/>
+        <result property="nodeType" column="node_type"/>
+        <result property="level" column="level"/>
+        <result property="nodeShortName" column="node_short_name"/>
+        <result property="parentCodeId" column="parent_code_id"/>
+        <result property="pinyin" column="pinyin"/>
+        <result property="citycode" column="citycode"/>
+        <result property="yzcode" column="yzcode"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+    </resultMap>
+
+    <sql id="selectConCountryRegionVo">
+        select t.client_id, t.country_region_sid, t.node_id, t.node_name, t.node_type, t.level, t.node_short_name, t.parent_code_id, t.pinyin, t.citycode, t.yzcode, t.remark, t.status, t.handle_status, t.creator_account, t.create_date, t.updater_account, t.update_date, t.confirmer_account, t.confirm_date, t.data_source_sys from s_con_country_region t
+    </sql>
+
+    <select id="selectConCountryRegionById" parameterType="Long" resultMap="ConCountryRegionResult">
+        <include refid="selectConCountryRegionVo"/>
+        where t.country_region_sid = #{countryRegionSid}
+    </select>
+
+
+    <select id="selectConCountryRegionList" parameterType="com.platform.common.core.domain.entity.ConCountryRegion"
+            resultMap="ConCountryRegionResult">
+        <include refid="selectConCountryRegionVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="nodeId != null  and nodeId != ''">
+                and (<foreach collection="nodeId.split(';')" item="item" separator="or">t.node_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="nodeName != null  and nodeName != ''">and
+                t.node_name like concat('%', #{nodeName}, '%')
+            </if>
+            <if test="nodeType != null  and nodeType != ''">
+                and (<foreach collection="nodeType.split(';')" item="item" separator="or">t.node_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="level != null ">
+                and t.level =#{level}
+            </if>
+            <if test="nodeShortName != null  and nodeShortName != ''">and
+                t.node_short_name like concat('%', #{nodeShortName}, '%')
+            </if>
+            <if test="parentCodeId != null ">
+                and t.parent_code_id =#{parentCodeId}
+            </if>
+            <if test="pinyin != null  and pinyin != ''">
+                and (<foreach collection="pinyin.split(';')" item="item" separator="or">t.pinyin like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="citycode != null  and citycode != ''">
+                and (<foreach collection="citycode.split(';')" item="item" separator="or">t.citycode like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="yzcode != null  and yzcode != ''">
+                and (<foreach collection="yzcode.split(';')" item="item" separator="or">t.yzcode like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="status != null  and status != ''">
+                and (<foreach collection="status.split(';')" item="item" separator="or">t.status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and (<foreach collection="handleStatus.split(';')" item="item" separator="or">t.handle_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_country_region
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            country_region_sid,
+            node_id,
+            node_name,
+            node_type,
+            level,
+            node_short_name,
+            parent_code_id,
+            pinyin,
+            citycode,
+            yzcode,
+            remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.countryRegionSid},
+                #{item.nodeId},
+                #{item.nodeName},
+                #{item.nodeType},
+                #{item.level},
+                #{item.nodeShortName},
+                #{item.parentCodeId},
+                #{item.pinyin},
+                #{item.citycode},
+                #{item.yzcode},
+                #{item.remark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_country_region
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            node_id = #{nodeId},
+            node_name = #{nodeName},
+            node_type = #{nodeType},
+            level = #{level},
+            node_short_name = #{nodeShortName},
+            parent_code_id = #{parentCodeId},
+            pinyin = #{pinyin},
+            citycode = #{citycode},
+            yzcode = #{yzcode},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where country_region_sid = #{countryRegionSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_country_region
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                node_id = #{nodeId},
+                node_name = #{nodeName},
+                node_type = #{nodeType},
+                level = #{level},
+                node_short_name = #{nodeShortName},
+                parent_code_id = #{parentCodeId},
+                pinyin = #{pinyin},
+                citycode = #{citycode},
+                yzcode = #{yzcode},
+                remark = #{remark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where country_region_sid = #{countryRegionSid}
+        </foreach>
+    </update>
+</mapper>

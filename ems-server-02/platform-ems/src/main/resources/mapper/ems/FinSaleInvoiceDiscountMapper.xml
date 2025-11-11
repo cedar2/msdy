@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinSaleInvoiceDiscountMapper">
+
+    <resultMap type="com.platform.ems.domain.FinSaleInvoiceDiscount" id="FinSaleInvoiceDiscountResult">
+        <result property="clientId" column="client_id"/>
+        <result property="saleInvoiceDiscountSid" column="sale_invoice_discount_sid"/>
+        <result property="saleInvoiceSid" column="sale_invoice_sid"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="accountDocumentSid" column="account_document_sid"/>
+        <result property="accountDocumentCode" column="account_document_code"/>
+        <result property="bookType" column="book_type"/>
+        <result property="bookSourceCategory" column="book_source_category"/>
+        <result property="accountItemSid" column="account_item_sid"/>
+        <result property="accountItemCode" column="account_item_code"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="currencyAmount" column="currency_amount"/>
+        <result property="taxAmount" column="tax_amount"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="bookSourceCategoryName" column="book_source_category_name"/>
+        <result property="bookTypeName" column="book_type_name"/>
+    </resultMap>
+
+    <sql id="selectFinSaleInvoiceDiscountVo">
+        select t.client_id, t.sale_invoice_discount_sid, t.sale_invoice_sid, t.item_num, t.account_document_sid, t.account_document_code,
+               t.book_type, t.book_source_category, t.account_item_sid, t.account_item_code, t.currency_amount_tax, t.currency_amount,
+               t.tax_amount, t.remark, t.creator_account, t.create_date, t.updater_account, t.update_date, t.data_source_sys,
+               t2.name AS book_source_category_name, t3.name AS book_type_name
+        from s_fin_sale_invoice_discount t
+        LEFT JOIN s_con_book_source_category t2 on t.book_source_category = t2.code
+        LEFT JOIN s_con_book_type t3 on t.book_type = t3.code
+    </sql>
+
+    <select id="selectFinSaleInvoiceDiscountById" parameterType="Long" resultMap="FinSaleInvoiceDiscountResult">
+        <include refid="selectFinSaleInvoiceDiscountVo"/>
+        where t.sale_invoice_discount_sid = #{saleInvoiceDiscountSid}
+    </select>
+
+
+    <select id="selectFinSaleInvoiceDiscountList" parameterType="com.platform.ems.domain.FinSaleInvoiceDiscount"
+            resultMap="FinSaleInvoiceDiscountResult">
+        <include refid="selectFinSaleInvoiceDiscountVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="saleInvoiceDiscountSid != null ">
+                and t.sale_invoice_discount_sid = #{saleInvoiceDiscountSid}
+            </if>
+            <if test="saleInvoiceSid != null ">
+                and t.sale_invoice_sid = #{saleInvoiceSid}
+            </if>
+            <if test="accountDocumentSid != null ">
+                and t.account_document_sid =#{accountDocumentSid}
+            </if>
+            <if test="accountDocumentCode != null ">
+                and t.account_document_code =#{accountDocumentCode}
+            </if>
+            <if test="bookType != null  and bookType != ''">
+                and (<foreach collection="bookType.split(';')" item="item" separator="or">t.book_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="bookSourceCategory != null  and bookSourceCategory != ''">
+                and (<foreach collection="bookSourceCategory.split(';')" item="item" separator="or">
+                t.book_source_category like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="accountItemSid != null ">
+                and t.account_item_sid =#{accountItemSid}
+            </if>
+            <if test="accountItemCode != null ">
+                and t.account_item_code =#{accountItemCode}
+            </if>
+            <if test="currencyAmountTax != null ">
+                and t.currency_amount_tax = #{currencyAmountTax}
+            </if>
+            <if test="currencyAmount != null ">
+                and t.currency_amount = #{currencyAmount}
+            </if>
+            <if test="taxAmount != null ">
+                and t.tax_amount = #{taxAmount}
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_sale_invoice_discount
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sale_invoice_discount_sid,
+            sale_invoice_sid,
+            item_num,
+            account_document_sid,
+            account_document_code,
+            book_type,
+            book_source_category,
+            account_item_sid,
+            account_item_code,
+            currency_amount_tax,
+            currency_amount,
+            tax_amount,
+            remark,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.saleInvoiceDiscountSid},
+                #{item.saleInvoiceSid},
+                #{item.itemNum},
+                #{item.accountDocumentSid},
+                #{item.accountDocumentCode},
+                #{item.bookType},
+                #{item.bookSourceCategory},
+                #{item.accountItemSid},
+                #{item.accountItemCode},
+                #{item.currencyAmountTax},
+                #{item.currencyAmount},
+                #{item.taxAmount},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_sale_invoice_discount
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            sale_invoice_sid = #{saleInvoiceSid},
+            item_num = #{itemNum},
+            account_document_sid = #{accountDocumentSid},
+            account_document_code = #{accountDocumentCode},
+            book_type = #{bookType},
+            book_source_category = #{bookSourceCategory},
+            account_item_sid = #{accountItemSid},
+            account_item_code = #{accountItemCode},
+            currency_amount_tax = #{currencyAmountTax},
+            currency_amount = #{currencyAmount},
+            tax_amount = #{taxAmount},
+            remark = #{remark},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where sale_invoice_discount_sid = #{saleInvoiceDiscountSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_sale_invoice_discount
+            <trim prefix="SET" suffixOverrides=",">
+                client_id = #{clientId},
+                sale_invoice_sid = #{saleInvoiceSid},
+                item_num = #{itemNum},
+                account_document_sid = #{accountDocumentSid},
+                account_document_code = #{accountDocumentCode},
+                book_type = #{bookType},
+                book_source_category = #{bookSourceCategory},
+                account_item_sid = #{accountItemSid},
+                account_item_code = #{accountItemCode},
+                currency_amount_tax = #{currencyAmountTax},
+                currency_amount = #{currencyAmount},
+                tax_amount = #{taxAmount},
+                remark = #{remark},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where sale_invoice_discount_sid = #{saleInvoiceDiscountSid}
+        </foreach>
+    </update>
+
+    <delete id="deleteFinSaleInvoiceDiscountByIds" parameterType="long">
+        delete from s_fin_sale_invoice_discount where sale_invoice_sid in
+        <foreach item="saleInvoiceSid" collection="array" open="(" separator="," close=")">
+            #{saleInvoiceSid}
+        </foreach>
+    </delete>
+</mapper>

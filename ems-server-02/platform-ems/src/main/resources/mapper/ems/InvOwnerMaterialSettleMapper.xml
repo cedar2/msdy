@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.InvOwnerMaterialSettleMapper">
+
+    <resultMap type="com.platform.ems.domain.InvOwnerMaterialSettle" id="InvOwnerMaterialSettleResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="settleSid" column="settle_sid"/>
+                    <result property="settleCode" column="settle_code"/>
+                    <result property="documentDate" column="document_date"/>
+                    <result property="movementType" column="movement_type"/>
+                    <result property="documentType" column="document_type"/>
+                    <result property="businessType" column="business_type"/>
+                    <result property="referDocument" column="refer_document"/>
+                    <result property="companySid" column="company_sid"/>
+                    <result property="storehouseSid" column="storehouse_sid"/>
+                    <result property="storehouseLocationSid" column="storehouse_location_sid"/>
+                    <result property="inOutStockStatus" column="in_out_stock_status"/>
+                    <result property="stockType" column="stock_type"/>
+                    <result property="specialStock" column="special_stock"/>
+                    <result property="vendorSid" column="vendor_sid"/>
+                    <result property="materialCategory" column="material_category"/>
+                    <result property="docCategory" column="doc_category"/>
+                    <result property="accountor" column="accountor"/>
+                    <result property="accountDate" column="account_date"/>
+                    <result property="productSeasonSid" column="product_season_sid"/>
+                    <result property="projectSid" column="project_sid"/>
+                    <result property="remark" column="remark"/>
+                    <result property="handleStatus" column="handle_status"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="confirmerAccount" column="confirmer_account"/>
+                    <result property="confirmDate" column="confirm_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+            </resultMap>
+
+    <sql id="selectInvOwnerMaterialSettleVo">
+        select t.client_id,
+        t.settle_sid,
+        t.settle_code,
+        t.document_date,
+        t.movement_type,
+        t.document_type,
+        t.business_type,
+        t.refer_document,
+        t.company_sid,
+        t.storehouse_sid,
+        t.storehouse_location_sid,
+        t.in_out_stock_status,
+        t.stock_type,
+        t.special_stock,
+        t.vendor_sid,
+        t.material_category,
+        t.doc_category,
+        t.accountor,
+        t.account_date,
+        t.product_season_sid,
+        t.project_sid,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.company_name,
+	t1.company_code,
+	t3.storehouse_name,
+	t3.storehouse_code,
+	t4.location_name,
+	t4.location_code,
+	t7.vendor_name,
+	t7.vendor_code,
+	t11.name as movement_type_name,
+	t13.name as special_stock_name,
+	t14.name as document_category_name,
+	t15.nick_name as creator_account_name,
+	t16.nick_name as accountor_name,
+	t17.nick_name as updater_account_name
+        from s_inv_owner_material_settle t
+    LEFT JOIN s_bas_company t1 ON t1.company_sid = t.company_sid
+    LEFT JOIN s_bas_storehouse t3 on t3.storehouse_sid=t.storehouse_sid
+    LEFT JOIN s_bas_storehouse_location t4 on t4.storehouse_location_sid=t.storehouse_location_sid
+    LEFT JOIN s_bas_vendor t7 on t7.vendor_sid=t.vendor_sid
+    LEFT JOIN s_con_movement_type t11 on t11.code=t.movement_type
+    left join s_con_special_stock t13 on t13.code =t.special_stock
+    left join s_con_inventory_document_category t14 on t14.code=t.doc_category
+    LEFT JOIN sys_user t15 ON t15.user_name = t.creator_account
+    LEFT JOIN sys_user t16 ON t16.user_name = t.accountor
+    LEFT JOIN sys_user t17 ON t17.user_name = t.updater_account
+    </sql>
+
+    <select id="selectInvOwnerMaterialSettleById" parameterType="Long" resultMap="InvOwnerMaterialSettleResult">
+        <include refid="selectInvOwnerMaterialSettleVo"/>
+        where t.settle_sid = #{settleSid}
+    </select>
+
+
+    <select id="selectInvOwnerMaterialSettleList" parameterType="com.platform.ems.domain.InvOwnerMaterialSettle"
+            resultMap="InvOwnerMaterialSettleResult">
+        <include refid="selectInvOwnerMaterialSettleVo"/>
+        <where>
+            <if test="itemSidList != null  and itemSidList.size> 0">and t.settle_sid in
+                <foreach collection="itemSidList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="creatorAccountName != null and creatorAccountName != '' ">
+                and t15.nick_name  like concat('%',#{creatorAccountName}, '%')
+            </if>
+
+            <if test="creatorAccountList != null  and creatorAccountList.length >0" >
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="settleCode != null and settleCode != '' ">
+                and t.settle_code like concat('%',#{settleCode}, '%')
+            </if>
+            <if test="storehouseSid != null and storehouseSid != '' ">
+                and t.storehouse_sid =#{storehouseSid}
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0" >
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="storehouseLocationSidList != null and storehouseLocationSidList.length >0">
+                and t.storehouse_location_sid in
+                (<foreach collection="storehouseLocationSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+        </where>
+        order by t.settle_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_inv_owner_material_settle
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                settle_sid,
+                                                                settle_code,
+                                                                document_date,
+                                                                movement_type,
+                                                                document_type,
+                                                                business_type,
+                                                                refer_document,
+                                                                company_sid,
+                                                                storehouse_sid,
+                                                                storehouse_location_sid,
+                                                                in_out_stock_status,
+                                                                stock_type,
+                                                                special_stock,
+                                                                vendor_sid,
+                                                                material_category,
+                                                                doc_category,
+                                                                accountor,
+                                                                account_date,
+                                                                product_season_sid,
+                                                                project_sid,
+                                                                remark,
+                                                                handle_status,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                confirmer_account,
+                                                                confirm_date,
+                                                                data_source_sys,
+                                    </trim>
+        values
+            <foreach collection="list" item="item" separator=",">
+                <trim prefix=" (" suffix=")" suffixOverrides=",">
+                                                            #{item.clientId},
+                                                                                                                    #{item.settleCode},
+                                                                                #{item.documentDate},
+                                                                                #{item.movementType},
+                                                                                #{item.documentType},
+                                                                                #{item.businessType},
+                                                                                #{item.referDocument},
+                                                                                #{item.companySid},
+                                                                                #{item.storehouseSid},
+                                                                                #{item.storehouseLocationSid},
+                                                                                #{item.inOutStockStatus},
+                                                                                #{item.stockType},
+                                                                                #{item.specialStock},
+                                                                                #{item.vendorSid},
+                                                                                #{item.materialCategory},
+                                                                                #{item.docCategory},
+                                                                                #{item.accountor},
+                                                                                #{item.accountDate},
+                                                                                #{item.productSeasonSid},
+                                                                                #{item.projectSid},
+                                                                                #{item.remark},
+                                                                                #{item.handleStatus},
+                                                                                #{item.creatorAccount},
+                                                                                #{item.createDate},
+                                                                                #{item.updaterAccount},
+                                                                                #{item.updateDate},
+                                                                                #{item.confirmerAccount},
+                                                                                #{item.confirmDate},
+                                                                                #{item.dataSourceSys},
+                                                    </trim>
+            </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_inv_owner_material_settle
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                settle_sid = #{settleSid},
+                                                                settle_code = #{settleCode},
+                                                                document_date = #{documentDate},
+                                                                movement_type = #{movementType},
+                                                                document_type = #{documentType},
+                                                                business_type = #{businessType},
+                                                                refer_document = #{referDocument},
+                                                                company_sid = #{companySid},
+                                                                storehouse_sid = #{storehouseSid},
+                                                                storehouse_location_sid = #{storehouseLocationSid},
+                                                                in_out_stock_status = #{inOutStockStatus},
+                                                                stock_type = #{stockType},
+                                                                special_stock = #{specialStock},
+                                                                vendor_sid = #{vendorSid},
+                                                                material_category = #{materialCategory},
+                                                                doc_category = #{docCategory},
+                                                                accountor = #{accountor},
+                                                                account_date = #{accountDate},
+                                                                product_season_sid = #{productSeasonSid},
+                                                                project_sid = #{projectSid},
+                                                                remark = #{remark},
+                                                                handle_status = #{handleStatus},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                confirmer_account = #{confirmerAccount},
+                                                                confirm_date = #{confirmDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where settle_sid = #{settleSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_inv_owner_material_settle
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                settle_sid = #{settleSid},
+                                                                                settle_code = #{settleCode},
+                                                                                document_date = #{documentDate},
+                                                                                movement_type = #{movementType},
+                                                                                document_type = #{documentType},
+                                                                                business_type = #{businessType},
+                                                                                refer_document = #{referDocument},
+                                                                                company_sid = #{companySid},
+                                                                                storehouse_sid = #{storehouseSid},
+                                                                                storehouse_location_sid = #{storehouseLocationSid},
+                                                                                in_out_stock_status = #{inOutStockStatus},
+                                                                                stock_type = #{stockType},
+                                                                                special_stock = #{specialStock},
+                                                                                vendor_sid = #{vendorSid},
+                                                                                material_category = #{materialCategory},
+                                                                                doc_category = #{docCategory},
+                                                                                accountor = #{accountor},
+                                                                                account_date = #{accountDate},
+                                                                                product_season_sid = #{productSeasonSid},
+                                                                                project_sid = #{projectSid},
+                                                                                remark = #{remark},
+                                                                                handle_status = #{handleStatus},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                confirmer_account = #{confirmerAccount},
+                                                                                confirm_date = #{confirmDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where settle_sid = #{settleSid}
+        </foreach>
+    </update>
+
+</mapper>

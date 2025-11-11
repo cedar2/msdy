@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.DelOutsourceMaterialIssueNoteMapper">
+
+    <resultMap type="com.platform.ems.domain.DelOutsourceMaterialIssueNote" id="DelOutsourceMaterialIssueNoteResult">
+        <result property="clientId" column="client_id"/>
+        <result property="issueNoteSid" column="issue_note_sid"/>
+        <result property="issueNoteCode" column="issue_note_code"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="plantSid" column="plant_sid"/>
+        <result property="documentType" column="document_type"/>
+        <result property="businessType" column="business_type"/>
+        <result property="consignee" column="consignee"/>
+        <result property="consigneePhone" column="consignee_phone"/>
+        <result property="consigneeAddr" column="consignee_addr"/>
+        <result property="shippingOrderCode" column="shipping_order_code"/>
+        <result property="carrier" column="carrier"/>
+        <result property="carrierNoteCode" column="carrier_note_code"/>
+        <result property="shippingPoint" column="shipping_point"/>
+        <result property="expectedIssueDate" column="expected_issue_date"/>
+        <result property="issueStatus" column="issue_status"/>
+        <result property="operator" column="operator"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="materialCategory" column="material_category"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="vendorSid" column="vendor_sid"/>
+        <result property="vendorCode" column="vendor_code"/>
+        <result property="vendorName" column="vendor_name"/>
+        <result property="shortName" column="short_name"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="buyer" column="buyer"/>
+        <result property="purchaseGroup" column="purchase_group"/>
+        <result property="carrierCode" column="carrier_code"/>
+        <result property="carrierName" column="carrier_name"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="plantName" column="plant_name"/>
+        <result property="documentTypeName" column="document_type_name"/>
+        <result property="businessTypeName" column="business_type_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="approvalNode" column="approval_node"/>
+        <result property="approvalUserName" column="approval_user_name"/>
+        <result property="submitDate" column="submit_date"/>
+        <result property="submitUserName" column="submit_user_name"/>
+    </resultMap>
+    <sql id="selectDelOutsourceMaterialIssueNoteVo">
+        select
+        t.client_id,
+        t.issue_note_sid,
+        t.issue_note_code,
+        t.vendor_sid,
+        t.document_date,
+        t.plant_sid,
+        t.document_type,
+        t.business_type,
+        t.consignee,
+        t.consignee_phone,
+        t.consignee_addr,
+        t.shipping_order_code,
+        t.carrier,
+        t.carrier_note_code,
+        t.shipping_point,
+        t.expected_issue_date,
+        t.issue_status,
+        t.operator,
+        t.company_sid,
+        t.material_category,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.vendor_code,
+        t1.vendor_name,
+        t1.short_name,
+        t2.plant_code,
+        t2.plant_name,
+        t3.nick_name,
+        t4.vendor_code as carrier_code,
+        t4.vendor_name as carrier_name,
+        t5.name as document_type_name,
+        t6.name as business_type_name,
+        t7.nick_name as creator_account_name,
+        t8.nick_name as updater_account_name,
+        t9.storehouse_operator,
+        t10.approval_node,
+        t10.approval_user_name,
+        t10.create_date as submit_date,
+        t10.approval_user_id,
+        t11.nick_name as submit_user_name,
+        t12.manufacture_order_sid,
+        t12.manufacture_order_code
+  from s_del_outsource_material_issue_note t
+        LEFT JOIN s_bas_vendor t1 ON t1.vendor_sid = t.vendor_sid
+        LEFT JOIN s_bas_plant t2 ON t2.plant_sid = t.plant_sid
+        LEFT JOIN sys_user t3 ON t3.user_name = t.operator
+        LEFT JOIN s_bas_vendor t4 ON t4.vendor_sid = t.carrier
+        LEFT JOIN s_con_doc_type_outsource_mi t5 ON t5.code = t.document_type
+        LEFT JOIN s_con_bu_type_outsource_mi t6 ON t6.code = t.business_type
+        LEFT JOIN sys_user t7 ON t7.user_name = t.creator_account
+        LEFT JOIN sys_user t8 ON t8.user_name = t.updater_account
+        left join s_inv_inventory_document t9 on t9.refer_document_sid=t.issue_note_sid
+        LEFT JOIN s_sys_form_process t10 ON t10.form_id = t.issue_note_sid
+        LEFT JOIN sys_user t11 ON t11.user_id = t10.create_by_id
+        LEFT JOIN s_del_outsource_material_issue_note_item t12 ON t12.issue_note_sid = t.issue_note_sid
+    </sql>
+
+    <select id="selectDelOutsourceMaterialIssueNoteById" parameterType="Long"
+            resultMap="DelOutsourceMaterialIssueNoteResult">
+        <include refid="selectDelOutsourceMaterialIssueNoteVo"/>
+        where t.issue_note_sid = #{issueNoteSid}
+        group by t.issue_note_sid
+    </select>
+
+
+    <select id="selectDelOutsourceMaterialIssueNoteList"
+            parameterType="com.platform.ems.domain.DelOutsourceMaterialIssueNote"
+            resultMap="DelOutsourceMaterialIssueNoteResult">
+        <include refid="selectDelOutsourceMaterialIssueNoteVo"/>
+        <where>
+            <if test="clientId != null  and clientId != ''">
+                and (<foreach collection="clientId.split(';')" item="item" separator="or">t.client_id like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="issueNoteSid != null ">
+                and t.issue_note_sid =#{issueNoteSid}
+            </if>
+            <if test="issueNoteSidList != null and issueNoteSidList.length >0 ">
+                and t.issue_note_sid in
+                (<foreach collection="issueNoteSidList" item="issueNoteSid" separator=",">#{issueNoteSid}</foreach>)
+            </if>
+            <if test="issueNoteCode != null ">
+                and t.issue_note_code like concat('%',#{issueNoteCode}, '%')
+            </if>
+            <if test="vendorSid != null ">
+                and t.vendor_sid =#{vendorSid}
+            </if>
+            <if test="vendorSidList != null and vendorSidList.length >0 ">
+                and t.vendor_sid in
+                (<foreach collection="vendorSidList" item="vendorSid" separator=",">#{vendorSid}</foreach>)
+            </if>
+            <if test="documentDate != null ">
+                and t.document_date = #{documentDate}
+            </if>
+            <if test="plantSid != null ">
+                and t.plant_sid =#{plantSid}
+            </if>
+            <if test="plantSidList != null and plantSidList.length >0 ">
+                and t.plant_sid in
+                (<foreach collection="plantSidList" item="plantSid" separator=",">#{plantSid}</foreach>)
+            </if>
+            <if test="documentType != null  and documentType != ''">
+                and t.document_type = #{documentType}
+            </if>
+            <if test="documentTypeList != null and documentTypeList.length >0 ">
+                and t.document_type in
+                (<foreach collection="documentTypeList" item="documentType" separator=",">#{documentType}</foreach>)
+            </if>
+            <if test="businessType != null  and businessType != ''">
+                and t.business_type = #{businessType}
+            </if>
+            <if test="businessTypeList != null and businessTypeList.length >0 ">
+                and t.business_type in
+                (<foreach collection="businessTypeList" item="businessType" separator=",">#{businessType}</foreach>)
+            </if>
+            <if test="consignee != null  and consignee != ''">
+                and (<foreach collection="consignee.split(';')" item="item" separator="or">t.consignee like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="consigneePhone != null  and consigneePhone != ''">
+                and (<foreach collection="consigneePhone.split(';')" item="item" separator="or">t.consignee_phone like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="consigneeAddr != null  and consigneeAddr != ''">
+                and (<foreach collection="consigneeAddr.split(';')" item="item" separator="or">t.consignee_addr like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="shippingOrderCode != null ">
+                and t.shipping_order_code =#{shippingOrderCode}
+            </if>
+            <if test="carrier != null ">
+                and t.carrier =#{carrier}
+            </if>
+            <if test="carrierList != null and carrierList.length >0 ">
+                and t.carrier in
+                (<foreach collection="carrierList" item="carrier" separator=",">#{carrier}</foreach>)
+            </if>
+            <if test="carrierNoteCode != null  and carrierNoteCode != ''">
+                and (<foreach collection="carrierNoteCode.split(';')" item="item" separator="or">t.carrier_note_code
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="shippingPoint != null  and shippingPoint != ''">
+                and (<foreach collection="shippingPoint.split(';')" item="item" separator="or">t.shipping_point like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="expectedIssueDate != null ">
+                and t.expected_issue_date = #{expectedIssueDate}
+            </if>
+            <if test="issueStatus != null  and issueStatus != ''">
+                and (<foreach collection="issueStatus.split(';')" item="item" separator="or">t.issue_status like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="operator != null  and operator != ''">
+                and (<foreach collection="operator.split(';')" item="item" separator="or">t.operator like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="companySid != null ">
+                and t.company_sid =#{companySid}
+            </if>
+            <if test="materialCategory != null  and materialCategory != ''">
+                and (<foreach collection="materialCategory.split(';')" item="item" separator="or">t.material_category
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="manufactureOrderCode != null ">
+                and t12.manufacture_order_code like concat('%',#{manufactureOrderCode}, '%')
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t.creator_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length >0 ">
+                and t.creator_account in
+                (<foreach collection="creatorAccountList" item="creatorAccount" separator=",">#{creatorAccount}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or">t.updater_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or">t.confirmer_account
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or">t.data_source_sys like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+        group by t.issue_note_sid
+        order by t.issue_note_code desc, t.create_date desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_del_outsource_material_issue_note
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            issue_note_sid,
+            issue_note_code,
+            document_date,
+            vendor_sid,
+            document_type,
+            plant_sid,
+            business_type,
+            consignee,
+            consignee_phone,
+            consignee_addr,
+            shipping_order_code,
+            carrier,
+            carrier_note_code,
+            shipping_point,
+            expected_issue_date,
+            issue_status,
+            operator,
+            company_sid,
+            remark,
+            material_category,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.issueNoteSid},
+                #{item.issueNoteCode},
+                #{item.documentDate},
+                #{item.vendorSid},
+                #{item.documentType},
+                #{item.plantSid},
+                #{item.businessType},
+                #{item.consignee},
+                #{item.consigneePhone},
+                #{item.consigneeAddr},
+                #{item.shippingOrderCode},
+                #{item.carrier},
+                #{item.carrierNoteCode},
+                #{item.shippingPoint},
+                #{item.expectedIssueDate},
+                #{item.issueStatus},
+                #{item.operator},
+                #{item.companySid},
+                #{item.remark},
+                #{item.materialCategory},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_del_outsource_material_issue_note
+        <trim prefix="SET" suffixOverrides=",">
+            issue_note_code = #{issueNoteCode},
+            document_date = #{documentDate},
+            vendor_sid = #{vendorSid},
+            document_type = #{documentType},
+            plant_sid = #{plantSid},
+            business_type = #{businessType},
+            consignee = #{consignee},
+            consignee_phone = #{consigneePhone},
+            consignee_addr = #{consigneeAddr},
+            shipping_order_code = #{shippingOrderCode},
+            carrier = #{carrier},
+            carrier_note_code = #{carrierNoteCode},
+            shipping_point = #{shippingPoint},
+            expected_issue_date = #{expectedIssueDate},
+            issue_status = #{issueStatus},
+            operator = #{operator},
+            company_sid = #{companySid},
+            remark = #{remark},
+            material_category = #{materialCategory},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where issue_note_sid = #{issueNoteSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_del_outsource_material_issue_note
+            <trim prefix="SET" suffixOverrides=",">
+                issue_note_code = #{issueNoteCode},
+                document_date = #{documentDate},
+                vendor_sid = #{vendorSid},
+                document_type = #{documentType},
+                plant_sid = #{plantSid},
+                business_type = #{businessType},
+                consignee = #{consignee},
+                consignee_phone = #{consigneePhone},
+                consignee_addr = #{consigneeAddr},
+                shipping_order_code = #{shippingOrderCode},
+                carrier = #{carrier},
+                carrier_note_code = #{carrierNoteCode},
+                shipping_point = #{shippingPoint},
+                expected_issue_date = #{expectedIssueDate},
+                issue_status = #{issueStatus},
+                operator = #{operator},
+                company_sid = #{companySid},
+                remark = #{remark},
+                material_category = #{materialCategory},
+                handle_status = #{handleStatus},
+                creator_account = #{creatorAccount},
+                create_date = #{createDate},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+            </trim>
+            where issue_note_sid = #{issueNoteSid}
+        </foreach>
+    </update>
+
+</mapper>

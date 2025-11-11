@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.SalSalePriceItemMapper">
+
+    <resultMap type="com.platform.ems.domain.SalSalePriceItem" id="SalSalePriceItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="salePriceItemSid" column="sale_price_item_sid"/>
+        <result property="salePriceSid" column="sale_price_sid"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="cascadeType" column="cascade_type"/>
+        <result property="priceEnterMode" column="price_enter_mode"/>
+        <result property="salePriceTax" column="sale_price_tax"/>
+        <result property="salePrice" column="sale_price"/>
+        <result property="quotePriceTax" column="quote_price_tax"/>
+        <result property="priceRemark" column="price_remark"/>
+        <result property="referQuantity" column="refer_quantity"/>
+        <result property="increQuantity" column="incre_quantity"/>
+        <result property="decreQuantity" column="decre_quantity"/>
+        <result property="priceMinQuantity" column="price_min_quantity"/>
+        <result property="increPriceTax" column="incre_price_tax"/>
+        <result property="increPrice" column="incre_price"/>
+        <result property="decrePriceTax" column="decre_price_tax"/>
+        <result property="decrePrice" column="decre_price"/>
+        <result property="isRecursionPrice" column="is_recursion_price"/>
+        <result property="unitRecursion" column="unit_recursion"/>
+        <result property="roundingType" column="rounding_type"/>
+        <result property="discountType" column="discount_type"/>
+        <result property="taxRate" column="tax_rate"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="unitBase" column="unit_base"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="unitConversionRate" column="unit_conversion_rate"/>
+        <result property="saleContractSid" column="sale_contract_sid"/>
+        <result property="updateRemark" column="update_remark"/>
+        <result property="remark" column="remark"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="skuTypeRecursion" column="sku_type_recursion"/>
+        <result property="creatorAccount" column="creator_account"/>
+    </resultMap>
+
+    <sql id="selectSalSalePriceItemVo">
+        select t.client_id,
+               t.sale_price_item_sid,
+               t.sale_price_sid,
+               t.start_date,
+               t.end_date,
+               t.cascade_type,
+               t.price_enter_mode,
+               t.sale_price_tax,
+               t.sale_price,
+               t.quote_price_tax,
+               t.price_remark,
+               t.refer_quantity,
+               t.incre_quantity,
+               t.decre_quantity,
+               t.price_min_quantity,
+               t.incre_price_tax,
+               t.incre_price,
+               t.decre_price_tax,
+               t.decre_price,
+               t.is_recursion_price,
+               t.unit_recursion,
+               t.rounding_type,
+               t.discount_type,
+               t.item_num,
+               t.tax_rate,
+               t.currency,
+               t.currency_unit,
+               t.unit_base,
+               t.unit_price,
+               t.unit_conversion_rate,
+               t.sale_contract_sid,
+               t.update_remark,
+               t.remark,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t.handle_status,
+               t.sku_type_recursion,
+               t.creator_account,
+               t1.sale_contract_code,
+               t1.contract_name as sale_contract_name,
+               t2.name as unit_base_name,
+               t3.name as unit_price_name,
+               t4.tax_rate_name,
+               t5.nick_name as creator_account_name,
+               t6.approval_node,
+               t6.approval_user_id,
+               t6.approval_user_name
+        from s_sal_sale_price_item t
+                 left join s_sal_sale_contract t1 on t1.sale_contract_sid=t.sale_contract_sid
+                 left join s_con_measure_unit t2 on t2.code=t.unit_base
+                 left join s_con_measure_unit t3 on t3.code=t.unit_price
+                 left join s_con_tax_rate t4 on t4.tax_rate_name=t.tax_rate
+                 LEFT JOIN sys_user t5 ON t5.user_name = t.creator_account
+                 left join s_sys_form_process t6 on t6.form_id=t.sale_price_item_sid
+    </sql>
+
+    <sql id="SaleReportVo">
+        select
+            t.sale_price_item_sid,
+            t.sale_price_sid,
+            t.start_date,
+            t.end_date,
+            t.cascade_type,
+            t.price_enter_mode,
+            t.sale_price_tax,
+            t.sale_price,
+            t.quote_price_tax,
+            t.price_remark,
+            t.refer_quantity,
+            t.incre_quantity,
+            t.decre_quantity,
+            t.price_min_quantity,
+            t.incre_price_tax,
+            t.incre_price,
+            t.decre_price_tax,
+            t.decre_price,
+            t.is_recursion_price,
+            t.unit_recursion,
+            t.rounding_type,
+            t.discount_type,
+            t.tax_rate,
+            t.currency,
+            t.currency_unit,
+            t.unit_base,
+            t.item_num,
+            t.unit_price,
+            t.unit_conversion_rate,
+            t.sale_contract_sid,
+            t.update_remark,
+            t.remark,
+            t.create_date,
+            t.updater_account,
+            t.update_date,
+            t.sku_type_recursion,
+            t.creator_account,
+            t1.sale_contract_code,
+            t1.contract_name as sale_contract_name,
+            t2.name as unit_base_name,
+            t3.name as unit_price_name,
+            t4.tax_rate_value as tax_rate_name,
+            t5.price_dimension,
+            t5.raw_material_mode,
+            t5.customer_sid,
+            t.handle_status,
+            t5.handle_status as head_handle_status,
+            t5.sale_price_code,
+            t5.company_sid,
+            t5.customer_sid,
+            t5.sale_mode,
+            t6.material_sid,
+            t6.material_name,
+            t6.material_code,
+            t6.material_category,
+            t6.picture_path,
+            t7.sku_sid as sku1_sid,
+            t7.sku_name as sku1_name,
+            t14.name AS material_type_name,
+            t8.customer_name,
+            t8.short_name as customer_short_name,
+            t8b.short_name as customer_name_material,
+            t9.company_name,
+            t10.nick_name as creator_account_name,
+            t12.nick_name as updater_account_name,
+            t15.product_season_name,
+            t19.approval_node,
+            t19.approval_user_id,
+            t19.approval_user_name,
+            t19.create_date AS submit_date,
+            t20.nick_name AS submit_user_name,
+            t21.name as unit_recursion_name
+        from s_sal_sale_price_item t
+                 left join s_sal_sale_contract t1 on t1.sale_contract_sid=t.sale_contract_sid
+                 left join s_con_measure_unit t2 on t2.code=t.unit_base
+                 left join s_con_measure_unit t3 on t3.code=t.unit_price
+                 left join s_con_tax_rate t4 on t4.tax_rate_name=t.tax_rate
+                 left join s_sal_sale_price t5 on t5.sale_price_sid=t.sale_price_sid
+                 left join s_bas_material t6 on t6.material_sid=t5.material_sid
+                 LEFT JOIN s_bas_sku t7 on t7.sku_sid=t5.sku1_sid
+                 left join s_bas_customer t8 on t8.customer_sid=t5.customer_sid
+                 left join s_bas_customer t8b on t8b.customer_sid=t6.customer_sid
+                 left join s_bas_company t9 on t9.company_sid=t5.company_sid
+                 LEFT JOIN sys_user t10 ON t10.user_name = t.creator_account and t.client_id = t10.client_id
+                 LEFT JOIN sys_user t12 ON t12.user_name = t.updater_account and t.client_id = t12.client_id
+                 LEFT JOIN s_con_material_type t14 ON t14.code = t6.material_type
+                 left join s_bas_product_season t15 on t15.product_season_sid=t6.product_season_sid
+                 left join s_sys_form_process t19 on t19.form_id=t.sale_price_item_sid
+                 LEFT JOIN sys_user t20 ON t19.creator_account = t20.user_name and t19.client_id = t20.client_id
+                 left join s_con_measure_unit t21 on t21.code=t.unit_recursion
+    </sql>
+
+
+    <select id="selectSalSalePriceItemById" parameterType="Long" resultMap="SalSalePriceItemResult">
+        <include refid="selectSalSalePriceItemVo"/>
+        where t.sale_price_sid = #{salePriceSid} order by t.start_date desc
+    </select>
+
+
+    <select id="saleReport" parameterType="com.platform.ems.domain.dto.response.SaleReportResponse"
+            resultType="com.platform.ems.domain.dto.response.SaleReportResponse">
+        <include refid="SaleReportVo"/>
+        <where>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="materialCode" separator = " or ">t6.material_code
+                like concat('%', #{materialCode}, '%')</foreach>)
+            </if>
+            <if test="approvalUserId != null and approvalUserId != '' ">
+                and (t19.approval_user_id = #{approvalUserId}  or t19.approval_user_id like concat('%, ', #{approvalUserId}, ',%')
+                or t19.approval_user_id like concat('%, ', #{approvalUserId}) or t19.approval_user_id like concat(#{approvalUserId}, ',%')
+                or t19.approval_user_id like concat('%,', #{approvalUserId}, ',%') or t19.approval_user_id like concat('%,', #{approvalUserId}))
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="materialName" separator = " or ">t6.material_name
+                like concat('%', #{materialName}, '%')</foreach>)
+            </if>
+            <if test="salePriceCode != null and salePriceCode != ''">
+                and (<foreach collection="salePriceCode.split(';')" item="code" separator = " or ">t5.sale_price_code
+                like concat('%', #{code}, '%')</foreach>)
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length > 0">and t6.material_type in
+                <foreach collection="materialTypeList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="customerSids != null and customerSids.length> 0">and t5.customer_sid in
+                <foreach collection="customerSids" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="customerSidsMaterial != null and customerSidsMaterial.length> 0">and t6.customer_sid in
+                <foreach collection="customerSidsMaterial" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length> 0">and t6.product_season_sid in
+                <foreach collection="productSeasonSidList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="itemSidList != null and itemSidList.size > 0">and t.sale_price_item_sid in
+                <foreach collection="itemSidList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="companySids != null and companySids.length >0">and t5.company_sid in
+                <foreach collection="companySids" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="handleStatuses != null and handleStatuses.length >0 ">
+                and t.handle_status in
+                <foreach collection="handleStatuses" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="creatorAccount != null and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator = " or ">t10.nick_name like
+                concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="rawMaterialModes != null and rawMaterialModes.length > 0">
+                and (<foreach collection="rawMaterialModes" item="item" separator = " or ">
+                t5.raw_material_mode = #{item}</foreach>)
+            </if>
+            <if test="saleModes != null and saleModes.length > 0">
+                and (<foreach collection="saleModes" item="item" separator = " or ">t5.sale_mode = #{item}</foreach>)
+            </if>
+            <if test="createDateStart != null">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{createDateStart},'%y%m%d')
+            </if>
+            <if test="createDateEnd != null">
+                and date_format(t.create_date,'%y%m%d') &lt;=date_format(#{createDateEnd},'%y%m%d')
+            </if>
+            <if test="startDate != null">
+                and date_format(t.start_date,'%y%m%d') &gt;= date_format(#{startDate},'%y%m%d')
+            </if>
+            <if test="endDate != null">
+                and date_format(t.end_date,'%y%m%d') &lt;=date_format(#{endDate},'%y%m%d')
+            </if>
+
+        </where>
+        order by t5.sale_price_code desc ,t.start_date desc
+    </select>
+    <!--更新-->
+
+    <update id="updateAllById">
+
+        update s_sal_sale_price_item
+
+        <trim prefix="SET" suffixOverrides=",">
+
+            client_id = #{clientId},
+
+            sale_price_item_sid = #{salePriceItemSid},
+
+            sale_price_sid = #{salePriceSid},
+
+            start_date = #{startDate},
+
+            end_date = #{endDate},
+
+            cascade_type = #{cascadeType},
+
+            price_enter_mode = #{priceEnterMode},
+
+            sale_price_tax = #{salePriceTax},
+
+            sale_price = #{salePrice},
+
+            quote_price_tax = #{quotePriceTax},
+            price_remark = #{priceRemark},
+
+            refer_quantity = #{referQuantity},
+
+            incre_quantity = #{increQuantity},
+
+            decre_quantity = #{decreQuantity},
+
+            price_min_quantity = #{priceMinQuantity},
+
+            incre_price_tax = #{increPriceTax},
+
+            incre_price = #{increPrice},
+
+            decre_price_tax = #{decrePriceTax},
+
+            decre_price = #{decrePrice},
+
+            is_recursion_price = #{isRecursionPrice},
+
+            unit_recursion = #{unitRecursion},
+
+            rounding_type = #{roundingType},
+
+            discount_type = #{discountType},
+
+            tax_rate = #{taxRate},
+
+            currency = #{currency},
+
+            currency_unit = #{currencyUnit},
+
+            unit_base = #{unitBase},
+
+            unit_price = #{unitPrice},
+
+            unit_conversion_rate = #{unitConversionRate},
+
+            sale_contract_sid = #{saleContractSid},
+
+            update_remark = #{updateRemark},
+
+            remark = #{remark},
+
+            create_date = #{createDate},
+
+            updater_account = #{updaterAccount},
+
+            update_date = #{updateDate},
+            handle_status=#{handleStatus},
+
+            data_source_sys = #{dataSourceSys},
+
+            sku_type_recursion = #{skuTypeRecursion},
+
+            creator_account = #{creatorAccount},
+
+        </trim>
+
+        where sale_price_item_sid = #{salePriceItemSid}
+
+    </update>
+
+    <update id="updateRe">
+
+        update s_sal_sale_price_item
+
+        <trim prefix="SET" suffixOverrides=",">
+            sale_price_item_sid = #{salePriceItemSid},
+        </trim>
+        where sale_price_item_sid = #{salePriceItemSid}
+
+    </update>
+
+</mapper>

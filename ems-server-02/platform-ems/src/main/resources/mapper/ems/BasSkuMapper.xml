@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.BasSkuMapper">
+
+    <resultMap type="com.platform.ems.domain.BasSku" id="BasSkuResult">
+        <result property="clientId" column="client_id"/>
+        <result property="skuSid" column="sku_sid"/>
+        <result property="skuCode" column="sku_code"/>
+        <result property="skuName" column="sku_name"/>
+        <result property="skuName2" column="sku_name2"/>
+        <result property="skuName3" column="sku_name3"/>
+        <result property="skuName4" column="sku_name4"/>
+        <result property="skuName5" column="sku_name5"/>
+        <result property="upDownSuit" column="up_down_suit"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="skuType" column="sku_type"/>
+        <result property="colorStandard" column="color_standard"/>
+        <result property="standardColorCode" column="standard_color_code"/>
+        <result property="rgbCode" column="rgb_code"/>
+        <result property="colorSeries" column="color_series"/>
+        <result property="skuNumeralValue" column="sku_numeral_value"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="shortName" column="short_name"/>
+        <result property="confirmerAccountName" column="confirmer_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="disableRemark" column="disable_remark"/>
+    </resultMap>
+
+    <sql id="selectBasSkuVo">
+        SELECT
+	t.sku_numeral_value,
+	t.client_id,
+	t.sku_sid,
+	t.sku_code,
+	LPAD(t.sku_code, 8, 'A') AS lpad_sku_code,
+	t.sku_name,
+	t.sku_name2,
+	t.sku_name3,
+	t.sku_name4,
+	t.sku_name5,
+	t.up_down_suit,
+	t.customer_sid,
+	t.sku_type,
+	t.color_standard,
+	t.standard_color_code,
+	t.rgb_code,
+	t.color_series,
+	t.picture_path,
+	t.remark,
+	t.disable_remark,
+	t.STATUS,
+	t.handle_status,
+	t.creator_account,
+	t.create_date,
+	t.updater_account,
+	t.update_date,
+	t.confirmer_account,
+	t.confirm_date,
+	t.data_source_sys,
+	t1.customer_code,
+	t1.customer_name,
+	t1.short_name,
+	t2.nick_name AS creator_account_name,
+	t3.nick_name AS updater_account_name,
+	t4.nick_name AS confirmer_account_name
+FROM
+	s_bas_sku t
+	LEFT JOIN s_bas_customer t1 ON t1.customer_sid = t.customer_sid
+	LEFT JOIN sys_user t2 ON t.creator_account = t2.user_name
+	LEFT JOIN sys_user t3 ON t.updater_account = t3.user_name
+    LEFT JOIN sys_user t4 ON t.confirmer_account = t4.user_name
+    </sql>
+
+
+    <select id="getList" parameterType="String" resultMap="BasSkuResult">
+        select  sku_sid,sku_code,sku_name,sku_name2,status,handle_status from s_bas_sku where sku_type  = #{skuType} and status='1' and handle_status='5' order by sku_name asc
+    </select>
+
+    <select id="selectBasSkuById" parameterType="long" resultMap="BasSkuResult">
+        <include refid="selectBasSkuVo"/>
+        where t.sku_sid = #{skuSid}
+    </select>
+
+<!--    wp 【BUG】【颜色】排序BUG修复：使用左补齐 'A' 来进行排序-->
+    <select id="selectBasSkuList" parameterType="com.platform.ems.domain.BasSku"
+            resultMap="BasSkuResult">
+        <include refid="selectBasSkuVo"/>
+        <where>
+            <if test="skuCodeList != null and skuCodeList.length >0 ">
+                and t.sku_code in
+                (<foreach collection="skuCodeList" item="skuCode" separator=",">#{skuCode}</foreach>)
+            </if>
+            <if test="skuCode != null  and skuCode != ''">
+               and (<foreach collection="skuCode.split(';')" item="item" separator="or"> t.sku_code like concat('%',
+                    #{item}, '%')
+                </foreach>)
+            </if>
+            <if test="skuName != null  and skuName != ''">
+                and (<foreach collection="skuName.split(';')" item="item" separator="or"> t.sku_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="skuNumeralValue != null  and skuNumeralValue != ''">
+                and (<foreach collection="skuNumeralValue.split(';')" item="item" separator="or"> t.sku_numeral_value like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="skuTypeList != null and skuTypeList.length >0 ">
+                and t.sku_type in
+                (<foreach collection="skuTypeList" item="skuType" separator=",">#{skuType}</foreach>)
+            </if>
+            <if test="colorStandardList != null and colorStandardList.length >0 ">
+                and t.color_standard in
+                (<foreach collection="colorStandardList" item="colorStandard" separator=",">#{colorStandard}</foreach>)
+            </if>
+            <if test="colorSeriesList != null and colorSeriesList.length >0 ">
+                and t.color_series in
+                (<foreach collection="colorSeriesList" item="colorSeries" separator=",">#{colorSeries}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0 ">
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="skuSid != null  and skuSid != ''">
+                and (<foreach collection="skuSid.split(';')" item="item" separator="or"> t.sku_sid like concat('%',
+                    #{item}, '%')
+                </foreach>)
+            </if>
+            <if test="skuName2 != null  and skuName2 != ''">
+               and ( <foreach collection="skuName2.split(';')" item="item" separator="or"> t.sku_name2 like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="skuName3 != null  and skuName3 != ''">
+               and (<foreach collection="skuName3.split(';')" item="item" separator="or"> t.sku_name3 like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="skuName4 != null  and skuName4 != ''">
+              and ( <foreach collection="skuName4.split(';')" item="item" separator="or"> t.sku_name4 like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="skuName5 != null  and skuName5 != ''">
+              and ( <foreach collection="skuName5.split(';')" item="item" separator="or"> t.sku_name5 like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="upDownSuit != null  and upDownSuit != ''">
+                and ( <foreach collection="upDownSuit.split(';')" item="item" separator="or"> t.up_down_suit like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="upDownSuitList != null and upDownSuitList.length >0 ">
+                and t.up_down_suit in
+                (<foreach collection="upDownSuitList" item="upDownSuit" separator=",">#{upDownSuit}</foreach>)
+            </if>
+            <if test="customerSid != null">
+                and t.customer_sid = #{customerSid}
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0 ">
+                and t.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=",">#{customerSid}</foreach>)
+            </if>
+            <if test="skuType != null  and skuType != ''">
+               and (<foreach collection="skuType.split(';')" item="item" separator="or"> t.sku_type like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="colorStandard != null  and colorStandard != ''">
+               and (<foreach collection="colorStandard.split(';')" item="item" separator="or"> t.color_standard like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="standardColorCode != null  and standardColorCode != ''">
+                and (<foreach collection="standardColorCode.split(';')" item="item" separator="or"> t.standard_color_code like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="rgbCode != null  and rgbCode != ''">
+                and (<foreach collection="rgbCode.split(';')" item="item" separator="or"> t.rgb_code like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="colorSeries != null  and colorSeries != ''">
+                and (<foreach collection="colorSeries.split(';')" item="item" separator="or"> t.color_series like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="status != null  and status != ''">
+                and ( <foreach collection="status.split(';')" item="item" separator="or"> t.status like concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and ( <foreach collection="handleStatus.split(';')" item="item" separator="or"> t.handle_status like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t2.nick_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null  and updaterAccount != ''">
+                and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">
+                and (<foreach collection="confirmerAccount.split(';')" item="item" separator="or"> t.confirmer_account like
+                concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="confirmDate != null ">
+                and t.confirm_date = #{confirmDate}
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or"> t.data_source_sys like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+--         order by t.sku_code desc, t.create_date desc
+        order by lpad_sku_code desc, t.create_date desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_bas_sku
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            sku_sid,
+            sku_code,
+            sku_name,
+            sku_type,
+            sku_name2,
+            sku_name3,
+            sku_name4,
+            sku_name5,
+            up_down_suit,
+            customer_sid,
+            color_standard,
+            standard_color_code,
+            rgb_code,
+            color_series,
+            picture_path,
+            sku_numeral_value,
+            remark,
+            disable_remark,
+            status,
+            handle_status,
+            creator_account,
+            create_date,
+            updater_account,
+            update_date,
+            confirmer_account,
+            confirm_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.skuSid},
+                #{item.skuCode},
+                #{item.skuName},
+                #{item.skuType},
+                #{item.skuName2},
+                #{item.skuName3},
+                #{item.skuName4},
+                #{item.skuName5},
+                #{item.upDownSuit},
+                #{item.customerSid},
+                #{item.colorStandard},
+                #{item.standardColorCode},
+                #{item.rgbCode},
+                #{item.colorSeries},
+                #{item.picturePath},
+                #{item.skuNumeralValue},
+                #{item.remark},
+                #{item.disableRemark},
+                #{item.status},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.updaterAccount},
+                #{item.updateDate},
+                #{item.confirmerAccount},
+                #{item.confirmDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_bas_sku
+        <trim prefix="SET" suffixOverrides=",">
+            sku_code = #{skuCode},
+            sku_name = #{skuName},
+            sku_name2 = #{skuName2},
+            sku_name3 = #{skuName3},
+            sku_name4 = #{skuName4},
+            sku_name5 = #{skuName5},
+            up_down_suit = #{upDownSuit},
+            customer_sid = #{customerSid},
+            sku_type = #{skuType},
+            color_standard = #{colorStandard},
+            standard_color_code = #{standardColorCode},
+            rgb_code = #{rgbCode},
+            color_series = #{colorSeries},
+            picture_path = #{picturePath},
+            remark = #{remark},
+            disable_remark = #{disableRemark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            sku_numeral_value =  #{skuNumeralValue},
+        </trim>
+        where sku_sid = #{skuSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_bas_sku
+            <trim prefix="SET" suffixOverrides=",">
+                sku_code = #{skuCode},
+                sku_name = #{skuName},
+                sku_name2 = #{skuName2},
+                sku_name3 = #{skuName3},
+                sku_name4 = #{skuName4},
+                sku_name5 = #{skuName5},
+                sku_type = #{skuType},
+                up_down_suit = #{upDownSuit},
+                color_standard = #{colorStandard},
+                standard_color_code = #{standardColorCode},
+                rgb_code = #{rgbCode},
+                color_series = #{colorSeries},
+                picture_path = #{picturePath},
+                remark = #{remark},
+                disable_remark = #{disableRemark},
+                status = #{status},
+                handle_status = #{handleStatus},
+                updater_account = #{updaterAccount},
+                update_date = #{updateDate},
+                confirmer_account = #{confirmerAccount},
+                confirm_date = #{confirmDate},
+                data_source_sys = #{dataSourceSys},
+                sku_numeral_value =  #{skuNumeralValue},
+            </trim>
+            where sku_sid = #{skuSid}
+        </foreach>
+    </update>
+
+</mapper>

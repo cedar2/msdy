@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.ConTaskTemplateCompareMapper">
+
+    <resultMap type="com.platform.ems.domain.ConTaskTemplateCompare" id="ConTaskTemplateCompareResult">
+        <result property="clientId" column="client_id"/>
+        <result property="taskTemplateCompareSid" column="task_template_compare_sid"/>
+        <result property="taskTemplateSid" column="task_template_sid"/>
+        <result property="taskTemplateCode" column="task_template_code"/>
+        <result property="projectType" column="project_type"/>
+        <result property="brand" column="brand"/>
+        <result property="storeCategory" column="store_category"/>
+        <result property="operateMode" column="operate_mode"/>
+        <result property="joinMode" column="join_mode"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="updaterAccountName" column="updater_account_name"/>
+        <result property="taskTemplateName" column="task_template_name"/>
+        <result property="afterTaskTemplateName" column="after_task_template_name"/>
+    </resultMap>
+
+    <sql id="selectConTaskTemplateCompareVo">
+        select t.client_id,
+               t.task_template_compare_sid,
+               t.task_template_sid,
+               t.task_template_code,
+               t.brand,
+               t.store_category,
+               t.operate_mode,
+               t.join_mode,
+               t.remark,
+               t.handle_status,
+               t.creator_account,
+               t.create_date,
+               t.updater_account,
+               t.update_date,
+               t.data_source_sys,
+               t.project_type,
+               u1.nick_name AS creator_account_name,
+               u2.nick_name AS updater_account_name,
+               sptt.task_template_name as task_template_name,
+               aft.task_template_name as after_task_template_name
+        from s_con_task_template_compare t
+                 LEFT JOIN sys_user u1 ON t.creator_account = u1.user_name
+                 LEFT JOIN sys_user u2 ON t.updater_account = u2.user_name
+                 left join s_prj_task_template sptt on t.task_template_sid = sptt.task_template_sid and
+                                                       t.task_template_code = sptt.task_template_code
+                 left join s_prj_task_template aft on t.after_task_template_sid = aft.task_template_sid and
+                                                      t.after_task_template_code = aft.task_template_code
+    </sql>
+
+    <select id="selectConTaskTemplateCompareById" parameterType="Long" resultMap="ConTaskTemplateCompareResult">
+        <include refid="selectConTaskTemplateCompareVo"/>
+        where t.task_template_compare_sid = #{taskTemplateCompareSid}
+    </select>
+
+    <select id="selectConTaskTemplateCompareList" parameterType="com.platform.ems.domain.ConTaskTemplateCompare"
+            resultMap="ConTaskTemplateCompareResult">
+        <include refid="selectConTaskTemplateCompareVo"/>
+        <where>
+            <if test="clientId != null and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="taskTemplateSid != null ">
+                and t.task_template_sid = #{taskTemplateSid}
+            </if>
+            <if test="taskTemplateCode != null and taskTemplateCode != ''">
+                and t.task_template_code like concat('%', #{taskTemplateCode}, '%')
+            </if>
+            <if test="taskTemplateName != null and taskTemplateName != ''">
+                and sptt.task_template_name like concat('%', #{taskTemplateName}, '%')
+            </if>
+            <if test="afterTaskTemplateName != null and afterTaskTemplateName != ''">
+                and aft.task_template_name like concat('%', #{afterTaskTemplateName}, '%')
+            </if>
+            <if test="projectType != null and projectType != ''">
+                and t.project_type = #{projectType}
+            </if>
+            <if test="brand != null and brand != ''">
+                and t.brand = #{brand}
+            </if>
+            <if test="storeCategory != null and storeCategory != ''">
+                and t.store_category = #{storeCategory}
+            </if>
+            <if test="operateMode != null and operateMode != ''">
+                and t.operate_mode = #{operateMode}
+            </if>
+            <if test="joinMode != null and joinMode != ''">
+                and t.join_mode = #{joinMode}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and t.handle_status = #{handleStatus}
+            </if>
+            <if test="creatorAccountList != null and creatorAccountList.length != 0 ">
+                and t.creator_account in
+                <foreach collection="creatorAccountList" item="creator_account" open="(" separator="," close=")">
+                    #{creator_account}
+                </foreach>
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="updaterAccount != null and updaterAccount != ''">
+                and t.updater_account = #{updaterAccount}
+            </if>
+            <if test="updateDate != null ">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="dataSourceSys != null and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_con_task_template_compare
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            task_template_compare_sid,
+            task_template_sid,
+            task_template_code,
+            project_type,
+            brand,
+            store_category,
+            operate_mode,
+            join_mode,
+            remark,
+            handle_status,
+            creator_account,
+            create_date,
+            data_source_sys,
+            after_task_template_sid,
+            after_task_template_code,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.taskTemplateCompareSid},
+                #{item.taskTemplateSid},
+                #{item.taskTemplateCode},
+                #{item.projectType},
+                #{item.brand},
+                #{item.storeCategory},
+                #{item.operateMode},
+                #{item.joinMode},
+                #{item.remark},
+                #{item.handleStatus},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+                #{item.afterTaskTemplateSid},
+                #{item.afterTaskTemplateCode},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_con_task_template_compare
+        <trim prefix="SET" suffixOverrides=",">
+            task_template_sid = #{taskTemplateSid},
+            task_template_code = #{taskTemplateCode},
+            project_type = #{item.projectType},
+            brand = #{brand},
+            store_category = #{storeCategory},
+            operate_mode = #{operateMode},
+            join_mode = #{joinMode},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+        </trim>
+        where task_template_compare_sid = #{taskTemplateCompareSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_con_task_template_compare
+            <trim prefix="SET" suffixOverrides=",">
+                task_template_sid = #{o.taskTemplateSid},
+                task_template_code = #{o.taskTemplateCode},
+                project_type = #{o.projectType},
+                brand = #{o.brand},
+                store_category = #{o.storeCategory},
+                operate_mode = #{o.operateMode},
+                join_mode = #{o.joinMode},
+                remark = #{o.remark},
+                handle_status = #{o.handleStatus},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+            </trim>
+            where task_template_compare_sid = #{o.taskTemplateCompareSid}
+        </foreach>
+    </update>
+
+</mapper>

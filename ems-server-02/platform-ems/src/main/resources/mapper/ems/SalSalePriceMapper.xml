@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.SalSalePriceMapper">
+
+    <resultMap type="com.platform.ems.domain.SalSalePrice" id="SalSalePriceResult">
+        <result property="clientId" column="client_id"/>
+        <result property="salePriceSid" column="sale_price_sid"/>
+        <result property="materialSid" column="material_sid"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="saleOrg" column="sale_org"/>
+        <result property="priceDimension" column="price_dimension"/>
+        <result property="skuTypeRecursion" column="sku_type_recursion"/>
+        <result property="salePriceCode" column="sale_price_code"/>
+        <result property="remark" column="remark"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="rawMaterialMode" column="raw_material_mode"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="confirmerAccount" column="confirmer_account"/>
+        <result property="confirmDate" column="confirm_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="saleMode" column="sale_mode"/>
+        <result property="barcodeSid" column="barcode_sid"/>
+        <result property="materialCategory" column="material_category"/>
+    </resultMap>
+
+    <sql id="selectSalSalePriceVo">
+        select
+         t.sale_price_sid,
+         t.material_sid,
+         t.customer_sid,
+         t.company_sid,
+         t.sale_org,
+         t.business_channel,
+         t.price_dimension,
+         t.sku_type_recursion,
+         t.sale_price_code,
+         t.sku1_sid,
+         t.sku2_sid,
+         t.remark,
+         t.handle_status,
+         t.creator_account,
+         t.create_date,
+         t.updater_account,
+         t.update_date,
+         t.confirmer_account,
+         t.confirm_date,
+         t.status,
+         t.raw_material_mode,
+         t.sale_mode,
+         t.material_category,
+         t1.company_name,
+         t2.customer_name,
+         t2.customer_code,
+         t3.material_code,
+         t3.material_name,
+         t3.sku1_type,
+         t3.sku2_type,
+         t4.barcode,
+         t5.sku_name as sku1_name,
+        t7.nick_name as creator_account_name,
+        t8.nick_name as updater_account_name,
+        t9.nick_name as confirmer_account_name,
+        t3.unit_base,
+         t3.picture_path,
+         t3.picture_path_second
+         from s_sal_sale_price t
+         left join s_bas_company t1 on t1.company_sid =t.company_sid
+         left join s_bas_customer t2 on t2.customer_sid=t.customer_sid
+         left join s_bas_material t3 on t3.material_sid=t.material_sid
+         left join s_bas_material_barcode t4 on t4.barcode_sid=t.barcode_sid
+        LEFT JOIN s_bas_sku t5 on t5.sku_sid=t.sku1_sid
+        LEFT JOIN sys_user t7 ON t7.user_name = t.creator_account
+        LEFT JOIN sys_user t8 ON t8.user_name = t.updater_account
+        LEFT JOIN sys_user t9 ON t9.user_name = t.confirmer_account
+    </sql>
+    <select id="getCostList" parameterType="com.platform.ems.domain.SalSalePrice"
+            resultType="com.platform.ems.domain.SalSalePrice">
+        select t1.sale_price_code,
+        t1.sale_price_sid
+        from s_sal_sale_price_item t
+        left join s_sal_sale_price t1 on t.sale_price_sid = t1.sale_price_sid
+        <where>
+            <if test="handleStatuses != null and handleStatuses.length > 0">
+                and t.handle_status in (<foreach collection="handleStatuses" item="handleStatus" separator=",">#{handleStatus}</foreach>)
+            </if>
+            <if test="materialSid != null">
+                and t1.material_sid = #{materialSid}
+            </if>
+            <if test="sku1Sid != null">
+                and t1.sku1_sid = #{sku1Sid}
+            </if>
+            <if test="priceDimension != null">
+                and t1.price_dimension = #{priceDimension}
+            </if>
+            <if test="customerSid != null ">
+                and t1.customer_sid = #{customerSid}
+            </if>
+            <if test="rawMaterialMode != null and rawMaterialMode != ''">
+                and t1.raw_material_mode = #{rawMaterialMode}
+            </if>
+            <if test="saleMode != null and saleMode != ''">
+                and t1.sale_mode = #{saleMode}
+            </if>
+        </where>
+    </select>
+    <select id="selectSalSalePriceList" parameterType="com.platform.ems.domain.SalSalePrice"
+            resultMap="SalSalePriceResult">
+        <include refid="selectSalSalePriceVo"/>
+        <where>
+            <if test="salePriceSid != null  and salePriceSid != ''">and sale_price_sid = #{salePriceSid}</if>
+            <if test="materialSid != null  and materialSid != ''">and material_sid = #{materialSid}</if>
+            <if test="customerSid != null  and customerSid != ''">and customer_sid = #{customerSid}</if>
+            <if test="companySid != null  and companySid != ''">and company_sid = #{companySid}</if>
+            <if test="saleOrg != null  and saleOrg != ''">and sale_org = #{saleOrg}</if>
+            <if test="priceType != null  and priceType != ''">and price_type = #{priceType}</if>
+            <if test="priceDimension != null  and priceDimension != ''">and price_dimension = #{priceDimension}</if>
+            <if test="sku1Type != null  and sku1Type != ''">and sku1_type = #{sku1Type}</if>
+            <if test="sku2Type != null  and sku2Type != ''">and sku2_type = #{sku2Type}</if>
+            <if test="skuTypeRecursion != null  and skuTypeRecursion != ''">and sku_type_recursion =
+                #{skuTypeRecursion}
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">and handle_status = #{handleStatus}</if>
+            <if test="creatorAccount != null  and creatorAccount != ''">and creator_account = #{creatorAccount}</if>
+            <if test="createDate != null ">and create_date = #{createDate}</if>
+            <if test="updaterAccount != null  and updaterAccount != ''">and updater_account = #{updaterAccount}</if>
+            <if test="updateDate != null ">and update_date = #{updateDate}</if>
+            <if test="confirmerAccount != null  and confirmerAccount != ''">and confirmer_account =
+                #{confirmerAccount}
+            </if>
+            <if test="confirmDate != null ">and confirm_date = #{confirmDate}</if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">and data_source_sys = #{dataSourceSys}</if>
+        </where>
+    </select>
+
+    <select id="selectSalSalePriceById" parameterType="Long" resultType="com.platform.ems.domain.SalSalePrice">
+        <include refid="selectSalSalePriceVo"/>
+        where sale_price_sid = #{salePriceSid}
+    </select>
+
+
+
+    <insert id="insertSalSalePrice" parameterType="com.platform.ems.domain.SalSalePrice">
+        insert into s_sal_sale_price
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">client_id,</if>
+            <if test="salePriceSid != null and salePriceSid != ''">sale_price_sid,</if>
+            <if test="materialSid != null and materialSid != ''">material_sid,</if>
+            <if test="customerSid != null and customerSid != ''">customer_sid,</if>
+            <if test="companySid != null and companySid != ''">company_sid,</if>
+            <if test="saleOrg != null">sale_org,</if>
+            <if test="priceType != null">price_type,</if>
+            <if test="priceDimension != null and priceDimension != ''">price_dimension,</if>
+            <if test="sku1Type != null">sku1_type,</if>
+            <if test="sku2Type != null">sku2_type,</if>
+            <if test="skuTypeRecursion != null">sku_type_recursion,</if>
+            <if test="salePriceCode != null">sale_price_code,</if>
+            <if test="remark != null">remark,</if>
+            <if test="handleStatus != null and handleStatus != ''">handle_status,</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updaterAccount != null">updater_account,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="confirmerAccount != null">confirmer_account,</if>
+            <if test="confirmDate != null">confirm_date,</if>
+            <if test="dataSourceSys != null">data_source_sys,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">#{clientId},</if>
+            <if test="salePriceSid != null and salePriceSid != ''">#{salePriceSid},</if>
+            <if test="materialSid != null and materialSid != ''">#{materialSid},</if>
+            <if test="customerSid != null and customerSid != ''">#{customerSid},</if>
+            <if test="companySid != null and companySid != ''">#{companySid},</if>
+            <if test="saleOrg != null">#{saleOrg},</if>
+            <if test="priceType != null">#{priceType},</if>
+            <if test="priceDimension != null and priceDimension != ''">#{priceDimension},</if>
+            <if test="sku1Type != null">#{sku1Type},</if>
+            <if test="sku2Type != null">#{sku2Type},</if>
+            <if test="skuTypeRecursion != null">#{skuTypeRecursion},</if>
+            <if test="salePriceCode != null">#{salePriceCode},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="handleStatus != null and handleStatus != ''">#{handleStatus},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">#{creatorAccount},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updaterAccount != null">#{updaterAccount},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="confirmerAccount != null">#{confirmerAccount},</if>
+            <if test="confirmDate != null">#{confirmDate},</if>
+            <if test="dataSourceSys != null">#{dataSourceSys},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSalSalePrice" parameterType="com.platform.ems.domain.SalSalePrice">
+        update s_sal_sale_price
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="materialSid != null and materialSid != ''">material_sid = #{materialSid},</if>
+            <if test="customerSid != null and customerSid != ''">customer_sid = #{customerSid},</if>
+            <if test="companySid != null and companySid != ''">company_sid = #{companySid},</if>
+            <if test="saleOrg != null">sale_org = #{saleOrg},</if>
+            <if test="priceType != null">price_type = #{priceType},</if>
+            <if test="priceDimension != null and priceDimension != ''">price_dimension = #{priceDimension},</if>
+            <if test="sku1Type != null">sku1_type = #{sku1Type},</if>
+            <if test="sku2Type != null">sku2_type = #{sku2Type},</if>
+            <if test="skuTypeRecursion != null">sku_type_recursion = #{skuTypeRecursion},</if>
+            <if test="salePriceCode != null">sale_price_code = #{salePriceCode},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="handleStatus != null and handleStatus != ''">handle_status = #{handleStatus},</if>
+            <if test="creatorAccount != null and creatorAccount != ''">creator_account = #{creatorAccount},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updaterAccount != null">updater_account = #{updaterAccount},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="confirmerAccount != null">confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmDate != null">confirm_date = #{confirmDate},</if>
+            <if test="dataSourceSys != null">data_source_sys = #{dataSourceSys},</if>
+        </trim>
+        where sale_price_sid = #{salePriceSid}
+    </update>
+
+    <delete id="deleteSalSalePriceById" parameterType="String">
+        delete from s_sal_sale_price where sale_price_sid in
+        <foreach collection="salePriceSid.split(';')" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteSalSalePriceByIds" parameterType="String">
+        delete from s_sal_sale_price where sale_price_sid in
+        <foreach item="salePriceSid" collection="array" open="(" separator="," close=")">
+            #{salePriceSid}
+        </foreach>
+    </delete>
+    <select id="selecteSalSalePriceByCode" parameterType="String" resultType="com.platform.ems.domain.SalSalePrice">
+        select * from  s_sal_sale_price where sale_price_code =#{salePriceCode}
+    </select>
+
+    <!--按条件查询-->
+    <select id="getList" parameterType="com.platform.ems.domain.SalSalePrice"
+            resultType="com.platform.ems.domain.SalSalePrice">
+        <include refid="selectSalSalePriceVo"/>
+        <where>
+            <if test="salePriceSidList != null and salePriceSidList.length > 0">
+                and t.sale_price_sid in
+                (<foreach collection="salePriceSidList" item="salePriceSidList" separator=",">#{salePriceSidList}</foreach>)
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and (<foreach collection="materialCode.split(';')" item="materialCode" separator="or">t3.material_code
+                like concat('%', #{materialCode}, '%')</foreach>)
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and (<foreach collection="materialName.split(';')" item="materialName" separator="or">t3.material_name
+                like concat('%', #{materialName}, '%')</foreach>)
+            </if>
+            <if test="customerSids != null  and customerSids.size > 0">and t.customer_sid in
+                <foreach collection="customerSids" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="companySids != null  and companySids.length >0">and t.company_sid in
+                <foreach collection="companySids" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="salePriceCode != null  and salePriceCode != ''">
+                and (<foreach collection="salePriceCode.split(';')" item="item" separator="or">t.sale_price_code like
+                concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="saleOrgs != null  and saleOrgs.length >0">
+                and (<foreach collection="saleOrgs" item="item" separator="or">t.sale_org like concat('%', #{item},
+                '%')</foreach>)
+            </if>
+            <if test="handleStatuses != null  and handleStatuses.length >0 ">
+                and (<foreach collection="handleStatuses" item="item" separator="or">t.handle_status like concat('%',
+                #{item}, '%')</foreach>)
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator="or">t7.nick_name like
+                concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="rawMaterialModes != null  and rawMaterialModes.length > 0">
+                and (<foreach collection="rawMaterialModes" item="item" separator="or">t.raw_material_mode like
+                concat('%', #{item}, '%')</foreach>)
+            </if>
+            <if test="saleModes != null  and saleModes.length > 0">
+                and (<foreach collection="saleModes" item="item" separator="or">t.sale_mode like concat('%', #{item},
+                '%')</foreach>)
+            </if>
+            <if test="barcodeSid != null">
+                and t.barcode_sid = #{barcodeSid}
+            </if>
+            <if test="materialCategory != null">
+                and t.material_category = #{materialCategory}
+            </if>
+            <if test="createDateStart != null">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{createDateStart},'%y%m%d')
+            </if>
+            <if test="createDateEnd != null">
+                and date_format(t.create_date,'%y%m%d') &lt;=date_format(#{createDateEnd},'%y%m%d')
+            </if>
+
+        </where>
+        order by sale_price_code desc
+    </select>
+    <!--修改处理状态-->
+    <update id="updateHandleStatus" parameterType="com.platform.ems.domain.dto.request.SalePriceActionRequest">
+        update s_sal_sale_price set
+        <if test="handleStatus != null and handleStatus != ''">
+            handle_status=#{handleStatus}
+        </if>
+        <if test="status != null and status != ''">
+            status=#{status}
+        </if>
+        where
+        sale_price_sid in (
+        <foreach collection="salePriceSid.split(';')" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </update>
+
+    <update id="updateAllById" parameterType="com.platform.ems.domain.SalSalePrice">
+        update s_sal_sale_price
+        <trim prefix="SET" suffixOverrides=",">
+            sale_price_code = #{salePriceCode},
+            material_sid = #{materialSid},
+            customer_sid = #{customerSid},
+            barcode_sid=#{barcodeSid},
+            company_sid = #{companySid},
+            business_channel=#{businessChannel},
+            raw_material_mode = #{rawMaterialMode},
+            sale_org = #{saleOrg},
+            sku1_sid = #{sku1Sid},
+            sku2_sid = #{sku2Sid},
+            sku_type_recursion = #{skuTypeRecursion},
+            remark = #{remark},
+            status = #{status},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            sale_mode=#{saleMode},
+            material_category=#{materialCategory},
+        </trim>
+        where sale_price_sid = #{salePriceSid}
+    </update>
+
+
+    <select id="getSalSalePriceTaxK1" parameterType="com.platform.ems.domain.SalSalePrice" resultType="com.platform.ems.domain.SalSalePriceItem">
+        select t1.sale_price_tax,t1.tax_rate from s_sal_sale_price t
+        left join s_sal_sale_price_item t1 on t1.sale_price_sid=t.sale_price_sid
+        <where>
+            <if test="priceDimension !=null and priceDimension !=''">
+                and t.price_dimension=#{priceDimension} and t.sku1_sid=#{sku1Sid}
+            </if>
+            <if test="customerSid !=null and customerSid !=''">
+                and t.customer_sid=#{customerSid}
+            </if>
+            <if test="purchaseMode !=null">
+                and t.purchase_mode=#{purchaseMode}
+            </if>
+            <if test="rawMaterialMode !=null ">
+                and t.raw_material_mode=#{rawMaterialMode}
+            </if>
+            <if test="materialSid !=null ">
+                and t.material_sid=#{materialSid} and t.handle_status ='5' and  now() &gt;= t1.start_date and now() &lt;= t1.end_date
+            </if>
+
+        </where>
+    </select>
+
+    <select id="getSalSalePriceTaxK" parameterType="com.platform.ems.domain.SalSalePrice" resultType="com.platform.ems.domain.SalSalePriceItem">
+        select t1.sale_price_tax,t1.tax_rate from s_sal_sale_price t
+        left join s_sal_sale_price_item t1 on t1.sale_price_sid=t.sale_price_sid
+        <where>
+            <if test="customerSid !=null and customerSid !=''">
+                and t.customer_sid=#{customerSid}
+            </if>
+            <if test="purchaseMode !=null">
+                and t.purchase_mode=#{purchaseMode}
+            </if>
+            <if test="rawMaterialMode !=null">
+                and t.raw_material_mode=#{rawMaterialMode}
+            </if>
+            <if test="materialSid !=null">
+                and t.material_sid=#{materialSid} and t.handle_status ='5' and  now() &gt;= t1.start_date and now() &lt;= t1.end_date
+            </if>
+            <if test="priceDimension !=null and priceDimension !=''">
+                and t.price_dimension=#{priceDimension}
+            </if>
+        </where>
+    </select>
+</mapper>

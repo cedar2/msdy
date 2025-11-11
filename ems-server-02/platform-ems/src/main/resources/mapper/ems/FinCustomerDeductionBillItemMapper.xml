@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.FinCustomerDeductionBillItemMapper">
+
+    <resultMap type="com.platform.ems.domain.FinCustomerDeductionBillItem" id="FinCustomerDeductionBillItemResult">
+        <result property="clientId" column="client_id"/>
+        <result property="deductionBillItemSid" column="deduction_bill_item_sid"/>
+        <result property="deductionBillSid" column="deduction_bill_sid"/>
+        <result property="deductionType" column="deduction_type"/>
+        <result property="currencyAmountTax" column="currency_amount_tax"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="saleContractSid" column="sale_contract_sid"/>
+        <result property="saleContractCode" column="sale_contract_code"/>
+        <result property="salesOrderSid" column="sales_order_sid"/>
+        <result property="salesOrderCode" column="sales_order_code"/>
+        <result property="deliveryNoteSid" column="delivery_note_sid"/>
+        <result property="deliveryNoteCode" column="delivery_note_code"/>
+        <result property="paperContractCode" column="paper_contract_code"/>
+        <result property="remark" column="remark"/>
+        <result property="creatorAccount" column="creator_account"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updaterAccount" column="updater_account"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="dataSourceSys" column="data_source_sys"/>
+        <result property="deductionBillCode" column="deduction_bill_code"/>
+        <result property="customerSid" column="customer_sid"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerCode" column="customer_code"/>
+        <result property="productSeasonSid" column="product_season_sid"/>
+        <result property="productSeasonName" column="product_season_name"/>
+        <result property="productSeasonCode" column="product_season_code"/>
+        <result property="materialType" column="material_type"/>
+        <result property="salePerson" column="sale_person"/>
+        <result property="companySid" column="company_sid"/>
+        <result property="companyName" column="company_name"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="documentDate" column="document_date"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="currency" column="currency"/>
+        <result property="currencyUnit" column="currency_unit"/>
+        <result property="creatorAccountName" column="creator_account_name"/>
+        <result property="materialTypeName" column="material_type_name"/>
+        <result property="salePersonName" column="sale_person_name"/>
+        <result property="deductionTypeName" column="deduction_type_name"/>
+        <result property="clearStatus" column="clear_status"/>
+    </resultMap>
+
+    <sql id="selectFinCustomerDeductionBillItemVo">
+        SELECT
+	t.client_id,
+	t.deduction_bill_item_sid,
+	t.deduction_bill_sid,
+	t.deduction_type,
+	t.currency_amount_tax,
+	t.item_num,
+	t.sale_contract_sid,
+	t5.sale_contract_code,
+	t.sales_order_sid,
+	t6.sales_order_code,
+	t.delivery_note_sid,
+	t7.delivery_note_code,
+    t.paper_contract_code,
+	t.remark,
+	t.creator_account,
+	t.create_date,
+	t.updater_account,
+	t.update_date,
+	t.data_source_sys,
+	t1.deduction_bill_code,
+	t1.customer_sid,
+	t2.customer_name,
+	t2.customer_code,
+	t1.product_season_sid,
+	t3.product_season_name,
+	t3.product_season_code,
+	t1.material_type,
+	t1.sale_person,
+	t1.company_sid,
+	t4.company_name,
+	t4.company_code,
+	t1.document_date,
+	t1.handle_status,
+	t1.currency,
+	t1.currency_unit,
+	t11.nick_name AS creator_account_name,
+	t8.name AS material_type_name,
+	t9.nick_name AS sale_person_name,
+	t10.name AS deduction_type_name,
+	t12.clear_status AS clear_status
+FROM
+	s_fin_customer_deduction_bill_item t
+	LEFT JOIN s_fin_customer_deduction_bill t1 ON t1.deduction_bill_sid = t.deduction_bill_sid
+	LEFT JOIN s_bas_customer t2 ON t2.customer_sid = t1.customer_sid
+	LEFT JOIN s_bas_product_season t3 ON t3.product_season_sid = t1.product_season_sid
+	LEFT JOIN s_bas_company t4 ON t4.company_sid = t1.company_sid
+	LEFT JOIN s_sal_sale_contract t5 ON t5.sale_contract_sid = t.sale_contract_sid
+	LEFT JOIN s_sal_sales_order t6 ON t6.sales_order_sid = t.sales_order_sid
+	LEFT JOIN s_del_delivery_note t7 ON t7.delivery_note_sid = t.delivery_note_sid
+	LEFT JOIN s_con_material_type t8 ON t1.material_type = t8.code
+	LEFT JOIN sys_user t9 ON t1.sale_person = t9.user_name
+	LEFT JOIN s_con_deduction_type_customer t10 ON t.deduction_type = t10.code
+	LEFT JOIN sys_user t11 ON t.creator_account = t11.user_name
+	LEFT JOIN s_fin_book_customer_deduction_item t12 ON t1.deduction_bill_sid = t12.refer_doc_sid
+    </sql>
+
+    <select id="selectFinCustomerDeductionBillItemById" parameterType="Long" resultMap="FinCustomerDeductionBillItemResult">
+        <include refid="selectFinCustomerDeductionBillItemVo"/>
+        where t.deduction_bill_item_sid = #{deductionBillItemSid}
+    </select>
+
+    <select id="selectFinCustomerDeductionBillItemList" parameterType="com.platform.ems.domain.FinCustomerDeductionBillItem"
+            resultMap="FinCustomerDeductionBillItemResult">
+        <include refid="selectFinCustomerDeductionBillItemVo"/>
+        <where>
+            <if test="clearStatusList != null and clearStatusList.length >0">
+                and t12.clear_status in
+                (<foreach collection="clearStatusList" item="clearStatus" separator=","> #{clearStatus}</foreach>)
+            </if>
+            <if test="salePersonList != null and salePersonList.length >0">
+                and t1.sale_person in
+                (<foreach collection="salePersonList" item="salePerson" separator=","> #{salePerson}</foreach>)
+            </if>
+            <if test="materialTypeList != null and materialTypeList.length >0">
+                and t1.material_type in
+                (<foreach collection="materialTypeList" item="materialType" separator=","> #{materialType}</foreach>)
+            </if>
+            <if test="companySidList != null and companySidList.length >0">
+                and t1.company_sid in
+                (<foreach collection="companySidList" item="companySid" separator=","> #{companySid}</foreach>)
+            </if>
+            <if test="productSeasonSidList != null and productSeasonSidList.length >0">
+                and t1.product_season_sid in
+                (<foreach collection="productSeasonSidList" item="productSeasonSid" separator=","> #{productSeasonSid}</foreach>)
+            </if>
+            <if test="customerSidList != null and customerSidList.length >0">
+                and t1.customer_sid in
+                (<foreach collection="customerSidList" item="customerSid" separator=","> #{customerSid}</foreach>)
+            </if>
+            <if test="handleStatusList != null and handleStatusList.length >0">
+                and t1.handle_status in
+                (<foreach collection="handleStatusList" item="handleStatus" separator=","> #{handleStatus}</foreach>)
+            </if>
+            <if test="handleStatus != null and handleStatus!=''">
+                and t1.handle_status =#{handleStatus}
+            </if>
+            <if test="materialType != null and materialType!=''">
+                and t1.material_type =#{materialType}
+            </if>
+            <if test="salePerson != null and salePerson!=''">
+                and t1.sale_person =#{salePerson}
+            </if>
+            <if test="companySid != null ">
+                and t1.company_sid =#{companySid}
+            </if>
+            <if test="productSeasonSid != null ">
+                and t1.product_season_sid =#{productSeasonSid}
+            </if>
+            <if test="customerSid != null ">
+                and t1.customer_sid =#{customerSid}
+            </if>
+            <if test="deductionBillCode != null">
+                and t1.deduction_bill_code like concat('%', #{deductionBillCode}, '%')
+            </if>
+            <if test="clientId != null  and clientId != ''">
+                and t.client_id = #{clientId}
+            </if>
+            <if test="deductionBillSid != null ">
+                and t.deduction_bill_sid =#{deductionBillSid}
+            </if>
+            <if test="deductionType != null  and deductionType != ''">
+                and t.deduction_type = #{deductionType}
+            </if>
+            <if test="currencyAmountTax != null ">
+                and t.currency_amount_tax = #{currencyAmountTax}
+            </if>
+            <if test="itemNum != null ">
+                and t.item_num =#{itemNum}
+            </if>
+            <if test="saleContractSid != null ">
+                and t.sale_contract_sid =#{saleContractSid}
+            </if>
+            <if test="saleContractCode != null ">
+                and t.sale_contract_code =#{saleContractCode}
+            </if>
+            <if test="salesOrderSid != null ">
+                and t.sales_order_sid =#{salesOrderSid}
+            </if>
+            <if test="salesOrderCode != null ">
+                and t.sales_order_code =#{salesOrderCode}
+            </if>
+            <if test="deliveryNoteSid != null ">
+                and t.delivery_note_sid =#{deliveryNoteSid}
+            </if>
+            <if test="deliveryNoteCode != null ">
+                and t.delivery_note_code =#{deliveryNoteCode}
+            </if>
+            <if test="paperContractCode != null and paperContractCode != ''">
+                and t.paper_contract_code like concat('%', #{paperContractCode}, '%')
+            </if>
+            <if test="creatorAccount != null  and creatorAccount != ''">
+                and (<foreach collection="creatorAccount.split(';')" item="item" separator=" or "> t11.nick_name like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                and t.data_source_sys = #{dataSourceSys}
+            </if>
+            <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where> order by t.create_date desc
+    </select>
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_fin_customer_deduction_bill_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            client_id,
+            deduction_bill_item_sid,
+            deduction_bill_sid,
+            deduction_type,
+            currency_amount_tax,
+            item_num,
+            sale_contract_sid,
+            sale_contract_code,
+            sales_order_sid,
+            sales_order_code,
+            delivery_note_sid,
+            delivery_note_code,
+            paper_contract_code,
+            remark,
+            creator_account,
+            create_date,
+            data_source_sys,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix=" (" suffix=")" suffixOverrides=",">
+                #{item.clientId},
+                #{item.deductionBillItemSid},
+                #{item.deductionBillSid},
+                #{item.deductionType},
+                #{item.currencyAmountTax},
+                #{item.itemNum},
+                #{item.saleContractSid},
+                #{item.saleContractCode},
+                #{item.salesOrderSid},
+                #{item.salesOrderCode},
+                #{item.deliveryNoteSid},
+                #{item.deliveryNoteCode},
+                #{item.paperContractCode},
+                #{item.remark},
+                #{item.creatorAccount},
+                #{item.createDate},
+                #{item.dataSourceSys},
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_fin_customer_deduction_bill_item
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            deduction_bill_sid = #{deductionBillSid},
+            deduction_type = #{deductionType},
+            currency_amount_tax = #{currencyAmountTax},
+            item_num = #{itemNum},
+            sale_contract_sid = #{saleContractSid},
+            sale_contract_code = #{saleContractCode},
+            sales_order_sid = #{salesOrderSid},
+            sales_order_code = #{salesOrderCode},
+            delivery_note_sid = #{deliveryNoteSid},
+            delivery_note_code = #{deliveryNoteCode},
+            paper_contract_code = #{paperContractCode},
+            remark = #{remark},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            data_source_sys = #{dataSourceSys},
+        </trim>
+        where deduction_bill_item_sid = #{deductionBillItemSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_fin_customer_deduction_bill_item
+            <trim prefix="SET" suffixOverrides=",">
+                deduction_type = #{o.deductionType},
+                currency_amount_tax = #{o.currencyAmountTax},
+                item_num = #{o.itemNum},
+                sale_contract_sid = #{o.saleContractSid},
+                sale_contract_code = #{o.saleContractCode},
+                sales_order_sid = #{o.salesOrderSid},
+                sales_order_code = #{o.salesOrderCode},
+                delivery_note_sid = #{o.deliveryNoteSid},
+                delivery_note_code = #{o.deliveryNoteCode},
+                paper_contract_code = #{o.paperContractCode},
+                remark = #{o.remark},
+                updater_account = #{o.updaterAccount},
+                update_date = #{o.updateDate},
+                data_source_sys = #{o.dataSourceSys},
+            </trim>
+            where deduction_bill_item_sid = #{o.deductionBillItemSid}
+        </foreach>
+    </update>
+
+</mapper>

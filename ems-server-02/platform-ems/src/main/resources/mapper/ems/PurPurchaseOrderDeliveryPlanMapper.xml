@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.PurPurchaseOrderDeliveryPlanMapper">
+
+    <resultMap type="com.platform.ems.domain.PurPurchaseOrderDeliveryPlan" id="PurPurchaseOrderDeliveryPlanResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="deliveryPlanSid" column="delivery_plan_sid"/>
+                    <result property="purchaseOrderItemSid" column="purchase_order_item_sid"/>
+                    <result property="purchaseOrderSid" column="purchase_order_sid"/>
+                    <result property="deliveryDate" column="delivery_date"/>
+                    <result property="planQuantity" column="plan_quantity"/>
+                    <result property="unitBase" column="unit_base"/>
+                    <result property="unitSale" column="unit_sale"/>
+                    <result property="receiverOrgType" column="receiver_org_type"/>
+                    <result property="receiverOrg" column="receiver_org"/>
+                    <result property="vendorSid" column="vendor_sid"/>
+                    <result property="customerSid" column="customer_sid"/>
+                    <result property="storehouseSid" column="storehouse_sid"/>
+                    <result property="shopSid" column="shop_sid"/>
+                    <result property="consignee" column="consignee"/>
+                    <result property="consigneePhone" column="consignee_phone"/>
+                    <result property="consigneeAddr" column="consignee_addr"/>
+                    <result property="itemNum" column="item_num"/>
+                    <result property="remark" column="remark"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+            </resultMap>
+
+    <sql id="selectPurPurchaseOrderDeliveryPlanVo">
+        select t.client_id,
+        t.delivery_plan_sid,
+        t.purchase_order_item_sid,
+        t.purchase_order_sid,
+        t.delivery_date,
+        t.plan_quantity,
+        t.unit_base,
+        t.unit_sale,
+        t.receiver_org_type,
+        t.receiver_org,
+        t.vendor_sid,
+        t.customer_sid,
+        t.storehouse_sid,
+        t.shop_sid,
+        t.consignee,
+        t.consignee_phone,
+        t.consignee_addr,
+        t.item_num,
+        t.remark,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.data_source_sys
+        from s_pur_purchase_order_delivery_plan t
+    </sql>
+
+    <select id="selectPurPurchaseOrderDeliveryPlanById" parameterType="Long" resultMap="PurPurchaseOrderDeliveryPlanResult">
+        <include refid="selectPurPurchaseOrderDeliveryPlanVo"/>
+        where t.purchase_order_item_sid = #{purchaseOrderItemSid}
+    </select>
+
+
+    <select id="selectPurPurchaseOrderDeliveryPlanList" parameterType="com.platform.ems.domain.PurPurchaseOrderDeliveryPlan"
+            resultMap="PurPurchaseOrderDeliveryPlanResult">
+        <include refid="selectPurPurchaseOrderDeliveryPlanVo"/>
+        <where>
+                                                                                                    <if test="clientId != null  and clientId != ''">
+                               and (<foreach collection="clientId.split(';')" item="item" separator="or"> t.client_id like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                            <if test="purchaseOrderItemSid != null ">
+                                and t.purchase_order_item_sid =#{purchaseOrderItemSid}
+                            </if>
+                                                                                                                                                                <if test="purchaseOrderSid != null ">
+                                and t.purchase_order_sid =#{purchaseOrderSid}
+                            </if>
+                                                                                                                                                                                                <if test="deliveryDate != null ">
+                                    and t.delivery_date = #{deliveryDate}
+                                </if>
+                                                                                                                                                                                                                            <if test="planQuantity != null ">
+                                    and t.plan_quantity = #{planQuantity}
+                                </if>
+                                                                                                                                                                                            <if test="unitBase != null  and unitBase != ''">
+                               and (<foreach collection="unitBase.split(';')" item="item" separator="or"> t.unit_base like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="unitSale != null  and unitSale != ''">
+                               and (<foreach collection="unitSale.split(';')" item="item" separator="or"> t.unit_sale like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="receiverOrgType != null  and receiverOrgType != ''">
+                               and (<foreach collection="receiverOrgType.split(';')" item="item" separator="or"> t.receiver_org_type like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="receiverOrg != null ">
+                                and t.receiver_org =#{receiverOrg}
+                            </if>
+                                                                                                                                                                <if test="vendorSid != null ">
+                                and t.vendor_sid =#{vendorSid}
+                            </if>
+                                                                                                                                                                <if test="customerSid != null ">
+                                and t.customer_sid =#{customerSid}
+                            </if>
+                                                                                                                                                                <if test="storehouseSid != null ">
+                                and t.storehouse_sid =#{storehouseSid}
+                            </if>
+                                                                                                                                                                <if test="shopSid != null ">
+                                and t.shop_sid =#{shopSid}
+                            </if>
+                                                                                                                                                                <if test="consignee != null  and consignee != ''">
+                               and (<foreach collection="consignee.split(';')" item="item" separator="or"> t.consignee like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="consigneePhone != null  and consigneePhone != ''">
+                               and (<foreach collection="consigneePhone.split(';')" item="item" separator="or"> t.consignee_phone like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="consigneeAddr != null  and consigneeAddr != ''">
+                               and (<foreach collection="consigneeAddr.split(';')" item="item" separator="or"> t.consignee_addr like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                <if test="itemNum != null ">
+                                and t.item_num =#{itemNum}
+                            </if>
+                                                                                                                                                                                            <if test="creatorAccount != null  and creatorAccount != ''">
+                               and (<foreach collection="creatorAccount.split(';')" item="item" separator="or"> t.creator_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="beginTime != null and beginTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+                                </if>
+                                <if test="endTime != null and endTime!=''">
+                                    and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                                </if>
+                                                                                                                                                                                            <if test="updaterAccount != null  and updaterAccount != ''">
+                               and (<foreach collection="updaterAccount.split(';')" item="item" separator="or"> t.updater_account like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                                                                                                                                <if test="updateDate != null ">
+                                    and t.update_date = #{updateDate}
+                                </if>
+                                                                                                                                                                                            <if test="dataSourceSys != null  and dataSourceSys != ''">
+                               and (<foreach collection="dataSourceSys.split(';')" item="item" separator="or"> t.data_source_sys like concat('%',
+                                    #{item}, '%')
+                                </foreach>)
+                            </if>
+                                                                                    <if test="params.dataScope != null and params.dataScope!=''">
+                ${params.dataScope}
+            </if>
+        </where>
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_pur_purchase_order_delivery_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                delivery_plan_sid,
+                                                                purchase_order_item_sid,
+                                                                purchase_order_sid,
+                                                                delivery_date,
+                                                                plan_quantity,
+                                                                unit_base,
+                                                                unit_sale,
+                                                                receiver_org_type,
+                                                                receiver_org,
+                                                                vendor_sid,
+                                                                customer_sid,
+                                                                storehouse_sid,
+                                                                shop_sid,
+                                                                consignee,
+                                                                consignee_phone,
+                                                                consignee_addr,
+                                                                item_num,
+                                                                remark,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                data_source_sys,
+                                    </trim>
+        values
+            <foreach collection="list" item="item" separator=",">
+                <trim prefix=" (" suffix=")" suffixOverrides=",">
+                                                            #{item.clientId},
+                                                                                #{item.deliveryPlanSid},
+                                                                                #{item.purchaseOrderItemSid},
+                                                                                #{item.purchaseOrderSid},
+                                                                                #{item.deliveryDate},
+                                                                                #{item.planQuantity},
+                                                                                #{item.unitBase},
+                                                                                #{item.unitSale},
+                                                                                #{item.receiverOrgType},
+                                                                                #{item.receiverOrg},
+                                                                                #{item.vendorSid},
+                                                                                #{item.customerSid},
+                                                                                #{item.storehouseSid},
+                                                                                #{item.shopSid},
+                                                                                #{item.consignee},
+                                                                                #{item.consigneePhone},
+                                                                                #{item.consigneeAddr},
+                                                                                #{item.itemNum},
+                                                                                #{item.remark},
+                                                                                #{item.creatorAccount},
+                                                                                #{item.createDate},
+                                                                                #{item.updaterAccount},
+                                                                                #{item.updateDate},
+                                                                                #{item.dataSourceSys},
+                                                    </trim>
+            </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_pur_purchase_order_delivery_plan
+        <trim prefix="SET" suffixOverrides=",">
+                                                client_id = #{clientId},
+                                                                delivery_plan_sid = #{deliveryPlanSid},
+                                                                purchase_order_item_sid = #{purchaseOrderItemSid},
+                                                                purchase_order_sid = #{purchaseOrderSid},
+                                                                delivery_date = #{deliveryDate},
+                                                                plan_quantity = #{planQuantity},
+                                                                unit_base = #{unitBase},
+                                                                unit_sale = #{unitSale},
+                                                                receiver_org_type = #{receiverOrgType},
+                                                                receiver_org = #{receiverOrg},
+                                                                vendor_sid = #{vendorSid},
+                                                                customer_sid = #{customerSid},
+                                                                storehouse_sid = #{storehouseSid},
+                                                                shop_sid = #{shopSid},
+                                                                consignee = #{consignee},
+                                                                consignee_phone = #{consigneePhone},
+                                                                consignee_addr = #{consigneeAddr},
+                                                                item_num = #{itemNum},
+                                                                remark = #{remark},
+                                                                creator_account = #{creatorAccount},
+                                                                create_date = #{createDate},
+                                                                updater_account = #{updaterAccount},
+                                                                update_date = #{updateDate},
+                                                                data_source_sys = #{dataSourceSys},
+                                    </trim>
+        where delivery_plan_sid = #{deliveryPlanSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_pur_purchase_order_delivery_plan
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                delivery_plan_sid = #{deliveryPlanSid},
+                                                                                purchase_order_item_sid = #{purchaseOrderItemSid},
+                                                                                purchase_order_sid = #{purchaseOrderSid},
+                                                                                delivery_date = #{deliveryDate},
+                                                                                plan_quantity = #{planQuantity},
+                                                                                unit_base = #{unitBase},
+                                                                                unit_sale = #{unitSale},
+                                                                                receiver_org_type = #{receiverOrgType},
+                                                                                receiver_org = #{receiverOrg},
+                                                                                vendor_sid = #{vendorSid},
+                                                                                customer_sid = #{customerSid},
+                                                                                storehouse_sid = #{storehouseSid},
+                                                                                shop_sid = #{shopSid},
+                                                                                consignee = #{consignee},
+                                                                                consignee_phone = #{consigneePhone},
+                                                                                consignee_addr = #{consigneeAddr},
+                                                                                item_num = #{itemNum},
+                                                                                remark = #{remark},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where delivery_plan_sid = #{deliveryPlanSid}
+        </foreach>
+    </update>
+
+</mapper>

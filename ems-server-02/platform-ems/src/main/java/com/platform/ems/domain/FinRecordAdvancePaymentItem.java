@@ -1,0 +1,184 @@
+package com.platform.ems.domain;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.platform.common.annotation.Excel;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableId;
+
+import com.platform.common.core.domain.EmsBaseEntity;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
+import lombok.experimental.Accessors;
+
+/**
+ * 供应商业务台账-明细-预付对象 s_fin_record_advance_payment_item
+ *
+ * @author linhongwei
+ * @date 2021-05-29
+ */
+@Data
+@Accessors(chain = true)
+@ApiModel
+@TableName(value = "s_fin_record_advance_payment_item")
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class FinRecordAdvancePaymentItem extends EmsBaseEntity {
+
+    /**
+     * 租户ID
+     */
+    @Excel(name = "租户ID")
+    @TableField(fill = FieldFill.INSERT)
+    @ApiModelProperty(value = "租户ID")
+    private String clientId;
+
+    /**
+     * 系统SID-供应商预付台账流水明细
+     */
+    @TableId
+    @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(value = "系统SID-供应商预付台账流水明细")
+    private Long recordAdvancePaymentItemSid;
+
+    @ApiModelProperty(value = "sid数组")
+    @TableField(exist = false)
+    private Long[] recordAdvancePaymentItemSidList;
+
+    /**
+     * 系统SID-供应商预付台账流水
+     */
+    @Excel(name = "系统SID-供应商预付台账流水")
+    @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(value = "系统SID-供应商预付台账流水")
+    private Long recordAdvancePaymentSid;
+
+    /**
+     * 行号
+     */
+    @Excel(name = "行号")
+    @ApiModelProperty(value = "行号")
+    private Long itemNum;
+
+    /**
+     * 应付金额（含税）
+     */
+    @Excel(name = "应付金额（含税）")
+    @ApiModelProperty(value = "应付金额（含税）")
+    private BigDecimal currencyAmountTaxYingf;
+
+    /**
+     * 已付金额（含税）
+     */
+    @Excel(name = "已核销金额（含税）")
+    @ApiModelProperty(value = "已核销金额（含税）")
+    private BigDecimal currencyAmountTaxYhx;
+
+    /**
+     * 申请中未付金额（含税）
+     */
+    @Excel(name = "核销中金额（含税）")
+    @ApiModelProperty(value = "核销中金额（含税）")
+    private BigDecimal currencyAmountTaxHxz;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "待付金额（含税）")
+    private BigDecimal currencyAmountTaxDhx;
+
+    /**
+     * 税率（存值，即：不含百分号，如20%，就存0.2）
+     */
+    @Excel(name = "税率（存值，即：不含百分号，如20%，就存0.2）")
+    @ApiModelProperty(value = "税率（存值，即：不含百分号，如20%，就存0.2）")
+    private BigDecimal taxRate;
+
+    /**
+     * 付款状态
+     */
+    @Excel(name = "核销状态")
+    @ApiModelProperty(value = "核销状态")
+    private String clearStatus;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "核销状态(多选)")
+    private String[] clearStatusList;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "处理状态(多选)")
+    private String[] handleStatusList;
+
+    /**
+     * 账期(天)
+     */
+    @Excel(name = "账期(天)")
+    @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(value = "账期(天)")
+    private Long accountValidDays;
+
+    /**
+     * 账期天类型编码（数据字典的键值或配置档案的编码）
+     */
+    @Excel(name = "账期天类型编码（数据字典的键值或配置档案的编码）")
+    @ApiModelProperty(value = "账期天类型编码（数据字典的键值或配置档案的编码）")
+    private String dayType;
+
+    /**
+     * 账期有效期（起）
+     */
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
+    @Excel(name = "账期有效期（起）", width = 30, dateFormat = "yyyy-MM-dd")
+    @ApiModelProperty(value = "账期有效期（起）")
+    private Date accountValidDate;
+
+    /**
+     * 创建人账号（用户名称）
+     */
+    @Excel(name = "创建人账号（用户名称）")
+    @TableField(fill = FieldFill.INSERT)
+    @ApiModelProperty(value = "创建人账号（用户名称）")
+    private String creatorAccount;
+
+    /**
+     * 创建时间
+     */
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
+    @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @TableField(fill = FieldFill.INSERT)
+    @ApiModelProperty(value = "创建时间")
+    private Date createDate;
+
+    /**
+     * 更新人账号（用户名称）
+     */
+    @Excel(name = "更新人账号（用户名称）")
+    @TableField(fill = FieldFill.UPDATE)
+    @ApiModelProperty(value = "更新人账号（用户名称）")
+    private String updaterAccount;
+
+    /**
+     * 更新时间
+     */
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
+    @Excel(name = "更新时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @TableField(fill = FieldFill.UPDATE)
+    @ApiModelProperty(value = "更新时间")
+    private Date updateDate;
+
+    /**
+     * 数据源系统（数据字典的键值或配置档案的编码）
+     */
+    @Excel(name = "数据源系统（数据字典的键值或配置档案的编码）")
+    @TableField(fill = FieldFill.INSERT)
+    @ApiModelProperty(value = "数据源系统（数据字典的键值或配置档案的编码）")
+    private String dataSourceSys;
+
+
+}

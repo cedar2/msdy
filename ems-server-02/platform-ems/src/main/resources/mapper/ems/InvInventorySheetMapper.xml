@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.ems.mapper.InvInventorySheetMapper">
+
+    <resultMap type="com.platform.ems.domain.InvInventorySheet" id="InvInventorySheetResult">
+                    <result property="clientId" column="client_id"/>
+                    <result property="inventorySheetSid" column="inventory_sheet_sid"/>
+                    <result property="inventorySheetCode" column="inventory_sheet_code"/>
+                    <result property="storehouseSid" column="storehouse_sid"/>
+                    <result property="storehouseLocationSid" column="storehouse_location_sid"/>
+                    <result property="specialStock" column="special_stock"/>
+                    <result property="documentDate" column="document_date"/>
+                    <result property="planCountDate" column="plan_count_date"/>
+                    <result property="year" column="year"/>
+                    <result property="countTaskDocument" column="count_task_document"/>
+                    <result property="countStatus" column="count_status"/>
+                    <result property="actualCountDate" column="actual_count_date"/>
+                    <result property="countResultEnterDate" column="count_result_enter_date"/>
+                    <result property="companySid" column="company_sid"/>
+        <result property="otherSystemInventorySheetCode" column="other_system_inventory_sheet_code"/>
+        <result property="isPushOtherSystem" column="is_push_other_system"/>
+        <result property="pushResultOtherSystem" column="push_result_other_system"/>
+        <result property="pushReturnMsgOtherSystem" column="push_return_msg_other_system"/>
+        <result property="pushTimeOtherSystem" column="push_time_other_system"/>
+                    <result property="remark" column="remark"/>
+                    <result property="handleStatus" column="handle_status"/>
+                    <result property="creatorAccount" column="creator_account"/>
+                    <result property="createDate" column="create_date"/>
+                    <result property="updaterAccount" column="updater_account"/>
+                    <result property="updateDate" column="update_date"/>
+                    <result property="confirmerAccount" column="confirmer_account"/>
+                    <result property="confirmDate" column="confirm_date"/>
+                    <result property="dataSourceSys" column="data_source_sys"/>
+                    <result property="storehouseCode" column="storehouse_code"/>
+                    <result property="storehouseName" column="storehouse_name"/>
+                    <result property="locationCode" column="location_code"/>
+                    <result property="locationName" column="location_name"/>
+                    <result property="companyCode" column="company_code"/>
+                    <result property="companyName" column="company_name"/>
+            </resultMap>
+
+    <sql id="selectInvInventorySheetVo">
+        select
+        t.client_id,
+        t.inventory_sheet_sid,
+        t.inventory_sheet_code,
+        t.storehouse_sid,
+        t.storehouse_location_sid,
+        t.special_stock,
+        t.vendor_sid,
+        t.customer_sid,
+        t.movement_type,
+        t.account_date,
+        t.document_date,
+        t.plan_count_date,
+        t.is_freeze_stock,
+        t.is_quantity_record,
+        t.year,
+        t.count_task_document,
+        t.refer_document,
+        t.count_status,
+        t.actual_count_date,
+        t.count_result_enter_date,
+        t.company_sid,
+        t.other_system_inventory_sheet_code,
+        t.is_push_other_system,
+        t.push_result_other_system,
+        t.push_return_msg_other_system,
+        t.push_time_other_system,
+        t.remark,
+        t.handle_status,
+        t.creator_account,
+        t.create_date,
+        t.updater_account,
+        t.update_date,
+        t.confirmer_account,
+        t.is_repeat_count,
+        t.confirm_date,
+        t.data_source_sys,
+        t1.storehouse_code,
+        t1.storehouse_name,
+        t2.location_code,
+        t2.location_name,
+        t3.company_code,
+        t3.company_name,
+        t7.vendor_name,
+        t7.vendor_code,
+        t8.customer_code,
+        t8.customer_name,
+        t9.nick_name as creator_account_name,
+        t10.nick_name as accountor_name,
+        t11.inventory_document_code,
+        t12.name as special_stock_name,
+        t13.nick_name as updater_account_name,
+        t19.approval_node,
+	    t19.approval_user_id,
+	    t19.approval_user_name,
+	    t19.create_date AS submit_date,
+	    t20.nick_name AS submit_user_name
+        from s_inv_inventory_sheet t
+        LEFT JOIN s_bas_storehouse t1 ON t1.storehouse_sid = t.storehouse_sid
+        LEFT JOIN s_bas_storehouse_location t2 ON t2.storehouse_location_sid = t.storehouse_location_sid
+        LEFT JOIN s_bas_company t3 ON t3.company_sid = t.company_sid
+        LEFT JOIN s_bas_vendor t7 on t7.vendor_sid=t.vendor_sid
+        LEFT JOIN s_bas_customer t8 on t8.customer_sid=t.customer_sid
+        lEFT JOIN sys_user t9 ON t9.user_name = t.creator_account and t9.client_id = t.client_id
+        lEFT JOIN sys_user t10 ON t10.user_name = t.accountor and t10.client_id = t.client_id
+        left join s_inv_inventory_document  t11 on t11.refer_document_sid=t.inventory_sheet_sid
+        left join s_con_special_stock t12 on t12.code =t.special_stock
+        lEFT JOIN sys_user t13 ON t13.user_name = t.updater_account and t13.client_id = t.client_id
+        left join s_sys_form_process t19 on t19.form_id=t.inventory_sheet_sid
+        LEFT JOIN sys_user t20 ON t19.creator_account = t20.user_name and t19.client_id = t20.client_id
+    </sql>
+
+    <select id="selectInvInventorySheetById" parameterType="Long" resultType="com.platform.ems.domain.InvInventorySheet">
+        <include refid="selectInvInventorySheetVo"/>
+        where t.inventory_sheet_sid = #{inventorySheetSid}
+    </select>
+
+
+    <select id="selectInvInventorySheetList" parameterType="com.platform.ems.domain.InvInventorySheet"
+            resultType="com.platform.ems.domain.InvInventorySheet">
+      <include refid="selectInvInventorySheetVo"/>
+        <where>
+            <if test="itemSidList != null  and itemSidList.size> 0">and t.inventory_sheet_sid in
+                <foreach collection="itemSidList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="inventorySheetCode != null and inventorySheetCode !=''">
+                and  t.inventory_sheet_code like concat('%',
+                #{inventorySheetCode}, '%')
+            </if>
+            <if test="inventoryDocumentCode != null and inventoryDocumentCode !=''">
+                and  t11.inventory_document_code like concat('%',
+                #{inventoryDocumentCode}, '%')
+            </if>
+            <if test="year != null and year !=''">
+                and  t.year=#{year}
+            </if>
+            <if test="movementType != null and movementType !=''">
+                and  t.movement_type=#{movementType}
+            </if>
+            <if test="storehouseSid != null and storehouseSid != '' ">
+                and t.storehouse_sid =#{storehouseSid}
+            </if>
+            <if test="storehouseLocationSidList != null and storehouseLocationSidList.length >0">
+                and t.storehouse_location_sid in
+                (<foreach collection="storehouseLocationSidList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="specialStockList != null and specialStockList.length >0">
+                and t.special_stock in
+                (<foreach collection="specialStockList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="countTaskDocument != null and countTaskDocument !=''">
+                and  t.count_task_document like concat('%',
+                #{countTaskDocument}, '%')
+            </if>
+            <if test="isFreezeStock != null and isFreezeStock !=''">
+                and  t.is_freeze_stock =#{isFreezeStock}
+            </if>
+            <if test="creatorAccountName != null  and creatorAccountName != ''">
+                and (<foreach collection="creatorAccountName.split(';')" item="item" separator="or">t9.nick_name
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="countStatusList != null and countStatusList.length >0 ">
+                and t.count_status in
+                (<foreach collection="countStatusList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="handleStatusList != null  and handleStatusList.length >0" >
+                and t.handle_status in
+                (<foreach collection="handleStatusList" item="item" separator=",">
+                #{item}</foreach>)
+            </if>
+            <if test="beginTime != null and beginTime!=''">
+                and date_format(t.create_date,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime!=''">
+                and date_format(t.create_date,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="accountorName != null  and accountorName != ''">
+                and (<foreach collection="accountorName.split(';')" item="item" separator="or">t10.nick_name
+                like concat('%',
+                #{item}, '%')
+            </foreach>)
+            </if>
+            <if test="beginTimePlan != null and beginTimePlan!=''">
+                and date_format(t.plan_count_date,'%y%m%d') &gt;= date_format(#{beginTimePlan},'%y%m%d')
+            </if>
+            <if test="endTimePlan != null and endTimePlan!=''">
+                and date_format(t.plan_count_date,'%y%m%d') &lt;= date_format(#{endTimePlan},'%y%m%d')
+            </if>
+            <if test="beginTimeAccount != null and beginTimeAccount!=''">
+                and date_format(t.account_date,'%y%m%d') &gt;= date_format(#{beginTimeAccount},'%y%m%d')
+            </if>
+            <if test="endTimeAccount != null and endTimeAccount!=''">
+                and date_format(t.account_date,'%y%m%d') &lt;= date_format(#{endTimeAccount},'%y%m%d')
+            </if>
+        </where>
+        order by t.inventory_sheet_code desc
+    </select>
+
+
+    <!--添加多个-->
+    <insert id="inserts">
+        insert into s_inv_inventory_sheet
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                client_id,
+                                                                inventory_sheet_sid,
+                                                                inventory_sheet_code,
+                                                                storehouse_sid,
+                                                                storehouse_location_sid,
+                                                                special_stock,
+                                                                document_date,
+                                                                plan_count_date,
+                                                                freeze_stock,
+                                                                account_quantity_record,
+                                                                year,
+                                                                count_task_document,
+                                                                reference_document,
+                                                                count_status,
+                                                                actual_count_date,
+                                                                count_result_enter_date,
+                                                                company_sid,
+            other_system_inventory_sheet_code,
+            is_push_other_system,
+            push_result_other_system,
+            push_return_msg_other_system,
+            push_time_other_system,
+                                                                remark,
+                                                                handle_status,
+                                                                creator_account,
+                                                                create_date,
+                                                                updater_account,
+                                                                update_date,
+                                                                confirmer_account,
+                                                                confirm_date,
+                                                                data_source_sys,
+                                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="o" separator=",">
+                                                            #{clientId},
+                                                                                #{inventorySheetSid},
+                                                                                #{inventorySheetCode},
+                                                                                #{storehouseSid},
+                                                                                #{storehouseLocationSid},
+                                                                                #{specialStock},
+                                                                                #{documentDate},
+                                                                                #{planCountDate},
+                                                                                #{freezeStock},
+                                                                                #{accountQuantityRecord},
+                                                                                #{year},
+                                                                                #{countTaskDocument},
+                                                                                #{referenceDocument},
+                                                                                #{countStatus},
+                                                                                #{actualCountDate},
+                                                                                #{countResultEnterDate},
+                                                                                #{companySid},
+                #{otherSystemInventorySheetCode},
+                #{isPushOtherSystem},
+                #{pushResultOtherSystem},
+                #{pushReturnMsgOtherSystem},
+                #{pushTimeOtherSystem},
+                                                                                #{remark},
+                                                                                #{handleStatus},
+                                                                                #{creatorAccount},
+                                                                                #{createDate},
+                                                                                #{updaterAccount},
+                                                                                #{updateDate},
+                                                                                #{confirmerAccount},
+                                                                                #{confirmDate},
+                                                                                #{dataSourceSys},
+                                                </foreach>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateAllById">
+        update s_inv_inventory_sheet
+        <trim prefix="SET" suffixOverrides=",">
+            client_id = #{clientId},
+            inventory_sheet_sid = #{inventorySheetSid},
+            inventory_sheet_code = #{inventorySheetCode},
+            storehouse_sid = #{storehouseSid},
+            storehouse_location_sid = #{storehouseLocationSid},
+            document_date = #{documentDate},
+            plan_count_date = #{planCountDate},
+            document_type = #{documentType},
+            is_freeze_stock = #{isFreezeStock},
+            is_quantity_record = #{isQuantityRecord},
+            year = #{year},
+            count_task_document = #{countTaskDocument},
+            refer_document = #{referDocument},
+            count_status = #{countStatus},
+            actual_count_date = #{actualCountDate},
+            count_result_enter_date = #{countResultEnterDate},
+            company_sid = #{companySid},
+            stock_type = #{stockType},
+            special_stock = #{specialStock},
+            vendor_sid = #{vendorSid},
+            customer_sid = #{customerSid},
+            accountor = #{accountor},
+            account_date = #{accountDate},
+            other_system_inventory_sheet_code = #{otherSystemInventorySheetCode},
+            is_push_other_system = #{isPushOtherSystem},
+            push_result_other_system = #{pushResultOtherSystem},
+            push_return_msg_other_system = #{pushReturnMsgOtherSystem},
+            push_time_other_system = #{pushTimeOtherSystem},
+            remark = #{remark},
+            handle_status = #{handleStatus},
+            creator_account = #{creatorAccount},
+            create_date = #{createDate},
+            updater_account = #{updaterAccount},
+            update_date = #{updateDate},
+            confirmer_account = #{confirmerAccount},
+            confirm_date = #{confirmDate},
+            data_source_sys = #{dataSourceSys},
+            instance_id = #{instanceId},
+            process_type = #{processType},
+            is_repeat_count = #{isRepeatCount},
+        </trim>
+        where inventory_sheet_sid = #{inventorySheetSid}
+    </update>
+
+    <!--更新多个-->
+    <update id="updatesAllById">
+        <foreach collection="list" item="o" separator=";">
+            update s_inv_inventory_sheet
+            <trim prefix="SET" suffixOverrides=",">
+                                                            client_id = #{clientId},
+                                                                                                                    inventory_sheet_code = #{inventorySheetCode},
+                                                                                storehouse_sid = #{storehouseSid},
+                                                                                storehouse_location_sid = #{storehouseLocationSid},
+                                                                                special_stock = #{specialStock},
+                                                                                document_date = #{documentDate},
+                                                                                plan_count_date = #{planCountDate},
+                                                                                freeze_stock = #{freezeStock},
+                                                                                account_quantity_record = #{accountQuantityRecord},
+                                                                                year = #{year},
+                                                                                count_task_document = #{countTaskDocument},
+                                                                                reference_document = #{referenceDocument},
+                                                                                count_status = #{countStatus},
+                                                                                actual_count_date = #{actualCountDate},
+                                                                                count_result_enter_date = #{countResultEnterDate},
+                                                                                company_sid = #{companySid},
+                other_system_inventory_sheet_code = #{otherSystemInventorySheetCode},
+                is_push_other_system = #{isPushOtherSystem},
+                push_result_other_system = #{pushResultOtherSystem},
+                push_return_msg_other_system = #{pushReturnMsgOtherSystem},
+                push_time_other_system = #{pushTimeOtherSystem},
+                                                                                remark = #{remark},
+                                                                                handle_status = #{handleStatus},
+                                                                                creator_account = #{creatorAccount},
+                                                                                create_date = #{createDate},
+                                                                                updater_account = #{updaterAccount},
+                                                                                update_date = #{updateDate},
+                                                                                confirmer_account = #{confirmerAccount},
+                                                                                confirm_date = #{confirmDate},
+                                                                                data_source_sys = #{dataSourceSys},
+                                                </trim>
+            where inventory_sheet_sid = #{inventorySheetSid}
+        </foreach>
+    </update>
+
+    <select id="countByDomain" resultType="java.lang.Integer">
+        select count(1) from s_inv_inventory_sheet
+        <where>
+            <if test="inventorySheetSids != null  and inventorySheetSids.length > 0">
+                and inventory_sheet_sid in (
+                <foreach collection="inventorySheetSids" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="handleStatus != null  and handleStatus != ''">
+                and handle_status in (
+                <foreach collection="handleStatus.split(';')" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteInvInventorySheetByIds" parameterType="long">
+        delete from s_inv_inventory_sheet where inventory_sheet_sid in
+        <foreach item="inventorySheetSid" collection="array" open="(" separator="," close=")">
+            #{inventorySheetSid}
+        </foreach>
+    </delete>
+
+    <update id="confirm" parameterType="com.platform.ems.domain.InvInventorySheet">
+        update s_inv_inventory_sheet
+        <set>
+            <if test="handleStatus != null and handleStatus != ''" >handle_status = #{handleStatus},</if>
+            <if test="confirmerAccount != null and confirmerAccount != ''" >confirmer_account = #{confirmerAccount},</if>
+            <if test="confirmDate != null" >confirm_date = #{confirmDate},</if>
+        </set>
+        where inventory_sheet_sid in
+        (<foreach collection="inventorySheetSids" item="inventorySheetSid" separator=",">#{inventorySheetSid}</foreach>)
+    </update>
+
+    <select id="getName" parameterType="com.platform.ems.domain.InvInventorySheet" resultMap="InvInventorySheetResult">
+    	SELECT
+			t1.storehouse_code,
+			t1.storehouse_name,
+			t2.location_code,
+			t2.location_name,
+			t3.company_code,
+			t3.company_name
+		FROM
+			s_inv_inventory_sheet t
+			LEFT JOIN s_bas_storehouse t1 ON t1.storehouse_sid = t.storehouse_sid
+			LEFT JOIN s_bas_storehouse_location t2 ON t2.storehouse_location_sid = t.storehouse_location_sid
+			LEFT JOIN s_bas_company t3 ON t3.company_sid = t.company_sid
+		WHERE
+		 	t.inventory_sheet_sid = #{inventorySheetSid}
+    </select>
+
+</mapper>
